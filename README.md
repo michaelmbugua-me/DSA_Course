@@ -1,59 +1,42 @@
-# 500+ Data Structures and Algorithms Interview Questions & Practice Problems
+# DSA Practice Library
 
-Source: [Medium - Techie Delight](https://medium.com/techie-delight/500-data-structures-and-algorithms-practice-problems-35afe8a1e222)
-by Vivek Srivastava. Saved locally so it can be read fully offline.
+An offline-friendly library of data structures and algorithms practice problems, with linked solutions and 19 interview-pattern study cards.
 
-## Layout
+The question collection is based on [Techie Delight's 500+ DSA practice problems](https://medium.com/techie-delight/500-data-structures-and-algorithms-practice-problems-35afe8a1e222). Pattern cards are based on [14 Patterns to Ace Any Coding Interview Question](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed), expanded with templates, pitfalls, and local practice problems.
 
-- `problems/` — the full list of questions grouped by category (from the Medium article)
-- `solutions/` — the complete Techie Delight solution article for every question, converted to Markdown with syntax-highlighted code (C, C++, Java, Python)
-- `patterns/` — **19 interview pattern study cards** (based on the HackerNoon article [14 Patterns to Ace Any Coding Interview Question](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed)), each with recognition cues, a Python template, complexity analysis, common pitfalls, and practice problems linked into this repo. Start with [patterns/README.md](patterns/README.md)
-- `full-article.md` — raw backup of the Medium article
-- `urls.txt` — all 630 unique solution URLs
+## Stack
 
-## Contents
+- Next.js App Router and React
+- TypeScript
+- Static export for Firebase Hosting
+- Markdown content rendered with Marked
+- Browser-local storage for theme and pattern completion progress
 
-| Category | Problems |
-|---|---|
-| [Array](problems/array.md) | 144 |
-| [Backtracking](problems/backtracking.md) | 20 |
-| [Binary](problems/binary.md) | 38 |
-| [Binary Tree](problems/binary-tree.md) | 77 |
-| [BST](problems/bst.md) | 28 |
-| [Divide & Conquer](problems/divide-conquer.md) | 23 |
-| [Dynamic Programming](problems/dynamic-programming.md) | 78 |
-| [Graph](problems/graph.md) | 41 |
-| [Greedy](problems/greedy.md) | 7 |
-| [Heap](problems/heap.md) | 19 |
-| [Linked List](problems/linked-list.md) | 64 |
-| [Matrix](problems/matrix.md) | 59 |
-| [Puzzles](problems/puzzles.md) | 29 |
-| [Queue](problems/queue.md) | 37 |
-| [Sorting](problems/sorting.md) | 26 |
-| [Stack](problems/stack.md) | 32 |
-| [String](problems/string.md) | 80 |
-| [Trie](problems/trie.md) | 10 |
-
-**Total: 812 entries (~630 unique questions; some are cross-listed under multiple categories)**
-
-## How to use offline
-
-Browse `problems/<category>.md` — every question links to its local solution file in `solutions/`.
-
-Example: find "Find pair with given sum in the array" in [problems/array.md](problems/array.md), then open [solutions/find-pair-with-given-sum-array.md](solutions/find-pair-with-given-sum-array.md) for the explanation and code.
-
-### Local web server (recommended)
+## Run locally
 
 ```sh
-python3 serve.py          # then open http://localhost:8000
-python3 serve.py 9000     # custom port
+npm install
+npm run dev
 ```
 
-No dependencies — pure Python stdlib. Gives you:
+Open [http://localhost:3000](http://localhost:3000). Search questions, read the pattern cards, and check off practice problems; pattern progress is saved in the current browser.
 
-- **Home page** — grid of all 18 categories with problem counts
-- **Question lists** — rendered Markdown, dark theme, click through to solutions
-- **Solutions** — full articles with syntax-highlighted code
-- **Live search** — `/q` or click "search questions" to fuzzy-search all 812 questions
+## Build and deploy
 
-Note: one link in the original article (`conditionally-negate-value-without-branching`) returns 404 on the site itself, so it has no local solution.
+```sh
+npm run typecheck
+npm run build
+npm run preview
+```
+
+`next build` exports the site into `out/`, the Firebase Hosting public directory. To deploy, run `firebase deploy --only hosting` after building.
+
+## Content layout
+
+- `problems/` — question lists grouped by category
+- `solutions/` — local solution write-ups and code
+- `patterns/` — 19 pattern study cards and a cheat sheet
+- `full-article.md` — saved source article from Medium
+- `urls.txt` — source URLs for the collected solutions
+
+All content pages are generated as static routes at build time. The content remains Markdown files in the repository.
