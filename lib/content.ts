@@ -59,9 +59,12 @@ export async function getPatternData() {
 
 export async function getSearchIndex(): Promise<SearchItem[]> {
   const results: SearchItem[] = [];
-  for (const category of CATEGORIES) {
-    const categorySlug = slugify(category);
-    const markdown = await readMarkdown('problems', categorySlug);
+  const categories = await Promise.all(CATEGORIES.map(async category => ({
+    category,
+    markdown: await readMarkdown('problems', slugify(category)),
+  })));
+
+  for (const { category, markdown } of categories) {
     const expression = /^\d+\.\s+\[([^\]]+)\]\(([^)]+)\)/gm;
     for (const match of markdown.matchAll(expression)) {
       const target = match[2].split('#')[0];
