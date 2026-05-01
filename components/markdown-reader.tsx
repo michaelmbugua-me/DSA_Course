@@ -1,11 +1,10 @@
 'use client';
 
-import { marked } from 'marked';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const STORAGE_KEY = 'medium-dsas-pattern-progress-v1';
 const QUESTION_GOAL = 5;
-type Props = { markdown: string; baseHref: string; patternSlug?: string };
+type Props = { html: string; baseHref: string; patternSlug?: string };
 
 function readProgress() {
   try {
@@ -15,9 +14,8 @@ function readProgress() {
   }
 }
 
-export function MarkdownReader({ markdown, baseHref, patternSlug }: Props) {
+export function MarkdownReader({ html, baseHref, patternSlug }: Props) {
   const contentRef = useRef<HTMLElement>(null);
-  const html = useMemo(() => marked.parse(markdown, { async: false }) as string, [markdown]);
 
   useEffect(() => {
     const content = contentRef.current;
