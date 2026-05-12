@@ -1,18 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { readPatternProgress, savePatternProgress } from '@/lib/pattern-progress';
 
-const STORAGE_KEY = 'medium-dsas-pattern-progress-v1';
 const QUESTION_GOAL = 5;
 type Props = { html: string; baseHref: string; patternSlug?: string };
-
-function readProgress() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as Record<string, any>;
-  } catch {
-    return {};
-  }
-}
 
 export function MarkdownReader({ html, baseHref, patternSlug }: Props) {
   const contentRef = useRef<HTMLElement>(null);
@@ -59,7 +51,7 @@ export function MarkdownReader({ html, baseHref, patternSlug }: Props) {
       .slice(0, QUESTION_GOAL);
     if (!items.length) return;
 
-    const progress = readProgress();
+    const progress = readPatternProgress();
     const state = progress[patternSlug] || { complete: false, questions: {} };
     const panel = document.createElement('section');
     panel.className = 'pattern-checklist';
@@ -118,7 +110,7 @@ export function MarkdownReader({ html, baseHref, patternSlug }: Props) {
           return [input.dataset.questionHref!, input.checked];
         })),
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      savePatternProgress(progress);
     };
     const handleChange = (event: Event) => {
       if (event.target === completeInput || (event.target as HTMLElement).matches('.question-check')) update();
