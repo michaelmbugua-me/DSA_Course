@@ -1,5 +1,9 @@
 node_modules/
 .next/
 out/
+dist/
+.firebase/
+__pycache__/
+*.py[cod]
 *.tsbuildinfo
 .DS_Store

@@ -5,7 +5,7 @@ languages are removed. Follow these rules exactly.
 
 ## What to do per file
 
-1. Each file is a Techie Delight solution page. It typically contains several `## Approach N`
+1. Each file under `content/solutions/` is a Techie Delight solution page. It typically contains several `## Approach N`
    sections. Each approach has code blocks tagged ```cpp, ```java, ```python3 (sometimes ```c,
    sometimes ```std — treat ```std like ```cpp).
 2. For each approach, produce ONE TypeScript implementation and delete the other language blocks

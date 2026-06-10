@@ -33,10 +33,14 @@ npm run preview
 
 ## Content layout
 
-- `problems/` — question lists grouped by category
-- `solutions/` — local solution write-ups and code
-- `patterns/` — 19 pattern study cards and a cheat sheet
-- `full-article.md` — saved source article from Medium
-- `urls.txt` — source URLs for the collected solutions
+- `app/` — App Router pages, global styles, and local font files
+- `components/` — shared interactive UI
+- `content/problems/` — question lists grouped by category
+- `content/solutions/` — local solution write-ups and code
+- `content/patterns/` — 19 pattern study cards and a cheat sheet
+- `content/full-article.md` — saved source article from Medium
+- `lib/` — content loading, Markdown rendering, and browser storage helpers
+- `public/` — static files copied directly into the exported site
+- `public/urls.txt` — source URLs for the collected solutions
 
-All content pages are generated as static routes at build time. The content remains Markdown files in the repository.
+All content pages are generated as static routes at build time. Markdown remains source content under `content/`, while `next/font/local` bundles the self-hosted fonts with the application.

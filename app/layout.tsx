@@ -1,6 +1,25 @@
 import type { Metadata } from 'next';
-import '../assets/style.css';
+import localFont from 'next/font/local';
+import './globals.css';
 import { SiteHeader } from '@/components/site-header';
+
+const nunito = localFont({
+  src: [
+    { path: './fonts/nunito-var.woff2', weight: '200 1000', style: 'normal' },
+    { path: './fonts/nunito-var-italic.woff2', weight: '200 1000', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--font-nunito',
+});
+
+const jakarta = localFont({
+  src: [
+    { path: './fonts/jakarta-var.woff2', weight: '200 800', style: 'normal' },
+    { path: './fonts/jakarta-var-italic.woff2', weight: '200 800', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--font-jakarta',
+});
 
 const themeBootstrapScript = `(() => {
   try {
@@ -22,7 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
       </head>
-      <body>
+      <body className={`${nunito.variable} ${jakarta.variable}`}>
         <SiteHeader />
         {children}
       </body>

@@ -10,7 +10,7 @@ export const CATEGORIES = [
 export type ContentSection = 'patterns' | 'problems' | 'solutions';
 export type SearchItem = { title: string; href: string; category: string };
 
-const ROOT = process.cwd();
+const CONTENT_ROOT = path.join(process.cwd(), 'content');
 
 export function slugify(value: string) {
   return value.toLowerCase().replaceAll(' & ', '-').replaceAll(' ', '-');
@@ -22,11 +22,11 @@ export function titleFromMarkdown(markdown: string, fallback: string) {
 }
 
 export async function readMarkdown(section: ContentSection, slug: string) {
-  return readFile(path.join(ROOT, section, `${slug}.md`), 'utf8');
+  return readFile(path.join(CONTENT_ROOT, section, `${slug}.md`), 'utf8');
 }
 
 async function markdownSlugs(section: ContentSection) {
-  const files = await readdir(path.join(ROOT, section));
+  const files = await readdir(path.join(CONTENT_ROOT, section));
   return files.filter(file => file.endsWith('.md')).map(file => file.slice(0, -3));
 }
 
