@@ -57,25 +57,34 @@ body {
   font-family: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
 }
 
-/* ── header ─────────────────────────────────────────────── */
+/* ── site navigation ────────────────────────────────────── */
 
-header {
+header.site-header {
   position: sticky;
   top: 0;
   z-index: 5;
-  display: flex;
-  gap: 0.85rem;
-  align-items: baseline;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0.8rem 1.25rem;
+  width: 100%;
+  padding: 0 1.25rem;
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
 
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 800px;
+  min-height: 64px;
+  margin: 0 auto;
+}
+
 header .home {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.55rem;
   font-family: var(--font-jakarta), var(--font-nunito), sans-serif;
   color: var(--accent-text);
   text-decoration: none;
@@ -83,21 +92,68 @@ header .home {
   font-size: 0.85rem;
   letter-spacing: 0.01em;
 }
-header .home:hover { text-decoration: underline; text-underline-offset: 3px; }
+header .home:hover { color: var(--text); text-decoration: none; }
+header .home:hover .brand-mark { border-color: var(--accent); }
 
-header .crumb {
-  color: var(--faint);
-  font-family: "SF Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.75rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.brand-mark {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 7px;
+  background: var(--accent-soft);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
-header .spacer { margin-left: auto; }
+.brand-name { white-space: nowrap; }
+
+.primary-nav {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  padding: 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+
+.nav-link::after {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 0;
+  left: 0.55rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  content: '';
+  opacity: 0;
+  transform: scaleX(0.65);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active { color: var(--accent-text); }
+
+.nav-link:hover::after,
+.nav-link.is-active::after { opacity: 1; transform: scaleX(1); }
 
 #theme-toggle {
-  margin-left: auto;
+  flex-shrink: 0;
+  margin-left: 0.25rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -113,7 +169,9 @@ header .spacer { margin-left: auto; }
   color: var(--accent-text);
   background: var(--surface-2);
 }
-header .crumb:has(+ #theme-toggle) { margin-right: 0.25rem; }
+
+#questions,
+#patterns { scroll-margin-top: 5.5rem; }
 
 /* ── page column ────────────────────────────────────────── */
 
@@ -539,9 +597,21 @@ ul > li.checklist-question {
 
 @media (max-width: 640px) {
   main { padding: 1.6rem 1rem 3rem; }
-  header { padding: 0.7rem 1rem; }
+  header.site-header { padding: 0 0.65rem; }
+  .site-header-inner { min-height: 58px; gap: 0.35rem; }
+  .brand-name { display: none; }
+  .primary-nav { gap: 0.05rem; }
+  .nav-link { padding-inline: 0.42rem; font-size: 0.76rem; }
+  #theme-toggle { margin-left: 0.1rem; padding: 0.35rem 0.55rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   table { font-size: 0.82rem; }
   .pattern-checklist { grid-template-columns: 1fr; gap: 0.45rem; }
   .checklist-count { grid-column: 1; grid-row: auto; }
+}
+
+@media (max-width: 360px) {
+  header.site-header { padding: 0 0.4rem; }
+  .site-header-inner { gap: 0.2rem; }
+  .nav-link { padding-inline: 0.34rem; font-size: 0.72rem; }
+  #theme-toggle { padding-inline: 0.42rem; }
 }
