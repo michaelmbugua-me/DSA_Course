@@ -7,6 +7,7 @@ by Vivek Srivastava. Saved locally so it can be read fully offline.
 
 - `problems/` — the full list of questions grouped by category (from the Medium article)
 - `solutions/` — the complete Techie Delight solution article for every question, converted to Markdown with syntax-highlighted code (C, C++, Java, Python)
+- `patterns/` — **19 interview pattern study cards** (based on the HackerNoon article [14 Patterns to Ace Any Coding Interview Question](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed)), each with recognition cues, a Python template, complexity analysis, common pitfalls, and practice problems linked into this repo. Start with [patterns/README.md](patterns/README.md)
 - `full-article.md` — raw backup of the Medium article
 - `urls.txt` — all 630 unique solution URLs
 

@@ -32,6 +32,19 @@ def count_problems(path):
         return len(re.findall(r'^\d+\.\s', f.read(), re.M))
 
 
+def pattern_cards():
+    rows = []
+    for f in sorted(os.listdir(os.path.join(ROOT, 'patterns'))):
+        if not f.endswith('.md') or f == 'README.md':
+            continue
+        num, *rest = f[:-3].split('-')
+        name = ' '.join(rest).title()
+        rows.append(f'<a class="card" href="/patterns/{f}">'
+                    f'<span class="cat">{num}. {html.escape(name.title())}</span>'
+                    f'<span class="count">&rarr;</span></a>')
+    return ''.join(rows)
+
+
 def build_index():
     rows = []
     total = 0
@@ -48,7 +61,10 @@ def build_index():
         f'<span class="count">file</span></a>'
         for f in ('full-article.md', 'urls.txt'))
     return f'<div class="grid">{"".join(rows)}{extra}</div>' \
-           f'<p class="total">{total} entries &middot; ~630 unique questions &middot; all offline</p>'
+           f'<p class="total">{total} entries &middot; ~630 unique questions &middot; all offline</p>' \
+           f'<h2>19 Interview Patterns</h2>' \
+           f'<p>Study cards based on <a href="/patterns/raw-article.md">14 Patterns to Ace Any Coding Interview Question</a>, extended with templates, pitfalls and linked practice problems. <a href="/patterns/README.md">Cheat sheet &amp; decision flow</a></p>' \
+           f'<div class="grid">{pattern_cards()}</div>'
 
 
 def render_page(md_path, rel_path):
