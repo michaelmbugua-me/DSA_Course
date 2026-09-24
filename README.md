@@ -41,4 +41,18 @@ Browse `problems/<category>.md` — every question links to its local solution f
 
 Example: find "Find pair with given sum in the array" in [problems/array.md](problems/array.md), then open [solutions/find-pair-with-given-sum-array.md](solutions/find-pair-with-given-sum-array.md) for the explanation and code.
 
+### Local web server (recommended)
+
+```sh
+python3 serve.py          # then open http://localhost:8000
+python3 serve.py 9000     # custom port
+```
+
+No dependencies — pure Python stdlib. Gives you:
+
+- **Home page** — grid of all 18 categories with problem counts
+- **Question lists** — rendered Markdown, dark theme, click through to solutions
+- **Solutions** — full articles with syntax-highlighted code
+- **Live search** — `/q` or click "search questions" to fuzzy-search all 812 questions
+
 Note: one link in the original article (`conditionally-negate-value-without-branching`) returns 404 on the site itself, so it has no local solution.
