@@ -1,0 +1,23 @@
+# Heap (19 problems)
+
+
+1.   [Introduction to Priority Queues using Binary Heaps](https://www.techiedelight.com/introduction-priority-queues-using-binary-heaps/)
+2.   Min Heap and Max Heap Implementation — [C++](https://www.techiedelight.com/min-heap-max-heap-implementation-c/), [Java](https://www.techiedelight.com/min-heap-max-heap-implementation-in-java/)
+3.   [Heap Sort Algorithm](https://www.techiedelight.com/heap-sort-place-place-implementation-c-c/)
+4.   [Check if given array represents min heap or not](https://www.techiedelight.com/check-given-array-represents-min-heap-not/)
+5.   [Convert Max Heap to Min Heap in linear time](https://www.techiedelight.com/convert-max-heap-min-heap-linear-time/)
+6.   [Find K’th largest element in an array](https://www.techiedelight.com/find-kth-largest-element-array/)
+7.   [Sort a K-Sorted Array](https://www.techiedelight.com/sort-k-sorted-array/)
+8.   [Merge M sorted lists of variable length](https://www.techiedelight.com/merge-m-sorted-lists-variable-length/)
+9.   [Merge K sorted linked lists](https://www.techiedelight.com/efficiently-merge-k-sorted-linked-lists/)
+10.   [Find K’th smallest element in an array](https://www.techiedelight.com/find-kth-smallest-element-array/)
+11.   [Find smallest range with at-least one element from each of the given lists](https://www.techiedelight.com/find-smallest-range-least-one-element-given-lists/)
+12.   [Merge M sorted lists each containing N elements](https://www.techiedelight.com/merge-m-sorted-lists-containing-n-elements/)
+13.   [Find first k non-repeating characters in a string in single traversal](https://www.techiedelight.com/first-k-non-repeating-characters-string/)
+14.   [Find first k maximum occurring words in given set of strings](https://www.techiedelight.com/find-first-k-maximum-occurring-words-given-set-strings/)
+15.   [Implementation of Treap Data Structure (Insert, Search and Delete)](https://www.techiedelight.com/implementation-treap-data-structure-cpp-java-insert-search-delete/)
+16.   [Convert a Binary Search Tree into a Min Heap](https://www.techiedelight.com/convert-binary-search-tree-into-min-heap/)
+17.   [Check if a binary tree is a min-heap or not](https://www.techiedelight.com/check-binary-tree-is-min-heap/)
+18.   [Huffman Coding](https://www.techiedelight.com/huffman-coding/)
+19.   [External Merge Sort Algorithm](https://www.techiedelight.com/external-merge-sort/)
+
