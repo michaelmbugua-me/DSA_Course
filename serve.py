@@ -180,5 +180,18 @@ inp.addEventListener('input', () => {
 
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+    # find a free port: if the requested one is busy, walk upwards
+    import socket
+    for candidate in range(port, port + 50):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('127.0.0.1', candidate))
+            except OSError:
+                print(f'Port {candidate} is busy, trying next...')
+                continue
+            port = candidate
+            break
+    else:
+        sys.exit('No free port found in range')
     print(f'Serving DSA question bank at http://localhost:{port}')
     ThreadingHTTPServer(('127.0.0.1', port), Handler).serve_forever()
