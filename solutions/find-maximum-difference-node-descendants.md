@@ -19,7 +19,10 @@ Following is a TypeScript implementation of the algorithm:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Helper function to find the maximum difference between a node and its

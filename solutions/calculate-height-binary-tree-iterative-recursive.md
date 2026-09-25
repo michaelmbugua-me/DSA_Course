@@ -17,9 +17,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to calculate the height of a given binary tree
@@ -54,9 +59,14 @@ In an iterative version, perform a [level order traversal](https://techiedelight
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to calculate the height of a given binary tree
@@ -83,7 +93,10 @@ const height = (root: TreeNode | null): number => {
         // process each node of the current level and enqueue their
         // non-empty left and right child
         for (let i = 0; i < size; i++) {
-            const front = queue.shift()!;
+            const front = queue.shift();
+            if (front === undefined) {
+                break;
+            }
 
             if (front.left) {
                 queue.push(front.left);

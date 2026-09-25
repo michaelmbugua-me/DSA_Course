@@ -17,7 +17,14 @@ The idea is to traverse the tree in a [postorder fashion](https://techiedelight.
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to print all ancestors of a given node in a binary tree.
@@ -66,15 +73,19 @@ function printAncestors(root: TreeNode | null, node: TreeNode): boolean {
 */
 
 const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.right = new TreeNode(4);
-root.right.left = new TreeNode(5);
-root.right.right = new TreeNode(6);
-root.right.left.left = new TreeNode(7);
-root.right.left.right = new TreeNode(8);
+const left = new TreeNode(2);
+const right = new TreeNode(3);
+const rightLeft = new TreeNode(5);
+const rightLeftLeft = new TreeNode(7);
+root.left = left;
+root.right = right;
+left.right = new TreeNode(4);
+right.left = rightLeft;
+right.right = new TreeNode(6);
+rightLeft.left = rightLeftLeft;
+rightLeft.right = new TreeNode(8);
 
-const node = root.right.left.left as TreeNode;    // Node 7
+const node = rightLeftLeft;    // Node 7
 printAncestors(root, node);
 ```
 
@@ -91,14 +102,21 @@ Following is the implementation of the above approach in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print root-to-leaf paths without using recursion
-function printTopToBottomPath(parent: Map<TreeNode, TreeNode | null>, node: TreeNode | null): void {
+function printTopToBottomPath(parent: Map<TreeNode, TreeNode | null>, node: TreeNode | null | undefined): void {
     while (node) {
         process.stdout.write(`${node.val} `);
-        node = parent.get(node) as TreeNode | null;
+        node = parent.get(node);
     }
     console.log('');
 }
@@ -114,7 +132,10 @@ function setParent(root: TreeNode, parent: Map<TreeNode, TreeNode | null>): void
     while (stack.length) {
 
         // Pop the top item from the stack
-        const curr = stack.pop() as TreeNode;
+        const curr = stack.pop();
+        if (curr === undefined) {
+            break;
+        }
 
         // push its right child into the stack and set its parent on the map
         if (curr.right) {
@@ -146,7 +167,7 @@ function printAncestors(root: TreeNode | null, node: TreeNode): void {
     setParent(root, parent);
 
     // print ancestors of a given node using the parent map
-    printTopToBottomPath(parent, parent.get(node) as TreeNode | null);
+    printTopToBottomPath(parent, parent.get(node));
 }
 
 /* Construct the following tree
@@ -161,15 +182,19 @@ function printAncestors(root: TreeNode | null, node: TreeNode): void {
 */
 
 const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.right = new TreeNode(4);
-root.right.left = new TreeNode(5);
-root.right.right = new TreeNode(6);
-root.right.left.left = new TreeNode(7);
-root.right.left.right = new TreeNode(8);
+const left = new TreeNode(2);
+const right = new TreeNode(3);
+const rightLeft = new TreeNode(5);
+const rightLeftLeft = new TreeNode(7);
+root.left = left;
+root.right = right;
+left.right = new TreeNode(4);
+right.left = rightLeft;
+right.right = new TreeNode(6);
+rightLeft.left = rightLeftLeft;
+rightLeft.right = new TreeNode(8);
 
-const node = root.right.left.left as TreeNode;    // Node 7
+const node = rightLeftLeft;    // Node 7
 printAncestors(root, node);
 ```
 

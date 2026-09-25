@@ -21,9 +21,10 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // Function to perform inorder traversal on the tree

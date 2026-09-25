@@ -21,7 +21,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -32,7 +37,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Takes two lists sorted in increasing order and merge their nodes
@@ -98,14 +103,19 @@ const head = sortedMerge(a, b);
 printList('After Merge: ', head);
 ```
 
-This solution is structurally very similar to the above, but it avoids using a dummy node. Instead, it maintains a `struct node**` pointer, `lastPtrRef`, which always points to the last pointer of the result list. This solves the same case that the dummy node did – dealing with the result list when it is empty. When trying to build up a list at its tail, use either the dummy node or the `struct node**` “reference” strategy.
+This solution is structurally similar to the above but avoids a dummy node. Instead, the `lastPtrRef` wrapper’s getter and setter target either the result head or a node’s `next` field, so the tail can be updated while the result is empty or nonempty.
 
 This approach is demonstrated below in TypeScript:
 
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -116,7 +126,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Helper function to insert a new node at the beginning of the linked list
@@ -124,11 +134,17 @@ function push(headRef: { node: ListNode | null }, data: number): void {
     headRef.node = new ListNode(data, headRef.node);
 }
 
-// `NodePtrRef` emulates a C++ `Node**` using getter/setter closures
 type NodePtrRef = {
     get: () => ListNode | null;
     set: (node: ListNode | null) => void;
 };
+
+function toNodePtrRef(ref: { node: ListNode | null }): NodePtrRef {
+    return {
+        get: () => ref.node,
+        set: (node) => { ref.node = node; }
+    };
+}
 
 // Function takes the node from the front of the source and moves it
 // to the front of the destination
@@ -147,6 +163,8 @@ function moveNode(destRef: NodePtrRef, sourceRef: NodePtrRef): void {
 // Takes two lists sorted in increasing order and merge their nodes
 // to make one big sorted list, which is returned
 function sortedMerge(a: { node: ListNode | null }, b: { node: ListNode | null }): ListNode | null {
+    const aRef = toNodePtrRef(a);
+    const bRef = toNodePtrRef(b);
     let result: ListNode | null = null;
     let lastPtrRef: NodePtrRef = {
         get: () => result,
@@ -155,22 +173,22 @@ function sortedMerge(a: { node: ListNode | null }, b: { node: ListNode | null })
 
     while (true)
     {
-        if (a.node === null)
+        if (aRef.get() === null)
         {
-            lastPtrRef.set(b.node);
+            lastPtrRef.set(bRef.get());
             break;
         }
-        else if (b.node === null)
+        else if (bRef.get() === null)
         {
-            lastPtrRef.set(a.node);
+            lastPtrRef.set(aRef.get());
             break;
         }
 
-        if (a.node.data <= b.node.data) {
-            moveNode(lastPtrRef, a);
+        if (aRef.get()!.data <= bRef.get()!.data) {
+            moveNode(lastPtrRef, aRef);
         }
         else {
-            moveNode(lastPtrRef, b);
+            moveNode(lastPtrRef, bRef);
         }
 
         // tricky: advance to point to the next `.next` field
@@ -212,7 +230,12 @@ This is a nice problem where the recursive solution code is much cleaner than th
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -223,7 +246,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Helper function to insert a new node at the beginning of the linked list

@@ -21,6 +21,8 @@ function random(): number
 We can use bitwise or logical `AND` operator to solve this problem. The idea is two make two calls to the `random()` function and return `AND` of results returned by the individual calls.
 
 ```ts
+const random = (): number => Math.floor(Math.random() * 2);
+
 // Return 0 and 1 with 75% and 25% probability, respectively, using the
 // specified function and bitwise AND operator
 function generate(): number
@@ -41,6 +43,8 @@ x can be either {0, 1} y can be either {0, 1} (x & y) can be either {0, 0, 0, 1}
 We can also use a bitwise or logical `OR` operator. The idea remains similar. First, make two calls to the `random()` function and then return the negation of `OR` of results returned by the individual calls, as shown below:
 
 ```ts
+const random = (): number => Math.floor(Math.random() * 2);
+
 // Return 0 and 1 with 75% and 25% probability, respectively, using the
 // specified function and bitwise OR operator
 function generate(): number
@@ -65,6 +69,8 @@ The idea is to use this expression: `(random() << 1) ^ random()`.
 random() returns either 0000 or 0001 (in binary) (random() << 1) can be either 0000 or 0010 (random() << 1) ^ random() can be either {0001, 0011, 0000, 0010}
 
 ```ts
+const random = (): number => Math.floor(Math.random() * 2);
+
 // Return 0 and 1 with 75% and 25% probability, respectively, using the
 // specified function, left shift operator, and bitwise XOR operator
 function generate(): number {

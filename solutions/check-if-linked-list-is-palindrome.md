@@ -17,7 +17,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Recursive function to check if the linked list is a palindrome or not
@@ -69,7 +74,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Iterative function to reverse nodes of a linked list
@@ -118,6 +128,9 @@ const findMiddle = (head: ListNode, odd: { value: boolean }): ListNode | null =>
 
     // find the middle pointer
     while (fast !== null && fast.next !== null) {
+        if (slow === null) {
+            return null;
+        }
         prev = slow;
         slow = slow.next;
         fast = fast.next.next;
@@ -129,6 +142,9 @@ const findMiddle = (head: ListNode, odd: { value: boolean }): ListNode | null =>
     }
 
     // make next of previous node null
+    if (prev === null || slow === null) {
+        return null;
+    }
     prev.next = null;
 
     // return middle node
@@ -149,10 +165,16 @@ const checkPalindrome = (head: ListNode | null): boolean => {
 
     // find the second half of the linked list
     let mid = findMiddle(head, odd);
+    if (mid === null) {
+        return false;
+    }
 
     // if the total number of nodes is odd, advance mid
     if (odd.value) {
         mid = mid.next;
+        if (mid === null) {
+            return false;
+        }
     }
 
     // reverse the second half

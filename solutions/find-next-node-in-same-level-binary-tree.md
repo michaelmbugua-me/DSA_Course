@@ -17,7 +17,14 @@ The implementation can be seen below in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the next node of a given node in the same level
@@ -43,7 +50,10 @@ const findRightNode = (root: TreeNode | null, node: TreeNode | null): TreeNode |
         // non-empty left and right child
         while (size > 0) {
             size = size - 1;
-            const front = queue.shift() as TreeNode;
+            const front = queue.shift();
+            if (front === undefined) {
+                return null;
+            }
 
             // if the desired node is found, return its next right node
             if (front === node) {
@@ -52,7 +62,8 @@ const findRightNode = (root: TreeNode | null, node: TreeNode | null): TreeNode |
                     return null;
                 }
 
-                return queue[0];
+                const right = queue[0];
+                return right === undefined ? null : right;
             }
 
             if (front.left) {
@@ -108,7 +119,14 @@ Following is the implementation of the above approach in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the next node for a given node in the same level in a

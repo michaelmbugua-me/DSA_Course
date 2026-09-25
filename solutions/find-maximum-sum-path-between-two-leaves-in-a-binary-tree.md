@@ -23,9 +23,10 @@ The algorithm can be implemented as follows in TypeScript. Here, we pass the max
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Recursive function to find the maximum sum path between two leaves

@@ -19,7 +19,13 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null;
+
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -50,6 +56,9 @@ function sortedIntersect(a: ListNode | null, b: ListNode | null): ListNode | nul
                 head = new ListNode(a.val, head);
                 tail = head;
             } else {
+                if (tail === null) {
+                    return head;
+                }
                 tail.next = new ListNode(a.val, tail.next);
                 tail = tail.next;
             }
@@ -99,7 +108,13 @@ To build up the result list, we can also use both the dummy node and local refer
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null;
+
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -170,7 +185,13 @@ printList('After Intersection: ', head);
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null;
+
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

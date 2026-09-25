@@ -19,7 +19,10 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Recursive function to insert a key into a BST

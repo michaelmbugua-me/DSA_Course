@@ -17,7 +17,10 @@ This can be easily expressed as a recursive algorithm. The implementation can be
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Recursive function to insert a key into a BST
@@ -89,7 +92,10 @@ The space used by the [call stack](https://en.wikipedia.org/wiki/Call_stack) is 
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Recursive function to insert a key into a BST

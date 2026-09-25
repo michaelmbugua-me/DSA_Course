@@ -19,9 +19,10 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // Utility function to print binary tree nodes in an inorder fashion

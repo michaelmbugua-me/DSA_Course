@@ -13,7 +13,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null = null;
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Helper function to create a new node with the given data and
@@ -29,9 +34,12 @@ function deleteList(head: ListNode | null): ListNode | null {
   let prev = head;
 
   while (head !== null) {
+    if (prev === null) {
+      break;
+    }
     head = head.next;
 
-    console.log(`Deleting ${prev!.data}`);
+    console.log(`Deleting ${prev.data}`);
     // garbage collection handles deallocation in JS/TS
     prev = head;
   }
@@ -64,7 +72,12 @@ We can easily convert the above iterative version into a recursive one. Followin
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null = null;
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Helper function to create a new node with the given data and

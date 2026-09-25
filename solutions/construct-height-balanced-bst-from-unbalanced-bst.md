@@ -20,9 +20,14 @@ The algorithm can be implemented as follows in TypeScript:
 // A class to store a BST node
 class Node {
     // Constructor
-    constructor(public data: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform the preorder traversal on a BST
@@ -82,15 +87,22 @@ function constructBalancedBST(root: Node): Node {
     pushTreeNodes(root, nodes);
 
     // Construct a height-balanced BST from sorted BST nodes
-    return buildBalancedBST(nodes, 0, nodes.length - 1)!;
+    const balancedRoot = buildBalancedBST(nodes, 0, nodes.length - 1);
+    if (balancedRoot === null) {
+        return root;
+    }
+    return balancedRoot;
 }
 
 let root = new Node(20);
-root.left = new Node(15);
-root.left!.left = new Node(10);
-root.left!.left!.left = new Node(5);
-root.left!.left!.left!.left = new Node(2);
-root.left!.left!.left!.right = new Node(8);
+const left = new Node(15);
+const leftLeft = new Node(10);
+const leftLeftLeft = new Node(5);
+root.left = left;
+left.left = leftLeft;
+leftLeft.left = leftLeftLeft;
+leftLeftLeft.left = new Node(2);
+leftLeftLeft.right = new Node(8);
 
 root = constructBalancedBST(root);
 
@@ -109,9 +121,14 @@ We can do the conversion [in-place](https://techiedelight.com/in-place-vs-out-of
 // A class to store a BST node
 class Node {
     // Constructor
-    constructor(public data: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to perform the preorder traversal on a BST
@@ -189,18 +206,21 @@ function convertSortedDLLToBST(head: Node | null, n: number): [Node | null, Node
     // `head` now points to the middle node of the sorted DDL
 
     // make the middle node of the sorted DDL as the root node of the BST
+    if (head === null) {
+        return [null, head];
+    }
     const root = head;
 
     // update left child of the root node
-    root!.left = leftSubTree;
+    root.left = leftSubTree;
 
     // update the head reference of the doubly linked list
-    head = head!.right;
+    head = root.right;
 
     // recursively construct the right subtree with the remaining nodes
     // (+1 for the root node)
     const [rightSubTree, h2] = convertSortedDLLToBST(head, n - (Math.floor(n / 2) + 1));
-    root!.right = rightSubTree;
+    root.right = rightSubTree;
     head = h2;
 
     // return the root node
@@ -220,15 +240,21 @@ function constructBalancedBST(root: Node): Node {
     // construct a height-balanced BST from the sorted doubly linked list
     const [newRoot] = convertSortedDLLToBST(head, nodes);
 
-    return newRoot!;
+    if (newRoot === null) {
+        return root;
+    }
+    return newRoot;
 }
 
 let root = new Node(20);
-root.left = new Node(15);
-root.left!.left = new Node(10);
-root.left!.left!.left = new Node(5);
-root.left!.left!.left!.left = new Node(2);
-root.left!.left!.left!.right = new Node(8);
+const left = new Node(15);
+const leftLeft = new Node(10);
+const leftLeftLeft = new Node(5);
+root.left = left;
+left.left = leftLeft;
+leftLeft.left = leftLeftLeft;
+leftLeftLeft.left = new Node(2);
+leftLeftLeft.right = new Node(8);
 
 root = constructBalancedBST(root);
 

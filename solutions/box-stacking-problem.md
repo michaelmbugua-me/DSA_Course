@@ -32,7 +32,15 @@ Finally, the maximum height is the maximum value in `L[]`. The algorithm can be 
 // A class to store a box (L × W × H)
 class Box {
     // constraint: width is never more than length
-    constructor(public length: number, public width: number, public height: number) {}
+    length: number;
+    width: number;
+    height: number;
+
+    constructor(length: number, width: number, height: number) {
+        this.length = length;
+        this.width = width;
+        this.height = height;
+    }
 }
 
 // Function to generate rotations of all the boxes

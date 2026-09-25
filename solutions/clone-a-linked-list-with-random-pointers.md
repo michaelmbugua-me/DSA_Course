@@ -17,7 +17,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // A linked list node with a random pointer
 class Node {
-    constructor(public data: number, public next: Node | null = null, public random: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    random: Node | null = null;
+    constructor(data: number, next: Node | null = null, random: Node | null = null) {
+        this.data = data;
+        this.next = next;
+        this.random = random;
+    }
 }
 
 // Recursive function to print a linked list
@@ -42,7 +49,11 @@ function updateRandomPointers(head: Node | null, map: Map<Node, Node>): void {
     }
 
     // update the random pointer of the cloned node
-    map.get(head)!.random = head.random ? (map.get(head.random) ?? null) : null;
+    const clone = map.get(head);
+    if (clone === undefined) {
+        return;
+    }
+    clone.random = head.random ? (map.get(head.random) ?? null) : null;
 
     // recur for the next node
     updateRandomPointers(head.next, map);
@@ -59,13 +70,14 @@ function cloneLinkedList(head: Node | null, map: Map<Node, Node>): Node | null {
     // clone all fields of the head node except the random pointer
 
     // create a new node with the same data as the head node
-    map.set(head, new Node(head.data));
+    const clonedHead = new Node(head.data);
+    map.set(head, clonedHead);
 
     // clone the next node
-    map.get(head)!.next = cloneLinkedList(head.next, map);
+    clonedHead.next = cloneLinkedList(head.next, map);
 
     // return cloned head node
-    return map.get(head)!;
+    return clonedHead;
 }
 
 // Function to clone a linked list having random pointers
@@ -81,7 +93,10 @@ function cloneList(head: Node | null): Node | null {
     updateRandomPointers(head, map);
 
     // return the cloned head node
-    return map.get(head)!;
+    if (head === null) {
+        return null;
+    }
+    return map.get(head) ?? null;
 }
 
 // construct the linked list 1 —> 2 —> 3 —> 4 —> 5
@@ -93,12 +108,12 @@ const head = new Node(1,
 head.random = head.next!.next!.next!;
 head.next!.next!.random = head.next!;
 
-console.log('Original Linked List:');
+console.log('Original linked list:');
 console.log(traverse(head));
 
 const clone = cloneList(head);
 
-console.log('\nCloned Linked List:');
+console.log('\nCloned linked list:');
 console.log(traverse(clone));
 ```
 
@@ -119,7 +134,14 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A linked list node with a random pointer
 class Node {
-    constructor(public data: number, public next: Node | null = null, public random: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    random: Node | null = null;
+    constructor(data: number, next: Node | null = null, random: Node | null = null) {
+        this.data = data;
+        this.next = next;
+        this.random = random;
+    }
 }
 
 // Function to print a linked list

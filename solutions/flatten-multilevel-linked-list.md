@@ -22,7 +22,10 @@ The algorithm can be implemented as follows in TypeScript:
 // Data structure to represent a special linked list node with an
 // additional `down` pointer
 class ListNode {
-    constructor(public data: number, public down: ListNode | null = null, public next: ListNode | null = null) {}
+    data: number;
+    down: ListNode | null = null;
+    next: ListNode | null = null;
+    constructor(data: number, down: ListNode | null = null, next: ListNode | null = null) {}
 }
 
 // Utility function to print a list with `down` and `next` pointers

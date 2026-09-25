@@ -20,7 +20,12 @@ Finally, print all non-overlapping intervals present in the stack. The algorithm
 ```ts
 // A class to represent an interval
 class Interval {
-    constructor(public begin: number, public end: number) {}
+    begin: number;
+    end: number;
+    constructor(begin: number, end: number) {
+        this.begin = begin;
+        this.end = end;
+    }
 }
 
 // Function to merge overlapping intervals
@@ -51,7 +56,10 @@ function mergeIntervals(intervals: Interval[]): void {
 
     // print all non-overlapping intervals
     while (stack.length) {
-        const top = stack.pop()!;
+        const top = stack.pop();
+        if (top === undefined) {
+            break;
+        }
         console.log(`{${top.begin}, ${top.end}}`);
     }
 }

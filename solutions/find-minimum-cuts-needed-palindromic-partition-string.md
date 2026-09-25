@@ -155,14 +155,19 @@ function findMinCuts(i: number, j: number, isPalin: boolean[][],
             const count = 1 + findMinCuts(i, k, isPalin, lookup) +
                     findMinCuts(k + 1, j, isPalin, lookup);
 
-            if (count < lookup.get(key)) {
+            const current = lookup.get(key);
+            if (current === undefined || count < current) {
                 lookup.set(key, count);
             }
         }
     }
 
     // return the minimum cuts required
-    return lookup.get(key);
+    const result = lookup.get(key);
+    if (result === undefined) {
+        return Infinity;
+    }
+    return result;
 }
 
 function findMinimumCuts(X: string): number {

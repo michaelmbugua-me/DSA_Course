@@ -20,7 +20,14 @@ class Node {
     // `value` stores the element
     // `listNum` stores the list number of the element
     // `index` stores column number of the list from which element was taken
-    constructor(public value: number, public listNum: number, public index: number) {}
+    value: number;
+    listNum: number;
+    index: number;
+    constructor(value: number, listNum: number, index: number) {
+        this.value = value;
+        this.listNum = listNum;
+        this.index = index;
+    }
 }
 
 // Function to merge `M` sorted lists each of size `N` and
@@ -30,11 +37,15 @@ function printSorted(lists: number[][]): void {
     // min-heap assumed (JS has no builtin heap); heap ops are done as plain
     // array ops on `pq`, always extracting the node with the smallest value
     const pq: Node[] = [];
+    const result: number[] = [];
 
     // push the first element of each list into the min-heap
     // along with the list number and their index in the list
     for (let i = 0; i < lists.length; i++) {
-        pq.push(new Node(lists[i][0], i, 0));
+        const first = lists[i][0];
+        if (first !== undefined) {
+            pq.push(new Node(first, i, 0));
+        }
     }
 
     // run till min-heap is empty
@@ -47,19 +58,28 @@ function printSorted(lists: number[][]): void {
                 minIdx = i;
             }
         }
-        const min = pq.splice(minIdx, 1)[0];
+        const min = pq[minIdx];
+        if (min === undefined) {
+            break;
+        }
+        pq.splice(minIdx, 1);
 
         // print the minimum element
-        process.stdout.write(`${min.value} `);
+        result.push(min.value);
 
         // take the next element from the "same" list and
         // insert it into the min-heap
-        if (min.index + 1 < lists[min.listNum].length) {
-            min.index = min.index + 1;
-            min.value = lists[min.listNum][min.index];
+        const list = lists[min.listNum];
+        const nextIndex = min.index + 1;
+        const nextValue = list === undefined ? undefined : list[nextIndex];
+        if (nextValue !== undefined) {
+            min.index = nextIndex;
+            min.value = nextValue;
             pq.push(min);
         }
     }
+
+    console.log(result.join(' '));
 }
 
 // `M` lists of size `N`, each in the form of a 2D-matrix
@@ -72,7 +92,6 @@ const lists = [
 ];
 
 printSorted(lists);
-console.log();
 ```
 
 **Output:** 10 15 16 18 20 22 25 27 28 29 30 32 33 35 37 39 40 45 48 50

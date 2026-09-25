@@ -29,9 +29,10 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to perform inorder traversal on the tree

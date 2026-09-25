@@ -18,7 +18,12 @@ Following is the simple recursive implementation that works by fixing `.next` po
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -82,7 +87,12 @@ We can also solve this problem by passing only reference to the head pointer to 
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -138,7 +148,12 @@ We can simplify the above code by passing previous node information to the funct
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

@@ -15,7 +15,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform inorder traversal on the tree
@@ -70,7 +77,7 @@ const correctBST = (root: TreeNode | null, x: TreeNode | null, y: TreeNode | nul
     [x, y, prev] = correctBST(root.left, x, y, prev);
 
     // if the current node is less than the previous node
-    if (root.data < prev!.data) {
+    if (prev !== null && root.data < prev.data) {
         // if this is the first occurrence, update `x` and `y` to the previous
         // and current node, respectively
         if (x === null) {

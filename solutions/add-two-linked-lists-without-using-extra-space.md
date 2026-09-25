@@ -19,7 +19,9 @@ This approach is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {}
 }
 
 // Function to print a given linked list

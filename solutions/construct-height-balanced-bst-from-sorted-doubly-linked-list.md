@@ -17,9 +17,14 @@ A simple solution would be to traverse the doubly linked list, store every node 
 class Node {
     // The `prev` and `next` pointer of the doubly linked list can act as
     // left and right child for the BST, respectively
-    constructor(public data: number,
-                public prev: Node | null = null,
-                public next: Node | null = null) {}
+    data: number;
+    prev: Node | null = null;
+    next: Node | null = null;
+    constructor(data: number, prev: Node | null = null, next: Node | null = null) {
+        this.data = data;
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Function to insert a new node at the beginning of the doubly linked list
@@ -136,9 +141,14 @@ The algorithm can be implemented as follows in TypeScript:
 class Node {
     // The `prev` and `next` pointer of the doubly linked list can act as
     // left and right child for the BST, respectively
-    constructor(public data: number,
-                public prev: Node | null = null,
-                public next: Node | null = null) {}
+    data: number;
+    prev: Node | null = null;
+    next: Node | null = null;
+    constructor(data: number, prev: Node | null = null, next: Node | null = null) {
+        this.data = data;
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Function to insert a new node at the beginning of the doubly linked list
@@ -196,7 +206,10 @@ function convertSortedDLLToBalancedBST(head: Node | null, n: number): [Node | nu
     // `head` now points to the middle node of the sorted DDL
 
     // make the middle node of the sorted DDL as the root node of the BST
-    const root = head!;
+    if (head === null) {
+        return [null, head];
+    }
+    const root = head;
 
     // update left child of the root node
     root.prev = leftSubTree;

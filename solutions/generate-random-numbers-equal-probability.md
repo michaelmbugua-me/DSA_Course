@@ -45,7 +45,7 @@ for (let i = 0; i < 1000000; i++) {
 }
 
 for (let i = 1; i <= 12; i++) {
-    console.log(`${i} ~ ${freq[i] / 10000}`);
+    console.log(`${i} ~ ${freq[i] / 10000}%`);
 }
 ```
 
@@ -69,6 +69,10 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // Generate random numbers between 1 and 12 with equal probability using a
 // function that generates random numbers from 1 to 6 with equal probability
+function rand(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function generate(): number {
 
     const x = rand(1, 6);
@@ -85,7 +89,7 @@ for (let i = 0; i < 1000000; i++) {
 }
 
 for (let i = 1; i <= 12; i++) {
-    console.log(`${i} ~ ${freq[i] / 10000}`);
+    console.log(`${i} ~ ${freq[i] / 10000}%`);
 }
 ```
 

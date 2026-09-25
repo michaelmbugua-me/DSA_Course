@@ -17,7 +17,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A Doubly Linked List Node
 class ListNode {
-    constructor(public val: number, public prev: ListNode | null = null, public next: ListNode | null = null) {}
+    val: number;
+    prev: ListNode | null = null;
+    next: ListNode | null = null;
+    constructor(val: number, prev: ListNode | null = null, next: ListNode | null = null) {
+        this.val = val;
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Utility function to push a node at the beginning of the doubly linked list
@@ -97,7 +104,14 @@ We can also solve this problem recursively by passing current node information i
 ```ts
 // A Doubly Linked List Node
 class ListNode {
-    constructor(public val: number, public prev: ListNode | null = null, public next: ListNode | null = null) {}
+    val: number;
+    prev: ListNode | null = null;
+    next: ListNode | null = null;
+    constructor(val: number, prev: ListNode | null = null, next: ListNode | null = null) {
+        this.val = val;
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Utility function to push a node at the beginning of the doubly linked list
@@ -134,7 +148,8 @@ function swap(node: ListNode): void {
 // Recursive function to reverse a doubly-linked list
 function reverse(head: ListNode | null, curr: ListNode): ListNode | null {
     // last node
-    if (curr.next === null) {
+    const next = curr.next;
+    if (next === null) {
         // swap `next` and `prev` pointers for the current node
         swap(curr);
 
@@ -147,7 +162,7 @@ function reverse(head: ListNode | null, curr: ListNode): ListNode | null {
     swap(curr);
 
     // recur with the next node
-    head = reverse(head, curr.prev as ListNode);
+    head = reverse(head, next);
     return head;
 }
 

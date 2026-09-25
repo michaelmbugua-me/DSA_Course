@@ -39,7 +39,14 @@ The algorithm can be implemented as follows in TypeScript:
 class Node {
     // (x, y) represents chessboard coordinates
     // `dist` represents its minimum distance from the source
-    constructor(public x: number, public y: number, public dist: number = 0) {}
+    x: number;
+    y: number;
+    dist: number = 0;
+    constructor(x: number, y: number, dist: number = 0) {
+        this.x = x;
+        this.y = y;
+        this.dist = dist;
+    }
 }
 
 // Below arrays detail all eight possible movements for a knight
@@ -66,7 +73,10 @@ const findShortestDistance = (src: Node, dest: Node, N: number): number => {
     while (q.length > 0) {
 
         // dequeue front node and process it
-        const node = q.shift()!;
+        const node = q.shift();
+        if (node === undefined) {
+            break;
+        }
 
         const x = node.x;
         const y = node.y;

@@ -29,7 +29,14 @@ The stack can easily be implemented as an array. Following is the custom stack i
 // Custom stack implementation in TypeScript
 class Stack {
     // Constructor to initialize the stack
-    constructor(private arr: (number | null)[], private capacity: number, private top: number) {}
+    arr: (number | null)[];
+    capacity: number;
+    top: number;
+    constructor(arr: (number | null)[], capacity: number, top: number) {
+        this.arr = arr;
+        this.capacity = capacity;
+        this.top = top;
+    }
 
     // Function to add an element `val` to the stack
     push(val: number): void {
@@ -93,7 +100,7 @@ stack.pop();         // removing the top element (1)
 
 stack.push(3);       // Inserting 3 in the stack
 
-console.log('Top element is', stack.peek());
+console.log('The top element is', stack.peek());
 console.log('The stack size is', stack.size());
 
 stack.pop();         // removing the top element (3)
@@ -132,7 +139,7 @@ stack.push('C');
 console.log('Inserting D into the stack…');
 stack.push('D');
 
-console.log('Top element is', stack[stack.length - 1]);                 // prints the stack's top (D)
+console.log('The top element is', stack[stack.length - 1]);                 // prints the stack's top (D)
 
 console.log(`Removing ${stack.pop()} from the stack`);   // removing the top element (D)
 console.log(`Removing ${stack.pop()} from the stack`);   // removing the next top (C)

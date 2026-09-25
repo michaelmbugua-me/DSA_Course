@@ -19,7 +19,14 @@ Following is the iterative implementation of the above approach in TypeScript:
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to insert a key into a BST
@@ -109,7 +116,14 @@ Following is the recursive TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST

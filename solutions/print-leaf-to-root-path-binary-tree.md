@@ -17,7 +17,14 @@ Since use of recursion is not allowed, we can do [postorder iterative traversal]
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given node is a leaf node or not
@@ -34,7 +41,10 @@ function printPathRecursive(curr: TreeNode | null, d: Map<TreeNode, TreeNode | n
     }
 
     // recursively call the parent node
-    printPathRecursive(d.get(curr)!, d);
+    const parent = d.get(curr);
+    if (parent !== undefined) {
+        printPathRecursive(parent, d);
+    }
     process.stdout.write(curr.val + ' —> ');
 }
 
@@ -46,9 +56,13 @@ function printPathIterative(leafNode: TreeNode, d: Map<TreeNode, TreeNode | null
     let curr: TreeNode = leafNode;
 
     // loop till the root node is reached and print each node in the path
-    while (d.get(curr)! !== null) {
+    while (true) {
+        const parent = d.get(curr);
+        if (parent === undefined || parent === null) {
+            break;
+        }
         process.stdout.write(curr.val + ' —> ');
-        curr = d.get(curr)!;
+        curr = parent;
     }
 
     console.log(curr.val);
@@ -78,7 +92,10 @@ function postorderIterative(root: TreeNode | null): void {
     while (s.length > 0) {
 
         // pop the top node from the stack
-        const curr = s.pop()!;
+        const curr = s.pop();
+        if (curr === undefined) {
+            break;
+        }
 
         // if a leaf node is found, print the path
         if (isLeaf(curr)) {
@@ -141,7 +158,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given node is a leaf node or not
@@ -167,7 +191,11 @@ function printLeafToRootPaths(root: TreeNode | null): void {
     while (stack.length > 0) {
 
         // pop a node from the stack and push the data into the output stack
-        const [curr, path] = stack.pop()!;
+        const entry = stack.pop();
+        if (entry === undefined) {
+            break;
+        }
+        const [curr, path] = entry;
 
         // add the current node to the existing path
         const delim = path ? ' —> ' : '\n';

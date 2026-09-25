@@ -15,13 +15,18 @@ Following is the TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number,
-                public left: Node = null,
-                public right: Node = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to calculate the size of a given binary tree
-function size(root: Node): number {
+function size(root: Node | null): number {
 
     // base case: empty tree has size 0
     if (root === null) {
@@ -36,7 +41,7 @@ function size(root: Node): number {
 // Recursive function to determine if a given binary tree is a BST or not
 // by keeping a valid range (starting from [-INFINITY, INFINITY]) and
 // keep shrinking it down for each node as we go down recursively
-function isBST(node: Node, min: number, max: number): boolean {
+function isBST(node: Node | null, min: number, max: number): boolean {
 
     // base case
     if (node === null) {
@@ -53,9 +58,12 @@ function isBST(node: Node, min: number, max: number): boolean {
 }
 
 // Recursive function to find the size of the largest BST in a given binary tree
-function findLargestBST(root: Node): number {
+function findLargestBST(root: Node | null): number {
+    if (root === null) {
+        return 0;
+    }
 
-    if (isBST(root, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)) {
+    if (isBST(root, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY)) {
         return size(root);
     }
 
@@ -102,27 +110,32 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number,
-                public left: Node = null,
-                public right: Node = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // A class to store information about a binary tree
 class SubTreeInfo {
-
-    // `min`, `max` stores the minimum and the maximum value in the binary tree rooted
-    // under the current node. They are relevant only if the `isBST` flag is true.
-    constructor(public min: number, public max: number,
-
-    // stores size of the largest BST in the binary tree rooted under the current node
-                public size: number,
-
-    // true if a binary tree rooted under the current node is a BST
-                public isBST: boolean) {}
+    min: number;
+    max: number;
+    size: number;
+    isBST: boolean;
+    constructor(min: number, max: number, size: number, isBST: boolean) {
+        this.min = min;
+        this.max = max;
+        this.size = size;
+        this.isBST = isBST;
+    }
 }
 
 // Recursive function to find the size of the largest BST in a given binary tree
-function findLargestBST(root: Node): SubTreeInfo {
+function findLargestBST(root: Node | null): SubTreeInfo {
 
     // Base case: empty tree
     if (root === null) {

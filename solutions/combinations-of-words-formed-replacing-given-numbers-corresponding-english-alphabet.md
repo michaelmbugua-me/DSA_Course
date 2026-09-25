@@ -61,9 +61,10 @@ The only difference is that instead of using string to store the output, use bin
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: string,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: string;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: string, left: Node | null = null, right: Node | null = null) {}
 }
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

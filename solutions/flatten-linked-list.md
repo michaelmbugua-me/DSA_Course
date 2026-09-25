@@ -24,7 +24,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null, public down: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    down: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null, down: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+        this.down = down;
+    }
 }
 
 // Takes two lists sorted in increasing order and merge their nodes
@@ -70,7 +77,10 @@ const frontBackSplit = (source: ListNode | null): [ListNode | null, ListNode | n
     while (fast) {
         fast = fast.down;
         if (fast) {
-            slow = slow.down!;
+            if (slow.down === null) {
+                break;
+            }
+            slow = slow.down;
             fast = fast.down;
         }
     }
@@ -139,9 +149,19 @@ const third = [9, 5];
 const fourth = [12, 11, 10];
 
 let head = createVerticalList(null, first);
-head!.next = createVerticalList(head!.next, second);
-head!.next!.next = createVerticalList(head!.next!.next, third);
-head!.next!.next!.next = createVerticalList(head!.next!.next!.next, fourth);
+const secondList = createVerticalList(null, second);
+const thirdList = createVerticalList(null, third);
+const fourthList = createVerticalList(null, fourth);
+
+if (head !== null) {
+    head.next = secondList;
+    if (head.next !== null) {
+        head.next.next = thirdList;
+        if (head.next.next !== null) {
+            head.next.next.next = fourthList;
+        }
+    }
+}
 
 // flatten the list
 flatten(head);
@@ -162,7 +182,14 @@ The above solution first flattens the list and then sort it. We can combine both
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null, public down: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    down: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null, down: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+        this.down = down;
+    }
 }
 
 // Takes two lists sorted in increasing order and merge their nodes
@@ -232,9 +259,19 @@ const third = [9, 5];
 const fourth = [12, 11, 10];
 
 let head = createVerticalList(null, first);
-head!.next = createVerticalList(head!.next, second);
-head!.next!.next = createVerticalList(head!.next!.next, third);
-head!.next!.next!.next = createVerticalList(head!.next!.next!.next, fourth);
+const secondList = createVerticalList(null, second);
+const thirdList = createVerticalList(null, third);
+const fourthList = createVerticalList(null, fourth);
+
+if (head !== null) {
+    head.next = secondList;
+    if (head.next !== null) {
+        head.next.next = thirdList;
+        if (head.next.next !== null) {
+            head.next.next.next = fourthList;
+        }
+    }
+}
 
 // flatten and sort the list
 flatten(head);

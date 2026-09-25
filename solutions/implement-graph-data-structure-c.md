@@ -15,12 +15,22 @@ Following is the TypeScript implementation of a directed graph using an adjacenc
 ```ts
 // Data structure to store adjacency list nodes of the graph
 class Node {
-    constructor(public dest: number, public next: Node | null = null) {}
+    dest: number;
+    next: Node | null = null;
+    constructor(dest: number, next: Node | null = null) {
+        this.dest = dest;
+        this.next = next;
+    }
 }
 
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number) {}
+    src: number;
+    dest: number;
+    constructor(src: number, dest: number) {
+        this.src = src;
+        this.dest = dest;
+    }
 }
 
 // A class to represent a graph object
@@ -91,12 +101,22 @@ As evident from the above code, in a directed graph, we only create an edge from
 ```ts
 // Data structure to store adjacency list nodes of the graph
 class Node {
-    constructor(public dest: number, public next: Node | null = null) {}
+    dest: number;
+    next: Node | null = null;
+    constructor(dest: number, next: Node | null = null) {
+        this.dest = dest;
+        this.next = next;
+    }
 }
 
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number) {}
+    src: number;
+    dest: number;
+    constructor(src: number, dest: number) {
+        this.src = src;
+        this.dest = dest;
+    }
 }
 
 // A class to represent a graph object
@@ -182,12 +202,26 @@ Following is the implementation of a weighted directed graph in TypeScript using
 ```ts
 // Data structure to store adjacency list nodes of the graph
 class Node {
-    constructor(public dest: number, public weight: number, public next: Node | null = null) {}
+    dest: number;
+    weight: number;
+    next: Node | null = null;
+    constructor(dest: number, weight: number, next: Node | null = null) {
+        this.dest = dest;
+        this.weight = weight;
+        this.next = next;
+    }
 }
 
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number, public weight: number) {}
+    src: number;
+    dest: number;
+    weight: number;
+    constructor(src: number, dest: number, weight: number) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
 }
 
 // A class to represent a graph object

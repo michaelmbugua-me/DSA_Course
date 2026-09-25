@@ -16,12 +16,11 @@ Following is a TypeScript implementation of the idea:
 // A class to store a special binary tree node with a random pointer
 class Node {
     // Constructor
-    constructor(
-        public data: number,
-        public left: Node | null = null,
-        public right: Node | null = null,
-        public random: Node | null = null
-    ) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    random: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null, random: Node | null = null) {}
 }
 
 // Function to print the preorder traversal on a given binary tree

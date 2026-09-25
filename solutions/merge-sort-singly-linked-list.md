@@ -15,7 +15,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -67,14 +72,17 @@ function frontBackSplit(source: ListNode | null): [ListNode | null, ListNode | n
     }
 
     let slow = source;
-    let fast = source.next;
+    let fast: ListNode | null = source.next;
 
     // advance `fast` two nodes, and advance `slow` one node
     while (fast) {
 
         fast = fast.next;
         if (fast) {
-            slow = slow.next!;
+            if (slow.next === null) {
+                break;
+            }
+            slow = slow.next;
             fast = fast.next;
         }
     }

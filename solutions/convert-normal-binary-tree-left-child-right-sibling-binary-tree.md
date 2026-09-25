@@ -24,9 +24,15 @@ The idea is to traverse the tree in a [postorder fashion](https://techiedelight.
 The algorithm can be implemented as follows in TypeScript:
 
 ```ts
-# A class to store a binary tree node
 class Node {
-    constructor(public key: number, public left: Node | null = null, public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform preorder traversal on a given binary tree.

@@ -21,7 +21,11 @@ Following is a TypeScript program that demonstrates the idea:
 ```ts
 // A class to store a ternary tree node
 class Node {
-    constructor(public data: number, public left: Node | null = null, public mid: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    mid: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, mid: Node | null = null, right: Node | null = null) {}
 }
 
 // Insert a tree node at the front of the doubly linked list

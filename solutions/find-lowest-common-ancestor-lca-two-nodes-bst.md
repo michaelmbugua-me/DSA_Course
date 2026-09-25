@@ -23,7 +23,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -48,7 +55,7 @@ function insert(root: TreeNode | null, key: number): TreeNode {
 }
 
 // Iterative function to search a given node in a BST
-function search(root: TreeNode, key: TreeNode): boolean {
+function search(root: TreeNode | null, key: TreeNode): boolean {
 
     // traverse the tree and search for the key
     while (root) {
@@ -77,7 +84,7 @@ function search(root: TreeNode, key: TreeNode): boolean {
 
 // Recursive function to find the lowest common ancestor of given nodes
 // `x` and `y`, where both `x` and `y` are present in a BST
-function LCARecursive(root: TreeNode | null, x: TreeNode, y: TreeNode): TreeNode {
+function LCARecursive(root: TreeNode | null, x: TreeNode, y: TreeNode): TreeNode | null {
 
     // base case: empty tree
     if (root === null) {
@@ -136,7 +143,9 @@ for (const key of keys) {
     root = insert(root, key);
 }
 
-LCA(root, root.left.left, root.left.right);
+if (root !== null && root.left !== null && root.left.left !== null && root.left.right !== null) {
+    LCA(root, root.left.left, root.left.right);
+}
 ```
 
 **Output:** LCA is 10
@@ -152,7 +161,14 @@ The same algorithm can be easily implemented iteratively. Following is a TypeScr
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -177,7 +193,7 @@ function insert(root: TreeNode | null, key: number): TreeNode {
 }
 
 // Iterative function to search a given node in a BST
-function search(root: TreeNode, key: TreeNode): boolean {
+function search(root: TreeNode | null, key: TreeNode): boolean {
 
     // traverse the tree and search for the key
     while (root) {
@@ -206,7 +222,7 @@ function search(root: TreeNode, key: TreeNode): boolean {
 
 // Iterative function to find the lowest common ancestor of given nodes
 // in the BST
-function LCA(root: TreeNode | null, x: TreeNode, y: TreeNode): TreeNode {
+function LCA(root: TreeNode | null, x: TreeNode, y: TreeNode): TreeNode | null {
 
     // return if the tree is empty, or `x` or `y` is not present in the tree
     if (root === null || !search(root, x) || !search(root, y)) {
@@ -214,7 +230,7 @@ function LCA(root: TreeNode | null, x: TreeNode, y: TreeNode): TreeNode {
     }
 
     // start from the root node
-    let curr = root;
+    let curr: TreeNode | null = root;
 
     // traverse the tree
     while (curr) {
@@ -259,14 +275,16 @@ for (const key of keys) {
 }
 
 // `lca` stores the lowest common ancestor of 8 and 12
-const lca = LCA(root, root.left.left, root.left.right);
+if (root !== null && root.left !== null && root.left.left !== null && root.left.right !== null) {
+    const lca = LCA(root, root.left.left, root.left.right);
 
-// if the lowest common ancestor exists, print it
-if (lca) {
-    console.log('LCA is', lca.data);
-}
-else {
-    console.log('LCA does not exist');
+    // if the lowest common ancestor exists, print it
+    if (lca) {
+        console.log('LCA is', lca.data);
+    }
+    else {
+        console.log('LCA does not exist');
+    }
 }
 ```
 

@@ -65,10 +65,12 @@ function linkNodesAtLevel(root: Node | null, level: number, map: Map<number, Nod
   }
 
   // insert the current node and level information into the map
-  if (!map.has(level)) {
-    map.set(level, []);
+  const nodes = map.get(level);
+  if (nodes === undefined) {
+    map.set(level, [root]);
+  } else {
+    nodes.push(root);
   }
-  map.get(level)!.push(root);
 
   // recur for the left and right subtree by increasing the level by 1
   linkNodesAtLevel(root.left, level + 1, map);
@@ -95,7 +97,9 @@ function linkNodes(root: Node | null): void {
       }
       prev = curr;
     }
-    prev!.next = null;
+    if (prev !== null) {
+      prev.next = null;
+    }
   }
 }
 
@@ -110,19 +114,27 @@ function linkNodes(root: Node | null): void {
 */
 
 const root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.left!.right = new Node(5);
-root.right!.right = new Node(6);
-root.left!.left!.right = new Node(7);
-root.right!.right!.left = new Node(8);
+const left = new Node(2);
+const right = new Node(3);
+const leftLeft = new Node(4);
+const leftRight = new Node(5);
+const rightRight = new Node(6);
+const leftLeftRight = new Node(7);
+const rightRightLeft = new Node(8);
+
+root.left = left;
+root.right = right;
+left.left = leftLeft;
+left.right = leftRight;
+right.right = rightRight;
+leftLeft.right = leftLeftRight;
+rightRight.left = rightRightLeft;
 
 // link nodes at the same level
 linkNodes(root);
 
 // print the nodes
-let node = root;
+let node: Node | null = root;
 while (node) {
   // print the current level
   printList(node);
@@ -234,19 +246,27 @@ function linkNodes(root: Node | null): void {
 */
 
 const root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.left!.right = new Node(5);
-root.right!.right = new Node(6);
-root.left!.left!.right = new Node(7);
-root.right!.right!.left = new Node(8);
+const left = new Node(2);
+const right = new Node(3);
+const leftLeft = new Node(4);
+const leftRight = new Node(5);
+const rightRight = new Node(6);
+const leftLeftRight = new Node(7);
+const rightRightLeft = new Node(8);
+
+root.left = left;
+root.right = right;
+left.left = leftLeft;
+left.right = leftRight;
+right.right = rightRight;
+leftLeft.right = leftLeftRight;
+rightRight.left = rightRightLeft;
 
 // link nodes at the same level
 linkNodes(root);
 
 // print the nodes
-let node = root;
+let node: Node | null = root;
 while (node) {
   // print the current level
   printList(node);

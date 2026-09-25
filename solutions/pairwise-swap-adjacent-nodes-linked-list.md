@@ -19,7 +19,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -48,7 +53,10 @@ function rearrange(head: ListNode | null): ListNode | null {
 
     // consider two nodes at a time and swap their links
     while (curr !== null && curr.next !== null) {
-        const temp = curr.next;
+        const temp: ListNode | null = curr.next;
+        if (temp === null) {
+            break;
+        }
         curr.next = temp.next;
         temp.next = curr;
 
@@ -84,7 +92,12 @@ We can also write a [recursive version](https://techiedelight.com/recursion-prac
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

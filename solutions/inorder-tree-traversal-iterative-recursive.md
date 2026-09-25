@@ -25,7 +25,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform inorder traversal on the tree
@@ -82,7 +89,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to perform inorder traversal on the tree
@@ -105,7 +119,11 @@ function inorderIterative(root: TreeNode | null): void {
         } else {
             // otherwise, if the current node is null, pop an element from the stack,
             // print it, and finally set the current node to its right child
-            curr = stack.pop()!;
+            const popped = stack.pop();
+            if (popped === undefined) {
+                return;
+            }
+            curr = popped;
             process.stdout.write(curr.val + ' ');
 
             curr = curr.right;

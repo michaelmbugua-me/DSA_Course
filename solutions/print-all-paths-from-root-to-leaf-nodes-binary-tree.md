@@ -15,7 +15,14 @@ The idea is to traverse the tree in a [preorder fashion](https://techiedelight.c
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given node is a leaf node or not
@@ -89,7 +96,14 @@ The problem seems a bit difficult to solve without recursion. There is one worka
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 function printRootToLeafPathIterative(root: TreeNode | null): void {
@@ -110,7 +124,11 @@ function printRootToLeafPathIterative(root: TreeNode | null): void {
     while (stack.length > 0) {
 
         // pop a node from the stack and push the data into the output stack
-        const [curr, prev] = stack.pop()!;
+        const entry = stack.pop();
+        if (entry === undefined) {
+            break;
+        }
+        const [curr, prev] = entry;
 
         // add the current node to the existing path
         const path = prev + (prev ? " —> " : "\n") + curr.val;

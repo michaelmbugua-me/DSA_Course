@@ -19,9 +19,17 @@ Following is a TypeScript implementation of the above algorithm. The logic works
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: number;
+    left: Node | null;
+    right: Node | null;
+
+    constructor(key: number,
+                left: Node | null = null,
+                right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -60,12 +68,15 @@ function printLevelOrderTraversal(root: Node | null): void {
         const level: number[] = [];
         for (let i = 0; i < n; i++) {
             const front = q.shift();
-            level.push(front!.key);
-            if (front!.left) {
-                q.push(front!.left);
+            if (front === undefined) {
+                break;
             }
-            if (front!.right) {
-                q.push(front!.right);
+            level.push(front.key);
+            if (front.left) {
+                q.push(front.left);
+            }
+            if (front.right) {
+                q.push(front.right);
             }
         }
         console.log(level.join(' '));
@@ -93,7 +104,11 @@ function preorder(root: Node | null, keys: number[]): void {
     }
 
     // replace the root's key value with the next key from the queue
-    root.key = keys.shift()!;
+    const key = keys.shift();
+    if (key === undefined) {
+        return;
+    }
+    root.key = key;
 
     // process left subtree
     preorder(root.left, keys);
@@ -152,9 +167,17 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: number;
+    left: Node | null;
+    right: Node | null;
+
+    constructor(key: number,
+                left: Node | null = null,
+                right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -195,12 +218,15 @@ function printLevelOrderTraversal(root: Node | null): void {
         while (n > 0) {
             n = n - 1;
             const front = q.shift();
-            level.push(front!.key);
-            if (front!.left) {
-                q.push(front!.left);
+            if (front === undefined) {
+                break;
             }
-            if (front!.right) {
-                q.push(front!.right);
+            level.push(front.key);
+            if (front.left) {
+                q.push(front.left);
+            }
+            if (front.right) {
+                q.push(front.right);
             }
         }
         console.log(level.join(' '));
@@ -208,13 +234,17 @@ function printLevelOrderTraversal(root: Node | null): void {
 }
 
 // Function to construct a complete binary tree from sorted keys in a queue
-function construct(keys: number[]): Node {
+function construct(keys: number[]): Node | null {
 
     // construct a queue to store the parent nodes
     const q: Node[] = [];
 
     // initialize the root node of the complete binary tree
-    const root = new Node(keys.pop()!);
+    const rootKey = keys.pop();
+    if (rootKey === undefined) {
+        return null;
+    }
+    const root = new Node(rootKey);
 
     // enqueue root node
     q.push(root);
@@ -223,10 +253,17 @@ function construct(keys: number[]): Node {
     while (keys.length > 0) {
 
         // dequeue front node
-        const parent = q.shift()!;
+        const parent = q.shift();
+        if (parent === undefined) {
+            return null;
+        }
 
         // allocate the left child of the parent node with the next key
-        parent.left = new Node(keys.pop()!);
+        const leftKey = keys.pop();
+        if (leftKey === undefined) {
+            return null;
+        }
+        parent.left = new Node(leftKey);
 
         // enqueue left child node
         q.push(parent.left);
@@ -234,7 +271,11 @@ function construct(keys: number[]): Node {
         // if the next key exists
         if (keys.length > 0) {
             // allocate the right child of the parent node with the next key
-            parent.right = new Node(keys.pop()!);
+            const rightKey = keys.pop();
+            if (rightKey === undefined) {
+                return null;
+            }
+            parent.right = new Node(rightKey);
 
             // enqueue right child node
             q.push(parent.right);
@@ -303,9 +344,17 @@ To convert the sorted list into a min-heap, construct the complete binary tree l
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public data: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    data: number;
+    left: Node | null;
+    right: Node | null;
+
+    constructor(data: number,
+                left: Node | null = null,
+                right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -344,12 +393,15 @@ function printLevelOrderTraversal(root: Node | null): void {
         const level: number[] = [];
         for (let i = 0; i < n; i++) {
             const front = q.shift();
-            level.push(front!.data);
-            if (front!.left) {
-                q.push(front!.left);
+            if (front === undefined) {
+                break;
             }
-            if (front!.right) {
-                q.push(front!.right);
+            level.push(front.data);
+            if (front.left) {
+                q.push(front.left);
+            }
+            if (front.right) {
+                q.push(front.right);
             }
         }
         console.log(level.join(' '));
@@ -422,7 +474,10 @@ function convertListToMinHeap(head: Node | null): Node | null {
     // loop till the end of the list is reached
     while (head !== null) {
         // dequeue next node
-        const parent = q.shift()!;
+        const parent = q.shift();
+        if (parent === undefined) {
+            return heap;
+        }
 
         /* Assign the next node of the linked list to the left child of the
            parent node */

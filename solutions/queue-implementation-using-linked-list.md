@@ -15,8 +15,13 @@ Following is the implementation of the queue using a linked list in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {
+    data: number;
+    next: Node | null;
+
+    constructor(data: number, next: Node | null = null) {
         // set data in the allocated node and return it
+        this.data = data;
+        this.next = next;
     }
 }
 
@@ -27,16 +32,16 @@ class Queue {
 
     // Utility function to dequeue the front element
     dequeue(): number {          // delete at the beginning
-        if (this.front === null) {
+        const temp = this.front;
+        if (temp === null) {
             console.log('Queue Underflow');
             process.exit(-1);
+            return 0;
         }
-
-        const temp = this.front;
         console.log('Removing…', temp.data);
 
         // advance front to the next node
-        this.front = this.front.next;
+        this.front = temp.next;
 
         // if the list becomes empty
         if (this.front === null) {
@@ -64,8 +69,10 @@ class Queue {
         }
         else {
             // update rear
-            this.rear!.next = node;
-            this.rear = node;
+            if (this.rear !== null) {
+                this.rear.next = node;
+                this.rear = node;
+            }
         }
 
         // increase the node's count by 1
@@ -80,6 +87,7 @@ class Queue {
         }
         else {
             process.exit(-1);
+            return 0;
         }
     }
 

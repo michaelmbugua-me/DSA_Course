@@ -17,7 +17,13 @@ This approach is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null;
+
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -45,8 +51,11 @@ function copyList(head: Node | null): Node | null {
             tail = newList;
         }
         else {
-            tail!.next = new Node(current.data, null);
-            tail = tail!.next;
+            if (tail === null) {
+                return newList;
+            }
+            tail.next = new Node(current.data, null);
+            tail = tail.next;
         }
         current = current.next;
     }
@@ -79,7 +88,13 @@ The above implementation is a little unsatisfying because the 3–step link-in i
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null;
+
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -117,13 +132,13 @@ function copyList(head: Node | null): Node | null {
 
     while (current !== null) {
         // special case for the first new node
-        if (headRef.next === null) {
+        if (tail === null) {
             push(headRef, current.data);
             tail = headRef.next;
         }
         else {
-            push(tail as { next: Node | null }, current.data);        // add each node at the tail
-            tail = tail!.next;        // advance the tail to the new last node
+            push(tail, current.data);        // add each node at the tail
+            tail = tail.next;        // advance the tail to the new last node
         }
         current = current.next;
     }
@@ -158,7 +173,13 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null;
+
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -191,14 +212,18 @@ function push(headRef: { next: Node | null }, data: number): void {
 // list using a dummy node
 function copyList(head: Node | null): Node | null {
     let current = head;    // used to iterate over the original list
-    let tail: { next: Node | null };    // point to the last node in the new list
+    let tail: Node;    // point to the last node in the new list
     const dummy = new Node(0, null);    // build the new list off this dummy node
 
     tail = dummy;                       // start the tail pointing at the dummy
 
     while (current !== null) {
         push(tail, current.data);        // add each node at the tail
-        tail = tail.next as Node;        // advance the tail to the new last node
+        const next = tail.next;
+        if (next === null) {
+            return dummy.next;
+        }
+        tail = next;
         current = current.next;
     }
     return dummy.next;

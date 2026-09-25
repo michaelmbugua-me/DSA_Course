@@ -15,9 +15,10 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Doubly Linked List Node
 class Node {
-    constructor(public data: number,
-                public next: Node | null = null,
-                public prev: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    prev: Node | null = null;
+    constructor(data: number, next: Node | null = null, prev: Node | null = null) {}
 }
 
 // Utility function to push a node at the beginning of the doubly linked list

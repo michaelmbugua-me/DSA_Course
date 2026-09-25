@@ -19,7 +19,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to print all nodes between two given
@@ -49,7 +56,10 @@ function printNodes(root: TreeNode | null, start: number, end: number): void {
         // non-empty left and right child
         while (size > 0) {
             size = size - 1;
-            const curr = queue.shift()!;
+            const curr = queue.shift();
+            if (curr === undefined) {
+                break;
+            }
 
             // print the node if its level is between given levels
             if (level >= start && level <= end) {
@@ -95,7 +105,14 @@ We can also solve this problem by using [hashing](https://techiedelight.com/hash
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Traverse the tree in a preorder fashion and store nodes in a dictionary
@@ -109,10 +126,9 @@ function findNodes(root: TreeNode | null, start: number, end: number, level: num
 
     // push the current node into the dictionary corresponding to their level
     if (level >= start && level <= end) {
-        if (!d.has(level)) {
-            d.set(level, []);
-        }
-        d.get(level)!.push(root.key);
+        const values = d.get(level) ?? [];
+        d.set(level, values);
+        values.push(root.key);
     }
 
     // recur for the left and right subtree by increasing the level by 1

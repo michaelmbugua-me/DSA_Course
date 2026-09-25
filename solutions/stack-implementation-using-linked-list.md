@@ -15,7 +15,9 @@ The implementation can be seen below in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public key: number, public next: Node | null = null) {}
+    key: number;
+    next: Node | null = null;
+    constructor(key: number, next: Node | null = null) {}
 }
 
 class Stack {

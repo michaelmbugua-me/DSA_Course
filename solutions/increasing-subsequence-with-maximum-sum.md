@@ -135,22 +135,19 @@ function printMSIS(nums: number[]): void {
 
     // start from the second array element
     for (let i = 1; i < n; i++) {
+        MSIS[i] = [nums[i]];
+        sum[i] = nums[i];
+
         // do for each element in subarray `nums[0…i-1]`
         for (let j = 0; j < i; j++) {
             // find increasing subsequence with the maximum sum that ends with
             // `nums[j]`, where `nums[j]` is less than the current element `nums[i]`
 
-            if (sum[i] < sum[j] && nums[i] > nums[j]) {
-                MSIS[i] = MSIS[j];      // update increasing subsequence
-                sum[i] = sum[j];        // update maximum sum
+            if (nums[i] > nums[j] && sum[j] + nums[i] > sum[i]) {
+                MSIS[i] = [...MSIS[j], nums[i]];
+                sum[i] = sum[j] + nums[i];
             }
         }
-
-        // include the current element in increasing subsequence
-        MSIS[i].push(nums[i]);
-
-        // add the current element to the maximum sum
-        sum[i] += nums[i];
     }
 
     // uncomment the following code to print contents of `MSIS`

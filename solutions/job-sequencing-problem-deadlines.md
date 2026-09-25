@@ -40,7 +40,14 @@ Following is the implementation of the above approach in TypeScript:
 // A class to store job details. Each job has an identifier,
 // a deadline, and profit associated with it.
 class Job {
-    constructor(public taskId: number, public deadline: number, public profit: number) {}
+    taskId: number;
+    deadline: number;
+    profit: number;
+    constructor(taskId: number, deadline: number, profit: number) {
+        this.taskId = taskId;
+        this.deadline = deadline;
+        this.profit = profit;
+    }
 }
 
 // Function to schedule jobs to maximize profit

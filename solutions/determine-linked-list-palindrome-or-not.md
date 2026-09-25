@@ -19,7 +19,13 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null;
+
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Function to determine whether a given linked list is a palindrome
@@ -38,7 +44,10 @@ function isPalindrome(head: ListNode | null): boolean {
   node = head;
   while (node !== null) {
     // pop the top element from the stack
-    const top = s.pop()!;
+    const top = s.pop();
+    if (top === undefined) {
+      return false;
+    }
 
     // compare the popped element with the current node's data
     // return false if mismatch happens
@@ -78,7 +87,13 @@ The implementation can be seen below in TypeScript. Since the solution modifies 
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null;
+
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Function to split nodes of a given linked list into two halves using the
@@ -91,7 +106,11 @@ function frontBackSplit(head: ListNode): ListNode {
   while (fast !== null) {
     fast = fast.next;
     if (fast) {
-      slow = slow.next!;
+      const nextSlow = slow.next;
+      if (nextSlow === null) {
+        break;
+      }
+      slow = nextSlow;
       fast = fast.next;
     }
   }
@@ -187,7 +206,13 @@ We can avoid modification of the original list (even temporarily) with the power
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null;
+
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Function to determine whether a given linked list is a palindrome
@@ -204,12 +229,16 @@ function isPalindromeRecurse(curr: ListNode | null, headRef: { node: ListNode | 
   }
 
   // check vs. "mirror" when "coming back" from recursion
-  if (curr.data !== headRef.node!.data) {
+  const mirror = headRef.node;
+  if (mirror === null) {
+    return false;
+  }
+  if (curr.data !== mirror.data) {
     return false;
   }
 
   // advance "mirror" by one step for every single step "taken back" in the recursion
-  headRef.node = headRef.node!.next;
+  headRef.node = mirror.next;
   return true;
 }
 

@@ -19,7 +19,12 @@ Following is the TypeScript program that demonstrates it:
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null = null;
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Function to detect a cycle in a linked list using hashing
@@ -46,12 +51,23 @@ function detectCycle(head: ListNode | null): boolean {
 }
 
 let head: ListNode | null = null;
+let third: ListNode | null = null;
+let fifth: ListNode | null = null;
 for (let i = 5; i >= 1; i--) {
-  head = new ListNode(i, head);
+  const node: ListNode = new ListNode(i, head);
+  if (i === 3) {
+    third = node;
+  }
+  if (i === 5) {
+    fifth = node;
+  }
+  head = node;
 }
 
 // insert cycle
-head!.next!.next!.next!.next!.next = head!.next!.next;
+if (third !== null && fifth !== null) {
+  fifth.next = third;
+}
 
 if (detectCycle(head)) {
   console.log("Cycle Found");
@@ -73,7 +89,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-  constructor(public data: number, public next: ListNode | null = null) {}
+  data: number;
+  next: ListNode | null = null;
+  constructor(data: number, next: ListNode | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Function to detect a cycle in a linked list using
@@ -101,12 +122,23 @@ function detectCycle(head: ListNode | null): boolean {
 }
 
 let head: ListNode | null = null;
+let third: ListNode | null = null;
+let fifth: ListNode | null = null;
 for (let i = 5; i >= 1; i--) {
-  head = new ListNode(i, head);
+  const node: ListNode = new ListNode(i, head);
+  if (i === 3) {
+    third = node;
+  }
+  if (i === 5) {
+    fifth = node;
+  }
+  head = node;
 }
 
 // insert cycle
-head!.next!.next!.next!.next!.next = head!.next!.next;
+if (third !== null && fifth !== null) {
+  fifth.next = third;
+}
 
 if (detectCycle(head)) {
   console.log("Cycle Found");

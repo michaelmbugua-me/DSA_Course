@@ -39,7 +39,7 @@ const findRotationCount = (nums: number[]): number => {
             return left;
         }
 
-        const mid = (left + right) / 2;
+        const mid = Math.floor((left + right) / 2);
 
         // find the next and previous element of the `mid` element (in circular manner)
         const next = (mid + 1) % nums.length;
@@ -73,7 +73,7 @@ const findRotationCount = (nums: number[]): number => {
 };
 
 const nums = [8, 9, 10, 1, 2, 3, 4, 5, 6, 7];
-console.log(`The array is rotated ${findRotationCount(nums)} times`);
+console.log(`Array is rotated ${findRotationCount(nums)} times`);
 ```
 
 **Output:** Array is rotated 3 times

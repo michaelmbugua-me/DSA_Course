@@ -19,7 +19,12 @@ The implementation can be seen below in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -46,11 +51,14 @@ function deleteNodes(head: Node | null, m: number, n: number): Node | null {
 
     // skip `m` nodes
     for (let i = 1; i <= m; i++) {
+        if (curr === null) {
+            return head;
+        }
         prev = curr;
-        curr = curr!.next;
+        curr = curr.next;
 
         // return if we have reached end of the list
-        if (!curr) {
+        if (curr === null) {
             return head;
         }
     }
@@ -58,13 +66,16 @@ function deleteNodes(head: Node | null, m: number, n: number): Node | null {
     // delete next `n` nodes
     for (let i = 1; i <= n; i++) {
         if (curr) {
-            const next = curr.next;
+            const next: Node | null = curr.next;
             curr = next;
         }
     }
 
     // link remaining nodes with the last node
-    prev!.next = curr;
+    if (prev === null) {
+        return head;
+    }
+    prev.next = curr;
 
     // recur for remaining nodes
     deleteNodes(curr, m, n);

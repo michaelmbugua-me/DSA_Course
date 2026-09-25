@@ -35,11 +35,12 @@ function insert(head: TrieNode, s: string): void {
     let curr = head;
 
     for (const c of s) {
-        // go to the next node and create a new node if the path doesn't exist
-        if (!curr.character.has(c)) {
-            curr.character.set(c, new TrieNode());
+        let next = curr.character.get(c);
+        if (next === undefined) {
+            next = new TrieNode();
+            curr.character.set(c, next);
         }
-        curr = curr.character.get(c);
+        curr = next;
     }
 
     // store key and its count in leaf nodes
@@ -59,7 +60,7 @@ function preorder(curr: TrieNode, key = '', max_count = 0): [string, number] {
     for (const v of curr.character.values()) {
 
         // leaf node has a non-zero count
-        if (max_count < v.count) {
+        if (v.key !== null && max_count < v.count) {
             key = v.key;
             max_count = v.count;
         }

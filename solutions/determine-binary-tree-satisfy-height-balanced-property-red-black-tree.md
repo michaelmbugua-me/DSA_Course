@@ -23,11 +23,21 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 class MutableInt {
-  constructor(public value: number) {}
+  value: number;
+  constructor(value: number) {
+    this.value = value;
+  }
 
   set(data: number): void {
     this.value = data;

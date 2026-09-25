@@ -23,7 +23,15 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a BST node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Function to perform inorder traversal on the BST
@@ -97,10 +105,13 @@ function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
     // if the node to be deleted is not a root node, then set its
     // parent left/right child to null
     if (curr !== root) {
-      if (parent!.left === curr) {
-        parent!.left = null;
+      if (parent === null) {
+        return root;
+      }
+      if (parent.left === curr) {
+        parent.left = null;
       } else {
-        parent!.right = null;
+        parent.right = null;
       }
     }
     // if the tree has only a root node, set it to null
@@ -138,10 +149,13 @@ function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
     // if the node to be deleted is not a root node, set its parent
     // to its child
     if (curr !== root) {
-      if (curr === parent!.left) {
-        parent!.left = child;
+      if (parent === null) {
+        return root;
+      }
+      if (curr === parent.left) {
+        parent.left = child;
       } else {
-        parent!.right = child;
+        parent.right = child;
       }
     }
 
@@ -174,7 +188,15 @@ The above solution initially searches the key in the BST and also find its paren
 ```ts
 // A class to store a BST node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Function to perform inorder traversal on the BST
@@ -282,7 +304,15 @@ The above solution initially searches the key in the BST and also find its paren
 ```ts
 // A class to store a BST node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Function to perform inorder traversal on the BST

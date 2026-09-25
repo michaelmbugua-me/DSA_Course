@@ -26,7 +26,15 @@ const INF = Number.MAX_SAFE_INTEGER;
 
 // A class to store a graph edge
 class Edge {
-  constructor(public source: number, public dest: number, public weight: number) {}
+  source: number;
+  dest: number;
+  weight: number;
+
+  constructor(source: number, dest: number, weight: number) {
+    this.source = source;
+    this.dest = dest;
+    this.weight = weight;
+  }
 }
 
 // Function to run the Bellman–Ford algorithm from a given source

@@ -72,8 +72,16 @@ function isLeaf(root: Node): boolean {
 
 // A Tree node
 class Node {
-    constructor(public ch: string | null, public freq: number,
-                public left: Node | null = null, public right: Node | null = null) {}
+    ch: string | null;
+    freq: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(ch: string | null, freq: number, left: Node | null = null, right: Node | null = null) {
+        this.ch = ch;
+        this.freq = freq;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Traverse the Huffman Tree and store Huffman Codes in a map
@@ -84,8 +92,8 @@ function encode(root: Node | null, s: string, huffmanCode: Map<string, string>):
     }
 
     // found a leaf node
-    if (isLeaf(root)) {
-        huffmanCode.set(root.ch!, s.length > 0 ? s : '1');
+    if (isLeaf(root) && root.ch !== null) {
+        huffmanCode.set(root.ch, s.length > 0 ? s : '1');
     }
 
     encode(root.left, s + '0', huffmanCode);
@@ -101,7 +109,9 @@ function decode(root: Node | null, index: number, s: string, decoded: string[]):
 
     // found a leaf node
     if (isLeaf(root)) {
-        decoded.push(root.ch!);
+        if (root.ch !== null) {
+            decoded.push(root.ch);
+        }
         return index;
     }
 

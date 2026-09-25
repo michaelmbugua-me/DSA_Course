@@ -21,7 +21,12 @@ The algorithm can be implemented as follows in TypeScript:
 class Node {
     random: Node | null = null;
 
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a linked list with a random pointer
@@ -62,9 +67,12 @@ function reverse(head: Node | null): Node | null {
 function setRandomNodes(head: Node | null): Node | null {
     // Reverse the linked list
     head = reverse(head);
+    if (head === null) {
+        return null;
+    }
 
     // max points to the node with maximum value
-    let max = head;
+    let max: Node = head;
     head.random = null;
 
     // start from the second node in the list
@@ -112,7 +120,12 @@ We can simplify the above code using [recursion](https://techiedelight.com/recur
 class Node {
     random: Node | null = null;
 
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a linked list with a random pointer
@@ -143,6 +156,9 @@ function setRandomNodes(head: Node | null): Node | null {
     // max points to the node with the maximum value found so far
     // to the right of the head node
     const max = setRandomNodes(head.next);
+    if (max === null) {
+        return head;
+    }
 
     // update random pointer of the current node to point to the
     // maximum node so far

@@ -14,7 +14,7 @@ We can use the ASCII value of the semicolon to print a semicolon, without using 
 
 ```ts
 // 59 is an ASCII value of the semicolon
-const SEMICOLON = 59;
+const SEMICOLON: number = 59
 
 if (console.log(String.fromCharCode(SEMICOLON))) {}
 ```
@@ -23,7 +23,7 @@ The `console.log()` function prints the character with the ASCII value `59`, whi
 
 ```ts
 // 59 is an ASCII value of the semicolon
-const SEMICOLON = 59;
+const SEMICOLON: number = 59
 
 if (process.stdout.write(String.fromCharCode(SEMICOLON))) {}
 ```
@@ -32,9 +32,13 @@ We can also use a while-loop if the conditional statements are not allowed in th
 
 ```ts
 // 59 is an ASCII value of the semicolon
-const SEMICOLON = 59;
+const SEMICOLON: number = 59
 
-while (!console.log(String.fromCharCode(SEMICOLON))) {}
+let printed: boolean = false
+while (!printed) {
+    console.log(String.fromCharCode(SEMICOLON))
+    printed = true
+}
 ```
 
 ## 2\. Using `process.stdout.write()` with `String.fromCharCode()`
@@ -43,7 +47,7 @@ We can easily replace `console.log()` function with `process.stdout.write()` com
 
 ```ts
 // 59 is an ASCII value of the semicolon
-const SEMICOLON = 59;
+const SEMICOLON: number = 59
 
 if (process.stdout.write(String.fromCharCode(SEMICOLON))) {}
 ```

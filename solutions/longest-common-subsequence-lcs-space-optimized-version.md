@@ -56,6 +56,28 @@ console.log('The length of the LCS is', LCSLength(X, Y));
 The time complexity of the above solution is O(m.n), where `m` and `n` are the length of given strings `X` and `Y`, respectively. The auxiliary space required by the program is O(n), which is independent of the length of the first string `m`. However, if the second string’s length is much larger than the first string’s length, then the space complexity would be huge. We can optimize the space complexity to O(min(m, n)) by creating a wrapper that always passes a smaller string as a second argument to the `LCSLength` function.
 
 ```ts
+function LCSLength(X: string, Y: string): number {
+    const m: number = X.length;
+    const n: number = Y.length;
+    const curr: number[] = Array(n + 1).fill(0);
+    let previousDiagonal: number = 0;
+
+    for (let i = 1; i <= m; i++) {
+        previousDiagonal = 0;
+        for (let j = 1; j <= n; j++) {
+            const oldValue: number = curr[j];
+            if (X[i - 1] === Y[j - 1]) {
+                curr[j] = previousDiagonal + 1;
+            } else {
+                curr[j] = Math.max(curr[j], curr[j - 1]);
+            }
+            previousDiagonal = oldValue;
+        }
+    }
+
+    return curr[n];
+}
+
 const X = 'XMJYAUZ', Y = 'MZJAWXU';
 
 // pass smaller string as a second argument to `LCSLength()`

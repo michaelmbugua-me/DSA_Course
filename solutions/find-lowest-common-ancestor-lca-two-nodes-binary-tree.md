@@ -21,11 +21,19 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given node is present in a binary tree or not
-function isNodePresent(root: TreeNode, node: TreeNode): boolean {
+function isNodePresent(root: TreeNode | null, node: TreeNode): boolean {
 
     // base case
     if (root === null) {
@@ -45,7 +53,7 @@ function isNodePresent(root: TreeNode, node: TreeNode): boolean {
 // both `x` and `y` are present in a binary tree.
 // The function returns true if `x` or `y` is found in a subtree rooted at the root.
 // `lca` —> stores `LCA(x, y)`
-function findlca(root: TreeNode, lca: { node: TreeNode }, x: TreeNode, y: TreeNode): boolean {
+function findlca(root: TreeNode | null, lca: { node: TreeNode | null }, x: TreeNode, y: TreeNode): boolean {
 
     // base case 1: return false if the tree is empty
     if (root === null) {
@@ -79,7 +87,7 @@ function findlca(root: TreeNode, lca: { node: TreeNode }, x: TreeNode, y: TreeNo
 function findLCA(root: TreeNode, x: TreeNode, y: TreeNode): void {
 
     // `lca` stores the lowest common ancestor
-    const lca: { node: TreeNode } = { node: null };
+    const lca: { node: TreeNode | null } = { node: null };
 
     // call LCA procedure only if both `x` and `y` are present in the tree
     if (isNodePresent(root, y) && isNodePresent(root, x)) {

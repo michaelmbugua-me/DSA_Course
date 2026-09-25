@@ -23,7 +23,12 @@ So, from position `(x, y)`, we can move to `(x - 1, y)`, `(x, y - 1)`, `(x, y + 
 ```ts
 // To store cell coordinates of the matrix
 class Node {
-    constructor(public first: number, public second: number) {}
+    first: number;
+    second: number;
+    constructor(first: number, second: number) {
+        this.first = first;
+        this.second = second;
+    }
 }
 
 // Below arrays detail all four possible movements from a cell

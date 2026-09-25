@@ -29,11 +29,11 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to represent a graph object
 class Graph {
-    adjList: Map<number, number[]>[];
+    adjList: number[][];
 
     constructor(edges: [number, number, number][], n: number) {
         // A list of lists to represent an adjacency list
-        this.adjList = Array.from({ length: n }, () => []);
+        this.adjList = Array.from({ length: n }, (): number[] => []);
 
         // add edges to the directed graph
         for (const [source, dest, weight] of edges) {

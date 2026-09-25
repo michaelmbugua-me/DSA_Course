@@ -19,7 +19,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -96,7 +101,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -179,7 +189,12 @@ We can easily solve this problem by [recursion](https://techiedelight.com/recurs
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

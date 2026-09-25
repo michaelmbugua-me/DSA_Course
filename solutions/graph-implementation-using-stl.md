@@ -19,13 +19,18 @@ The above representation allows the storage of additional data on the vertices b
 ```ts
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number) {}
+    src: number;
+    dest: number;
+    constructor(src: number, dest: number) {
+        this.src = src;
+        this.dest = dest;
+    }
 }
 
 // A class to represent a graph object
 class Graph {
     // an array of arrays to represent an adjacency list
-    adjList: number[][];
+    adjList: number[][] = [];
 
     // Graph Constructor
     constructor(edges: Edge[], n: number) {
@@ -86,13 +91,20 @@ Following is the TypeScript implementation of a weighted directed graph using an
 ```ts
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number, public weight: number) {}
+    src: number;
+    dest: number;
+    weight: number;
+    constructor(src: number, dest: number, weight: number) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
 }
 
 // A class to represent a graph object
 class Graph {
     // an array of arrays of Pairs to represent an adjacency list
-    adjList: [number, number][][];
+    adjList: [number, number][][] = [];
 
     // Graph Constructor
     constructor(edges: Edge[], n: number) {

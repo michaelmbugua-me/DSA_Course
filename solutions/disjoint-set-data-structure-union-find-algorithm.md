@@ -72,12 +72,11 @@ class DisjointSet {
 
     // Find the root of the set in which element `k` belongs
     Find(k: number): number {
-        // if `k` is root
-        if (this.parent.get(k) === k) {
+        const parent = this.parent.get(k);
+        if (parent === undefined || parent === k) {
             return k;
         }
-        // recur for the parent until we find the root
-        return this.Find(this.parent.get(k) as number);
+        return this.Find(parent);
     }
 
     // Perform Union of two subsets
@@ -150,12 +149,13 @@ class DisjointSet {
 
     // Find the root of the set in which element `k` belongs
     Find(k: number): number {
-        // if `k` is not the root
-        if (this.parent.get(k) !== k) {
-            // path compression
-            this.parent.set(k, this.Find(this.parent.get(k) as number));
+        const parent = this.parent.get(k);
+        if (parent === undefined || parent === k) {
+            return k;
         }
-        return this.parent.get(k) as number;
+        const root = this.Find(parent);
+        this.parent.set(k, root);
+        return root;
     }
 
     // Perform Union of two subsets
@@ -170,15 +170,20 @@ class DisjointSet {
         }
 
         // Always attach a smaller depth tree under the root of the deeper tree.
-        if (this.rank.get(x) as number > this.rank.get(y) as number) {
+        const rankX = this.rank.get(x);
+        const rankY = this.rank.get(y);
+        if (rankX === undefined || rankY === undefined) {
+            return;
+        }
+        if (rankX > rankY) {
             this.parent.set(y, x);
         }
-        else if (this.rank.get(x) as number < this.rank.get(y) as number) {
+        else if (rankX < rankY) {
             this.parent.set(x, y);
         }
         else {
             this.parent.set(x, y);
-            this.rank.set(y, (this.rank.get(y) as number) + 1);
+            this.rank.set(y, rankY + 1);
         }
     }
 }

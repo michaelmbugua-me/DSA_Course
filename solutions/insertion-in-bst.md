@@ -19,7 +19,15 @@ Following is the implementation of the above approach in TypeScript:
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform inorder traversal on the tree
@@ -77,6 +85,28 @@ inorder(root);
 We can modify the above TypeScript solution so that the insert function returns the root node instead of relying on pass-by-reference semantics:
 
 ```ts
+class TreeNode {
+    val: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+function inorder(root: TreeNode | null): void {
+    if (root === null) {
+        return;
+    }
+
+    inorder(root.left);
+    process.stdout.write(root.val + ' ');
+    inorder(root.right);
+}
+
 // Recursive function to insert a key into a BST; returns the root node
 function insert(root: TreeNode | null, key: number): TreeNode | null {
     // if the root is null, create a new node and return it
@@ -119,6 +149,28 @@ Another way to explain the insertion is to insert a new node into the tree. Init
 The iterative version is demonstrated below in TypeScript:
 
 ```ts
+class TreeNode {
+    val: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+function inorder(root: TreeNode | null): void {
+    if (root === null) {
+        return;
+    }
+
+    inorder(root.left);
+    process.stdout.write(root.val + ' ');
+    inorder(root.right);
+}
+
 // Iterative function to insert a key into a BST
 function insertIterative(root: TreeNode | null, key: number): TreeNode | null {
 
@@ -149,6 +201,9 @@ function insertIterative(root: TreeNode | null, key: number): TreeNode | null {
     }
 
     // construct a node and assign it to the appropriate parent pointer
+    if (parent === null) {
+        return root;
+    }
     if (key < parent.val) {
         parent.left = new TreeNode(key);
     } else {

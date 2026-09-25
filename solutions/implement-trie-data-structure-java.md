@@ -118,13 +118,12 @@ class Trie {
 
         // do for each character of the key
         for (const c of key) {
-            // create a new node if the path doesn't exist
-            if (!curr.children.has(c)) {
-                curr.children.set(c, new Trie());
+            let child = curr.children.get(c);
+            if (child === undefined) {
+                child = new Trie();
+                curr.children.set(c, child);
             }
-
-            // go to the next node
-            curr = curr.children.get(c) as Trie;
+            curr = child;
         }
 
         // mark the current node as a leaf
@@ -140,13 +139,11 @@ class Trie {
 
         // do for each character of the key
         for (const c of key) {
-            // go to the next node
-            curr = curr.children.get(c) as Trie;
-
-            // if the string is invalid (reached end of a path in the Trie)
-            if (curr === null) {
+            const child = curr.children.get(c);
+            if (child === undefined) {
                 return false;
             }
+            curr = child;
         }
 
         // return true if the current node is a leaf node and the

@@ -11,7 +11,12 @@ The following code in TypeScript uses automatic storage to allocate nodes of the
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -45,7 +50,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -84,7 +94,12 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

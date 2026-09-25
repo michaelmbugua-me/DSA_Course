@@ -19,7 +19,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -73,7 +78,7 @@ function addDigit(head: ListNode | null, digit: number): ListNode | null {
 
     // traverse the reversed list
     let curr = head;
-    while (carry > 0) {
+    while (carry > 0 && curr !== null) {
 
         // get a sum of the current node and carry
         const total = curr.data + carry;
@@ -95,6 +100,9 @@ function addDigit(head: ListNode | null, digit: number): ListNode | null {
 
     // add a new node at the end of the linked list if there is any carry left
     if (carry > 0) {
+        if (curr === null) {
+            return head;
+        }
         curr.next = new ListNode(carry);
     }
 
@@ -103,7 +111,7 @@ function addDigit(head: ListNode | null, digit: number): ListNode | null {
     return head;
 }
 
-let head = new ListNode(9);
+const head = new ListNode(9);
 head.next = new ListNode(9);
 head.next.next = new ListNode(9);
 head.next.next.next = new ListNode(9);
@@ -112,8 +120,8 @@ head.next.next.next.next = new ListNode(3);
 const digit = 7;
 
 printList('Original linked list: ', head);
-head = addDigit(head, digit);
-printList('Resultant linked list: ', head);
+const result = addDigit(head, digit);
+printList('Resultant linked list: ', result);
 ```
 
 **Output:** Original linked list: 9 —> 9 —> 9 —> 9 —> 3 —> NULL Resultant linked list: 1 —> 0 —> 0 —> 0 —> 0 —> 0 —> NULL
@@ -125,7 +133,12 @@ This is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

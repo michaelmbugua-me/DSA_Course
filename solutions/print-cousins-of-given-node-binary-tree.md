@@ -17,7 +17,10 @@ The idea is to find the level of the given node in the binary tree by doing a [p
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to find the level of the given node `x`

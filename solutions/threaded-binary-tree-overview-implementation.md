@@ -30,7 +30,8 @@ class Node {
     // true if the right child of the node points to its inorder successor
     isThreaded = false;
 
-    constructor(public data: number) {}
+    data: number;
+    constructor(data: number) {}
 }
 
 // Utility function to return the leftmost node in a given binary tree

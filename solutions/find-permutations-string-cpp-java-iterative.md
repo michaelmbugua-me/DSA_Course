@@ -192,24 +192,24 @@ function permutations(s: string): void {
     // do for every character of the specified string
     for (let i = 1; i < s.length; i++) {
         // consider previously constructed partial permutation one by one
-        while (partial.length > 0) {
+        if (partial.length > 0) {
             // remove current partial permutation from the list
-            const str = partial.shift();
+            const current: string[] = partial.splice(0, partial.length);
 
             // Insert the next character of the specified string, i.e., s[i],
             // in all possible positions of current partial permutation.
             // Then insert each of these newly constructed strings into the list.
 
-            for (let k = 0; k <= str.length; k++) {
-                partial.push(str.slice(0, k) + s[i] + str.slice(k));
+            for (const str of current) {
+                for (let k = 0; k <= str.length; k++) {
+                    partial.push(str.slice(0, k) + s[i] + str.slice(k));
+                }
             }
         }
     }
 
     // The list now contains all permutations of the given string
-    for (const perm of partial) {
-        console.log(perm + ' ');
-    }
+    process.stdout.write(partial.join(' '));
 }
 
 const str = 'ABC';

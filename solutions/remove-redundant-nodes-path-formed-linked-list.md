@@ -19,7 +19,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public x: number, public y: number, public next: ListNode | null = null) {}
+    x: number;
+    y: number;
+    next: ListNode | null = null;
+    constructor(x: number, y: number, next: ListNode | null = null) {
+        this.x = x;
+        this.y = y;
+        this.next = next;
+    }
 
     toString(): string {
         return `(${this.x}, ${this.y})`;

@@ -132,6 +132,11 @@ This is demonstrated below, where we return the head node from the `push()` func
 class Node {
     public data: number;
     public next: Node | null;
+
+    constructor(data: number = 0) {
+        this.data = data;
+        this.next = null;
+    }
 }
 
 // Helper function to print a given linked list
@@ -193,6 +198,11 @@ We can construct a linked list by making the head reference global, but this app
 class Node {
     public data: number;
     public next: Node | null;
+
+    constructor(data: number = 0) {
+        this.data = data;
+        this.next = null;
+    }
 }
 
 // Helper function to print a given linked list

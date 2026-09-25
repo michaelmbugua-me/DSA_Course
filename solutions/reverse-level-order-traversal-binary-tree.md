@@ -18,7 +18,14 @@ The algorithm can be implemented as follows in TypeScript:
 
 ```ts
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print reverse level order traversal of a given binary tree
@@ -37,7 +44,10 @@ function reverseLevelOrderTraversal(root: TreeNode | null): void {
     while (queue.length) {
 
         // process each node in the queue and enqueue their children
-        const curr = queue.shift()!;
+        const curr = queue.shift();
+        if (curr === undefined) {
+            break;
+        }
 
         // push the current node into the stack
         stack.push(curr.key);
@@ -54,7 +64,11 @@ function reverseLevelOrderTraversal(root: TreeNode | null): void {
 
     // pop all nodes from the stack and print them
     while (stack.length) {
-        process.stdout.write(stack.pop() + ' ');
+        const value = stack.pop();
+        if (value === undefined) {
+            break;
+        }
+        process.stdout.write(value + ' ');
     }
 }
 
@@ -78,7 +92,14 @@ Following is a TypeScript implementation based on the above idea:
 
 ```ts
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Traverse the tree in a preorder fashion and store nodes in a map
@@ -90,10 +111,9 @@ function preorder(root: TreeNode | null, level: number, map: Map<number, number[
     }
 
     // insert the current node and its level into the map
-    if (!map.has(level)) {
-        map.set(level, []);
-    }
-    map.get(level)!.push(root.key);
+    const values = map.get(level) ?? [];
+    map.set(level, values);
+    values.push(root.key);
 
     // recur for the left and right subtree by increasing the level by 1
     preorder(root.left, level + 1, map);

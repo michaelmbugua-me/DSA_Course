@@ -15,7 +15,12 @@ The idea is to make the linked list circular and then break the chain before the
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -41,15 +46,20 @@ function rearrange(head: ListNode | null): ListNode | null {
     let ptr = head;
 
     // move to the second last node
-    while (ptr.next!.next) {
-        ptr = ptr.next!;
+    while (ptr.next !== null && ptr.next.next !== null) {
+        ptr = ptr.next;
+    }
+
+    const secondLast = ptr.next;
+    if (secondLast === null) {
+        return head;
     }
 
     // transform the list into a circular list
-    ptr.next!.next = head;
+    secondLast.next = head;
 
-    head = ptr.next;    // Fix head
-    ptr.next = null;    // break the chain
+    head = secondLast;    // Fix head
+    secondLast.next = null;    // break the chain
     return head;
 }
 
@@ -70,7 +80,12 @@ We can solve this problem recursively as well. Following is its simple recursive
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

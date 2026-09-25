@@ -19,7 +19,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: string, public next: ListNode | null = null) {}
+    val: string;
+    next: ListNode | null = null;
+    constructor(val: string, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Construct 's1' and 's2' out of the given linked list with consecutive
@@ -75,7 +80,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: string, public next: ListNode | null = null) {}
+    val: string;
+    next: ListNode | null = null;
+    constructor(val: string, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Recursive function to check if a given linked list of characters is a palindrome
@@ -92,16 +102,20 @@ function isPalindrome(left: ListNode | null, right: ListNode | null): [boolean, 
         return [false, left];
     }
 
+    if (left === null) {
+        return [false, null];
+    }
+
     // Copy the left child
     const prevLeft = left;
 
     // Advance the left child to the next node.
     // This change would reflect in the parent recursive calls.
-    left = (left as ListNode).next;
+    left = left.next;
 
     // For the linked list to be a palindrome, the character at the left
     // node should match with the character at the right node
-    return [prevLeft !== null && prevLeft.val === right.val, left];
+    return [prevLeft.val === right.val, left];
 }
 
 const head = new ListNode('A');

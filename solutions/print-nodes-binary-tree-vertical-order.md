@@ -21,13 +21,25 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // A Doubly Linked List Node
 class ListNode {
     data: number[] = [];
-    constructor(public prev: ListNode | null = null, public next: ListNode | null = null) {}
+    prev: ListNode | null = null;
+    next: ListNode | null = null;
+    constructor(prev: ListNode | null = null, next: ListNode | null = null) {
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Function to print the vertical order stored in a given doubly linked list
@@ -50,10 +62,10 @@ function printList(mid: ListNode | null): void {
 // vertical order of a given binary tree.
 // Each node of the doubly linked list will store nodes present at the corresponding
 // vertical line in a binary tree.
-function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode): void {
+function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode | null): void {
 
     // base case
-    if (root === null) {
+    if (root === null || curr === null) {
         return;
     }
 
@@ -75,8 +87,8 @@ function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode): void
     }
 
     // recur for the left and right subtree
-    updateDLLwithVerticalOrder(root.left, curr.prev!);
-    updateDLLwithVerticalOrder(root.right, curr.next!);
+    updateDLLwithVerticalOrder(root.left, curr.prev);
+    updateDLLwithVerticalOrder(root.right, curr.next);
 }
 
 // Function to print nodes of a given binary tree in vertical order
@@ -133,13 +145,25 @@ We can perform a [level order traversal](https://techiedelight.com/level-order-t
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // A Doubly Linked List Node
 class ListNode {
     data: number[] = [];
-    constructor(public prev: ListNode | null = null, public next: ListNode | null = null) {}
+    prev: ListNode | null = null;
+    next: ListNode | null = null;
+    constructor(prev: ListNode | null = null, next: ListNode | null = null) {
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Function to print the vertical order stored in a given doubly linked list
@@ -162,10 +186,10 @@ function printList(mid: ListNode | null): void {
 // vertical order of a given binary tree.
 // Each node of the doubly linked list will store nodes present at the corresponding
 // vertical line in a binary tree.
-function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode): void {
+function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode | null): void {
 
     // base case
-    if (root === null) {
+    if (root === null || curr === null) {
         return;
     }
 
@@ -178,7 +202,11 @@ function updateDLLwithVerticalOrder(root: TreeNode | null, curr: ListNode): void
     while (q.length > 0) {
 
         // dequeue front node
-        const [node, curr] = q.shift()!;
+        const entry = q.shift();
+        if (entry === undefined) {
+            break;
+        }
+        const [node, curr] = entry;
 
         // push the value of the current tree node into the corresponding list node
         curr.data.push(node.val);

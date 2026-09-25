@@ -19,7 +19,10 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to calculate the difference between the sum of all nodes present

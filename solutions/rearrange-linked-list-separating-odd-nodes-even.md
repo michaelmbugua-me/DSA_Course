@@ -17,7 +17,12 @@ The problem can be solved either iteratively or recursively. Following is the si
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -48,7 +53,7 @@ function rearrangeEvenOdd(head: Node | null): Node | null {
             if (odd === null) {
                 odd = oddTail = curr;
             }
-            else {
+            else if (oddTail !== null) {
                 oddTail.next = curr;
                 oddTail = oddTail.next;
             }
@@ -59,7 +64,7 @@ function rearrangeEvenOdd(head: Node | null): Node | null {
             if (even === null) {
                 even = evenTail = curr;
             }
-            else {
+            else if (evenTail !== null) {
                 evenTail.next = curr;
                 evenTail = curr;
             }
@@ -107,7 +112,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number = 0, public next: Node | null = null) {}
+    data: number = 0;
+    next: Node | null = null;
+    constructor(data: number = 0, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -168,7 +178,12 @@ This is one of those excellent problems where the recursive solution code is muc
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number = 0, public next: Node | null = null) {}
+    data: number = 0;
+    next: Node | null = null;
+    constructor(data: number = 0, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

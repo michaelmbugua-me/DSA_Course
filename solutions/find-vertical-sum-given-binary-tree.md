@@ -21,7 +21,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree and fill the dictionary.
@@ -73,12 +80,19 @@ const printVertical = (root: TreeNode | null): void => {
 */
 
 const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.right.left = new TreeNode(5);
-root.right.right = new TreeNode(6);
-root.right.left.left = new TreeNode(7);
-root.right.left.right = new TreeNode(8);
+const left = new TreeNode(2);
+const right = new TreeNode(3);
+const rightLeft = new TreeNode(5);
+const rightRight = new TreeNode(6);
+const rightLeftLeft = new TreeNode(7);
+const rightLeftRight = new TreeNode(8);
+
+root.left = left;
+root.right = right;
+right.left = rightLeft;
+right.right = rightRight;
+rightLeft.left = rightLeftLeft;
+rightLeft.right = rightLeftRight;
 
 printVertical(root);
 ```
@@ -100,12 +114,26 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // A Doubly Linked List Node
 class ListNode {
-    constructor(public data: number, public prev: ListNode | null, public next: ListNode | null) {}
+    data: number;
+    prev: ListNode | null;
+    next: ListNode | null;
+    constructor(data: number, prev: ListNode | null, next: ListNode | null) {
+        this.data = data;
+        this.prev = prev;
+        this.next = next;
+    }
 }
 
 // Function to print the vertical sum stored in a given doubly linked list
@@ -127,9 +155,9 @@ const printList = (mid: ListNode | null): void => {
 // the vertical sum of the given binary tree.
 // Each node of the doubly linked list will store the sum of tree nodes at
 // the corresponding vertical line in a binary tree.
-const updateDLLwithVerticalSum = (root: TreeNode | null, curr: ListNode): void => {
+const updateDLLwithVerticalSum = (root: TreeNode | null, curr: ListNode | null): void => {
     // base case
-    if (!root) {
+    if (!root || curr === null) {
         return;
     }
 
@@ -141,21 +169,23 @@ const updateDLLwithVerticalSum = (root: TreeNode | null, curr: ListNode): void =
     // through the root's left child, if not already.
     // This node would be the `prev` pointer of the current list node
 
-    if (root.left && curr.prev === null) {
-        curr.prev = new ListNode(0, null, curr);
+    if (root.left !== null) {
+        if (curr.prev === null) {
+            curr.prev = new ListNode(0, null, curr);
+        }
+        updateDLLwithVerticalSum(root.left, curr.prev);
     }
 
     // create a new linked list node corresponding to the vertical line passing
     // through the root's right child, if not already.
     // This node would be the next pointer of the current list node
 
-    if (root.right && curr.next === null) {
-        curr.next = new ListNode(0, curr, null);
+    if (root.right !== null) {
+        if (curr.next === null) {
+            curr.next = new ListNode(0, curr, null);
+        }
+        updateDLLwithVerticalSum(root.right, curr.next);
     }
-
-    // recur for the left and right subtree
-    updateDLLwithVerticalSum(root.left, curr.prev!);
-    updateDLLwithVerticalSum(root.right, curr.next);
 };
 
 // Function to find and print the vertical sum of a given binary tree
@@ -190,12 +220,19 @@ const printVerticalSum = (root: TreeNode | null): void => {
 */
 
 const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.right.left = new TreeNode(5);
-root.right.right = new TreeNode(6);
-root.right.left.left = new TreeNode(7);
-root.right.left.right = new TreeNode(8);
+const left = new TreeNode(2);
+const right = new TreeNode(3);
+const rightLeft = new TreeNode(5);
+const rightRight = new TreeNode(6);
+const rightLeftLeft = new TreeNode(7);
+const rightLeftRight = new TreeNode(8);
+
+root.left = left;
+root.right = right;
+right.left = rightLeft;
+right.right = rightRight;
+rightLeft.left = rightLeftLeft;
+rightLeft.right = rightLeftRight;
 
 printVerticalSum(root);
 ```

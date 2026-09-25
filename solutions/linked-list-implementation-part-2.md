@@ -17,7 +17,11 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+    }
 }
 
 // Helper function to print a given linked list
@@ -70,7 +74,11 @@ The following version is very similar to the above code but relies on `push()` t
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+    }
 }
 
 // Function to print a given linked list
@@ -145,7 +153,11 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+    }
 }
 
 // Helper function to print a given linked list

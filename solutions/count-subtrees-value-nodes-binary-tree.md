@@ -19,7 +19,10 @@ We can solve this problem in linear time. The idea is to traverse the tree in a 
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // The helper function to count all subtrees having the same value of nodes.

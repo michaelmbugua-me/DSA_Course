@@ -53,7 +53,10 @@ Following is a TypeScript implementation based on the above idea. This solution 
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to insert a specified key into the binary search tree

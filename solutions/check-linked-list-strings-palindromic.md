@@ -17,7 +17,12 @@ Now the problem reduces to just validating if both constructed strings are equal
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: string, public next: ListNode | null = null) {}
+    data: string;
+    next: ListNode | null = null;
+    constructor(data: string, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a linked list

@@ -21,7 +21,12 @@ This approach is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -94,14 +99,19 @@ printList('Second List: ', b.node);
 
 ## 2\. Using Local References
 
-This method uses a local reference to get rid of the dummy nodes entirely. Instead of using a dummy node, it maintains a `struct node**` pointer, `lastPtrRef`, which always points to the last pointer of the result list. This solves the same case that the dummy node did – dealing with the result list when it is empty. When trying to build up a list at its tail, either use the dummy node or the `struct node**` “reference” strategy. It uses [moveNode()](https://techiedelight.com/move-front-node-given-list-front-another-list/) function as a helper.
+This method uses a local reference to get rid of dummy nodes entirely. The `lastPtrRef` wrapper’s getter and setter target either the result head or a node’s `next` field, providing the same tail-link behavior as a dummy node. It uses the [moveNode()](https://techiedelight.com/move-front-node-given-list-front-another-list/) function as a helper.
 
 Following is a TypeScript implementation of the idea:
 
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -120,11 +130,17 @@ function push(headRef: { node: ListNode | null }, data: number): void {
     headRef.node = new ListNode(data, headRef.node);
 }
 
-// `NodePtrRef` emulates a C++ `Node**` using getter/setter closures
 type NodePtrRef = {
     get: () => ListNode | null;
     set: (node: ListNode | null) => void;
 };
+
+function toNodePtrRef(ref: { node: ListNode | null }): NodePtrRef {
+    return {
+        get: () => ref.node,
+        set: (node) => { ref.node = node; }
+    };
+}
 
 // Function takes the node from the front of the source and moves it
 // to the front of the destination
@@ -142,7 +158,7 @@ function moveNode(destRef: NodePtrRef, sourceRef: NodePtrRef): void {
 
 // Function to construct a linked list by merging alternate nodes of two
 // given linked lists using Local References and `moveNode()` as a helper
-function merge(a: { node: ListNode | null }, b: { node: ListNode | null }): void {
+function merge(a: NodePtrRef, b: NodePtrRef): void {
     let result: ListNode | null = null;
     let lastPtrRef: NodePtrRef = {
         get: () => result,
@@ -151,21 +167,20 @@ function merge(a: { node: ListNode | null }, b: { node: ListNode | null }): void
 
     while (true)
     {
-        if (a.node === null)
+        if (a.get() === null)
         {
-            lastPtrRef.set(null);       // Note
+            lastPtrRef.set(null);
             break;
         }
-        else if (b.node === null)
+        else if (b.get() === null)
         {
-            lastPtrRef.set(a.node);
+            lastPtrRef.set(a.get());
             break;
         }
         else
         {
             moveNode(lastPtrRef, a);
             const appended = lastPtrRef.get()!;
-            // lastPtrRef = &((*lastPtrRef).next)
             lastPtrRef = { get: () => appended.next, set: (node) => { appended.next = node; } };
 
             moveNode(lastPtrRef, b);
@@ -174,7 +189,7 @@ function merge(a: { node: ListNode | null }, b: { node: ListNode | null }): void
         }
     }
 
-    a.node = result;
+    a.set(result);
 }
 
 const a = { node: null as ListNode | null };
@@ -194,7 +209,7 @@ for (let i = 10; i >= 4; i--) {
 printList('First List - ', a.node);
 printList('Second List - ', b.node);
 
-merge(a, b);
+merge(toNodePtrRef(a), toNodePtrRef(b));
 
 console.log('\nAfter Merge:');
 
@@ -209,7 +224,12 @@ The recursive solution is the most compact of all but is probably not appropriat
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

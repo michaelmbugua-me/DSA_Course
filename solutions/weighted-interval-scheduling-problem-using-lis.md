@@ -31,7 +31,14 @@ Now the algorithm picks the one with the highest profit. In the above example, `
 ```ts
 // A class to store a Job
 class Job {
-    constructor(public start: number, public finish: number, public profit: number) {}
+    start: number;
+    finish: number;
+    profit: number;
+    constructor(start: number, finish: number, profit: number) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
 }
 
 // Function to find the maximum profit of non-overlapping jobs using LIS
@@ -90,7 +97,14 @@ The idea is similar to the above bottom-up approach using dynamic programming, b
 ```ts
 // A class to store a Job
 class Job {
-    constructor(public start: number, public finish: number, public profit: number) {}
+    start: number;
+    finish: number;
+    profit: number;
+    constructor(start: number, finish: number, profit: number) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
 }
 
 // Function to print the non-overlapping jobs involved in maximum profit

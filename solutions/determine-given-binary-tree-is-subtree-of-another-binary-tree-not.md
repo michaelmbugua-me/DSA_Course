@@ -21,7 +21,10 @@ Since `inorder(Y)` is a subset of `inorder(X)`, and `postorder(Y)` is a subset o
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to store inorder traversal on the tree in a list

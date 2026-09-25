@@ -22,9 +22,10 @@ We can solve both problems in linear time by traversing the tree in a bottom-up 
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Function to print the root-to-leaf path with a given sum in a binary tree

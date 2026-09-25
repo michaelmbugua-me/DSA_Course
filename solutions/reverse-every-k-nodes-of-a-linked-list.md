@@ -19,7 +19,13 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null;
+
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 
     // Helper function to print linked list starting from the current node
     print(): void {
@@ -52,7 +58,7 @@ function reverseInGroups(head: ListNode | null, k: number): ListNode | null {
         count = count + 1;
 
         // tricky: note the next node
-        const next = current.next;
+        const next: ListNode | null = current.next;
 
         // move the current node onto the result
         current.next = prev;
@@ -77,7 +83,9 @@ for (let i = 7; i >= 0; i--) {
 }
 
 head = reverseInGroups(head, 3);
-head.print();
+if (head !== null) {
+    head.print();
+}
 ```
 
 **Output:** 3 —> 2 —> 1 —> 6 —> 5 —> 4 —> 8 —> 7 —> NULL
@@ -91,7 +99,13 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null;
+
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -113,7 +127,7 @@ function reverseK(current: ListNode | null, k: number): [ListNode | null, ListNo
     // in front of the result list (like a push of the node)
     while (current && count++ < k) {
         // tricky: note the next node
-        const next = current.next;
+        const next: ListNode | null = current.next;
 
         // move the current node onto the result
         current.next = prev;

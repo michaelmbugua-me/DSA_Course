@@ -25,7 +25,12 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree
@@ -82,7 +87,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Iterative function to perform preorder traversal on the tree
@@ -149,7 +159,12 @@ The above solution can be further optimized by pushing only the right children t
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Iterative function to perform preorder traversal on the tree

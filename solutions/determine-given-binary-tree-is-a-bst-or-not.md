@@ -26,7 +26,14 @@ Following is the TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Recursive function to insert a key into a BST
@@ -90,8 +97,10 @@ for (const key of keys) {
 }
 
 // swap left and right nodes
-swap(root!);
-checkForBST(root);
+if (root !== null) {
+  swap(root);
+  checkForBST(root);
+}
 ```
 
 **Output:** The tree is not a BST!
@@ -107,7 +116,14 @@ Following is the TypeScript implementation of the idea:
 ```ts
 // A class to store a BST node
 class TreeNode {
-  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  data: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Recursive function to insert a key into a BST
@@ -179,8 +195,10 @@ for (const key of keys) {
 }
 
 // swap nodes
-swap(root!);
-checkForBST(root);
+if (root !== null) {
+  swap(root);
+  checkForBST(root);
+}
 ```
 
 **Output:** The tree is not a BST!

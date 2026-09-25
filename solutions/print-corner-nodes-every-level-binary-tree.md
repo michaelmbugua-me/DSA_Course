@@ -17,7 +17,10 @@ Following is the implementation in TypeScript based on the above idea:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
 }
 
 // Iterative function to print corner nodes of every level in a binary tree

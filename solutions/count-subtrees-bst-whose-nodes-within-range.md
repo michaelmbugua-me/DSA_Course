@@ -23,7 +23,10 @@ The algorithm can be implemented as follows in TypeScript, where a tuple is used
 ```ts
 // A class to store a BST node
 class Node {
-    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // Recursive function to insert a key into a BST

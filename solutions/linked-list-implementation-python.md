@@ -9,7 +9,12 @@ A Linked List node consists of a data field and a reference to the next node in 
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number = 0, public next: Node | null = null) {}
+    data: number = 0;
+    next: Node | null = null;
+    constructor(data: number = 0, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 ```
 
@@ -26,7 +31,12 @@ This is demonstrated below where the head node is updated in the caller.
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null) {}
+    data: number;
+    next: Node | null;
+    constructor(data: number, next: Node | null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -74,7 +84,12 @@ Here’s what the code would look like:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null) {}
+    data: number;
+    next: Node | null;
+    constructor(data: number, next: Node | null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -119,7 +134,12 @@ We can write the above code in a single line by passing the next node as an argu
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next_node: Node | null) {}
+    data: number;
+    next: Node | null;
+    constructor(data: number, next: Node | null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list

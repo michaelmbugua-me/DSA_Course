@@ -23,7 +23,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number, public left: Node | null = null, public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree and fill the map.
@@ -35,10 +42,12 @@ function printVertical(node: Node | null, dist: number, map: Map<number, number[
     }
 
     // insert nodes present at a current horizontal distance into the map
-    if (!map.has(dist)) {
-        map.set(dist, []);
+    const nodes = map.get(dist);
+    if (nodes === undefined) {
+        map.set(dist, [node.key]);
+    } else {
+        nodes.push(node.key);
     }
-    map.get(dist).push(node.key);
 
     // recur for the left subtree by decreasing horizontal distance by 1
     printVertical(node.left, dist - 1, map);
@@ -106,7 +115,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number, public left: Node | null = null, public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform vertical traversal on a given binary tree
@@ -129,14 +145,20 @@ function printVertical(root: Node | null): void {
     // loop till queue is empty
     while (q.length > 0) {
         // dequeue front node
-        const [node, dist] = q.shift();
+        const entry = q.shift();
+        if (entry === undefined) {
+            break;
+        }
+        const [node, dist] = entry;
 
         // insert front node value into the map using its horizontal distance
         // as the key
-        if (!map.has(dist)) {
-            map.set(dist, []);
+        const nodes = map.get(dist);
+        if (nodes === undefined) {
+            map.set(dist, [node.key]);
+        } else {
+            nodes.push(node.key);
         }
-        map.get(dist).push(node.key);
 
         // enqueue non-empty left and right child of the front node
         // with their corresponding horizontal distance

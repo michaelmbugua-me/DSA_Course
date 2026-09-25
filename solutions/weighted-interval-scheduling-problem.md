@@ -24,7 +24,14 @@ Finally, return the maximum profit we get by including or excluding the current 
 ```ts
 // A class to store a Job
 class Job {
-    constructor(public start: number, public finish: number, public profit: number) {}
+    start: number;
+    finish: number;
+    profit: number;
+    constructor(start: number, finish: number, profit: number) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
 }
 
 // Function to find the index of the last job which doesn't conflict with the given job.
@@ -93,7 +100,14 @@ The above solution has an [optimal substructure](https://techiedelight.com/intro
 ```ts
 // A class to store a Job
 class Job {
-    constructor(public start: number, public finish: number, public profit: number) {}
+    start: number;
+    finish: number;
+    profit: number;
+    constructor(start: number, finish: number, profit: number) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
 }
 
 // Function to find the index of the last job which doesn't conflict with the given job.
@@ -168,7 +182,14 @@ We can further optimize the above dynamic programming solution to run in O(n.log
 ```ts
 // A class to store a Job
 class Job {
-    constructor(public start: number, public finish: number, public profit: number) {}
+    start: number;
+    finish: number;
+    profit: number;
+    constructor(start: number, finish: number, profit: number) {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
 }
 
 // Function to perform a binary search on the given jobs, which are

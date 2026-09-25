@@ -16,7 +16,12 @@ Following is a TypeScript program that demonstrates it:
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Iterative function to return the k'th node from the end in a linked list
@@ -36,6 +41,9 @@ function getKthFromEnd(head: ListNode | null, k: number): ListNode | null {
         // return (n-k+1)'th node from the beginning
         curr = head;
         for (let i = 0; i < n - k; i++) {
+            if (curr === null) {
+                return null;
+            }
             curr = curr.next;
         }
     }
@@ -64,7 +72,12 @@ The algorithm can be implemented as follows in TypeScript:
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Iterative function to return the k'th node from the end in a linked list
@@ -83,6 +96,9 @@ function findKthNode(head: ListNode | null, k: number): ListNode | null {
 
     // move the `head` and `curr` parallelly till `curr` reaches the end of the list
     while (curr) {
+        if (head === null) {
+            return null;
+        }
         head = head.next;
         curr = curr.next;
     }
@@ -119,7 +135,12 @@ The recursive implementation can be seen below in TypeScript:
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Recursive function to return the k'th node from the end in a linked list

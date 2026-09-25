@@ -21,9 +21,14 @@ The algorithm can be implemented in a way that both these properties can be chec
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the total number of nodes in a binary tree
@@ -108,9 +113,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given binary tree is a min-heap or not
@@ -133,7 +143,10 @@ const isHeap = (root: TreeNode | null): boolean => {
     while (queue.length > 0) {
 
         // process front node in the queue
-        const curr = queue.shift()!;
+        const curr = queue.shift();
+        if (curr === undefined) {
+            break;
+        }
 
         // left child is non-empty
         if (curr.left !== null) {

@@ -123,7 +123,7 @@ function partition(nums: number[]): number {
 function rearrange(nums: number[]): void {
     // partition given array such that all positive elements move
     // to the end of the array
-    const p = partition(nums);
+    let p = partition(nums);
 
     // swap alternate negative elements from the next available positive
     // element till the end of the array is reached, or all negative or

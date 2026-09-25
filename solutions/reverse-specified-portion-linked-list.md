@@ -22,7 +22,9 @@ This can be effectively implemented as the following in TypeScript:
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {}
 }
 
 // Utility function to print a linked list

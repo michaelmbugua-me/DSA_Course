@@ -19,9 +19,14 @@ Following is the implementation in TypeScript based on the above idea:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print a given doubly linked list
@@ -131,9 +136,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to print a given doubly linked list
@@ -198,10 +208,10 @@ root.left.right = new TreeNode(5);
 root.right.left = new TreeNode(6);
 root.right.right = new TreeNode(7);
 
-root = convertBT(root);
+const convertedRoot = convertBT(root);
 
 // print the list
-printDLL(root);
+printDLL(convertedRoot);
 ```
 
 **Output:** 4 2 5 1 6 3 7
@@ -217,9 +227,14 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to print a given doubly linked list
@@ -302,10 +317,10 @@ root.left.right = new TreeNode(5);
 root.right.left = new TreeNode(6);
 root.right.right = new TreeNode(7);
 
-root = convertTree(root);
+const convertedRoot = convertTree(root);
 
 // print the list
-printDLL(root);
+printDLL(convertedRoot);
 ```
 
 **Output:** 4 2 5 1 6 3 7

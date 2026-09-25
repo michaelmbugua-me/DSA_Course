@@ -19,12 +19,26 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // A class to store a binary tree node along with its level and parent information
 class NodeInfo {
-  constructor(public node: TreeNode | null, public level: number, public parent: TreeNode | null) {}
+  node: TreeNode | null;
+  level: number;
+  parent: TreeNode | null;
+  constructor(node: TreeNode | null, level: number, parent: TreeNode | null) {
+    this.node = node;
+    this.level = level;
+    this.parent = parent;
+  }
 }
 
 // Perform inorder traversal on a given binary tree and update 'x' and 'y'

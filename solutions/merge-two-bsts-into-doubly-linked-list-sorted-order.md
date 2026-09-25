@@ -20,7 +20,10 @@ This is demonstrated below in TypeScript:
 // A class to store a BST node
 class Node {
     // Constructor
-    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // Helper function to print a doubly linked list

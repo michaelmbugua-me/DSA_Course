@@ -17,7 +17,12 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+    }
 }
 
 // Iterative function to print the left view of a given binary tree
@@ -86,7 +91,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+    }
 }
 
 // Recursive function to traverse the nodes in a preorder fashion
@@ -142,7 +152,12 @@ We can also traverse nodes in reverse preorder fashion, as shown below:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+    }
 }
 
 function leftView(root: TreeNode | null, level: number, d: Map<number, number>): void {

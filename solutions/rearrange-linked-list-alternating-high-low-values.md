@@ -19,7 +19,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -42,34 +47,35 @@ function rearrange(head: Node | null): Node | null {
         return null;
     }
 
-    let prev = head;
-    let curr = head.next;
+    let prev: Node | null = head;
+    let curr: Node | null = head.next;
 
     // start from the second node
     while (curr) {
 
         // if the previous node is greater than the current node, swap their values
-        if (prev.data > curr.data) {
+        if (prev !== null && prev.data > curr.data) {
             const temp = prev.data;
             prev.data = curr.data;
             curr.data = temp;
         }
 
         // if the next node is greater than the current node, swap their values
-        if (curr.next && curr.next.data > curr.data) {
-            const temp = curr.next.data;
-            curr.next.data = curr.data;
+        const next = curr.next;
+        if (next !== null && next.data > curr.data) {
+            const temp = next.data;
+            next.data = curr.data;
             curr.data = temp;
         }
 
         // update `prev` and `curr` node
-        prev = curr.next;
+        prev = next;
 
-        if (curr.next === null) {
+        if (next === null) {
             break;
         }
 
-        curr = curr.next.next;
+        curr = next.next;
     }
 
     return head;

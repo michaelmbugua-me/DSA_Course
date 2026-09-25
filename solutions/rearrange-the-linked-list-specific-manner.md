@@ -19,7 +19,9 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null = null;
+    constructor(val: number, next: ListNode | null = null) {}
 }
 
 // Helper function to print a given linked list

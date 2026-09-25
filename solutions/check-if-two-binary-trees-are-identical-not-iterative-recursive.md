@@ -17,7 +17,15 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to check if two given binary trees are identical or not
@@ -68,7 +76,15 @@ In an iterative version, we use the [stack data structure](https://techiedelight
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to check if two given binary trees are identical or not
@@ -96,7 +112,11 @@ const isIdentical = (x: TreeNode | null, y: TreeNode | null): boolean => {
     // loop till stack is empty
     while (stack.length > 0) {
         // pop the top pair from the stack and process it
-        const [x, y] = stack.pop();
+        const pair = stack.pop();
+        if (pair === undefined) {
+            break;
+        }
+        const [x, y] = pair;
 
         // if the value of their root node doesn't match, return false
         if (x.key !== y.key) {

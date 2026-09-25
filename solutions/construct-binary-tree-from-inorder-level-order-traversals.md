@@ -27,9 +27,10 @@ In the respective inorder sequence, the key which appears first in the level ord
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public data: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    data: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
 }
 
 // Recursive function to perform inorder traversal on a given binary tree

@@ -13,7 +13,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Recursive function to delete a given binary tree
@@ -61,7 +68,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+    this.left = left;
+    this.right = right;
+  }
 }
 
 // Iterative function to delete a given binary tree
@@ -75,13 +89,14 @@ function deleteBinaryTree(root: TreeNode | null): TreeNode | null {
   const queue: TreeNode[] = [];
   queue.push(root);
 
-  let front: TreeNode | null = null;
-
   // loop till queue is empty
   while (queue.length > 0) {
     // delete each node in the queue one by one after pushing their
     // non-empty left and right child to the queue
-    front = queue.shift()!;
+    const front = queue.shift();
+    if (front === undefined) {
+      break;
+    }
 
     if (front.left) {
       queue.push(front.left);

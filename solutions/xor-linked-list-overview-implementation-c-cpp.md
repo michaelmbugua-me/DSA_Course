@@ -54,7 +54,8 @@ class Node {
     id = ++Node.idCounter;   // unique numeric id, acting as the node "address"
     link = 0;                // XOR of the previous and next node ids
 
-    constructor(public data: number) {}
+    data: number;
+    constructor(data: number) {}
 }
 
 // Registry mapping node ids to nodes (stands in for C/C++ memory addresses)

@@ -15,9 +15,15 @@ The idea is to use the [queue data structure](https://techiedelight.com/queue-im
 The algorithm can be implemented as follows in TypeScript:
 
 ```ts
-# A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null, public child: Node | null = null) {}
+    data: number;
+    next: Node | null;
+    child: Node | null;
+    constructor(data: number, next: Node | null = null, child: Node | null = null) {
+        this.data = data;
+        this.next = next;
+        this.child = child;
+    }
 }
 
 // Function to convert a multilevel linked list into a singly linked list
@@ -30,7 +36,10 @@ function convertList(head: Node | null): Node | null {
         // last node is reached
         // dequeue the front node and set it as the next node of the current node
         if (curr.next === null && q.length > 0) {
-            curr.next = q.shift()!;
+            const next = q.shift();
+            if (next !== undefined) {
+                curr.next = next;
+            }
         }
 
         // if the current node has a child
@@ -53,7 +62,7 @@ function printList(head: Node | null): void {
         out += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(out + 'null');
+    console.log(out + 'NULL');
 }
 
 // Helper function to create a linked list with elements of a given input
@@ -65,15 +74,25 @@ function createHorizontalList(input: number[]): Node | null {
     return head;
 }
 
-// create a multilevel linked list
-const head = createHorizontalList([1, 2, 3, 4, 5]);
-head!.child = createHorizontalList([6, 7]);
-head!.next!.next!.child = createHorizontalList([8, 9]);
-head!.child!.next!.child = createHorizontalList([10, 11]);
-head!.child!.next!.child!.child = createHorizontalList([12]);
+function requireNode(node: Node | null): Node {
+    if (node === null) {
+        throw new Error('Expected a node');
+    }
+    return node;
+}
 
-convertList(head);
-printList(head);
+// create a multilevel linked list
+const root = requireNode(createHorizontalList([1, 2, 3, 4, 5]));
+root.child = createHorizontalList([6, 7]);
+requireNode(requireNode(root.next).next).child = createHorizontalList([8, 9]);
+const firstChild = requireNode(root.child);
+const secondChild = requireNode(firstChild.next);
+secondChild.child = createHorizontalList([10, 11]);
+const firstGrandchild = requireNode(secondChild.child);
+firstGrandchild.child = createHorizontalList([12]);
+
+convertList(root);
+printList(root);
 ```
 
 **Output:** 1 —> 2 —> 3 —> 4 —> 5 —> 6 —> 7 —> 8 —> 9 —> 10 —> 11 —> 12 —> NULL
@@ -87,7 +106,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null, public child: Node | null = null) {}
+    data: number;
+    next: Node | null;
+    child: Node | null;
+    constructor(data: number, next: Node | null = null, child: Node | null = null) {
+        this.data = data;
+        this.next = next;
+        this.child = child;
+    }
 }
 
 // Function to find the last node of a linked list
@@ -112,7 +138,10 @@ function convertList(head: Node | null): Node | null {
         // if the current node has a child
         if (curr.child) {
             // set the child node as the next node of the tail node
-            tail!.next = curr.child;
+            if (tail === null) {
+                return head;
+            }
+            tail.next = curr.child;
 
             // update the tail to the last node of the child node
             tail = findTail(curr.child);
@@ -133,7 +162,7 @@ function printList(head: Node | null): void {
         out += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(out + 'null');
+    console.log(out + 'nullptr');
 }
 
 // Function to create a linked list with elements of a given input
@@ -145,15 +174,25 @@ function createHorizontalList(input: number[]): Node | null {
     return head;
 }
 
-// create a multilevel linked list
-const head = createHorizontalList([1, 2, 3, 4, 5]);
-head!.child = createHorizontalList([6, 7]);
-head!.next!.next!.child = createHorizontalList([8, 9]);
-head!.child!.next!.child = createHorizontalList([10, 11]);
-head!.child!.next!.child!.child = createHorizontalList([12]);
+function requireNode(node: Node | null): Node {
+    if (node === null) {
+        throw new Error('Expected a node');
+    }
+    return node;
+}
 
-convertList(head);
-printList(head);
+// create a multilevel linked list
+const root = requireNode(createHorizontalList([1, 2, 3, 4, 5]));
+root.child = createHorizontalList([6, 7]);
+requireNode(requireNode(root.next).next).child = createHorizontalList([8, 9]);
+const firstChild = requireNode(root.child);
+const secondChild = requireNode(firstChild.next);
+secondChild.child = createHorizontalList([10, 11]);
+const firstGrandchild = requireNode(secondChild.child);
+firstGrandchild.child = createHorizontalList([12]);
+
+convertList(root);
+printList(root);
 ```
 
 **Output:** 1 —> 2 —> 3 —> 4 —> 5 —> 6 —> 7 —> 8 —> 9 —> 10 —> 11 —> 12 —> nullptr

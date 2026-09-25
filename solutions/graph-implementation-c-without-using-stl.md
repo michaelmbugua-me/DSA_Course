@@ -20,12 +20,22 @@ The adjacency list representation of graphs also allows additional data storage 
 // Data structure to store adjacency list nodes
 class Node
 {
-    constructor(public val: number, public next: Node | null = null) {}
+    val: number;
+    next: Node | null = null;
+    constructor(val: number, next: Node | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number) {}
+    src: number;
+    dest: number;
+    constructor(src: number, dest: number) {
+        this.src = src;
+        this.dest = dest;
+    }
 }
 
 class Graph
@@ -129,12 +139,26 @@ Following is the TypeScript implementation of a directed weighted graph. The imp
 // Data structure to store adjacency list nodes
 class Node
 {
-    constructor(public val: number, public cost: number, public next: Node | null = null) {}
+    val: number;
+    cost: number;
+    next: Node | null = null;
+    constructor(val: number, cost: number, next: Node | null = null) {
+        this.val = val;
+        this.cost = cost;
+        this.next = next;
+    }
 }
 
 // Data structure to store a graph edge
 class Edge {
-    constructor(public src: number, public dest: number, public weight: number) {}
+    src: number;
+    dest: number;
+    weight: number;
+    constructor(src: number, dest: number, weight: number) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
 }
 
 class Graph

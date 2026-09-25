@@ -16,7 +16,9 @@ Following is a TypeScript implementation of the idea:
 
 ```ts
 class Node {
-  constructor(public data: number, public next: Node | null = null) {}
+  data: number;
+  next: Node | null = null;
+  constructor(data: number, next: Node | null = null) {}
 }
 
 // Helper function to print a given linked list

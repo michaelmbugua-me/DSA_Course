@@ -16,7 +16,12 @@ Following is the TypeScript implementation of a digraph using an adjacency list:
 // A class to store a graph edge
 class Edge
 {
-    constructor(public src: number, public dest: number) {}
+    src: number;
+    dest: number;
+    constructor(src: number, dest: number) {
+        this.src = src;
+        this.dest = dest;
+    }
 }
 
 // A class to represent a graph object
@@ -98,13 +103,25 @@ Following is the TypeScript implementation of a weighted digraph using an adjace
 // A class to store a graph edge
 class Edge
 {
-    constructor(public src: number, public dest: number, public weight: number) {}
+    src: number;
+    dest: number;
+    weight: number;
+    constructor(src: number, dest: number, weight: number) {
+        this.src = src;
+        this.dest = dest;
+        this.weight = weight;
+    }
 }
 
 // A class to store adjacency list nodes
 class Node
 {
-    constructor(public value: number, public weight: number) {}
+    value: number;
+    weight: number;
+    constructor(value: number, weight: number) {
+        this.value = value;
+        this.weight = weight;
+    }
 
     toString(): string {
         return `${this.value} (${this.weight})`;

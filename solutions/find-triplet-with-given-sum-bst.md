@@ -15,7 +15,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to insert a given key at its correct position into the BST
@@ -128,7 +135,14 @@ We can avoid the extra space used for storing BST keys if we are allowed to modi
 ```ts
 // A class to store a BST node
 class TreeNode {
-    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to insert a given key at its correct position into the BST
@@ -216,24 +230,24 @@ const findTriplet = (root: TreeNode | null, target: number): [number, number, nu
         const pair_sum = target - head.data;
 
         // reduce the search space `[start, end]` at each iteration of the loop
-        while (start !== end) {
+        while (start !== null && end !== null && start !== end) {
             // get the sum of the current start and end nodes
-            const curr_sum = start!.data + end!.data;
+            const curr_sum = start.data + end.data;
 
             // if a pair with the desired sum is found in the BST
             if (curr_sum === pair_sum) {
                 // create a tuple from the triplet and return true
-                return [head.data, start!.data, end!.data];
+                return [head.data, start.data, end.data];
             }
 
             // if the current sum is more than the desired sum, move left in the list
             else if (curr_sum > pair_sum) {
-                end = end!.left;
+                end = end.left;
             }
 
             // if the current sum is less than the desired sum, move right in the list
             else {
-                start = start!.right;
+                start = start.right;
             }
         }
 

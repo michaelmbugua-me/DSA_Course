@@ -20,7 +20,7 @@ The algorithm can be implemented as follows in TypeScript:
 
 ```ts
 // Find a sorted triplet in a given array
-function findTriplet(A: number[]): [number, number, number] {
+function findTriplet(A: number[]): [number, number, number] | null {
 
     // size of the input array
     const n = A.length;
@@ -105,7 +105,7 @@ Following is the implementation in TypeScript based on the above idea:
 
 ```ts
 // Find a sorted triplet in a given array
-function findTriplet(A: number[]): [number, number, number] {
+function findTriplet(A: number[]): [number, number, number] | null {
 
     // size of the input array
     const n = A.length;
@@ -157,10 +157,11 @@ function findTriplet(A: number[]): [number, number, number] {
 const input = [5, 4, 3, 7, 6, 1, 9];
 
 // store the triplet
-const [first, second, third] = findTriplet(input);
+const triplet = findTriplet(input);
 
 // find triplet
-if (first !== undefined) {
+if (triplet !== null && triplet.length === 3) {
+    const [first, second, third] = triplet;
     console.log(`Triplet found: (${first}, ${second}, ${third})`);
 } else {
     console.log('Triplet not found');

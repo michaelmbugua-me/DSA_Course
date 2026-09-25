@@ -17,7 +17,12 @@ The idea is to perform a [level order traversal](https://techiedelight.com/level
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Function to print level order traversal of a perfect binary tree
@@ -161,7 +166,12 @@ The idea remains similar to the previous approach, except here we recursively tr
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Function to print level order traversal of a given binary tree
@@ -284,7 +294,12 @@ We can replace stack with queue by doing reverse inorder traversal in the `pushO
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+    }
 }
 
 // Function to print level order traversal of a given binary tree

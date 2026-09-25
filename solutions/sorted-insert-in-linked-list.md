@@ -19,7 +19,12 @@ The naive implementation can be seen below in TypeScript:
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -84,7 +89,12 @@ Another strategy is to use a temporary dummy node to take care of the first node
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -102,7 +112,7 @@ function printList(head: Node | null): void {
 // list sorted in increasing order
 function sortedInsert(head: Node | null, newNode: Node): Node {
 
-    const dummy = new Node();
+    const dummy = new Node(0);
     let current = dummy;
     dummy.next = head;
 
@@ -112,7 +122,11 @@ function sortedInsert(head: Node | null, newNode: Node): Node {
 
     newNode.next = current.next;
     current.next = newNode;
-    return dummy.next;
+    const result = dummy.next;
+    if (result === null) {
+        return newNode;
+    }
+    return result;
 }
 
 // input keys
@@ -143,7 +157,12 @@ Finally, we can use also use local references to insert a node into the list’s
 ```ts
 // A Linked List Node
 class Node {
-    constructor(public data: number, public next: Node | null = null) {}
+    data: number;
+    next: Node | null = null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -176,6 +195,9 @@ function sortedInsert(head: Node | null, newNode: Node): Node {
     }
     prev.next = newNode;
 
+    if (head === null) {
+        return newNode;
+    }
     return head;
 }
 

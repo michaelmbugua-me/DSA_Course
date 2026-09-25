@@ -50,12 +50,15 @@ function insert(head: Trie, str: string): void
         const idx = str.charCodeAt(i) - 'a'.charCodeAt(0);
 
         // create a new node if the path doesn't exist
-        if (curr.character[idx] == null) {
-            curr.character[idx] = new Trie();
+        const child = curr.character[idx];
+        if (child === null) {
+            const newNode = new Trie();
+            curr.character[idx] = newNode;
+            curr = newNode;
         }
-
-        // go to the next node
-        curr = curr.character[idx]!;
+        else {
+            curr = child;
+        }
     }
 
     // mark the current node as a leaf
@@ -77,12 +80,11 @@ function search(head: Trie | null, str: string): boolean
         const idx = str.charCodeAt(i) - 'a'.charCodeAt(0);
 
         // go to the next node
-        curr = curr.character[idx]!;
-
-        // if the string is invalid (reached end of a path in the Trie)
-        if (curr == null) {
+        const child = curr.character[idx];
+        if (child === null) {
             return false;
         }
+        curr = child;
     }
 
     // return true if the current node is a leaf and the
@@ -121,20 +123,16 @@ function deletion(curr: Trie | null, str: string): boolean
         // recur for the node corresponding to the next character in
         // the string and if it returns true, delete the current node
         // (if it is non-leaf)
-        if (curr.character[idx] != null &&
-            deletion(curr.character[idx]!, str.slice(1)) &&
-            curr.isLeaf === false)
+        const child = curr.character[idx];
+        if (child !== null && deletion(child, str.slice(1)))
         {
             // delete the child node removed by the recursion
             curr.character[idx] = null;
 
-            if (!hasChildren(curr))
+            if (!hasChildren(curr) && !curr.isLeaf)
             {
                 // delete the current node (the caller drops its reference)
                 return true;
-            }
-            else {
-                return false;
             }
         }
     }
@@ -163,44 +161,48 @@ function deletion(curr: Trie | null, str: string): boolean
 // Trie implementation in TypeScript – Insertion, Searching, and Deletion
 let head: Trie | null = new Trie();
 
+function printSearch(headNode: Trie | null, key: string): void {
+    console.log(headNode === null ? 0 : search(headNode, key) ? 1 : 0);
+}
+
 insert(head, "hello");
-console.log(head.search("hello"));            // print 1
+printSearch(head, "hello");            // print 1
 
 insert(head, "helloworld");
-console.log(head.search("helloworld"));       // print 1
+printSearch(head, "helloworld");       // print 1
 
-console.log(head.search("helll"));            // print 0 (Not present)
+printSearch(head, "helll");            // print 0 (Not present)
 
 insert(head, "hell");
-console.log(head.search("hell"));             // print 1
+printSearch(head, "hell");             // print 1
 
 insert(head, "h");
-console.log(head.search("h"));                // print 1
+printSearch(head, "h");                // print 1
 
 deletion(head, "hello");
-console.log(head?.search("hello"));           // print 0 (hello deleted)
-console.log(head?.search("helloworld"));      // print 1
-console.log(head?.search("hell"));            // print 1
+printSearch(head, "hello");            // print 0 (hello deleted)
+printSearch(head, "helloworld");       // print 1
+printSearch(head, "hell");             // print 1
 
 deletion(head, "h");
-console.log(head?.search("h"));               // print 0 (h deleted)
-console.log(head?.search("hell"));            // print 1
-console.log(head?.search("helloworld"));      // print 1
+printSearch(head, "h");                // print 0 (h deleted)
+printSearch(head, "hell");             // print 1
+printSearch(head, "helloworld");       // print 1
 
 deletion(head, "helloworld");
-console.log(head?.search("helloworld"));      // print 0
-console.log(head?.search("hell"));            // print 1
+printSearch(head, "helloworld");       // print 0
+printSearch(head, "hell");             // print 1
 
-if (deletion(head!, "hell")) {
-    head = null;                              // the Trie is now empty
+if (deletion(head, "hell")) {
+    head = null;                       // the Trie is now empty
 }
-console.log(head?.search("hell") ?? false);   // print 0
+printSearch(head, "hell");             // print 0
 
 if (head === null) {
-    console.log("Trie empty!!");              // Trie is empty now
+    console.log("Trie empty!!");       // Trie is empty now
 }
 
-console.log(head?.search("hell") ?? false);   // print 0
+printSearch(head, "hell");             // print 0
 ```
 
 **Output:** 1 1 0 1 1 0 1 1 0 1 1 0 1 0 Trie empty!! 0

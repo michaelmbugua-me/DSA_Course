@@ -43,6 +43,22 @@ There are several methods to construct a singly linked list. Each is covered in 
 A simple solution would be to allocate memory for all individual nodes of the linked list, set their data, and rearrange their pointers to build the complete list.
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
+function newNode(key: number): Node {
+    const node = new Node(key);
+    node.next = null;
+    return node;
+}
+
 // Function for linked list implementation containing three nodes
 function constructList(): Node {
     // construct three linked list nodes
@@ -84,6 +100,16 @@ function printList(head: Node | null): void {
 We can write the above code in a single line by passing the next node as an argument to the `newNode()` function:
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
 // Utility function to return a new linked list node
 function newNode(key: number, next: Node | null = null): Node {
     // allocate a new node and set its data
@@ -127,6 +153,16 @@ function printList(head: Node | null): void {
 Both above methods are not practical when the total number of nodes increases in the linked list. If the keys are given in any container, such as an array, list, or set, we can easily construct a linked list by traversing the container, as shown below:
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
 // Utility function to return a new linked list node
 function newNode(key: number, next: Node | null = null): Node {
     // allocate a new node and set its data
@@ -182,6 +218,16 @@ The standard solution adds a single node to the head end of any list. This funct
 We know that TypeScript passes objects by reference, but a reassignment of a parameter (such as `head = node`) is not visible to the caller. To emulate C++’s reference parameter, we can wrap the head in a small holder object whose contents the callee mutates.
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
 /*
     push() in TypeScript — we pass the head inside a small holder object,
     which is passed by reference. So, this code changes the caller's memory,
@@ -246,6 +292,16 @@ function printList(head: Node | null): void {
 We can construct a linked list by making the head pointer global, but this approach is not recommended since [global variables](https://en.wikipedia.org/wiki/Global_variable) are usually considered bad practice.
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
 // Global head pointer
 let head: Node | null = null;
 
@@ -300,6 +356,16 @@ function printList(): void {
 Another common approach many programmers follow is to return the head node from the `push()` function and update the head in the caller. This is demonstrated below:
 
 ```ts
+class Node {
+    key: number;
+    next: Node | null;
+
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
+}
+
 /*
     Takes a list and a data value, creates a new link with the given data
     and pushes it onto the list's front.

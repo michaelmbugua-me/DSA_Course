@@ -19,9 +19,14 @@ This is demonstrated below in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the maximum width of a binary tree using level order
@@ -58,6 +63,9 @@ function findMaxWidth(root: TreeNode | null): void {
         while (width > 0) {
             width--;
             const curr = queue.shift();
+            if (curr === undefined) {
+                break;
+            }
 
             if (curr.left) {
                 queue.push(curr.left);
@@ -96,9 +104,14 @@ Please note that we can also traverse the tree in an [inorder](https://techiedel
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Traverse the tree in a preorder fashion and store the count of nodes
@@ -123,7 +136,7 @@ function findMaxWidth(root: TreeNode | null): void {
 
     // base case
     if (!root) {
-        return 0;
+        return;
     }
 
     // create an empty map to store the count of nodes in each level

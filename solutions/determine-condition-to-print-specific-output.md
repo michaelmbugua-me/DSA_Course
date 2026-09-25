@@ -7,10 +7,11 @@
 What should be the if condition in the following code snippet so that output would be “HelloWorld”.
 
 ```ts
-if "condition"
+if (process.stdout.write("Hello"), 0) {
     console.log("Hello");
-else
+} else {
     console.log("World");
+}
 ```
 
 ## 1\. Using `printf()` function

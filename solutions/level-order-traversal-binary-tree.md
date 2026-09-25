@@ -15,7 +15,12 @@ A simple solution is to print all nodes of level 1 first, followed by level 2, u
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+  }
 }
 
 // Function to print all nodes of a given level from left to right
@@ -73,7 +78,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+  }
 }
 
 // Function to print level order traversal of a given binary tree
@@ -127,7 +137,12 @@ Following is the implementation of the above approach in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-  constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+  key: number;
+  left: TreeNode | null = null;
+  right: TreeNode | null = null;
+  constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.key = key;
+  }
 }
 
 // Traverse the tree in a preorder fashion and store nodes in a map

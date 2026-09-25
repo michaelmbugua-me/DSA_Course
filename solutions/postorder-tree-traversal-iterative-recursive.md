@@ -25,9 +25,16 @@ Following is the TypeScript program that demonstrates it:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number,
+                left: TreeNode | null = null,
+                right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform postorder traversal on the tree
@@ -84,9 +91,16 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // Data structure to store a binary tree node
 class TreeNode {
-    constructor(public data: number,
-                public left: TreeNode | null = null,
-                public right: TreeNode | null = null) {}
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(data: number,
+                left: TreeNode | null = null,
+                right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to perform postorder traversal on the tree
@@ -107,7 +121,10 @@ function postorderIterative(root: TreeNode | null): void {
     while (stack.length) {
 
         // pop a node from the stack and push the data into the output stack
-        const curr = stack.pop()!;
+        const curr = stack.pop();
+        if (curr === undefined) {
+            break;
+        }
         out.push(curr.data);
 
         // push the left and right child of the popped node into the stack

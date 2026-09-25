@@ -17,14 +17,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a heap node
 class Node {
-    // `value` stores the element
-    constructor(public value: number,
-
-    // `list_num` stores the list number of the element
-                public list_num: number,
-
-    // `index` stores the column number of the list from which element was taken
-                public index: number) {}
+    value: number;
+    listNum: number;
+    index: number;
+    constructor(value: number, listNum: number, index: number) {
+        this.value = value;
+        this.listNum = listNum;
+        this.index = index;
+    }
 }
 
 // Function to compute the minimum range that includes at least one element
@@ -32,7 +32,7 @@ class Node {
 function findMinimumRange(lists: number[][]): [number, number] {
 
     // invalid input
-    if (!lists || lists.length === 0) {
+    if (lists.length === 0) {
         return [-1, -1];
     }
 
@@ -49,11 +49,12 @@ function findMinimumRange(lists: number[][]): [number, number] {
     // push the first element of each list into the min-heap
     // along with the list number and their index in the list
     for (let i = 0; i < lists.length; i++) {
-        if (!lists[i]) {        // invalid input
+        const list = lists[i];
+        if (list.length === 0) {
             return [-1, -1];
         }
-        push(pq, new Node(lists[i][0], i, 0));
-        high = Math.max(high, lists[i][0]);
+        push(pq, new Node(list[0], i, 0));
+        high = Math.max(high, list[0]);
     }
 
     // run till the end of any list is reached
@@ -64,7 +65,7 @@ function findMinimumRange(lists: number[][]): [number, number] {
 
         // retrieve root node information from the min-heap
         const low = top.value;
-        const i = top.list_num;
+        const i = top.listNum;
         const j = top.index;
 
         // update `low` and `high` if a new minimum is found
@@ -89,16 +90,54 @@ function findMinimumRange(lists: number[][]): [number, number] {
 // insert a node into the min-heap and restore heap order
 function push(pq: Node[], node: Node): void {
     pq.push(node);
-    pq.sort((a, b) => a.value - b.value);
+    let index = pq.length - 1;
+
+    while (index > 0) {
+        const parent = Math.floor((index - 1) / 2);
+        if (pq[parent].value <= node.value) {
+            break;
+        }
+
+        pq[index] = pq[parent];
+        index = parent;
+    }
+
+    pq[index] = node;
 }
 
 // remove and return the root node of the min-heap
 function pop(pq: Node[]): Node {
-    return pq.shift();
+    const root = pq[0];
+    const last = pq.pop()!;
+
+    if (pq.length === 0) {
+        return root;
+    }
+
+    let index = 0;
+    while (true) {
+        const left = index * 2 + 1;
+        if (left >= pq.length) {
+            break;
+        }
+
+        const right = left + 1;
+        const child = right < pq.length && pq[right].value < pq[left].value ? right : left;
+        if (pq[child].value >= last.value) {
+            break;
+        }
+
+        pq[index] = pq[child];
+        index = child;
+    }
+
+    pq[index] = last;
+    return root;
 }
 
 const lists = [[3, 6, 8, 10, 15], [1, 5, 12], [4, 8, 15, 16], [2, 6]];
-console.log('The minimum range is', findMinimumRange(lists));
+const [low, high] = findMinimumRange(lists);
+console.log(`The minimum range is (${low}, ${high})`);
 ```
 
 **Output:** The minimum range is (4, 6)

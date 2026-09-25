@@ -24,8 +24,11 @@ Following is the implementation of a treap data structure in TypeScript demonstr
 // A Treap Node
 class TreapNode {
     // constructor
-    constructor(public data: number, public priority = randrange(100),
-                public left: TreapNode | null = null, public right: TreapNode | null = null) {}
+    data: number;
+    priority = randrange(100);
+    left: TreapNode | null = null;
+    right: TreapNode | null = null;
+    constructor(data: number, priority = randrange(100), left: TreapNode | null = null, right: TreapNode | null = null) {}
 }
 
 // Generates a pseudo-random integer in range [0, max)

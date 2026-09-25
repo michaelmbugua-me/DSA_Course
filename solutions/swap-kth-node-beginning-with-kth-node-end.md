@@ -19,7 +19,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null = null;
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -48,22 +53,27 @@ function swapNodes(head: ListNode | null, k: number): ListNode | null {
         curr = curr.next;
         i++;
     }
-    const x = curr;
-
     // If `k` is more than the total number of nodes, X and Y doesn't exist
     if (curr === null) {
         return null;
     }
+    const x = curr;
 
     // Find the k'th node from the end and store it in `y`.
     // Also, calculate the previous node of `y` and store it in `prev_y`.
     let ptr = head;
     while (curr.next) {
+        if (ptr === null) {
+            return null;
+        }
         prev_y = ptr;
         ptr = ptr.next;
         curr = curr.next;
     }
     const y = ptr;
+    if (y === null) {
+        return null;
+    }
 
     // Y is next to X (X —> Y)
     if (x.next === y) {
@@ -92,6 +102,9 @@ function swapNodes(head: ListNode | null, k: number): ListNode | null {
     else if (x === head) {
         head = y;
         y.next = x.next;
+        if (prev_y === null) {
+            return null;
+        }
         prev_y.next = x;
         x.next = null;
     }
@@ -100,12 +113,18 @@ function swapNodes(head: ListNode | null, k: number): ListNode | null {
     else if (y === head) {
         head = x;
         x.next = y.next;
+        if (prev_x === null) {
+            return null;
+        }
         prev_x.next = y;
         y.next = null;
     }
 
     // Otherwise
     else {
+        if (prev_x === null || prev_y === null) {
+            return null;
+        }
         ptr = y.next;
         y.next = x.next;
         x.next = ptr;

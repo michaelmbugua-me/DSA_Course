@@ -25,7 +25,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Utility function to print contents of a linked list
@@ -54,7 +59,13 @@ const push = (node: ListNode): void => {
 };
 const pop = (): ListNode => {
     const top = pq[0];
-    const last = pq.pop() as ListNode;
+    if (top === undefined) {
+        throw new Error('Heap is empty');
+    }
+    const last = pq.pop();
+    if (last === undefined) {
+        return top;
+    }
     if (pq.length) {
         pq[0] = last;
         let i = 0;
@@ -101,12 +112,12 @@ function mergeKLists(lists: (ListNode | null)[]): ListNode | null {
         const min = pop();
 
         // add the minimum node to the output list
-        if (head === null) {
+        if (head === null || last === null) {
             head = min;
             last = min;
         }
         else {
-            (last as ListNode).next = min;
+            last.next = min;
             last = min;
         }
 
@@ -126,18 +137,28 @@ const k = 3;
 // a list to store the head nodes of the linked lists
 const lists: (ListNode | null)[] = new Array(k).fill(null);
 
-lists[0] = new ListNode(1);
-lists[0]!.next = new ListNode(5);
-lists[0]!.next!.next = new ListNode(7);
+const list0 = new ListNode(1);
+const list0Next = new ListNode(5);
+const list0NextNext = new ListNode(7);
+list0.next = list0Next;
+list0Next.next = list0NextNext;
+lists[0] = list0;
 
-lists[1] = new ListNode(2);
-lists[1]!.next = new ListNode(3);
-lists[1]!.next!.next = new ListNode(6);
-lists[1]!.next!.next!.next = new ListNode(9);
+const list1 = new ListNode(2);
+const list1Next = new ListNode(3);
+const list1NextNext = new ListNode(6);
+const list1NextNextNext = new ListNode(9);
+list1.next = list1Next;
+list1Next.next = list1NextNext;
+list1NextNext.next = list1NextNextNext;
+lists[1] = list1;
 
-lists[2] = new ListNode(4);
-lists[2]!.next = new ListNode(8);
-lists[2]!.next!.next = new ListNode(10);
+const list2 = new ListNode(4);
+const list2Next = new ListNode(8);
+const list2NextNext = new ListNode(10);
+list2.next = list2Next;
+list2Next.next = list2NextNext;
+lists[2] = list2;
 
 // Merge all lists into one
 const head = mergeKLists(lists);
@@ -159,7 +180,12 @@ This is demonstrated below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Utility function to print contents of a linked list
@@ -238,18 +264,28 @@ const k = 3;
 // a list to store the head nodes of the linked lists
 const lists: (ListNode | null)[] = new Array(k).fill(null);
 
-lists[0] = new ListNode(1);
-lists[0]!.next = new ListNode(5);
-lists[0]!.next!.next = new ListNode(7);
+const list0 = new ListNode(1);
+const list0Next = new ListNode(5);
+const list0NextNext = new ListNode(7);
+list0.next = list0Next;
+list0Next.next = list0NextNext;
+lists[0] = list0;
 
-lists[1] = new ListNode(2);
-lists[1]!.next = new ListNode(3);
-lists[1]!.next!.next = new ListNode(6);
-lists[1]!.next!.next!.next = new ListNode(9);
+const list1 = new ListNode(2);
+const list1Next = new ListNode(3);
+const list1NextNext = new ListNode(6);
+const list1NextNextNext = new ListNode(9);
+list1.next = list1Next;
+list1Next.next = list1NextNext;
+list1NextNext.next = list1NextNextNext;
+lists[1] = list1;
 
-lists[2] = new ListNode(4);
-lists[2]!.next = new ListNode(8);
-lists[2]!.next!.next = new ListNode(10);
+const list2 = new ListNode(4);
+const list2Next = new ListNode(8);
+const list2NextNext = new ListNode(10);
+list2.next = list2Next;
+list2Next.next = list2NextNext;
+lists[2] = list2;
 
 // Merge all lists into one
 const head = mergeKLists(lists);

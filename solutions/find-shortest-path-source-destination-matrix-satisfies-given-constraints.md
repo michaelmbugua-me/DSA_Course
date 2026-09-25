@@ -37,7 +37,14 @@ The algorithm can be implemented as follows in TypeScript:
 class Node {
     // (x, y) represents coordinates of a cell in the matrix
     // maintain a parent node for the printing path
-    constructor(public x: number, public y: number, public parent: Node = null) {}
+    x: number;
+    y: number;
+    parent: Node | null = null;
+    constructor(x: number, y: number, parent: Node | null = null) {
+        this.x = x;
+        this.y = y;
+        this.parent = parent;
+    }
 
     toString(): string {
         return `(${this.x}, ${this.y})`;
@@ -54,7 +61,7 @@ function isValid(x: number, y: number, N: number): boolean {
 }
 
 // Utility function to find path from source to destination
-function getPath(node: Node, path: Node[]): void {
+function getPath(node: Node | null, path: Node[]): void {
     if (node) {
         getPath(node.parent, path);
         path.push(node);
@@ -63,7 +70,7 @@ function getPath(node: Node, path: Node[]): void {
 
 // Find the shortest route in a matrix from source cell (x, y) to
 // destination cell (N-1, N-1)
-function findPath(matrix: number[][], x = 0, y = 0): Node[] {
+function findPath(matrix: number[][], x = 0, y = 0): Node[] | null {
     // base case
     if (!matrix || matrix.length === 0) {
         return null;
@@ -88,6 +95,9 @@ function findPath(matrix: number[][], x = 0, y = 0): Node[] {
 
         // dequeue front node and process it
         const curr = q.shift();
+        if (curr === undefined) {
+            break;
+        }
         const i = curr.x;
         const j = curr.y;
 
@@ -196,7 +206,11 @@ function findPath(matrix: number[][], x = 0, y = 0, level = 0): number {
     while (q.length) {
 
         // dequeue front node and process it
-        const [i, j, currLevel] = q.shift();
+        const current = q.shift();
+        if (current === undefined) {
+            break;
+        }
+        const [i, j, currLevel] = current;
 
         // return if the destination is found
         if (i === N - 1 && j === N - 1) {

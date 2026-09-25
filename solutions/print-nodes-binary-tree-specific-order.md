@@ -25,7 +25,14 @@ Following is a TypeScript implementation based on the above idea:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print all nodes of a given binary tree in a specific
@@ -60,7 +67,10 @@ function printNodes(root: TreeNode | null): void {
         for (let k = 0; k < n; k++) {
 
             // dequeue front node from the first queue and print it
-            const x = q1.shift()!;
+            const x = q1.shift();
+            if (x === undefined) {
+                break;
+            }
 
             process.stdout.write(x.key + ' ');
 
@@ -74,7 +84,10 @@ function printNodes(root: TreeNode | null): void {
             }
 
             // dequeue front node from the second queue and print it
-            const y = q2.shift()!;
+            const y = q2.shift();
+            if (y === undefined) {
+                break;
+            }
 
             process.stdout.write(y.key + ' ');
 
@@ -124,7 +137,14 @@ Following is a TypeScript program that demonstrates it:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    key: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print all nodes of a given binary tree in
@@ -169,11 +189,13 @@ function printNodes(root: TreeNode | null): void {
         while (n > 0) {
 
             // dequeue front node from the first queue and insert it into the dictionary
-            const x = q1.shift()!;
-            if (!d.has(level)) {
-                d.set(level, []);
+            const x = q1.shift();
+            if (x === undefined) {
+                break;
             }
-            d.get(level)!.push(x.key);
+            const values = d.get(level) ?? [];
+            d.set(level, values);
+            values.push(x.key);
 
             // enqueue left and right child of `x` to the first queue
             if (x.left) {
@@ -185,10 +207,13 @@ function printNodes(root: TreeNode | null): void {
             }
 
             // dequeue front node from the second queue
-            const y = q2.shift()!;
+            const y = q2.shift();
+            if (y === undefined) {
+                break;
+            }
 
             // insert the dequeued node into the dictionary
-            d.get(level)!.push(y.key);
+            values.push(y.key);
 
             // enqueue right and left child of `y` to the second queue
             if (y.right) {

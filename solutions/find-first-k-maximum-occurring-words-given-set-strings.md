@@ -27,7 +27,12 @@ class Trie {
 
 // A class to store a heap node
 class Node {
-    constructor(public key: string, public count: number) {}
+    key: string;
+    count: number;
+    constructor(key: string, count: number) {
+        this.key = key;
+        this.count = count;
+    }
 }
 
 // Iterative function to insert a string into a Trie
@@ -37,13 +42,12 @@ function insert(head: Trie, s: string): void {
     let curr: Trie = head;
 
     for (const c of s) {
-        // create a new node if the path doesn't exist
-        if (!curr.character.has(c)) {
-            curr.character.set(c, new Trie());
+        let next = curr.character.get(c);
+        if (next === undefined) {
+            next = new Trie();
+            curr.character.set(c, next);
         }
-
-        // go to the next node
-        curr = curr.character.get(c) as Trie;
+        curr = next;
     }
 
     // store key and its count in leaf nodes
@@ -64,8 +68,8 @@ function preorder(curr: Trie | null, pq: Node[]): void {
 
         // if a leaf node is reached (leaf nodes have a non-zero count),
         // push the key with its frequency in max-heap
-        if (value.count) {
-            pq.push(new Node(value.key as string, value.count));
+        if (value.count && value.key !== null) {
+            pq.push(new Node(value.key, value.count));
         }
 
         // recur for current node's children
@@ -97,7 +101,10 @@ function findKFrequentWords(words: string[], k: number): void {
     while (k-- > 0 && pq.length) {
 
         // extract the maximum node from the max-heap
-        const max = pq.shift() as Node;
+        const max = pq.shift();
+        if (max === undefined) {
+            return;
+        }
 
         // print the maximum occurring element with its count
         console.log(`${max.key} occurs ${max.count} times`);

@@ -100,7 +100,12 @@ The following TypeScript solution stores both actual integers and their indices 
 ```ts
 // Data structure to store an element and its index in an array
 class Node {
-    constructor(public elem: number, public index: number) {}
+    elem: number;
+    index: number;
+    constructor(elem: number, index: number) {
+        this.elem = elem;
+        this.index = index;
+    }
 }
 
 // Function to print LIS using parent array
@@ -109,15 +114,15 @@ function print(input: number[], parent: Map<number, number>, s: Node[]): void {
     const lis: number[] = [];
 
     // start from the last element of `s`
-    let index = s[s.length - 1].index;
+    let index: number | undefined = s[s.length - 1].index;
 
     // get length of LIS
     let n = s.length;
 
     // retrieve LIS from parent array
-    while (n--) {
+    while (n-- > 0 && index !== undefined) {
         lis.push(input[index]);
-        index = parent.get(index) as number;
+        index = parent.get(index);
     }
 
     // print LIS
@@ -178,7 +183,9 @@ function printLIS(input: number[]): void {
 
         // get an iterator to the current node and update the parent
         it = lowerBound(s, curr.elem);
-        parent.set(i, s[it - 1].index);
+        if (it > 0) {
+            parent.set(i, s[it - 1].index);
+        }
     }
 
     // print LIS using parent map

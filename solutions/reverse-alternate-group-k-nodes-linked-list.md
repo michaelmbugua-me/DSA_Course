@@ -21,7 +21,12 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null = null;
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -92,8 +97,8 @@ function reverseAlternatingKNodes(head: ListNode | null, k: number): ListNode | 
         }
         // for subsequent calls to `reverse()`, link the reversed sublist
         // with the rest of the list
-        else {
-            (prev as ListNode).next = front;
+        else if (prev !== null) {
+            prev.next = front;
         }
 
         // link the last node with the current node
@@ -135,7 +140,12 @@ The recursive implementation can be seen below in TypeScript:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public val: number, public next: ListNode | null = null) {}
+    val: number;
+    next: ListNode | null = null;
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

@@ -75,7 +75,7 @@ function findMaximumSum(nums: number[], left = 0, right = nums.length - 1): numb
     }
 
     // Find the middle element in the list
-    const mid = (left + right) / 2;
+    const mid = Math.floor((left + right) / 2);
 
     // Find maximum sublist sum for the left sublist,
     // including the middle element
@@ -110,7 +110,7 @@ function findMaximumSum(nums: number[], left = 0, right = nums.length - 1): numb
 }
 
 const nums = [2, -4, 1, 9, -6, 7, -3];
-console.log(`The Maximum sum of the sublist is ${findMaximumSum(nums)}`);
+console.log(`The maximum sum of the subarray is ${findMaximumSum(nums)}`);
 ```
 
 **Output:** The maximum sum of the subarray is 11

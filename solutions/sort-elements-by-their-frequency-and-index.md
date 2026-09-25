@@ -19,7 +19,10 @@ The algorithm can be implemented as follows in TypeScript:
 
 ```ts
 class Data {
-    constructor(public value: number, public index: number, public count = 0) {}
+    value: number;
+    index: number;
+    count = 0;
+    constructor(value: number, index: number, count = 0) {}
 }
 
 // Custom sort by element's frequency and index

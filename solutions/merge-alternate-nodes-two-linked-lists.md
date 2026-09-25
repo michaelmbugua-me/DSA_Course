@@ -21,7 +21,12 @@ Following is a TypeScript implementation of the idea:
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -32,7 +37,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Function to construct a linked list by merging alternate nodes of
@@ -98,7 +103,12 @@ This method is logically the same as above, but it uses the [moveNode()](https:/
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -109,7 +119,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Helper function to insert a new node at the beginning of the linked list
@@ -186,14 +196,19 @@ printList('After Merge: ', head);
 
 ## 3\. Using Local References
 
-This solution is structurally very similar to the above, but avoids using a dummy node. Instead, it maintains a `struct node**` pointer, `lastPtrRef`, which always points to the last node of the result list. This solves the same case that the dummy node did – dealing with the result list when it is empty. When trying to build up a list at its tail, we can use either the dummy node or the `struct node**` “reference” strategy.
+This solution is structurally very similar to the above, but avoids using a dummy node. Instead, the `lastPtrRef` wrapper’s getter and setter target either the result head or a node’s `next` field, so the tail can be updated while the result is empty or nonempty.
 
 Following is a TypeScript implementation based on the above idea:
 
 ```ts
 // A Linked List Node
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -204,7 +219,7 @@ function printList(msg: string, head: ListNode | null): void {
         str += `${ptr.data} —> `;
         ptr = ptr.next;
     }
-    console.log(str + 'null');
+    console.log(str + 'NULL');
 }
 
 // Helper function to insert a new node at the beginning of the linked list
@@ -212,11 +227,17 @@ function push(headRef: { node: ListNode | null }, data: number): void {
     headRef.node = new ListNode(data, headRef.node);
 }
 
-// `NodePtrRef` emulates a C++ `Node**` using getter/setter closures
 type NodePtrRef = {
     get: () => ListNode | null;
     set: (node: ListNode | null) => void;
 };
+
+function toNodePtrRef(ref: { node: ListNode | null }): NodePtrRef {
+    return {
+        get: () => ref.node,
+        set: (node) => { ref.node = node; }
+    };
+}
 
 // Function takes the node from the front of the source and moves it
 // to the front of the destination
@@ -235,6 +256,8 @@ function moveNode(destRef: NodePtrRef, sourceRef: NodePtrRef): void {
 // Function to construct a linked list by merging alternate nodes of two
 // given linked lists using Local References and `moveNode()` as a helper
 function shuffleMerge(a: { node: ListNode | null }, b: { node: ListNode | null }): ListNode | null {
+    const aRef = toNodePtrRef(a);
+    const bRef = toNodePtrRef(b);
     let result: ListNode | null = null;
     let lastPtrRef: NodePtrRef = {
         get: () => result,
@@ -243,23 +266,22 @@ function shuffleMerge(a: { node: ListNode | null }, b: { node: ListNode | null }
 
     while (true)
     {
-        if (a.node === null)
+        if (aRef.get() === null)
         {
-            lastPtrRef.set(b.node);
+            lastPtrRef.set(bRef.get());
             break;
         }
-        else if (b.node === null)
+        else if (bRef.get() === null)
         {
-            lastPtrRef.set(a.node);
+            lastPtrRef.set(aRef.get());
             break;
         }
         else {
-            moveNode(lastPtrRef, a);
+            moveNode(lastPtrRef, aRef);
             const appended = lastPtrRef.get()!;
-            // lastPtrRef = &((*lastPtrRef).next)
             lastPtrRef = { get: () => appended.next, set: (node) => { appended.next = node; } };
 
-            moveNode(lastPtrRef, b);
+            moveNode(lastPtrRef, bRef);
             const appendedB = lastPtrRef.get()!;
             lastPtrRef = { get: () => appendedB.next, set: (node) => { appendedB.next = node; } };
         }

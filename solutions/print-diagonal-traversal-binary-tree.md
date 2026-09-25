@@ -19,7 +19,14 @@ The algorithm can be implemented as follows in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree and
@@ -32,10 +39,9 @@ function printDiagonal(node: TreeNode | null, diagonal: number, d: Map<number, n
     }
 
     // insert the current node into the current diagonal
-    if (!d.has(diagonal)) {
-        d.set(diagonal, []);
-    }
-    d.get(diagonal)!.push(node.val);
+    const values = d.get(diagonal) ?? [];
+    d.set(diagonal, values);
+    values.push(node.val);
 
     // recur for the left subtree by increasing diagonal by 1
     printDiagonal(node.left, diagonal + 1, d);
@@ -97,7 +103,14 @@ This approach is demonstrated below in TypeScript:
 ```ts
 // A class to store a binary tree node
 class TreeNode {
-    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+    val: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to print the diagonal elements of a given binary tree
@@ -122,7 +135,10 @@ function diagonalPrint(root: TreeNode | null): void {
     while (q.length !== 1) {
 
         // dequeue front node
-        const front = q.shift()!;
+        const front = q.shift();
+        if (front === undefined) {
+            break;
+        }
 
         if (front !== sentinel) {
             // print the current node

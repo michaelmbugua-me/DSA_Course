@@ -19,9 +19,14 @@ This approach is demonstrated below in TypeScript:
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to print a doubly linked list
@@ -103,7 +108,11 @@ function convert(root: Node | null): Node | null {
     const n = d.size;
     let head: Node | null = null;
     for (let i = n - 1; i >= 0; i--) {
-        for (const node of d.get(i)!) {
+        const levelNodes = d.get(i);
+        if (levelNodes === undefined) {
+            continue;
+        }
+        for (const node of levelNodes) {
             head = push(node, head);
         }
     }
@@ -122,12 +131,14 @@ function convert(root: Node | null): Node | null {
 */
 
 let root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.left!.right = new Node(5);
-root.right!.left = new Node(6);
-root.right!.right = new Node(7);
+const left = new Node(2);
+const right = new Node(3);
+root.left = left;
+root.right = right;
+left.left = new Node(4);
+left.right = new Node(5);
+right.left = new Node(6);
+right.right = new Node(7);
 
 convert(root);
 printDoublyLinkedList(root);
@@ -146,9 +157,14 @@ Now to convert the binary tree into a doubly-linked list, store all nodes that w
 ```ts
 // A class to store a binary tree node
 class Node {
-    constructor(public key: number,
-                public left: Node | null = null,
-                public right: Node | null = null) {}
+    key: number;
+    left: Node | null = null;
+    right: Node | null = null;
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to print a doubly linked list
@@ -214,18 +230,21 @@ function convert(root: Node | null): void {
             while (nodeCount > 0) {
                 // pop from the front when `flag` is true
                 const curr = deque.shift();
-
-                // push the left child into the back, followed by the right child
-                if (curr!.left !== null) {
-                    deque.push(curr!.left);
+                if (curr === undefined) {
+                    break;
                 }
 
-                if (curr!.right !== null) {
-                    deque.push(curr!.right);
+                // push the left child into the back, followed by the right child
+                if (curr.left !== null) {
+                    deque.push(curr.left);
+                }
+
+                if (curr.right !== null) {
+                    deque.push(curr.right);
                 }
 
                 // push the current node into the stack
-                s.push(curr!);
+                s.push(curr);
                 nodeCount--;
             }
         }
@@ -237,18 +256,21 @@ function convert(root: Node | null): void {
             while (nodeCount > 0) {
                 // pop from the back when `flag` is false
                 const curr = deque.pop();
-
-                // push the right child at the front, followed by the left child
-                if (curr!.right !== null) {
-                    deque.unshift(curr!.right);
+                if (curr === undefined) {
+                    break;
                 }
 
-                if (curr!.left !== null) {
-                    deque.unshift(curr!.left);
+                // push the right child at the front, followed by the left child
+                if (curr.right !== null) {
+                    deque.unshift(curr.right);
+                }
+
+                if (curr.left !== null) {
+                    deque.unshift(curr.left);
                 }
 
                 // push the current node into the stack
-                s.push(curr!);
+                s.push(curr);
                 nodeCount--;
             }
         }
@@ -260,7 +282,11 @@ function convert(root: Node | null): void {
     // Insert all nodes from the stack at the beginning of the doubly linked list
     let head: Node | null = null;
     while (s.length > 0) {
-        head = push(s.pop()!, head);
+        const node = s.pop();
+        if (node === undefined) {
+            break;
+        }
+        head = push(node, head);
     }
 }
 
@@ -275,12 +301,14 @@ function convert(root: Node | null): void {
 */
 
 let root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.left!.right = new Node(5);
-root.right!.left = new Node(6);
-root.right!.right = new Node(7);
+const left = new Node(2);
+const right = new Node(3);
+root.left = left;
+root.right = right;
+left.left = new Node(4);
+left.right = new Node(5);
+right.left = new Node(6);
+right.right = new Node(7);
 
 convert(root);
 printDoublyLinkedList(root);

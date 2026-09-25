@@ -18,7 +18,9 @@ This `previous-current-next` strategy can be implemented as follows in TypeScrip
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {}
 }
 
 // Helper function to print a given linked list
@@ -70,7 +72,9 @@ The implementation can be seen below in TypeScript:
 
 ```ts
 class ListNode {
-    constructor(public data: number, public next: ListNode | null = null) {}
+    data: number;
+    next: ListNode | null = null;
+    constructor(data: number, next: ListNode | null = null) {}
 }
 
 // Helper function to print a given linked list
