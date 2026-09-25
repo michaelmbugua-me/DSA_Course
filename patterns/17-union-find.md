@@ -15,31 +15,41 @@ Use cases: connected components, cycle detection in undirected graphs, Kruskal's
 - Merging entities that share a common attribute (people with same email, islands joining)
 - Undirected cycle detection without DFS recursion
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-class DSU:
-    def __init__(self, n):
-        self.parent = list(range(n))
-        self.rank = [0] * n
+```ts
+class DSU {
+    parent: number[];
+    rank: number[];
 
-    def find(self, x):
-        while self.parent[x] != x:
-            self.parent[x] = self.parent[self.parent[x]]  # path halving
-            x = self.parent[x]
-        return x
+    constructor(n: number) {
+        this.parent = Array.from({ length: n }, (_, i) => i);
+        this.rank = new Array(n).fill(0);
+    }
 
-    def union(self, x, y):
-        rx, ry = self.find(x), self.find(y)
-        if rx == ry:
-            return False               # already connected (cycle!)
-        if self.rank[rx] < self.rank[ry]:
-            rx, ry = ry, rx
-        self.parent[ry] = rx
-        if self.rank[rx] == self.rank[ry]:
-            self.rank[rx] += 1
-        return True
-```
+    find(x: number): number {
+        while (this.parent[x] !== x) {
+            this.parent[x] = this.parent[this.parent[x]]; // path halving
+            x = this.parent[x];
+        }
+        return x;
+    }
+
+    union(x: number, y: number): boolean {
+        let rx = this.find(x), ry = this.find(y);
+        if (rx === ry) {
+            return false;              // already connected (cycle!)
+        }
+        if (this.rank[rx] < this.rank[ry]) {
+            [rx, ry] = [ry, rx];
+        }
+        this.parent[ry] = rx;
+        if (this.rank[rx] === this.rank[ry]) {
+            this.rank[rx] += 1;
+        }
+        return true;
+    }
+}
 
 ## Complexity
 

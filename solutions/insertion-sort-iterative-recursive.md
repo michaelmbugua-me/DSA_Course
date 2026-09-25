@@ -1,4 +1,4 @@
-# Insertion Sort Algorithm – Iterative & Recursive | C, Java, Python
+# Insertion Sort Algorithm – Iterative & Recursive
 
 > Source: https://www.techiedelight.com/insertion-sort-iterative-recursive/
 
@@ -20,271 +20,79 @@ The idea is to divide the array into two subsets – sorted subset and unsorted 
 
 ## Insertion Sort Implementation
 
-Following is an iterative implementation of the insertion sort algorithm in C, Java, and Python:
+Following is an iterative implementation of the insertion sort algorithm in TypeScript:
 
-```c
-#include <stdio.h>
+```ts
+// Function to perform insertion sort on an array
+function insertionSort(A: number[]): void {
 
-// Function to perform insertion sort on `arr[]`
-void insertionSort(int arr[], int n)
-{
-    // start from the second element (the element at index 0
-    // is already sorted)
-    for (int i = 1; i < n; i++)
-    {
-        int value = arr[i];
-        int j = i;
+    // Start from the second element
+    // (the element at index 0 is already sorted)
+    for (let i = 1; i < A.length; i++) {
 
-        // find index `j` within the sorted subset `arr[0…i-1]`
-        // where element `arr[i]` belongs
-        while (j > 0 && arr[j - 1] > value)
-        {
-            arr[j] = arr[j - 1];
-            j--;
+        const value = A[i];
+        let j = i;
+
+        // find index `j` within the sorted subset `A[0…i-1]`
+        // where element `A[i]` belongs
+        while (j > 0 && A[j - 1] > value) {
+            A[j] = A[j - 1];
+            j = j - 1;
         }
 
-        // note that the subarray `arr[j…i-1]` is shifted to
-        // the right by one position, i.e., `arr[j+1…i]`
+        // Note that sublist `A[j…i-1]`is shifted to
+        // the right by one position, i.e., `A[j+1…i]`
 
-        arr[j] = value;
+        A[j] = value;
     }
 }
 
-// Function to print `n` elements of array `arr`
-void printArray(int arr[], int n)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-}
+const A = [3, 8, 5, 4, 1, 9, -2];
 
-int main(void)
-{
-    int arr[] = { 3, 8, 5, 4, 1, 9, -2 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+insertionSort(A);
 
-    insertionSort(arr, n);
-
-    // print the sorted array
-    printArray(arr, n);
-
-    return 0;
-}
+// print the sorted list
+console.log(A);
 ```
 
 **Output:** -2 1 3 4 5 8 9
 
-##
+We can implement the insertion sort algorithm recursively. Following is the recursive implementation of the insertion sort algorithm in TypeScript:
 
-```java
-import java.util.Arrays;
+```ts
+// Recursive function to perform insertion sort on sublist `A[i…n]`
+function insertionSort(A: number[], i: number, n: number): void {
 
-class Main
-{
-    // Function to perform insertion sort on `arr[]`
-    public static void insertionSort(int[] arr)
-    {
-        // Start from the second element
-        // (the element at index 0 is already sorted)
-        for (int i = 1; i < arr.length; i++)
-        {
-            int value = arr[i];
-            int j = i;
+    const value = A[i];
+    let j = i;
 
-            // find index `j` within the sorted subset `arr[0…i-1]`
-            // where element `arr[i]` belongs
-            while (j > 0 && arr[j - 1] > value)
-            {
-                arr[j] = arr[j - 1];
-                j--;
-            }
-
-            // note that the subarray `arr[j…i-1]` is shifted to
-            // the right by one position, i.e., `arr[j+1…i]`
-
-            arr[j] = value;
-        }
+    // find index `j` within the sorted subset `A[0…i-1]`
+    // where element `A[i]` belongs
+    while (j > 0 && A[j - 1] > value) {
+        A[j] = A[j - 1];
+        j = j - 1;
     }
 
-    public static void main(String[] args)
-    {
-        int[] arr = { 3, 8, 5, 4, 1, 9, -2 };
+    A[j] = value;
 
-        insertionSort(arr);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Function to perform insertion sort on a list
-def insertionSort(A):
-
-    # Start from the second element
-    # (the element at index 0 is already sorted)
-    for i in range(1, len(A)):
-
-        value = A[i]
-        j = i
-
-        # find index `j` within the sorted subset `A[0…i-1]`
-        # where element `A[i]` belongs
-        while j > 0 and A[j - 1] > value:
-            A[j] = A[j - 1]
-            j = j - 1
-
-        # Note that sublist `A[j…i-1]`is shifted to
-        # the right by one position, i.e., `A[j+1…i]`
-
-        A[j] = value
-
-if __name__ == '__main__':
-
-    A = [3, 8, 5, 4, 1, 9, -2]
-
-    insertionSort(A)
-
-    # print the sorted list
-    print(A)
-```
-
-We can implement the insertion sort algorithm recursively. Following is the recursive implementation of the insertion sort algorithm in C, Java, and Python:
-
-```c
-#include <stdio.h>
-
-// Recursive function to perform insertion sort on subarray `arr[i…n]`
-void insertionSort(int arr[], int i, int n)
-{
-    int value = arr[i];
-    int j = i;
-
-    // find index `j` within the sorted subset `arr[0…i-1]`
-    // where element `arr[i]` belongs
-    while (j > 0 && arr[j - 1] > value)
-    {
-        arr[j] = arr[j - 1];
-        j--;
-    }
-
-    arr[j] = value;
-
-    // note that the subarray `arr[j…i-1]` is shifted to
-    // the right by one position, i.e., `arr[j+1…i]`
+    // Note that sublist `A[j…i-1]`is shifted to
+    // the right by one position, i.e., `A[j+1…i]`
 
     if (i + 1 <= n) {
-        insertionSort(arr, i + 1, n);
+        insertionSort(A, i + 1, n);
     }
 }
 
-// Function to print `n` elements of array `arr`
-void printArray(int arr[], int n)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-}
+const A = [3, 8, 5, 4, 1, 9, -2];
 
-int main(void)
-{
-    int arr[] = { 3, 8, 5, 4, 1, 9, -2 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+// start from the second element (the element at index 0 is already sorted)
+insertionSort(A, 1, A.length - 1);
 
-    // start from the second element (the element at index 0
-    // is already sorted)
-    insertionSort(arr, 1, n - 1);
-
-    // print the sorted array
-    printArray(arr, n);
-
-    return 0;
-}
+// print the sorted list
+console.log(A);
 ```
 
 **Output:** -2 1 3 4 5 8 9
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Recursive function to perform insertion sort on subarray `arr[i…n]`
-    public static void insertionSort(int[] arr, int i, int n)
-    {
-        int value = arr[i];
-        int j = i;
-
-        // find index `j` within the sorted subset `arr[0…i-1]`
-        // where element `arr[i]` belongs
-        while (j > 0 && arr[j - 1] > value)
-        {
-            arr[j] = arr[j - 1];
-            j--;
-        }
-
-        arr[j] = value;
-
-        // note that the subarray `arr[j…i-1]` is shifted to
-        // the right by one position, i.e., `arr[j+1…i]`
-
-        if (i + 1 <= n) {
-            insertionSort(arr, i + 1, n);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 3, 8, 5, 4, 1, 9, -2 };
-
-        // start from the second element (the element at index 0
-        // is already sorted)
-        insertionSort(arr, 1, arr.length - 1);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to perform insertion sort on sublist `A[i…n]`
-def insertionSort(A, i, n):
-
-    value = A[i]
-    j = i
-
-    # find index `j` within the sorted subset `A[0…i-1]`
-    # where element `A[i]` belongs
-    while j > 0 and A[j - 1] > value:
-        A[j] = A[j - 1]
-        j = j - 1
-
-    A[j] = value
-
-    # Note that sublist `A[j…i-1]`is shifted to
-    # the right by one position, i.e., `A[j+1…i]`
-
-    if i + 1 <= n:
-        insertionSort(A, i + 1, n)
-
-if __name__ == '__main__':
-
-    A = [3, 8, 5, 4, 1, 9, -2]
-
-    # start from the second element (the element at index 0 is already sorted)
-    insertionSort(A, 1, len(A) - 1)
-
-    # print the sorted list
-    print(A)
-```
 
 ## Insertion Sort Performance
 

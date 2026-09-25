@@ -15,17 +15,26 @@ Why it beats Two Pointers: on a **singly linked list you can't move backwards**,
 - "Find the start of the cycle" — reset one pointer to head, move both at 1x; they meet at the cycle entry (needs the distance proof)
 - Also works on sequences of numbers, e.g. happy numbers / arrays as implicit lists (i → nums[i])
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def has_cycle(head):
-    slow = fast = head
-    while fast and fast.next:
-        slow = slow.next          # 1x
-        fast = fast.next.next     # 2x
-        if slow is fast:
-            return True           # or: find cycle start / middle
-    return False
+```ts
+interface ListNode {
+  val: number;
+  next: ListNode | null;
+}
+
+function hasCycle(head: ListNode | null): boolean {
+  let slow = head;
+  let fast = head;
+  while (fast !== null && fast.next !== null) {
+    slow = slow!.next;          // 1x
+    fast = fast.next.next;      // 2x
+    if (slow === fast) {
+      return true;              // or: find cycle start / middle
+    }
+  }
+  return false;
+}
 ```
 
 ## Complexity

@@ -10,113 +10,36 @@ For example,
 
 > 
 
-We can solve this problem in linear time by using the [partitioning logic of Quicksort](https://techiedelight.com/quicksort/). The idea is to use 0 as a pivot element and make one pass of the partition process. The resultant array will satisfy the given constraints. Following is the C++, Java, and Python program that demonstrates it:
+We can solve this problem in linear time by using the [partitioning logic of Quicksort](https://techiedelight.com/quicksort/). The idea is to use 0 as a pivot element and make one pass of the partition process. The resultant array will satisfy the given constraints. Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-using namespace std;
+```ts
+function swap(a: number[], i: number, j: number): void {
 
-void partition(int a[], int n)
-{
-    int pIndex = 0;
+    const temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+}
+
+function partition(a: number[]): void {
+
+    let pIndex = 0;
 
     // each time we find a negative number, `pIndex` is incremented,
     // and that element would be placed before the pivot
-    for (int i = 0; i < n; i++)
-    {
-        if (a[i] < 0)    // pivot is 0
-        {
-            swap(a[i], a[pIndex]);
-            pIndex++;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] < 0) {     // pivot is 0
+            swap(a, i, pIndex);
+            pIndex = pIndex + 1;
         }
     }
 }
 
-int main()
-{
-    int a[] = { 9, -3, 5, -2, -8, -6, 1, 3 };
-    int n = sizeof(a)/sizeof(a[0]);
-
-    partition(a, n);
-
-    // print the rearranged array
-    for (int i = 0; i < n; i++) {
-        cout << a[i] << " ";
-    }
-
-    return 0;
-}
+const a = [9, -3, 5, -2, -8, -6, 1, 3];
+partition(a);
+console.log(a);
 ```
 
 **Output:** -3 -2 -8 -6 5 9 1 3
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    public static void partition(int[] a)
-    {
-        int pIndex = 0;
-
-        // each time we find a negative number, `pIndex` is incremented,
-        // and that element would be placed before the pivot
-        for (int i = 0; i < a.length; i++)
-        {
-            if (a[i] < 0)    // pivot is 0
-            {
-                swap(a, i, pIndex);
-                pIndex++;
-            }
-        }
-    }
-
-    private static void swap(int[] a, int i, int j)
-    {
-        int temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] a = { 9, -3, 5, -2, -8, -6, 1, 3 };
-
-        partition(a);
-        System.out.println(Arrays.toString(a));
-    }
-}
-```
-
-##
-
-```python3
-def swap(a, i, j):
-
-    temp = a[i]
-    a[i] = a[j]
-    a[j] = temp
-
-def partition(a):
-
-    pIndex = 0
-
-    # each time we find a negative number, `pIndex` is incremented,
-    # and that element would be placed before the pivot
-    for i in range(len(a)):
-        if a[i] < 0:        # pivot is 0
-            swap(a, i, pIndex)
-            pIndex = pIndex + 1
-
-if __name__ == '__main__':
-
-    a = [9, -3, 5, -2, -8, -6, 1, 3]
-    partition(a)
-    print(a)
-```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.
 

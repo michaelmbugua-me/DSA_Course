@@ -14,167 +14,55 @@ For example,
 
 We know that the left and right half of a palindrome contains the same set of characters in reverse order, and optionally a middle character, which can be anything. The idea is to find all even occurring characters and construct the left half of the palindrome using half their count. Their ordering doesn’t matter as shuffling is permitted. Then we can easily build the right half from the left half by reversing it. All odd occurring characters are ignored except the one, which forms the resultant palindromic string’s middle character.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Construct the longest palindrome by shuffling or deleting
 // characters from a given string
-string longestPalindrome(string str)
-{
-    // create a frequency map for characters of a given string
-    unordered_map<char, int> freq;
-    for (char ch: str) {
-        freq[ch]++;
+function longestPalindrome(s: string): string {
+
+    // base case
+    if (!s) {
+        return '';
     }
 
-    string mid_char;              // stores odd character
-    string left;                // stores left substring
+    // create a dictionary for characters of a given string
+    const freq: Record<string, number> = {};
 
-    // iterate through the frequency map
-    for (auto &p: freq)
-    {
-        char ch = p.first;      // get current character
-        int count = p.second;   // get character frequency
+    for (const ch of s) {
+        freq[ch] = (freq[ch] || 0) + 1;
+    }
+
+    let left = '';              // stores left substring
+    let mid = '';               // stores odd character
+
+    // iterate through the frequency dictionary
+    for (const [ch, count] of Object.entries(freq)) {
 
         // if the current character's frequency is odd,
-        // update mid to current char (and discard the old one)
-        if (count & 1) {
-            mid_char = ch;
+        // update mid to current (and discard the old one)
+        if (count % 2 === 1) {
+            mid = ch;            // stores odd character
         }
 
         // append half of the characters to the left substring
         // (the other half goes to the right substring in reverse order)
-        left.append(count/2, ch);
+        left += ch.repeat(Math.floor(count / 2));
     }
 
     // the right substring will be the reverse of the left substring
-    string right(left.rbegin(), left.rend());
+    const right = left.split('').reverse().join('');
 
-    // return string formed by the left substring, mid-character (if any),
+    // return formed by the left substring, mid-character (if any),
     // and the right substring
-    return (left + mid_char + right);
+    return left + mid + right;
 }
 
-int main()
-{
-    string str = "ABBDAB";
-
-    cout << "The longest palindrome is " << longestPalindrome(str);
-
-    return 0;
-}
+const s = 'ABBDAB';
+console.log(`The longest palindrome is ${longestPalindrome(s)}`);
 ```
 
 **Output:** The longest palindrome is BABAB
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Construct the longest palindrome by shuffling or deleting
-    // characters from a given string
-    public static String longestPalindrome(String str)
-    {
-        // base case
-        if (str == null || str.length() == 0) {
-            return str;
-        }
-
-        // create a frequency map for characters of a given string
-        Map<Character, Integer> freq = new HashMap<>();
-        for (char ch: str.toCharArray()) {
-            freq.put(ch, freq.getOrDefault(ch, 0) + 1);
-        }
-
-        String mid_char = "";                  // stores odd character
-        StringBuilder left = new StringBuilder();   // stores left substring
-
-        // iterate through the frequency map
-        for (var entry: freq.entrySet())
-        {
-            char ch = entry.getKey();               // get current character
-            int count = entry.getValue();           // get character frequency
-
-            // if the current character's frequency is odd,
-            // update mid to current char (and discard the old one)
-            if (count % 2 == 1) {
-                mid_char = String.valueOf(ch);
-            }
-
-            // append half of the characters to the left substring
-            // (the other half goes to the right substring in reverse order)
-            left.append(String.valueOf(ch).repeat(count / 2));
-        }
-
-        // the right substring will be the reverse of the left substring
-        StringBuilder right = new StringBuilder(left).reverse();
-
-        // return string formed by the left substring, mid-character (if any),
-        // and the right substring
-        return ("" + left + mid_char + right);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "ABBDAB";
-        System.out.print("The longest palindrome is " + longestPalindrome(str));
-    }
-}
-```
-
-##
-
-```python3
-# Construct the longest palindrome by shuffling or deleting
-# characters from a given string
-def longestPalindrome(s):
-
-    # base case
-    if not s:
-        return ''
-
-    # create a dictionary for characters of a given string
-    freq = {}
-
-    for ch in s:
-        freq[ch] = freq.get(ch, 0) + 1
-
-    left = ''                   # stores left substring
-    mid = ''
-
-    # iterate through the frequency dictionary
-    for ch, count in freq.items():
-
-        # if the current character's frequency is odd,
-        # update mid to current (and discard the old one)
-        if count % 2 == 1:
-            mid = ch            # stores odd character
-
-        # append half of the characters to the left substring
-        # (the other half goes to the right substring in reverse order)
-        for i in range(count // 2):
-            left += ch
-
-    # the right substring will be the reverse of the left substring
-    right = left[::-1]
-
-    # return formed by the left substring, mid-character (if any),
-    # and the right substring
-    return left + mid + right
-
-if __name__ == '__main__':
-
-    s = 'ABBDAB'
-    print('The longest palindrome is', longestPalindrome(s))
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the length of the input string.
 

@@ -20,186 +20,60 @@ We can easily solve this problem in O(n) time. The idea is to use a [sliding win
 
 So for the current problem, the window (substring) is stable if it contains all distinct characters at any point. If the window includes duplicates characters, it shrinks by removing characters from the left till it becomes stable again. A steady window tends to increase its size by adding characters to it until it becomes unstable again. The process continues until the window reaches the last character in the string. At each point the window size changes, update the maximum window size.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <vector>
-using namespace std;
+```ts
+// Function to find the longest substring with all
+// distinct characters using a sliding window
+function findLongestSubstring(s: string): string {
 
-// Define the character range
-#define CHAR_RANGE 128
-
-// Function to find the longest substring containing all distinct
-// characters in it using a sliding window
-string findLongestSubstring(string str, int n)
-{
-    // boolean array to mark characters present in the current window
-    vector<bool> window(CHAR_RANGE);
+    // object to mark characters present in the current window
+    const window: Record<string, boolean> = {};
 
     // stores the longest substring boundaries
-    int begin = 0, end = 0;
+    let begin = 0, end = 0;
 
     // `[low…high]` maintain the sliding window boundaries
-    for (int low = 0, high = 0; high < n; high++)
-    {
+    let low = 0, high = 0;
+
+    while (high < s.length) {
+
         // if the current character is present in the current window
-        if (window[str[high]])
-        {
+        if (window[s[high]]) {
+
             // remove characters from the left of the window till
             // we encounter the current character
-            while (str[low] != str[high]) {
-                window[str[low++]] = false;
+            while (s[low] !== s[high]) {
+                window[s[low]] = false;
+                low = low + 1;
             }
 
-            low++;        // remove the current character
+            low = low + 1;        // remove the current character
         }
         else {
             // if the current character is not present in the current
             // window, include it
-            window[str[high]] = true;
+            window[s[high]] = true;
 
             // update the maximum window size if necessary
-            if (end - begin < high - low)
-            {
+            if (end - begin < high - low) {
                 begin = low;
                 end = high;
             }
         }
+
+        high = high + 1;
     }
 
-    // return the longest substring found at `str[begin…end]`
-    return str.substr(begin, end - begin + 1);
+    // return the longest substring found at `s[begin…end]`
+    return s.slice(begin, end + 1);
 }
 
-int main()
-{
-    string str = "abbcdafeegh";
-    int n = str.length();
-
-    cout << findLongestSubstring(str, n);
-
-    return 0;
-}
+const s = 'abbcdafeegh';
+console.log(findLongestSubstring(s));
 ```
 
 **Output:** bcdafe
-
-##
-
-```java
-class Main
-{
-    // Define the character range
-    private static final int CHAR_RANGE = 128;
-
-    // Function to find the longest substring with all
-    // distinct characters using a sliding window
-    public static String findLongestSubstring(String str)
-    {
-        // base case
-        if (str == null || str.length() == 0) {
-            return str;
-        }
-
-        // boolean array to mark characters present in the current window
-        boolean[] window = new boolean[CHAR_RANGE];
-
-        // stores the longest substring boundaries
-        int begin = 0, end = 0;
-
-        // `[low…high]` maintain the sliding window boundaries
-        for (int low = 0, high = 0; high < str.length(); high++)
-        {
-            // if the current character is present in the current window
-            if (window[str.charAt(high)])
-            {
-                // remove characters from the left of the window till
-                // we encounter the current character
-                while (str.charAt(low) != str.charAt(high))
-                {
-                    window[str.charAt(low)] = false;
-                    low++;
-                }
-
-                low++;        // remove the current character
-            }
-            else {
-                // if the current character is not present in the current
-                // window, include it
-                window[str.charAt(high)] = true;
-
-                // update the maximum window size if necessary
-                if (end - begin < high - low)
-                {
-                    begin = low;
-                    end = high;
-                }
-            }
-        }
-
-        // return the longest substring found at `str[begin…end]`
-        return str.substring(begin, end + 1);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "abbcdafeegh";
-
-        System.out.print(findLongestSubstring(str));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the longest substring with all
-# distinct characters using a sliding window
-def findLongestSubstring(s):
-
-    # list to mark characters present in the current window
-    window = {}
-
-    # stores the longest substring boundaries
-    begin = end = 0
-
-    # `[low…high]` maintain the sliding window boundaries
-    low = high = 0
-
-    while high < len(s):
-
-        # if the current character is present in the current window
-        if window.get(s[high]):
-
-            # remove characters from the left of the window till
-            # we encounter the current character
-            while s[low] != s[high]:
-                window[s[low]] = False
-                low = low + 1
-
-            low = low + 1        # remove the current character
-        else:
-            # if the current character is not present in the current
-            # window, include it
-            window[s[high]] = True
-
-            # update the maximum window size if necessary
-            if end - begin < high - low:
-                begin = low
-                end = high
-
-        high = high + 1
-
-    # return the longest substring found at `s[begin…end]`
-    return s[begin:end + 1]
-
-if __name__ == '__main__':
-
-    s = 'abbcdafeegh'
-    print(findLongestSubstring(s))
-```
 
 The time complexity of the above solution is O(n) as it does two traversals of the given string of length `n`.
 

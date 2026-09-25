@@ -24,243 +24,80 @@ The corresponding binary tree is:
 
 The solution is simple and effective – create `n` new tree nodes, each having values from 0 to `n-1`, where `n` is the array’s size, and store them in a map or array for the quick lookup. Then traverse the given parent array and build the tree by setting the parent-child relationship defined by `(A[i], i)` for every index `i` in array `A`. Since several binary trees can be formed from a single input, the solution should build any of them. The solution will always set the left child for a node before setting its right child.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Function to perform inorder traversal on the tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+let output = '';
+const inorder = (root: TreeNode | null): void => {
+
+    if (root === null) {
         return;
     }
 
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
-}
+    inorder(root.left);
+    output += `${root.data} `;
+    inorder(root.right);
+};
 
 // Function to build a binary tree from the given parent array
-Node *createTree(vector<int> const &parent)
-{
-    int n = parent.size();
+const createTree = (parent: number[]): TreeNode | null => {
 
     // create an empty map
-    unordered_map<int, Node*> map;
+    const map = new Map<number, TreeNode>();
 
     // create `n` new tree nodes, each having a value from 0 to `n-1`,
     // and store them in a map
-    for (int i = 0; i < n; i++) {
-        map[i] = new Node(i);
+    for (let i = 0; i < parent.length; i++) {
+        map.set(i, new TreeNode(i));
     }
 
     // represents the root node of a binary tree
-    Node* root = nullptr;
+    let root: TreeNode | null = null;
 
     // traverse the parent array and build the tree
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < parent.length; i++) {
+
         // if the parent is -1, set the root to the current node having the
         // value `i` (stored in map[i])
-        if (parent[i] == -1) {
-            root = map[i];
+        if (parent[i] === -1) {
+            root = map.get(i)!;
         }
         else {
             // get the parent for the current node
-            Node* ptr = map[parent[i]];
+            const ptr = map.get(parent[i])!;
 
-            // if the parent's left child is filled,
-            // map the node to its right child
-            if (ptr->left) {
-                ptr->right = map[i];
+            // if the parent's left child is filled, map the node to its right
+            // child
+            if (ptr.left) {
+                ptr.right = map.get(i)!;
             }
             // if the parent's left child is empty, map the node to it
             else {
-                ptr->left = map[i];
+                ptr.left = map.get(i)!;
             }
         }
     }
 
     // return root of the constructed tree
     return root;
-}
+};
 
-int main()
-{
-    vector<int> parent = { -1, 0, 0, 1, 2, 2, 4, 4 };
+const parent = [-1, 0, 0, 1, 2, 2, 4, 4];
 
-    Node* root = createTree(parent);
-    inorder(root);
-
-    return 0;
-}
+const root = createTree(parent);
+inorder(root);
+console.log(output);
 ```
 
 **Output:** 3 1 0 6 4 7 2 5
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform inorder traversal on the tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // Function to build a binary tree from the given parent array
-    public static Node createTree(int[] parent)
-    {
-        // create an empty map
-        Map<Integer, Node> map = new HashMap<>();
-
-        // create `n` new tree nodes, each having a value from 0 to `n-1`,
-        // and store them in a map
-        for (int i = 0; i < parent.length; i++) {
-            map.put(i, new Node(i));
-        }
-
-        // represents the root node of a binary tree
-        Node root = null;
-
-        // traverse the parent array and build the tree
-        for (int i = 0; i < parent.length; i++)
-        {
-            // if the parent is -1, set the root to the current node having the
-            // value `i` (stored in map[i])
-            if (parent[i] == -1) {
-                root = map.get(i);
-            }
-            else {
-                // get the parent for the current node
-                Node ptr = map.get(parent[i]);
-
-                // if the parent's left child is filled, map the node to its right
-                // child
-                if (ptr.left != null) {
-                    ptr.right = map.get(i);
-                }
-                // if the parent's left child is empty, map the node to it
-                else {
-                    ptr.left = map.get(i);
-                }
-            }
-        }
-
-        // return root of the constructed tree
-        return root;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] parent = {-1, 0, 0, 1, 2, 2, 4, 4};
-
-        Node root = createTree(parent);
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform inorder traversal on the tree
-def inorder(root):
-
-    if root is None:
-        return
-
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# Function to build a binary tree from the given parent list
-def createTree(parent):
-
-    # create an empty dictionary
-    d = {}
-
-    # create `n` new tree nodes, each having a value from 0 to `n-1`,
-    # and store them in a dictionary
-    for i in range(len(parent)):
-        d[i] = Node(i)
-
-    # represents the root node of a binary tree
-    root = None
-
-    # traverse the parent list and build the tree
-    for i, e in enumerate(parent):
-
-        # if the parent is -1, set the root to the current node having the
-        # value `i` (stored in map[i])
-        if e == -1:
-            root = d[i]
-        else:
-            # get the parent for the current node
-            ptr = d[e]
-
-            # if the parent's left child is filled, map the node to its right child
-            if ptr.left:
-                ptr.right = d[i]
-            # if the parent's left child is empty, map the node to it
-            else:
-                ptr.left = d[i]
-
-    # return root of the constructed tree
-    return root
-
-if __name__ == '__main__':
-
-    parent = [-1, 0, 0, 1, 2, 2, 4, 4]
-
-    root = createTree(parent)
-    inorder(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in a binary tree (assuming constant-time operations for the hash table). The auxiliary space required by the program is O(n).
 

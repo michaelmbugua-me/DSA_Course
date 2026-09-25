@@ -29,76 +29,34 @@ Circular Left shift by 3:
 
 1\. Isolate the 3–bits from the left: **000** 00000000000000000000001111111 2\. Left shift by 3: ****00000000000000000000000001111111 00000000000000000000001111111**000** 3\. OR with isolated bits: 00000000000000000000001111111000 00000000000000000000000000000**000** ———————————————————————————————— 00000000000000000000001111111000
 
-Following is the C++ and Java program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
+```ts
+// convert a number to its 32–bit binary string representation
+const toBinaryString = (n: number): string =>
+    (n >>> 0).toString(2).padStart(32, '0');
 
-// A macro that defines integer size
-#define SIZE_INT sizeof(int) * 8
+// Function to perform left circular shift or right circular
+// shift on integer `n` by `k` positions based on flag `isLeftShift`
+const shift = (n: number, k: number, isLeftShift: boolean): number => {
 
-// Function to perform left circular shift or right circular shift
-// on integer `n` by `k` positions based on flag `isLeftShift`
-int circularShift(unsigned n, int k, bool isLeftShift)
-{
     // left shift by `k`
     if (isLeftShift) {
-        return (n << k) | (n >> (SIZE_INT - k));
+        return (n << k) | (n >>> (32 - k));
     }
 
     // right shift by `k`
-    return (n >> k) | (n << (SIZE_INT - k));
-}
+    return (n >>> k) | (n << (32 - k));
+};
 
-int main()
-{
-    unsigned n = 127;
-    int shift = 3;
+// demo
 
-    cout << "No Shift     " << bitset<32>(n) << endl;
-    cout << "Left Shift  " << bitset<32>(circularShift(n, shift, true)) << endl;
-    cout << "Right Shift " << bitset<32>(circularShift(n, shift, false)) << endl;
+const n = 127;
+const shiftBy = 3;
 
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    public static String toBinaryString(int n)
-    {
-        return String.format("%32s", Integer.toBinaryString(n))
-                    .replaceAll(" ", "0");
-    }
-
-    // Function to perform left circular shift or right circular
-    // shift on integer `n` by `k` positions based on flag `isLeftShift`
-    public static int shift(int n, int k, boolean isLeftShift)
-    {
-        // left shift by `k`
-        if (isLeftShift) {
-            return (n << k) | (n >> (Integer.SIZE - k));
-        }
-
-        // right shift by `k`
-        return (n >> k) | (n << (Integer.SIZE - k));
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 127;
-        int shift = 3;
-
-        System.out.println("No Shift    " + toBinaryString(n));
-        System.out.println("Left Shift  " + toBinaryString(shift(n, shift, true)));
-        System.out.println("Right Shift " + toBinaryString(shift(n, shift, false)));
-    }
-}
+console.log('No Shift    ' + toBinaryString(n));
+console.log('Left Shift  ' + toBinaryString(shift(n, shiftBy, true)));
+console.log('Right Shift ' + toBinaryString(shift(n, shiftBy, false)));
 ```
 
 **Output:** No Shift 00000000000000000000000001111111 Left Shift 00000000000000000000001111111000 Right Shift 11100000000000000000000000001111

@@ -14,292 +14,83 @@ There are five leaf-to-root paths in the above binary tree:
 
 The idea is to traverse the tree in a [preorder fashion](https://techiedelight.com/preorder-tree-traversal-iterative-recursive/) and store every encountered node in the current path from the root-to-leaf in a list. If we encounter a leaf node, print all nodes present in the list in reverse order.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
-
-// Function to check if a given node is a leaf node or not
-bool isLeaf(Node* node) {
-    return (node->left == nullptr && node->right == nullptr);
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
 }
 
-// Print path present in the vector in reverse order (leaf to the root node)
-void printPath(vector<int> const &path)
-{
-    for (int i = path.size() - 1; i > 0; i--) {
-        cout << path.at(i) << " —> ";
-    }
-
-    cout << path.at(0) << endl;
+// Function to check if a given node is a leaf node or not
+function isLeaf(node: TreeNode): boolean {
+    return node.left === null && node.right === null;
 }
 
 // Recursive function to print all paths from leaf-to-root node
-void printLeafToRootPaths(Node* node, vector<int> &path)
-{
+function printLeafToRootPaths(node: TreeNode | null, path: number[]): void {
+
     // base case
-    if (node == nullptr) {
+    if (node === null) {
         return;
     }
 
     // include the current node to the path
-    path.push_back(node->data);
+    path.push(node.val);
 
-    // if a leaf node is found, print the path
+    // if a leaf node is found, print the path present in the list
+    // in reverse order (leaf to the root node)
     if (isLeaf(node)) {
-        printPath(path);
+        console.log([...path].reverse());
     }
 
     // recur for the left and right subtree
-    printLeafToRootPaths(node->left, path);
-    printLeafToRootPaths(node->right, path);
+    printLeafToRootPaths(node.left, path);
+    printLeafToRootPaths(node.right, path);
 
     // backtrack: remove the current node after the left, and right subtree are done
-    path.pop_back();
+    path.pop();
 }
 
 // The main function to print all paths from leaf-to-root node
-void printLeafToRootPaths(Node* node)
-{
-    // vector to store leaf-to-root path
-    vector<int> path;
+function findLeafToRootPaths(node: TreeNode | null): void {
+
+    // list to store leaf-to-root path
+    const path: number[] = [];
 
     // call recursive function
     printLeafToRootPaths(node, path);
 }
 
-int main()
-{
-    /* Construct the following tree
-               1
-             /   \
-            /     \
-           /       \
-          2         3
-         / \       / \
-        /   \     /   \
-       4     5   6     7
-                / \
-               /   \
-              8     9
-    */
+/* Construct the following tree
+           1
+         /   \
+        /     \
+       /       \
+      2         3
+     / \       / \
+    /   \     /   \
+   4     5   6     7
+            / \
+           /   \
+          8     9
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
-    root->right->left->left = new Node(8);
-    root->right->left->right = new Node(9);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
+root.right.left.left = new TreeNode(8);
+root.right.left.right = new TreeNode(9);
 
-    // print all leaf-to-root paths
-    printLeafToRootPaths(root);
-
-    return 0;
-}
+// print all leaf-to-root paths
+findLeafToRootPaths(root);
 ```
 
 **Output:** 4 —> 2 —> 1 5 —> 2 —> 1 8 —> 6 —> 3 —> 1 9 —> 6 —> 3 —> 1 7 —> 3 —> 1
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to check if a given node is a leaf node or not
-    public static boolean isLeaf(Node node) {
-        return (node.left == null && node.right == null);
-    }
-
-    // Print path present in the list in reverse order (leaf to the root node)
-    public static void printPath(Deque<Integer> path)
-    {
-        Iterator<Integer> itr = path.descendingIterator();
-        while (itr.hasNext())
-        {
-            System.out.print(itr.next());
-
-            if (itr.hasNext()) {
-                System.out.print(" —> ");
-            }
-        }
-        System.out.println();
-    }
-
-    // Recursive function to print all paths from leaf-to-root node
-    public static void printLeafToRootPaths(Node node, Deque<Integer> path)
-    {
-        // base case
-        if (node == null) {
-            return;
-        }
-
-        // include the current node to the path
-        path.addLast(node.data);
-
-        // if a leaf node is found, print the path
-        if (isLeaf(node)) {
-            printPath(path);
-        }
-
-        // recur for the left and right subtree
-        printLeafToRootPaths(node.left, path);
-        printLeafToRootPaths(node.right, path);
-
-        // backtrack: remove the current node after the left, and right subtree are done
-        path.removeLast();
-    }
-
-    // The main function to print all paths from leaf-to-root node
-    public static void printLeafToRootPaths(Node node)
-    {
-        // Deque to store leaf-to-root path
-        Deque<Integer> path = new ArrayDeque<>();
-
-        // call recursive function
-        printLeafToRootPaths(node, path);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                   1
-                 /   \
-                /     \
-               /       \
-              2         3
-             / \       / \
-            /   \     /   \
-           4     5   6     7
-                    / \
-                   /   \
-                  8     9
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-        root.right.left.left = new Node(8);
-        root.right.left.right = new Node(9);
-
-        // print all leaf-to-root paths
-        printLeafToRootPaths(root);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to check if a given node is a leaf node or not
-def isLeaf(node):
-    return node.left is None and node.right is None
-
-# Recursive function to print all paths from leaf-to-root node
-def printLeafToRootPaths(node, path):
-
-    # base case
-    if node is None:
-        return
-
-    # include the current node to the path
-    path.append(node.data)
-
-    # if a leaf node is found, print the path present in the list
-    # in reverse order (leaf to the root node)
-    if isLeaf(node):
-        print(list(reversed(path)))
-
-    # recur for the left and right subtree
-    printLeafToRootPaths(node.left, path)
-    printLeafToRootPaths(node.right, path)
-
-    # backtrack: remove the current node after the left, and right subtree are done
-    path.pop()
-
-# The main function to print all paths from leaf-to-root node
-def findLeafToRootPaths(node):
-
-    # Deque to store leaf-to-root path
-    path = deque()
-
-    # call recursive function
-    printLeafToRootPaths(node, path)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               1
-             /   \
-            /     \
-           /       \
-          2         3
-         / \       / \
-        /   \     /   \
-       4     5   6     7
-                / \
-               /   \
-              8     9
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-    root.right.left.left = Node(8)
-    root.right.left.right = Node(9)
-
-    # print all leaf-to-root paths
-    findLeafToRootPaths(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

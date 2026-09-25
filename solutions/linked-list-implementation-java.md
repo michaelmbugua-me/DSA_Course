@@ -2,20 +2,18 @@
 
 > Source: https://www.techiedelight.com/linked-list-implementation-java/
 
-We know that the `LinkedList` class in Java is a doubly-linked list implementation of the `List` interface. This post provides an overview of common techniques to implement a linked list in Java programming language.
+We know that the `LinkedList` class in TypeScript is commonly implemented as a doubly-linked list. This post provides an overview of common techniques to implement a linked list in TypeScript programming language.
 
-We know that each node of a linked list contains a single data field and a reference to the next node in the list. The nodes of the linked list are allocated in the heap memory during runtime by the JVM. We can use the constructor of the `Node` class to initialize the `data` field and the `next` pointer.
+We know that each node of a linked list contains a single data field and a reference to the next node in the list. The nodes of the linked list are allocated during runtime. We can use the constructor of the `Node` class to initialize the `data` field and the `next` pointer.
 
-```
+```ts
 // A Linked List Node
-class Node
-{
-    int data;
-    Node next;
+class Node {
+    public data: number;
+    public next: Node | null;
 
     // constructor
-    Node(int data, Node next)
-    {
+    constructor(data: number, next: Node | null) {
         this.data = data;
         this.next = next;
     }
@@ -24,82 +22,71 @@ class Node
 
 > 
 
-There are several methods to construct a singly linked list in Java:
+There are several methods to construct a singly linked list in TypeScript:
 
 ## 1\. Naive method
 
 A simple solution would be to allocate memory for all individual nodes of the linked list, set their data, and rearrange their references to build the complete list.
 
-```
+```ts
 // A Linked List Node
-class Node
-{
-    int data;
-    Node next;
+class Node {
+    public data: number;
+    public next: Node | null;
 
-    Node(int data)
-    {
+    constructor(data: number) {
         this.data = data;
         this.next = null;
     }
 }
 
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
+// Helper function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
     }
 
-    // Naive function for linked list implementation containing three nodes
-    public static Node constructList()
-    {
-        // construct linked list nodes
-        Node first = new Node(1);
-        Node second = new Node(2);
-        Node third = new Node(3);
-        Node fourth = new Node(4);
-
-        // rearrange the references to construct a list
-        Node head = first;
-        first.next = second;
-        second.next = third;
-        third.next = fourth;
-
-        // return reference to the first node in the list
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // `head` points to the head node of the linked list
-        Node head = constructList();
-
-        // print linked list
-        printList(head);
-    }
+    console.log("null");
 }
+
+// Naive function for linked list implementation containing three nodes
+function constructList(): Node {
+    // construct linked list nodes
+    const first = new Node(1);
+    const second = new Node(2);
+    const third = new Node(3);
+    const fourth = new Node(4);
+
+    // rearrange the references to construct a list
+    const head = first;
+    first.next = second;
+    second.next = third;
+    third.next = fourth;
+
+    // return reference to the first node in the list
+    return head;
+}
+
+(function main() {
+    // `head` points to the head node of the linked list
+    const head = constructList();
+
+    // print linked list
+    printList(head);
+})();
 ```
 
 We can write the above code in a single line by passing the next node as an argument to the `Node` constructor:
 
-```
+```ts
 // A Linked List Node
-class Node
-{
-    int data;
-    Node next;
+class Node {
+    public data: number;
+    public next: Node | null;
 
-    Node(int data, Node next_node)
-    {
+    constructor(data: number, next_node: Node | null) {
         // Set data
         this.data = data;
 
@@ -108,37 +95,30 @@ class Node
     }
 }
 
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
+// Helper function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
     }
 
-    // Naive function for linked list implementation containing three nodes
-    public static Node constructList()
-    {
-        Node head = new Node(1, new Node(2, new Node(3, null)));
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // `head` points to the head node of the linked list
-        Node head = constructList();
-
-        // print linked list
-        printList(head);
-    }
+    console.log("null");
 }
+
+// Naive function for linked list implementation containing three nodes
+function constructList(): Node {
+    const head = new Node(1, new Node(2, new Node(3, null)));
+    return head;
+}
+
+(function main() {
+    // `head` points to the head node of the linked list
+    const head = constructList();
+
+    // print linked list
+    printList(head);
+})();
 ```
 
 ## 2\. Return Head Node
@@ -147,140 +127,122 @@ The standard solution adds a single node to the head end of any list. This funct
 
 This is demonstrated below, where we return the head node from the `push()` function and update the head in the caller.
 
-```
+```ts
 // A Linked List Node
-class Node
-{
-    int data;
-    Node next;
+class Node {
+    public data: number;
+    public next: Node | null;
 }
 
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-        System.out.println("null");
+// Helper function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
     }
-
-    public static Node push(Node head, int data)
-    {
-        // allocate a new node in a heap and set its data
-        Node newNode = new Node();
-        newNode.data = data;
-
-        // set the next field of the new node to point to the current
-        // first node of the list.
-
-        newNode.next = head;
-
-        // change the head to point to the new node, so it is
-        // now the first node in the list.
-
-        return newNode;
-    }
-
-    // Function for linked list implementation from the given set of keys
-    public static Node constructList(int[] keys)
-    {
-        Node head = null;
-
-        // start from the end of the array
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = push(head, keys[i]);
-        }
-
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4 };
-
-        // points to the head node of the linked list
-        Node head = constructList(keys);
-
-        // print linked list
-        printList(head);
-    }
+    console.log("null");
 }
+
+function push(head: Node | null, data: number): Node {
+    // allocate a new node and set its data
+    const newNode = new Node();
+    newNode.data = data;
+
+    // set the next field of the new node to point to the current
+    // first node of the list.
+
+    newNode.next = head;
+
+    // change the head to point to the new node, so it is
+    // now the first node in the list.
+
+    return newNode;
+}
+
+// Function for linked list implementation from the given set of keys
+function constructList(keys: number[]): Node | null {
+    let head: Node | null = null;
+
+    // start from the end of the array
+    for (let i = keys.length - 1; i >= 0; i--) {
+        head = push(head, keys[i]);
+    }
+
+    return head;
+}
+
+(function main() {
+    // input keys
+    const keys = [1, 2, 3, 4];
+
+    // points to the head node of the linked list
+    const head = constructList(keys);
+
+    // print linked list
+    printList(head);
+})();
 ```
 
 ## 3\. Make head reference global
 
 We can construct a linked list by making the head reference global, but this approach is not recommended since [global variables](https://en.wikipedia.org/wiki/Global_variable) are usually considered bad practice.
 
-```
+```ts
 // A Linked List Node
-class Node
-{
-    int data;
-    Node next;
+class Node {
+    public data: number;
+    public next: Node | null;
 }
 
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-        System.out.println("null");
+// Helper function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
     }
+    console.log("null");
+}
 
-    // global head
-    public static Node head;
+// global head
+let head: Node | null = null;
 
-    // Takes a list and a data value, creates a new link with the given
-    // data and pushes it onto the list's front.
-    public static Node push(int data)
-    {
-        // allocate a new node in a heap and set its data
-        Node newNode = new Node();
-        newNode.data = data;
+// Takes a list and a data value, creates a new link with the given
+// data and pushes it onto the list's front.
+function push(data: number): Node {
+    // allocate a new node and set its data
+    const newNode = new Node();
+    newNode.data = data;
 
-        // set the next field of the new node to point to the current
-        // head node of the list.
-        newNode.next = head;
+    // set the next field of the new node to point to the current
+    // head node of the list.
+    newNode.next = head;
 
-        // change the head to point to the new node, so it is
-        // now the first node in the list.
+    // change the head to point to the new node, so it is
+    // now the first node in the list.
 
-        return newNode;
-    }
+    return newNode;
+}
 
-    // Function for linked list implementation from the given set of keys
-    public static void constructList(int[] keys)
-    {
-        // start from the end of the array
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = push(keys[i]);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4 };
-
-        // points to the head node of the linked list
-        constructList(keys);
-
-        // print linked list
-        printList(head);
+// Function for linked list implementation from the given set of keys
+function constructList(keys: number[]): void {
+    // start from the end of the array
+    for (let i = keys.length - 1; i >= 0; i--) {
+        head = push(keys[i]);
     }
 }
+
+(function main() {
+    // input keys
+    const keys = [1, 2, 3, 4];
+
+    // points to the head node of the linked list
+    constructList(keys);
+
+    // print linked list
+    printList(head);
+})();
 ```
 
 **Continue Reading:**

@@ -20,201 +20,65 @@ We can easily solve this problem in O(n) time and O(n) space. The idea is to use
 
 The window (substring) is stable for the current problem if it contains `k` distinct characters at any point. If the window has less than `k` distinct characters, it expands by adding characters to it from the right; otherwise, if the window contains more than `k` distinct characters, it shrinks by removing characters from the left until it becomes stable again. The steady-state window tends to increase its size by adding characters to it until it becomes unstable again. We continue this process until the window reaches the last character in the string. At each point the window size changes, update the maximum window size.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_set>
-using namespace std;
+```ts
+// define the character range
+const CHAR_RANGE = 128;
 
-// Define the character range
-#define CHAR_RANGE 128
-
-// Function to find the longest substring of a given string containing
+// Function to find the longest substring of a given containing
 // `k` distinct characters using a sliding window
-string findLongestSubstring(string str, int k, int n)
-{
+function findLongestSubstring(s: string, k: number): string {
+
     // stores the longest substring boundaries
-    int end = 0, begin = 0;
+    let end = 0, begin = 0;
 
     // set to store distinct characters in a window
-    unordered_set<char> window;
+    const window = new Set<string>();
 
-    // Count array `freq` stores the frequency of characters present in the
-    // current window. We can also use a map instead of a count array.
-    int freq[CHAR_RANGE] = { 0 };
+    // `freq` stores the frequency of characters present in the
+    // current window. We can also use a dictionary instead.
+
+    const freq: number[] = new Array(CHAR_RANGE).fill(0);
 
     // `[low…high]` maintains the sliding window boundaries
-    for (int low = 0, high = 0; high < n; high++)
-    {
-        window.insert(str[high]);
-        freq[str[high]]++;
+    let low = 0, high = 0;
+
+    while (high < s.length) {
+
+        window.add(s[high]);
+        freq[s.charCodeAt(high)] += 1;
 
         // if the window size is more than `k`, remove characters from the left
-        while (window.size() > k)
-        {
+        while (window.size > k) {
+
             // If the leftmost character's frequency becomes 0 after
             // removing it in the window, remove it from the set as well
-            if (--freq[str[low]] == 0) {
-                window.erase(str[low]);
+            freq[s.charCodeAt(low)] -= 1;
+            if (freq[s.charCodeAt(low)] === 0) {
+                window.delete(s[low]);
             }
 
-            low++;        // reduce window size
+            low = low + 1;        // reduce window size
         }
 
         // update the maximum window size if necessary
-        if (end - begin < high - low)
-        {
+        if (end - begin < high - low) {
             end = high;
             begin = low;
         }
+
+        high = high + 1;
     }
 
-    // return the longest substring found at `str[begin…end]`
-    return str.substr(begin, end - begin + 1);
+    // return the longest substring found at `s[begin…end]`
+    return s.slice(begin, end + 1);
 }
 
-int main()
-{
-    string str = "abcbdbdbbdcdabd";
-    int k = 2;
+const s = 'abcbdbdbbdcdabd';
+const k = 2;
 
-    int n = str.length();
-    cout << findLongestSubstring(str, k, n);
-
-    return 0;
-}
-```
-
-**Output:** bdbdbbd
-
-##
-
-```java
-import java.util.HashSet;
-import java.util.Set;
-
-class Main
-{
-    // Define the character range
-    public static final int CHAR_RANGE = 128;
-
-    // Function to find the longest substring of a given string containing
-    // `k` distinct characters using a sliding window
-    public static String findLongestSubstring(String str, int k)
-    {
-        // base case
-        if (str == null || str.length() == 0) {
-            return str;
-        }
-
-        // stores the longest substring boundaries
-        int end = 0, begin = 0;
-
-        // set to store distinct characters in a window
-        Set<Character> window = new HashSet<>();
-
-        // Count array `freq` stores the frequency of characters present in the
-        // current window. We can also use a map instead of a count array.
-        int[] freq = new int[CHAR_RANGE];
-
-        // `[low…high]` maintains the sliding window boundaries
-        for (int low = 0, high = 0; high < str.length(); high++)
-        {
-            window.add(str.charAt(high));
-            freq[str.charAt(high)]++;
-
-            // if the window size is more than `k`, remove characters from the left
-            while (window.size() > k)
-            {
-                // If the leftmost character's frequency becomes 0 after
-                // removing it in the window, remove it from the set as well
-                if (--freq[str.charAt(low)] == 0) {
-                    window.remove(str.charAt(low));
-                }
-
-                low++;        // reduce window size
-            }
-
-            // update the maximum window size if necessary
-            if (end - begin < high - low)
-            {
-                end = high;
-                begin = low;
-            }
-        }
-
-        // return the longest substring found at `str[begin…end]`
-        return str.substring(begin, end + 1);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "abcbdbdbbdcdabd";
-        int k = 2;
-
-        System.out.print(findLongestSubstring(str, k));
-    }
-}
-```
-
-##
-
-```python3
-# define the character range
-CHAR_RANGE = 128
-
-# Function to find the longest substring of a given containing
-# `k` distinct characters using a sliding window
-def findLongestSubstring(s, k):
-
-    # stores the longest substring boundaries
-    end = begin = 0
-
-    # set to store distinct characters in a window
-    window = set()
-
-    # `freq` stores the frequency of characters present in the
-    # current window. We can also use a dictionary instead.
-
-    freq = [0] * CHAR_RANGE
-
-    # `[low…high]` maintains the sliding window boundaries
-    low = high = 0
-
-    while high < len(s):
-
-        window.add(s[high])
-        freq[ord(s[high])] = freq[ord(s[high])] + 1
-
-        # if the window size is more than `k`, remove characters from the left
-        while len(window) > k:
-
-            # If the leftmost character's frequency becomes 0 after
-            # removing it in the window, remove it from the set as well
-            freq[ord(s[low])] = freq[ord(s[low])] - 1
-            if freq[ord(s[low])] == 0:
-                window.remove(s[low])
-
-            low = low + 1        # reduce window size
-
-        # update the maximum window size if necessary
-        if end - begin < high - low:
-            end = high
-            begin = low
-
-        high = high + 1
-
-    # return the longest substring found at `s[begin…end]`
-    return s[begin:end + 1]
-
-if __name__ == '__main__':
-
-    s = 'abcbdbdbbdcdabd'
-    k = 2
-
-    print(findLongestSubstring(s, k))
+console.log(findLongestSubstring(s, k));
 ```
 
 The time complexity of the above solution is O(n) as it does two traversals of the given string of length `n`.

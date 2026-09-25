@@ -24,214 +24,72 @@ Please note that the pivot selection and partitioning steps can be made in sever
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-Following is the C++, Java, and Python implementation of the Quicksort algorithm:
+Following is the TypeScript implementation of the Quicksort algorithm:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-using namespace std;
+```ts
+function swap(A: number[], i: number, j: number): void {
+
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
 
 // Partition using the Lomuto partition scheme
-int partition(int a[], int start, int end)
-{
-    // Pick the rightmost element as a pivot from the array
-    int pivot = a[end];
+function partition(a: number[], start: number, end: number): number {
+
+    // Pick the rightmost element as a pivot from the list
+    const pivot = a[end];
 
     // elements less than the pivot will be pushed to the left of `pIndex`
     // elements more than the pivot will be pushed to the right of `pIndex`
     // equal elements can go either way
-    int pIndex = start;
+    let pIndex = start;
 
-    // each time we find an element less than or equal to the pivot, `pIndex`
-    // is incremented, and that element would be placed before the pivot.
-    for (int i = start; i < end; i++)
-    {
-        if (a[i] <= pivot)
-        {
-            swap(a[i], a[pIndex]);
-            pIndex++;
+    // each time we find an element less than or equal to the pivot,
+    // `pIndex` is incremented, and that element would be placed
+    // before the pivot.
+    for (let i = start; i < end; i++) {
+        if (a[i] <= pivot) {
+            swap(a, i, pIndex);
+            pIndex = pIndex + 1;
         }
     }
 
     // swap `pIndex` with pivot
-    swap (a[pIndex], a[end]);
+    swap(a, end, pIndex);
 
     // return `pIndex` (index of the pivot element)
     return pIndex;
 }
 
 // Quicksort routine
-void quicksort(int a[], int start, int end)
-{
+function quicksort(a: number[], start: number, end: number): void {
+
     // base condition
     if (start >= end) {
         return;
     }
 
     // rearrange elements across pivot
-    int pivot = partition(a, start, end);
+    const pivot = partition(a, start, end);
 
-    // recur on subarray containing elements that are less than the pivot
+    // recur on sublist containing elements less than the pivot
     quicksort(a, start, pivot - 1);
 
-    // recur on subarray containing elements that are more than the pivot
+    // recur on sublist containing elements more than the pivot
     quicksort(a, pivot + 1, end);
 }
 
-// C++ implementation of the Quicksort algorithm
-int main()
-{
-    int a[] = { 9, -3, 5, 2, 6, 8, -6, 1, 3 };
-    int n = sizeof(a)/sizeof(a[0]);
+// TypeScript implementation of the Quicksort algorithm
+const a = [9, -3, 5, 2, 6, 8, -6, 1, 3];
 
-    quicksort(a, 0, n - 1);
+quicksort(a, 0, a.length - 1);
 
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << a[i] << " ";
-    }
-
-    return 0;
-}
+// print the sorted list
+console.log(a);
 ```
 
 **Output:** -6 -3 1 2 3 5 6 8 9
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    public static void swap (int[] arr, int i, int j)
-    {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    // Partition using the Lomuto partition scheme
-    public static int partition(int[] a, int start, int end)
-    {
-        // Pick the rightmost element as a pivot from the array
-        int pivot = a[end];
-
-        // elements less than the pivot will be pushed to the left of `pIndex`
-        // elements more than the pivot will be pushed to the right of `pIndex`
-        // equal elements can go either way
-        int pIndex = start;
-
-        // each time we find an element less than or equal to the pivot,
-        // `pIndex` is incremented, and that element would be placed
-        // before the pivot.
-        for (int i = start; i < end; i++)
-        {
-            if (a[i] <= pivot)
-            {
-                swap(a, i, pIndex);
-                pIndex++;
-            }
-        }
-
-        // swap `pIndex` with pivot
-        swap(a, end, pIndex);
-
-        // return `pIndex` (index of the pivot element)
-        return pIndex;
-    }
-
-    // Quicksort routine
-    public static void quicksort(int[] a, int start, int end)
-    {
-        // base condition
-        if (start >= end) {
-            return;
-        }
-
-        // rearrange elements across pivot
-        int pivot = partition(a, start, end);
-
-        // recur on subarray containing elements less than the pivot
-        quicksort(a, start, pivot - 1);
-
-        // recur on subarray containing elements more than the pivot
-        quicksort(a, pivot + 1, end);
-    }
-
-    // Java implementation of the Quicksort algorithm
-    public static void main(String[] args)
-    {
-        int[] a = { 9, -3, 5, 2, 6, 8, -6, 1, 3 };
-
-        quicksort(a, 0, a.length - 1);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(a));
-    }
-}
-```
-
-##
-
-```python3
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Partition using the Lomuto partition scheme
-def partition(a, start, end):
-
-    # Pick the rightmost element as a pivot from the list
-    pivot = a[end]
-
-    # elements less than the pivot will be pushed to the left of `pIndex`
-    # elements more than the pivot will be pushed to the right of `pIndex`
-    # equal elements can go either way
-    pIndex = start
-
-    # each time we find an element less than or equal to the pivot,
-    # `pIndex` is incremented, and that element would be placed
-    # before the pivot.
-    for i in range(start, end):
-        if a[i] <= pivot:
-            swap(a, i, pIndex)
-            pIndex = pIndex + 1
-
-    # swap `pIndex` with pivot
-    swap(a, end, pIndex)
-
-    # return `pIndex` (index of the pivot element)
-    return pIndex
-
-# Quicksort routine
-def quicksort(a, start, end):
-
-    # base condition
-    if start >= end:
-        return
-
-    # rearrange elements across pivot
-    pivot = partition(a, start, end)
-
-    # recur on sublist containing elements less than the pivot
-    quicksort(a, start, pivot - 1)
-
-    # recur on sublist containing elements more than the pivot
-    quicksort(a, pivot + 1, end)
-
-# Python implementation of the Quicksort algorithm
-if __name__ == '__main__':
-
-    a = [9, -3, 5, 2, 6, 8, -6, 1, 3]
-
-    quicksort(a, 0, len(a) - 1)
-
-    # print the sorted list
-    print(a)
-```
 
 ## Quicksort Performance
 

@@ -16,34 +16,30 @@ We can solve this problem in O(log(x)) time with the help of a [binary search al
 
 The idea is to determine the range in which `x` resides using [exponential search](https://techiedelight.com/exponential-search/) and perform a binary search within that range. The exponential search routine starts with `i = 1` and keep on doubling `i` until `f(i)` becomes positive for the first time. When `f(i)` becomes positive, perform a binary search within the search space `[i/2, i]` and find the target value `x` in O(log(x)) time.
 
-Following is the C, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-
+```ts
 // A monotonically increasing function `f(x) = 3x - 100`
-int f(int x) {
-    return 3*x - 100;
+function f(x: number): number {
+    return 3 * x - 100;
 }
 
 // Find the value of `x` in the search space [low, high] using binary search
 // where f(x) becomes positive for the first time
-int binarySearch(int low, int high)
-{
+function binarySearch(low: number, high: number): number {
     // base condition (search space is exhausted)
     if (high < low) {
         return -1;
     }
 
     // find the mid-value in the search space
-    int mid = low + ((high - low) / 2);
+    const mid = low + Math.floor((high - low) / 2);
 
     // if `f(mid)` is positive
-    if (f(mid) > 0)
-    {
+    if (f(mid) > 0) {
         // return `mid` if it is the first element of the search space or
         // when f(mid-1) is not positive
-        if (mid == low || f(mid - 1) <= 0) {
+        if (mid === low || f(mid - 1) <= 0) {
             return mid;
         }
 
@@ -51,148 +47,25 @@ int binarySearch(int low, int high)
         return binarySearch(low, mid - 1);
     }
 
-    // if f(mid) is zero or negative,
-    // discard all elements in the left search space
+    // if f(mid) is zero or negative, discard all elements in the left search space
     return binarySearch(mid + 1, high);
 }
 
 // Returns the positive value `x`, where f(x) becomes positive for the first time
-int exponentialSearch()
-{
+function exponentialSearch(): number {
     // find the range in which the result would reside
-    int i = 1;
-    while (f(i) <= 0)
-    {
+    let i = 1;
+    while (f(i) <= 0) {
         // calculate the next power of 2
         i *= 2;
     }
 
     // call binary search on [i/2, i]
-    return binarySearch(i/2, i);
+    return binarySearch(Math.floor(i / 2), i);
 }
 
-int main(void)
-{
-    int x = exponentialSearch();
-    printf("f(x) becomes positive for the first time when x = %d", x);
-
-    return 0;
-}
-```
-
-**Output:** f(x) becomes positive for the first time when x = 34
-
-##
-
-```java
-class Main
-{
-    // A monotonically increasing function `f(x) = 3x - 100`
-    public static int f(int x) {
-        return 3*x - 100;
-    }
-
-    // Find the value of `x` in the search space [low, high] using binary search
-    // where f(x) becomes positive for the first time
-    public static int binarySearch(int low, int high)
-    {
-        // base condition (search space is exhausted)
-        if (high < low) {
-            return -1;
-        }
-
-        // find the mid-value in the search space
-        int mid = low + ((high - low) / 2);
-
-        // if `f(mid)` is positive
-        if (f(mid) > 0)
-        {
-            // return `mid` if it is the first element of the search space or
-            // when f(mid-1) is not positive
-            if (mid == low || f(mid - 1) <= 0) {
-                return mid;
-            }
-
-            // otherwise, discard all elements in the right search space
-            return binarySearch(low, mid - 1);
-        }
-
-        // if f(mid) is zero or negative,
-        // discard all elements in the left search space
-        return binarySearch(mid + 1, high);
-    }
-
-    // Returns the positive value `x`, where f(x) becomes positive for the first time
-    public static int exponentialSearch()
-    {
-        // find the range in which the result would reside
-        int i = 1;
-        while (f(i) <= 0)
-        {
-            // calculate the next power of 2
-            i *= 2;
-        }
-
-        // call binary search on [i/2, i]
-        return binarySearch(i/2, i);
-    }
-
-    public static void main(String[] args)
-    {
-        int x = exponentialSearch();
-        System.out.println("f(x) becomes positive for the first time when x = " + x);
-    }
-}
-```
-
-##
-
-```python3
-# A monotonically increasing function `f(x) = 3x - 100`
-def f(x):
-    return 3*x - 100
-
-# Find the value of `x` in the search space [low, high] using binary search
-# where f(x) becomes positive for the first time
-def binarySearch(low, high):
-
-    # base condition (search space is exhausted)
-    if high < low:
-        return -1
-
-    # find the mid-value in the search space
-    mid = low + ((high - low) // 2)
-
-    # if `f(mid)` is positive
-    if f(mid) > 0:
-
-        # return `mid` if it is the first element of the search space or
-        # when f(mid-1) is not positive
-        if mid == low or f(mid - 1) <= 0:
-            return mid
-
-        # otherwise, discard all elements in the right search space
-        return binarySearch(low, mid - 1)
-
-    # if f(mid) is zero or negative, discard all elements in the left search space
-    return binarySearch(mid + 1, high)
-
-# Returns the positive value `x`, where f(x) becomes positive for the first time
-def exponentialSearch():
-
-    # find the range in which the result would reside
-    i = 1
-    while f(i) <= 0:
-        # calculate the next power of 2
-        i *= 2
-
-    # call binary search on [i/2, i]
-    return binarySearch(i // 2, i)
-
-if __name__ == '__main__':
-
-    x = exponentialSearch()
-    print('f(x) becomes positive for the first time when x =', x)
+const x = exponentialSearch();
+console.log('f(x) becomes positive for the first time when x =', x);
 ```
 
 Also See:

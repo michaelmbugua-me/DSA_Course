@@ -18,39 +18,32 @@ The time complexity of this solution is O(n2), where `n` is the length of each s
 
 The idea is to use [hashing](https://techiedelight.com/hashing-in-data-structure/). The following solution uses a map to store a mapping from characters of string `X` to string `Y` and a set to store already mapped characters of string `Y`; the rest of the code is pretty much straightforward:
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-using namespace std;
-
+```ts
 // Find if strings 'X' and 'Y' are Isomorphic or not
-bool isIsomorphic(string X, string Y)
-{
+function isIsomorphic(X: string, Y: string): boolean {
+
     // if 'X' and 'Y' have different lengths, they cannot be isomorphic
-    if (X.length() != Y.length()) {
+    if (X.length !== Y.length) {
         return false;
     }
 
     // use a map to store a mapping from characters of string 'X' to string 'Y'
-    unordered_map<char, char> map;
+    const map = new Map<string, string>();
 
     // use set to store a pool of already mapped characters
-    unordered_set<char> set;
+    const set = new Set<string>();
 
-    for (int i = 0; i < X.length(); i++)
-    {
-        char x = X[i], y = Y[i];
+    for (let i = 0; i < X.length; i++) {
+        const x = X[i];
+        const y = Y[i];
 
         // if 'x' is seen before
-        if (map.find(x) != map.end())
-        {
+        if (map.has(x)) {
             // return false if the first occurrence of `x` is mapped to a
             // different character
-            if (map[x] != y) {
+            if (map.get(x) !== y) {
                 return false;
             }
         }
@@ -58,160 +51,30 @@ bool isIsomorphic(string X, string Y)
         // if 'x' is seen for the first time (i.e., it isn't mapped yet)
         else {
             // return false if 'y' is already mapped to some other char in 'X'
-            if (set.find(y) != set.end()) {
+            if (set.has(y)) {
                 return false;
             }
 
             // map 'y' to 'x' and mark it as mapped
-            map[x] = y;
-            set.insert(y);
+            map.set(x, y);
+            set.add(y);
         }
     }
 
     return true;
 }
 
-int main()
-{
-    string X = "ACAB";
-    string Y = "XCXY";
+const X = 'ACAB';
+const Y = 'XCXY';
 
-    if (isIsomorphic(X, Y)) {
-        cout << X << " and " << Y << " are Isomorphic";
-    }
-    else {
-        cout << X << " and " << Y << " are not Isomorphic";
-    }
-
-    return 0;
+if (isIsomorphic(X, Y)) {
+    console.log(`${X} and ${Y} are Isomorphic`);
+} else {
+    console.log(`${X} and ${Y} are not Isomorphic`);
 }
 ```
 
 **Output:** ACAB and XCXY are Isomorphic
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-class Main
-{
-    // Find if strings 'X' and 'Y' are Isomorphic or not
-    public static boolean isIsomorphic(String X, String Y)
-    {
-        // base case
-        if (X == null || Y == null) {
-            return false;
-        }
-
-        // if 'X' and 'Y' have different lengths, they cannot be isomorphic
-        if (X.length() != Y.length()) {
-            return false;
-        }
-
-        // use a map to store a mapping from characters of string 'X' to string 'Y'
-        Map<Character, Character> map = new HashMap<>();
-
-        // use set to store a pool of already mapped characters
-        Set<Character> set = new HashSet<>();
-
-        for (int i = 0; i < X.length(); i++)
-        {
-            char x = X.charAt(i), y = Y.charAt(i);
-
-            // if 'x' is seen before
-            if (map.containsKey(x))
-            {
-                // return false if the first occurrence of `x` is mapped to a
-                // different character
-                if (map.get(x) != y) {
-                    return false;
-                }
-            }
-
-            // if 'x' is seen for the first time (i.e., it isn't mapped yet)
-            else {
-                // return false if 'y' is already mapped to some other char in 'X'
-                if (set.contains(y)) {
-                    return false;
-                }
-
-                // map 'y' to 'x' and mark it as mapped
-                map.put(x, y);
-                set.add(y);
-            }
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ACAB";
-        String Y = "XCXY";
-
-        if (isIsomorphic(X, Y)) {
-            System.out.println(X + " and " + Y + " are Isomorphic");
-        }
-        else {
-            System.out.println(X + " and " + Y + " are not Isomorphic");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Find if strings 'X' and 'Y' are Isomorphic or not
-def isIsomorphic(X, Y):
-
-    # if 'X' and 'Y' have different lengths, they cannot be isomorphic
-    if len(X) != len(Y):
-        return False
-
-    # use a dictionary to store a mapping from characters of string 'X' to string 'Y'
-    d = {}
-
-    # use set to store a pool of already mapped characters
-    s = set()
-
-    for i in range(len(X)):
-        x = X[i]
-        y = Y[i]
-
-        # if 'x' is seen before
-        if x in d:
-            # return false if the first occurrence of `x` is mapped to a
-            # different character
-            if d[x] != y:
-                return False
-
-        # if 'x' is seen for the first time (i.e., it isn't mapped yet)
-        else:
-            # return false if 'y' is already mapped to some other char in 'X'
-            if y in s:
-                return False
-
-            # map 'y' to 'x' and mark it as mapped
-            d[x] = y
-            s.add(y)
-
-    return True
-
-if __name__ == '__main__':
-
-    X = 'ACAB'
-    Y = 'XCXY'
-
-    if isIsomorphic(X, Y):
-        print(f'{X} and {Y} are Isomorphic')
-    else:
-        print(f'{X} and {Y} are not Isomorphic')
-```
 
 Rate this post
 

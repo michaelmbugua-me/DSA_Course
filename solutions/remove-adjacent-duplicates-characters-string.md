@@ -14,143 +14,33 @@ For example,
 
 The idea is to loop through the string, and for each character, compare it with its previous character. If the current character is different from the previous character, make it part of the resultant string; otherwise, ignore it. The time complexity of this approach is O(n), where `n` is the length of the input string and doesn’t require any extra space.
 
-Following is the C, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+```ts
 // Function to remove adjacent duplicates characters from a string
-void removeDuplicates(char s[])
-{
-    int n = strlen(s);
-    char prev = '\0';
-    int k = 0;
+function removeDuplicates(s: string): string {
+    let chars = '';
+    let prev: string | null = null;
 
-    // loop through the string
-    for (int i = 0; i < n; i++)
-    {
-        // if the current char is different from the previous char
-        if (prev != s[i])
-        {
-            // set distinct chars at index `k` and increment it
-            s[k++] = s[i];
+    for (const c of s) {
+        if (prev !== c) {
+            chars += c;
+            prev = c;
         }
-
-        // update previous char to current char for the next iteration of the loop
-        prev = s[i];
     }
 
-    // null terminate the resultant string
-    s[k] = '\0';
+    return chars;
 }
 
-int main(void)
-{
-    char s[] = "AAABBCDDD";
-
-    removeDuplicates(s);
-    printf("%s", s);
-
-    return 0;
-}
+const s = 'AAABBCDDD';
+console.log(removeDuplicates(s));
 ```
 
 **Output:** ABCD
 
-##
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
 
-// Function to remove adjacent duplicates characters from a string
-void removeDuplicates(string &s)
-{
-    char prev;
-    for (auto it = s.begin(); it != s.end(); it++)
-    {
-        if (prev == *it)
-        {
-            s.erase(it);
-            it--;
-        }
-        else {
-            prev = *it;
-        }
-    }
-}
 
-int main()
-{
-    string s = "AAABBCDDD";
-
-    removeDuplicates(s);
-    cout << s << endl;
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to remove adjacent duplicates characters from a string
-    public static String removeDuplicates(String s)
-    {
-        // base case
-        if (s == null) {
-            return null;
-        }
-
-        char[] chars = s.toCharArray();
-        char prev = 0;
-        int k = 0;
-
-        for (char c: chars)
-        {
-            if (prev != c)
-            {
-                chars[k++] = c;
-                prev = c;
-            }
-        }
-
-        return new String(chars).substring(0, k);
-    }
-
-    public static void main(String[] args)
-    {
-        String s = "AAABBCDDD";
-        System.out.println(removeDuplicates(s));
-    }
-}
-```
-
-##
-
-```python3
-# Function to remove adjacent duplicates characters from a string
-def removeDuplicates(s):
-    chars = []
-    prev = None
-
-    for c in s:
-        if prev != c:
-            chars.append(c)
-            prev = c
-
-    return ''.join(chars)
-
-if __name__ == '__main__':
-
-    s = 'AAABBCDDD'
-    print(removeDuplicates(s))
-```
 
 Also See:
 

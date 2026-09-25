@@ -14,35 +14,75 @@ A simple solution would be to use an [efficient sorting algorithm](https://techi
 
 We can solve this problem in O(n.log(k)) using a [min-heap](https://techiedelight.com/introduction-priority-queues-using-binary-heaps/#Heap). The idea is to construct a min-heap of size `k+1` and insert the first `k+1` elements into the heap. Then remove minimum from the heap and insert the next element from the array into the heap and continue the process till both array and heap are exhausted. Each pop operation from the heap should insert the corresponding top element in its correct position into the array.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-using namespace std;
+```ts
+// min-heap assumed (JS has no builtin heap)
+class MinHeap {
+    data: number[] = [];
 
-// Function to sort a k–sorted array
-void sortKSortedArray(vector<int> &nums, int k)
-{
-    // create an empty min-heap using `std::priority_queue`
-    // use `std::greater` as a comparison function for min-heap
-    priority_queue<int, vector<int>, greater<int>> pq;
-
-    // insert the first `k+1` elements into a heap
-    for (int i = 0; i <= k; i++) {
-        pq.push(nums[i]);
+    // build a min-heap from the given elements
+    constructor(elements: number[]) {
+        this.data = elements;
+        for (let i = (this.data.length >> 1) - 1; i >= 0; i--) {
+            this.siftDown(i);
+        }
     }
 
-    int index = 0;
+    private siftDown(i: number): void {
+        for (;;) {
+            const left = 2 * i + 1, right = left + 1;
+            let smallest = i;
+            if (left < this.data.length && this.data[left] < this.data[smallest]) smallest = left;
+            if (right < this.data.length && this.data[right] < this.data[smallest]) smallest = right;
+            if (smallest === i) break;
+            [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]];
+            i = smallest;
+        }
+    }
+
+    push(value: number): void {
+        this.data.push(value);
+        let i = this.data.length - 1;
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (this.data[parent] <= this.data[i]) break;
+            [this.data[i], this.data[parent]] = [this.data[parent], this.data[i]];
+            i = parent;
+        }
+    }
+
+    pop(): number | undefined {
+        if (this.data.length === 0) {
+            return undefined;
+        }
+        const top = this.data[0];
+        const last = this.data.pop()!;
+        if (this.data.length > 0) {
+            this.data[0] = last;
+            this.siftDown(0);
+        }
+        return top;
+    }
+
+    get size(): number {
+        return this.data.length;
+    }
+}
+
+// Function to sort a k–sorted array
+function sortKSortedArray(nums: number[], k: number): void {
+
+    // build a min-heap from the first `k+1` elements in the array
+    const pq = new MinHeap(nums.slice(0, k + 1));
 
     // do for remaining elements in the array
-    for (int i = k + 1; i < nums.size(); i++)
-    {
+    let index = 0;
+    for (let i = k + 1; i < nums.length; i++) {
+
         // pop the top element from the min-heap and assign them to the
         // next available array index
-        nums[index++] = pq.top();
-        pq.pop();
+        nums[index++] = pq.pop()!;
 
         // push the next array element into min-heap
         pq.push(nums[i]);
@@ -50,115 +90,18 @@ void sortKSortedArray(vector<int> &nums, int k)
 
     // pop all remaining elements from the min-heap and assign them to the
     // next available array index
-    while (!pq.empty())
-    {
-        nums[index++] = pq.top();
-        pq.pop();
+    while (pq.size > 0) {
+        nums[index++] = pq.pop()!;
     }
 }
 
-int main()
-{
-    vector<int> nums = { 1, 4, 5, 2, 3, 7, 8, 6, 10, 9};
-    int k = 2;
+const nums = [1, 4, 5, 2, 3, 7, 8, 6, 10, 9];
+const k = 2;
 
-    sortKSortedArray(nums, k);
+sortKSortedArray(nums, k);
 
-    // print the sorted array
-    for (int i: nums) {
-        cout << i << " ";
-    }
-
-    return 0;
-}
-```
-
-**Output:** 1 2 3 4 5 6 7 8 9 10
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
-
-class Main
-{
-    // Function to sort a k–sorted array
-    public static void sortKSortedArray(List<Integer> nums, int k)
-    {
-        // create an empty min-heap and insert the first `k+1` elements into it
-        PriorityQueue<Integer> pq = new PriorityQueue<>(nums.subList(0, k+1));
-
-        int index = 0;
-
-        // do for remaining elements in the array
-        for (int i = k + 1; i < nums.size(); i++)
-        {
-            // pop the top element from the min-heap and assign them to the
-            // next available array index
-            nums.set(index++, pq.poll());
-
-            // push the next array element into min-heap
-            pq.add(nums.get(i));
-        }
-
-        // pop all remaining elements from the min-heap and assign them to the
-        // next available array index
-        while (!pq.isEmpty()) {
-            nums.set(index++, pq.poll());
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        List<Integer> nums = Arrays.asList(1, 4, 5, 2, 3, 7, 8, 6, 10, 9);
-        int k = 2;
-
-        sortKSortedArray(nums, k);
-        System.out.println(nums);
-    }
-}
-```
-
-##
-
-```python3
-import heapq
-from heapq import heappop, heappush
-
-# Function to sort a k–sorted array
-def sort_k_sorted_arr(nums, k):
-
-    # build a min-heap from the first `k+1` elements in the list
-    pq = nums[0:k+1]
-    heapq.heapify(pq)
-
-    # do for remaining elements in the list
-    index = 0
-    for i in range(k+1, len(nums)):
-
-        # pop the top element from the min-heap and assign them to the
-        # next available list index
-        nums[index] = heappop(pq)
-        index = index + 1
-
-        # push the next list element into min-heap
-        heappush(pq, nums[i])
-
-    # pop all remaining elements from the min-heap and assign them to the
-    # next available list index
-    while pq:
-        nums[index] = heappop(pq)
-        index = index + 1
-
-if __name__ == '__main__':
-
-    nums = [1, 4, 5, 2, 3, 7, 8, 6, 10, 9]
-    k = 2
-
-    sort_k_sorted_arr(nums, k)
-    print(nums)
+// print the sorted array
+console.log(nums);
 ```
 
 The time complexity of the above solution is O(n.log(k)) since each insertion operation takes O(log(k)) time, and there are `n` elements in the input. The additional space used by the program is O(k).

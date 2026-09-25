@@ -44,170 +44,81 @@ addr(D) ^ link(C) = addr(D) ^ (addr(B) ^ addr(D)) = 0 ^ addr(B) = addr(B)
 
 Consider the following program, which constructs an XOR linked list and traverses it in a forward direction using bitwise XOR operator properties. To traverse the complete list, maintain three-pointers `prev`, `curr`, and `next` to store the current node address, the previous node address, and the next node address, respectively. Each iteration of the loop moves these pointers one position forward or backward depending upon which direction we are traversing the list.
 
-The implementation can be seen below in C and C++:
+The implementation can be seen below in TypeScript. Since JavaScript has no pointer-to-integer casts, each node is given a unique numeric id and the link field stores the XOR of the previous and next node ids, which mimics the C/C++ pointer-XOR behavior:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
+```ts
 // Data structure to store a XOR linked list node
-struct Node
-{
-    int data;
-    struct Node* link;
-};
+class Node {
+    static idCounter = 0;
 
-// Helper function to return XOR of `x` and `y`
-struct Node* XOR(struct Node *x, struct Node *y) {
-    return (struct Node*)((uintptr_t)(x) ^ (uintptr_t)(y));
+    id = ++Node.idCounter;   // unique numeric id, acting as the node "address"
+    link = 0;                // XOR of the previous and next node ids
+
+    constructor(public data: number) {}
+}
+
+// Registry mapping node ids to nodes (stands in for C/C++ memory addresses)
+const registry = new Map<number, Node>();
+
+// Helper function to return the node obtained by XOR-ing the id of `x`
+// and the given link value (0 stands in for a null address)
+function XOR(x: Node | null, link: number): Node | null {
+    const id = (x ? x.id : 0) ^ link;
+    return registry.get(id) ?? null;
 }
 
 // Helper function to traverse the list in a forward direction
-void traverse(struct Node *head)
-{
-    struct Node* curr = head;
-    struct Node* prev = NULL;
-    struct Node *next;
+function traverse(head: Node | null): void {
+    let curr = head;
+    let prev: Node | null = null;
+    let next: Node | null;
 
-    while (curr != NULL)
-    {
-        printf("%d —> ", curr->data);
+    while (curr !== null) {
+        process.stdout.write(curr.data + ' —> ');
 
         // `next` node would be xor of the address of the previous node
         // and current node link
-        next = XOR(prev, curr->link);
+        next = XOR(prev, curr.link);
 
         // update `prev` and `curr` pointers for the next iteration of the loop
         prev = curr;
         curr = next;
     }
 
-    printf("NULL");
+    process.stdout.write('null');
 }
 
 // Helper function to insert a node at the beginning of the XOR linked list
-void push(struct Node **head, int data)
-{
+function push(headRef: Node | null, data: number): Node {
     // allocate a new list node and set its data
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
+    const newNode = new Node(data);
+    registry.set(newNode.id, newNode);
 
-    // The link field of the new node is XOR of the current head and `NULL`
-    // since a new node is being inserted at the beginning
-    newNode->link = XOR(*head, NULL);
+    // The link field of the new node is the id of the current head
+    // (XOR of the current head id and null/0), since a new node is
+    // being inserted at the beginning
+    newNode.link = headRef ? headRef.id : 0;
 
     // update link value of the current head node if the linked list is not empty
-    if (*head)
-    {
-        // *(head)->link is XOR of `NULL` and address of the next node.
-        // To get the address of the next node, XOR it with `NULL`
-        (*head)->link = XOR(newNode, XOR((*head)->link, NULL));
+    if (headRef) {
+        // `headRef.link` is XOR of null (0) and id of the next node.
+        // To get the id of the next node, XOR it with the new node's id
+        headRef.link = newNode.id ^ headRef.link;
     }
 
-    // update the head pointer
-    *head = newNode;
+    // return the new head
+    return newNode;
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3, 4, 5 };
-    int n = sizeof(keys)/sizeof(keys[0]);
+// input keys
+const keys = [1, 2, 3, 4, 5];
 
-    struct Node* head = NULL;
-    for (int i = n - 1; i >=0; i--) {
-        push(&head, keys[i]);
-    }
-
-    traverse(head);
-
-    return 0;
-}
-```
-
-**Output:** 1 —> 2 —> 3 —> 4 —> 5 —> NULL
-
-##
-
-```cpp
-#include <iostream>
-#include <vector>
-#include <cstdint>
-using namespace std;
-
-// Data structure to store a XOR linked list node
-struct Node
-{
-    int data;
-    Node* link;
-};
-
-// Helper function to return XOR of `x` and `y`
-Node* XOR(Node* x, Node* y) {
-    return (Node*)((uintptr_t)(x) ^ (uintptr_t)(y));
+let head: Node | null = null;
+for (let i = keys.length - 1; i >= 0; i--) {
+    head = push(head, keys[i]);
 }
 
-// Helper function to traverse the list in a forward direction
-void traverse(Node* head)
-{
-    Node* curr = head;
-    Node* prev = nullptr;
-    Node *next;
-
-    while (curr != nullptr)
-    {
-        cout << curr->data << " —> ";
-
-        // `next` node would be xor of the address of the previous node
-        // and current node link
-        next = XOR(prev, curr->link);
-
-        // update `prev` and `curr` pointers for the next iteration of the loop
-        prev = curr;
-        curr = next;
-    }
-
-    cout << "nullptr";
-}
-
-// Helper function to insert a node at the beginning of the XOR linked list
-void push(Node* &headRef, int data)
-{
-    // allocate a new list node and set its data
-    Node* newNode = new Node();
-    newNode->data = data;
-
-    // The link field of the new node is XOR of the current head and nullptr
-    // since a new node is being inserted at the beginning
-    newNode->link = XOR(headRef, nullptr);
-
-    // update link value of the current head node if the linked list is not empty
-    if (headRef)
-    {
-        // `headRef->link` is XOR of null and address of the next node.
-        // To get the address of the next node, XOR it with nullptr
-        headRef->link = XOR(newNode, XOR(headRef->link, nullptr));
-    }
-
-    // update the head pointer
-    headRef = newNode;
-}
-
-int main()
-{
-    // input keys
-    vector<int> keys = { 1, 2, 3, 4, 5 };
-
-    Node* head = nullptr;
-    for (int i = keys.size() - 1; i >=0; i--) {
-        push(head, keys[i]);
-    }
-
-    traverse(head);
-
-    return 0;
-}
+traverse(head);
 ```
 
 Drawbacks of XOR linked list:

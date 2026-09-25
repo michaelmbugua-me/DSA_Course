@@ -16,86 +16,58 @@ Please note that we can’t color the above graph using two colors, i.e., it’s
 
 We can use [backtracking](https://techiedelight.com/backtracking-interview-questions/) to solve this problem. The idea is to try all possible combinations of colors for the first vertex in the graph and recursively explore the remaining vertices to check if they will lead to the solution or not. If the current configuration doesn’t result in a solution, backtrack. Note that we assign any color to a vertex only if its adjacent vertices share the different colors.
 
-The implementation can be seen below in C++, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <iomanip>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adj;
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
     // Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adj.resize(n);
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-
-            adj[src].push_back(dest);
-            adj[dest].push_back(src);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
+            this.adjList[dest].push(src);
         }
     }
-};
+}
 
-// A string array to store colors (can handle 10–colorable graph)
-string COLORS[] = {"", "BLUE", "GREEN", "RED", "YELLOW", "ORANGE",
-                "PINK", "BLACK", "BROWN", "WHITE", "PURPLE"};
+// A list to store colors (can handle 10–colorable graph)
+const COLORS = ['', 'BLUE', 'GREEN', 'RED', 'YELLOW', 'ORANGE', 'PINK',
+        'BLACK', 'BROWN', 'WHITE', 'PURPLE'];
 
 // Function to check if it is safe to assign color `c` to vertex `v`
-bool isSafe(Graph const &graph, vector<int> color, int v, int c)
-{
+function isSafe(graph: Graph, color: number[], v: number, c: number): boolean {
     // check the color of every adjacent vertex of `v`
-    for (int u: graph.adj[v])
-    {
-        if (color[u] == c) {
+    for (const u of graph.adjList[v]) {
+        if (color[u] === c) {
             return false;
         }
     }
-
     return true;
 }
 
-void kColorable(Graph const &graph, vector<int> &color, int k, int v, int n)
-{
-    // if all colors are assigned, print the solution
-    if (v == n)
-    {
-        for (int v = 0; v < n; v++) {
-            cout << setw(8) << left << COLORS[color[v]];
-        }
-        cout << endl;
+function kColorable(g: Graph, color: number[], k: number, v: number, n: number): void {
 
+    // if all colors are assigned, print the solution
+    if (v === n) {
+        console.log(color.map(c => COLORS[c]));
         return;
     }
 
     // try all possible combinations of available colors
-    for (int c = 1; c <= k; c++)
-    {
+    for (let c = 1; c <= k; c++) {
         // if it is safe to assign color `c` to vertex `v`
-        if (isSafe(graph, color, v, c))
-        {
+        if (isSafe(g, color, v, c)) {
             // assign color `c` to vertex `v`
             color[v] = c;
 
             // recur for the next vertex
-            kColorable(graph, color, k, v + 1, n);
+            kColorable(g, color, k, v + 1, n);
 
             // backtrack
             color[v] = 0;
@@ -103,215 +75,21 @@ void kColorable(Graph const &graph, vector<int> &color, int k, int v, int n)
     }
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        {0, 1}, {0, 4}, {0, 5}, {4, 5}, {1, 4}, {1, 3}, {2, 3}, {2, 4}
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [[0, 1], [0, 4], [0, 5], [4, 5], [1, 4], [1, 3], [2, 3], [2, 4]];
 
-    // total number of nodes in the graph
-    int n = 6;
+// Set number of vertices in the graph
+const n = 6;
 
-    // build a graph from the given edges
-    Graph g(edges, n);
+// build a graph from the given edges
+const g = new Graph(edges, n);
 
-    int k = 3;
+const k = 3;
 
-    vector<int> color(n, 0);
+const color: number[] = Array(n).fill(0);
 
-    // print all k–colorable configurations of the graph
-    kColorable(g, color, k, 0, n);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // A string array to store colors (can handle 10–colorable graph)
-    private static String COLORS[] = {"", "BLUE", "GREEN", "RED", "YELLOW",
-            "ORANGE", "PINK", "BLACK", "BROWN", "WHITE", "PURPLE"};
-
-    // Function to check if it is safe to assign color `c` to vertex `v`
-    private static boolean isSafe(Graph graph, int[] color, int v, int c)
-    {
-        // check the color of every adjacent vertex of `v`
-        for (int u: graph.adjList.get(v)) {
-            if (color[u] == c) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static void kColorable(Graph g, int[] color, int k, int v, int n)
-    {
-        // if all colors are assigned, print the solution
-        if (v == n)
-        {
-            for (v = 0; v < n; v++) {
-                System.out.printf("%-8s" , COLORS[color[v]]);
-            }
-
-            System.out.println();
-
-            return;
-        }
-
-        // try all possible combinations of available colors
-        for (int c = 1; c <= k; c++)
-        {
-            // if it is safe to assign color `c` to vertex `v`
-            if (isSafe(g, color, v, c))
-            {
-                // assign color `c` to vertex `v`
-                color[v] = c;
-
-                // recur for the next vertex
-                kColorable(g, color, k, v + 1, n);
-
-                // backtrack
-                color[v] = 0;
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1), new Edge(0, 4), new Edge(0, 5), new Edge(4, 5),
-                new Edge(1, 4), new Edge(1, 3), new Edge(2, 3), new Edge(2, 4)
-        );
-
-        // Set number of vertices in the graph
-        int n = 6;
-
-        // build a graph from the given edges
-        Graph g = new Graph(edges, n);
-
-        int k = 3;
-
-        int[] color = new int[n];
-
-        // print all k–colorable configurations of the graph
-        kColorable(g, color, k, 0, n);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-# Function to check if it is safe to assign color `c` to vertex `v`
-def isSafe(graph, color, v, c):
-    # check the color of every adjacent vertex of `v`
-    for u in graph.adjList[v]:
-        if color[u] == c:
-            return False
-    return True
-
-def kColorable(g, color, k, v, n):
-
-    # if all colors are assigned, print the solution
-    if v == n:
-        print([COLORS[color[v]] for v in range(n)])
-        return
-
-    # try all possible combinations of available colors
-    for c in range(1, k + 1):
-        # if it is safe to assign color `c` to vertex `v`
-        if isSafe(g, color, v, c):
-            # assign color `c` to vertex `v`
-            color[v] = c
-
-            # recur for the next vertex
-            kColorable(g, color, k, v + 1, n)
-
-            # backtrack
-            color[v] = 0
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]
-
-    # A list to store colors (can handle 10–colorable graph)
-    COLORS = ['', 'BLUE', 'GREEN', 'RED', 'YELLOW', 'ORANGE', 'PINK',
-            'BLACK', 'BROWN', 'WHITE', 'PURPLE']
-
-    # Set number of vertices in the graph
-    n = 6
-
-    # build a graph from the given edges
-    g = Graph(edges, n)
-
-    k = 3
-
-    color = [None] * n
-
-    # print all k–colorable configurations of the graph
-    kColorable(g, color, k, 0, n)
+// print all k–colorable configurations of the graph
+kColorable(g, color, k, 0, n);
 ```
 
 **Output:** BLUE GREEN BLUE RED RED GREEN BLUE GREEN GREEN BLUE RED GREEN BLUE GREEN GREEN RED RED GREEN BLUE RED BLUE GREEN GREEN RED BLUE RED RED BLUE GREEN RED BLUE RED RED GREEN GREEN RED GREEN BLUE BLUE GREEN RED BLUE GREEN BLUE BLUE RED RED BLUE GREEN BLUE GREEN RED RED BLUE GREEN RED GREEN BLUE BLUE RED GREEN RED RED BLUE BLUE RED GREEN RED RED GREEN BLUE RED RED BLUE BLUE GREEN GREEN BLUE RED BLUE BLUE RED GREEN BLUE RED BLUE RED GREEN GREEN BLUE RED GREEN GREEN BLUE BLUE GREEN RED GREEN GREEN RED BLUE GREEN RED GREEN RED BLUE BLUE GREEN

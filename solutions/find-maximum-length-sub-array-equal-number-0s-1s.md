@@ -21,200 +21,62 @@ We can use the map to solve this problem in linear time. The idea is to replace 
   * If the sum is seen for the first time, insert the sum with its index into the map.
   * If the sum is seen before, there exists a subarray with a sum of 0, which ends at the current index, and update the largest subarray if the current subarray has more length.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
+**Output:** [1, 4]
 
-// Function to find the largest subarray having an equal number
-// of 0's and 1's
-void findLargestSubarray(int nums[], int n)
-{
+```ts
+// Function to find the largest subarray having an equal number of 0's and 1's
+function findLargestSubarray(nums: number[]): void {
+
     // create an empty map to store the ending index of the first subarray
     // having some sum
-    unordered_map<int, int> map;
+    const map = new Map<number, number>();
 
     // insert (0, -1) pair into the set to handle the case when a
     // subarray with zero-sum starts from index 0
-    map[0] = -1;
+    map.set(0, -1);
 
     // `len` stores the maximum length of subarray with zero-sum
-    int len = 0;
+    let len = 0;
 
     // stores ending index of the largest subarray having zero-sum
-    int ending_index = -1;
+    let ending_index = -1;
 
-    int sum = 0;
+    let sum = 0;
 
     // Traverse through the given array
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < nums.length; i++) {
+
         // sum of elements so far (replace 0 with -1)
-        sum += (nums[i] == 0)? -1 : 1;
+        sum += (nums[i] === 0) ? -1 : 1;
 
         // if the sum is seen before
-        if (map.find(sum) != map.end())
-        {
+        if (map.has(sum)) {
+
             // update length and ending index of largest subarray having zero-sum
-            if (len < i - map[sum])
-            {
-                len = i - map[sum];
+            if (len < i - map.get(sum)) {
+                len = i - map.get(sum);
                 ending_index = i;
             }
         }
         // if the sum is seen for the first time, insert the sum with its
         // index into the map
         else {
-            map[sum] = i;
+            map.set(sum, i);
         }
     }
 
     // print the subarray if present
-    if (ending_index != -1) {
-        cout << "[" << ending_index - len + 1 << ", " << ending_index << "]";
-    }
-    else {
-        cout << "No subarray exists";
-    }
-}
-
-int main()
-{
-    int nums[] = { 0, 0, 1, 0, 1, 0, 0 };
-    int n = sizeof(nums) / sizeof(nums[0]);
-
-    findLargestSubarray(nums, n);
-
-    return 0;
-}
-```
-
-**Output:** [1, 4]
-
-##
-
-```java
-import java.util.Map;
-import java.util.HashMap;
-
-class Main
-{
-    // Function to find the largest subarray having an equal number
-    // of 0's and 1's
-    public static void findLargestSubarray(int[] nums)
-    {
-        // create an empty `HashMap` to store the ending index of the first
-        // subarray having some sum
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // insert (0, -1) pair into the set to handle the case when a
-        // subarray with zero-sum starts from index 0
-        map.put(0, -1);
-
-        // `len` stores the maximum length of subarray with zero-sum
-        int len = 0;
-
-        // stores ending index of the largest subarray having zero-sum
-        int ending_index = -1;
-
-        int sum = 0;
-
-        // Traverse through the given array
-        for (int i = 0; i < nums.length; i++)
-        {
-            // sum of elements so far (replace 0 with -1)
-            sum += (nums[i] == 0)? -1: 1;
-
-            // if the sum is seen before
-            if (map.containsKey(sum))
-            {
-                // update length and ending index of largest subarray having zero-sum
-                if (len < i - map.get(sum))
-                {
-                    len = i - map.get(sum);
-                    ending_index = i;
-                }
-            }
-            // if the sum is seen for the first time, insert the sum with its
-            // index into the map
-            else {
-                map.put(sum, i);
-            }
-        }
-
-        // print the subarray if present
-        if (ending_index != -1)
-        {
-            System.out.println("[" + (ending_index - len + 1) + ", " +
-                                    ending_index + "]");
-        }
-        else {
-            System.out.println("No subarray exists");
-        }
-    }
-
-    public static void main (String[] args)
-    {
-        int[] nums = { 0, 0, 1, 0, 1, 0, 0 };
-
-        findLargestSubarray(nums);
+    if (ending_index !== -1) {
+        console.log(`[${ending_index - len + 1}, ${ending_index}]`);
+    } else {
+        console.log("No subarray exists");
     }
 }
-```
 
-##
-
-```python3
-# Function to find the largest sublist having an equal number of 0's and 1's
-def findLargestSublist(nums):
-
-    # create an empty dictionary to store the ending index of the first
-    # sublist having some sum
-    d = {}
-
-    # insert (0, -1) pair into the set to handle the case when a
-    # sublist with zero-sum starts from index 0
-    d[0] = -1
-
-    # `length` stores the maximum length of sublist with zero-sum
-    length = 0
-
-    # stores ending index of the largest sublist having zero-sum
-    ending_index = -1
-
-    total = 0
-
-    # Traverse through the given list
-    for i in range(len(nums)):
-
-        # sum of elements so far (replace 0 with -1)
-        total += -1 if (nums[i] == 0) else 1
-
-        # if the sum is seen before
-        if total in d:
-
-            # update length and ending index of largest sublist having zero-sum
-            if length < i - d.get(total):
-                length = i - d.get(total)
-                ending_index = i
-
-        # if the sum is seen for the first time, insert the sum with its
-        # index into the dictionary
-        else:
-            d[total] = i
-
-    # print the sublist if present
-    if ending_index != -1:
-        print((ending_index - length + 1, ending_index))
-    else:
-        print('No sublist exists')
-
-if __name__ == '__main__':
-
-    nums = [0, 0, 1, 0, 1, 0, 0]
-    findLargestSublist(nums)
+const nums = [0, 0, 1, 0, 1, 0, 0];
+findLargestSubarray(nums);
 ```
 
 The time complexity of the above solution O(n) and requires O(n) extra space, where `n` is the size of the input.

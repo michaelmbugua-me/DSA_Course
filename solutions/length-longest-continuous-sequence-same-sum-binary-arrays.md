@@ -29,184 +29,58 @@ Claim: If the difference is seen before and the index of previous occurrence is 
 
 We can write previous difference as di = X[0, i] – Y[0, i] Similarly, the current difference dj can be written as: dj = X[0, j] – Y[0, j], or dj = (X[0, i] + X[i+1, j]) – (Y[0, i] + Y[i+1, j]) If the difference is seen before, i.e., (dj = di), then (X[0, i] + X[i+1, j]) – (Y[0, i] + Y[i+1, j]) = X[0, i] – Y[0, i] X[i+1, j] – Y[i+1, j] = 0, or X[i+1, j] == Y[i+1, j]
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
-// Given two binary arrays, `X` and `Y`, find the length of the longest
+```ts
+// Given two lists, `X` and `Y`, find the length of the longest
 // continuous sequence that starts and ends at the same index in both
-// arrays and have the same sum
-int findMaxSubarrayLength(bool X[], bool Y[], int n)
-{
-    // create an empty map
-    unordered_map<int, int> map;
+// lists and have the same sum
+function findMaxSublistLength(X: number[], Y: number[]): number {
+  // create an empty map
+  const map = new Map<number, number>();
 
-    // to handle the case when the required sequence starts from index 0
-    map[0] = -1;
+  // to handle the case when the required sequence starts from index 0
+  map.set(0, -1);
 
-    // stores length of the longest continuous sequence
-    int result = 0;
+  // stores length of the longest continuous sequence
+  let result = 0;
 
-    // `sum_x` and `sum_y` stores the sum of elements of `X[]` and `Y[]`,
-    // respectively, till the current index
-    int sum_x = 0, sum_y = 0;
+  // `sum_x` and `sum_y` stores the sum of elements of `X` and `Y`,
+  // respectively, till the current index
+  let sum_x = 0, sum_y = 0;
 
-    // traverse both lists simultaneously
-    for (int i = 0; i < n; i++)
-    {
-        // update `sum_x` and `sum_y`
-        sum_x += X[i];
-        sum_y += Y[i];
+  // traverse both lists simultaneously
+  for (let i = 0; i < X.length; i++) {
+    // update `sum_x` and `sum_y`
+    sum_x += X[i];
+    sum_y += Y[i];
 
-        // calculate the difference between the sum of elements in two lists
-        int diff = sum_x - sum_y;
+    // calculate the difference between the sum of elements in two lists
+    const diff = sum_x - sum_y;
 
-        // if the difference is seen for the first time, store the
-        // difference and current index in a map
-        if (map.find(diff) == map.end()) {
-            map[diff] = i;
-        }
-
-        // if the difference is seen before, then update the result
-        else {
-            result = max(result, i - map[diff]);
-        }
+    // if the difference is seen for the first time, store the
+    // difference and current index in a map
+    if (!map.has(diff)) {
+      map.set(diff, i);
     }
 
-    return result;
+    // if the difference is seen before, then update the result
+    else {
+      result = Math.max(result, i - map.get(diff)!);
+    }
+  }
+
+  return result;
 }
 
-int main()
-{
-    bool X[] = {0, 0, 1, 1, 1, 1};
-    bool Y[] = {0, 1, 1, 0, 1, 0};
+const X = [0, 0, 1, 1, 1, 1];
+const Y = [0, 1, 1, 0, 1, 0];
 
-    int n = sizeof(X)/sizeof(X[0]);
-
-    cout << "The length of the longest continuous sequence with the same sum is " <<
-            findMaxSubarrayLength(X, Y, n);
-
-    return 0;
-}
+console.log('The length of the longest continuous sequence with the same sum is',
+  findMaxSublistLength(X, Y));
 ```
 
 **Output:** The length of the longest continuous sequence with the same sum is 5
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Given two binary arrays, `X` and `Y`, find the length of the longest
-    // continuous sequence that starts and ends at the same index in both
-    // arrays and have the same sum
-    public static int findMaxSubarrayLength(int[] X, int[] Y)
-    {
-        // create an empty map
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // to handle the case when the required sequence starts from index 0
-        map.put(0, -1);
-
-        // stores length of the longest continuous sequence
-        int result = 0;
-
-        // `sum_x` and `sum_y` stores the sum of elements of `X[]` and `Y[]`,
-        // respectively, till the current index
-        int sum_x = 0, sum_y = 0;
-
-        // traverse both lists simultaneously
-        for (int i = 0; i < X.length; i++)
-        {
-            // update `sum_x` and `sum_y`
-            sum_x += X[i];
-            sum_y += Y[i];
-
-            // calculate the difference between the sum of elements in two lists
-            int diff = sum_x - sum_y;
-
-            // if the difference is seen for the first time, store the
-            // difference and current index in a map
-            if (!map.containsKey(diff)) {
-                map.put(diff, i);
-            }
-
-            // if the difference is seen before, then update the result
-            else {
-                result = Integer.max(result, i - map.get(diff));
-            }
-        }
-
-        return result;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] X = { 0, 0, 1, 1, 1, 1 };
-        int[] Y = { 0, 1, 1, 0, 1, 0 };
-
-        System.out.println("The length of the longest continuous sequence " +
-                        "with the same sum is " + findMaxSubarrayLength(X, Y));
-    }
-}
-```
-
-##
-
-```python3
-# Given two lists, `X` and `Y`, find the length of the longest
-# continuous sequence that starts and ends at the same index in both
-# lists and have the same sum
-def findMaxSublistLength(X, Y):
-
-    # create an empty dictionary
-    d = {}
-
-    # to handle the case when the required sequence starts from index 0
-    d[0] = -1
-
-    # stores length of the longest continuous sequence
-    result = 0
-
-    # `sum_x` and `sum_y` stores the sum of elements of `X` and `Y`,
-    # respectively, till the current index
-    sum_x = sum_y = 0
-
-    # traverse both lists simultaneously
-    for i in range(len(X)):
-
-        # update `sum_x` and `sum_y`
-        sum_x += X[i]
-        sum_y += Y[i]
-
-        # calculate the difference between the sum of elements in two lists
-        diff = sum_x - sum_y
-
-        # if the difference is seen for the first time, store the
-        # difference and current index in a dictionary
-        if diff not in d:
-            d[diff] = i
-
-        # if the difference is seen before, then update the result
-        else:
-            result = max(result, i - d[diff])
-
-    return result
-
-if __name__ == '__main__':
-
-    X = [0, 0, 1, 1, 1, 1]
-    Y = [0, 1, 1, 0, 1, 0]
-
-    print('The length of the longest continuous sequence with the same sum is',
-        findMaxSublistLength(X, Y))
-```
 
 The time complexity of the above solution O(n) and requires O(n) extra space, where `n` is the size of the given sequence.
 

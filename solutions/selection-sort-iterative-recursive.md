@@ -18,295 +18,83 @@ The idea is to divide the array into two subsets – sorted subset and unsorted 
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-Following is an iterative implementation of the selection sort algorithm in C, Java, and Python:
+Following is an iterative implementation of the selection sort algorithm in TypeScript:
 
-```c
-#include <stdio.h>
-
-// Utility function to swap values at two indices in an array
-void swap(int arr[], int i, int j)
-{
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+```ts
+// Utility function to swap values at two indices in the array
+function swap(A: number[], i: number, j: number): void {
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
 }
 
-// Function to perform selection sort on `arr[]`
-void selectionSort(int arr[], int n)
-{
-    // run `n-1` times
-    for (int i = 0; i < n - 1; i++)
-    {
-        // find the minimum element in the unsorted subarray `[i…n-1]`
-        // and swap it with `arr[i]`
-        int min = i;
+// Function to perform selection sort on an array
+function selectionSort(A: number[]): void {
+    for (let i = 0; i < A.length - 1; i++) {
+        // find the minimum element in the unsorted subarray `A[i…n-1]`
+        // and swap it with `A[i]`
+        let min = i;
 
-        for (int j = i + 1; j < n; j++)
-        {
-            // if `arr[j]` is less, then it is the new minimum
-            if (arr[j] < arr[min]) {
-                min = j;    // update the index of minimum element
+        for (let j = i + 1; j < A.length; j++) {
+            // if the `A[j]` element is less, then it is the new minimum
+            if (A[j] < A[min]) {
+                min = j;        // update the index of minimum element
             }
         }
 
-        // swap the minimum element in subarray `arr[i…n-1]` with `arr[i]`
-        swap(arr, min, i);
+        // swap the minimum element in subarray `A[i…n-1]` with `A[i]`
+        swap(A, min, i);
     }
 }
 
-// Function to print `n` elements of array `arr`
-void printArray(int arr[], int n)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-}
+// demo
+const A = [3, 5, 8, 4, 1, 9, -2];
 
-int main(void)
-{
-    int arr[] = { 3, 5, 8, 4, 1, 9, -2 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+selectionSort(A);
 
-    selectionSort(arr, n);
-    printArray(arr, n);
-
-    return 0;
-}
-```
-
-**Output:** -2 1 3 4 5 8 9
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Utility function to swap values at two indices in the array
-    public static void swap(int[] arr, int i, int j)
-    {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    // Function to perform selection sort on `arr[]`
-    public static void selectionSort(int[] arr)
-    {
-        // run `n-1` times, where `n` is array length
-        for (int i = 0; i < arr.length - 1; i++)
-        {
-            // find the minimum element in the unsorted subarray `[i…n-1]`
-            // and swap it with `arr[i]`
-            int min = i;
-
-            for (int j = i + 1; j < arr.length; j++)
-            {
-                // if `arr[j]` is less, then it is the new minimum
-                if (arr[j] < arr[min]) {
-                    min = j;    // update the index of minimum element
-                }
-            }
-
-            // swap the minimum element in subarray `arr[i…n-1]` with `arr[i]`
-            swap(arr, min, i);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 3, 5, 8, 4, 1, 9, -2 };
-
-        selectionSort(arr);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Utility function to swap values at two indices in the list
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Function to perform selection sort on a list
-def selectionSort(A):
-
-    for i in range(len(A) - 1):
-
-        # find the minimum element in the unsorted sublist `A[i…n-1]`
-        # and swap it with `A[i]`
-        min = i
-
-        for j in range(i + 1, len(A)):
-            # if the `A[j]` element is less, then it is the new minimum
-            if A[j] < A[min]:
-                min = j        # update the index of minimum element
-
-        # swap the minimum element in sublist `A[i…n-1]` with `A[i]`
-        swap(A, min, i)
-
-if __name__ == '__main__':
-
-    A = [3, 5, 8, 4, 1, 9, -2]
-
-    selectionSort(A)
-
-    # print the sorted list
-    print(A)
+// print the sorted array
+console.log(A);
 ```
 
 Both the worst-case and best-case time complexity of selection sort is O(n2), where `n` is the input size, and it doesn’t require any extra space.
 
-The selection sort algorithm can be implemented recursively. Following is the recursive implementation of the selection sort algorithm in C, Java, and Python:
+The selection sort algorithm can be implemented recursively. Following is the recursive implementation of the selection sort algorithm in TypeScript:
 
-```c
-#include <stdio.h>
-
-// Utility function to swap values at two indices in an array
-void swap(int arr[], int i, int j)
-{
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+```ts
+// Utility function to swap values at two indices in the array
+function swap(A: number[], i: number, j: number): void {
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
 }
 
-// Recursive function to perform selection sort on subarray `arr[i…n-1]`
-void selectionSort(int arr[], int i, int n)
-{
-    // find the minimum element in the unsorted subarray `[i…n-1]`
-    // and swap it with `arr[i]`
-    int min = i;
-    for (int j = i + 1; j < n; j++)
-    {
-        // if `arr[j]` is less, then it is the new minimum
-        if (arr[j] < arr[min]) {
-            min = j;    // update the index of minimum element
+// Recursive function to perform selection sort on subarray `A[i…n-1]`
+function selectionSort(A: number[], i: number, n: number): void {
+    // find the minimum element in the unsorted subarray `A[i…n-1]`
+    // and swap it with `A[i]`
+    let min = i;
+    for (let j = i + 1; j < n; j++) {
+        // if the `A[j]` element is less, then it is the new minimum
+        if (A[j] < A[min]) {
+            min = j;            // update the index of minimum element
         }
     }
 
-    // swap the minimum element in subarray `arr[i…n-1]` with `arr[i]`
-    swap(arr, min, i);
+    // swap the minimum element in subarray `A[i…n-1]` with `A[i]`
+    swap(A, min, i);
 
     if (i + 1 < n) {
-        selectionSort(arr, i + 1, n);
+        selectionSort(A, i + 1, n);
     }
 }
 
-// Function to print `n` elements of array `arr`
-void printArray(int arr[], int n)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-}
+// demo
+const A = [3, 5, 8, 4, 1, 9, -2];
 
-int main()
-{
-    int arr[] = { 3, 5, 8, 4, 1, 9, -2 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+selectionSort(A, 0, A.length);
 
-    selectionSort(arr, 0, n);
-    printArray(arr, n);
-
-    return 0;
-}
-```
-
-**Output:** -2 1 3 4 5 8 9
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Utility function to swap values at two indices in the array
-    public static void swap(int[] arr, int i, int j)
-    {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    // Recursive function to perform selection sort on subarray `arr[i…n-1]`
-    public static void selectionSort(int[] arr, int i, int n)
-    {
-        // find the minimum element in the unsorted subarray `[i…n-1]`
-        // and swap it with `arr[i]`
-        int min = i;
-        for (int j = i + 1; j < n; j++)
-        {
-            // if `arr[j]` is less, then it is the new minimum
-            if (arr[j] < arr[min]) {
-                min = j;    // update the index of minimum element
-            }
-        }
-
-        // swap the minimum element in subarray `arr[i…n-1]` with `arr[i]`
-        swap(arr, min, i);
-
-        if (i + 1 < n) {
-            selectionSort(arr, i + 1, n);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 3, 5, 8, 4, 1, 9, -2 };
-
-        selectionSort(arr, 0, arr.length);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Utility function to swap values at two indices in the list
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Recursive function to perform selection sort on sublist `A[i…n-1]`
-def selectionSort(A, i, n):
-
-    # find the minimum element in the unsorted sublist `A[i…n-1]`
-    # and swap it with `A[i]`
-    min = i
-    for j in range(i + 1, n):
-
-        # if the `A[j]` element is less, then it is the new minimum
-        if A[j] < A[min]:
-            min = j            # update the index of minimum element
-
-    # swap the minimum element in sublist `A[i…n-1]` with `A[i]`
-    swap(A, min, i)
-
-    if i + 1 < n:
-        selectionSort(A, i + 1, n)
-
-if __name__ == '__main__':
-
-    A = [3, 5, 8, 4, 1, 9, -2]
-
-    selectionSort(A, 0, len(A))
-
-    # print the sorted list
-    print(A)
+// print the sorted array
+console.log(A);
 ```
 
 The time complexity of the selection sort recursive algorithm remains the same as the iterative version. However, the auxiliary space used by the recursive version is O(n) for the call stack.

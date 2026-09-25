@@ -30,43 +30,29 @@ As we can see that for a tree edge, forward edge, or cross edge `(u, v)`, `depar
 
 We know that **in a DAG, no back-edge is present**. So if we order the vertices in order of their decreasing departure time, we will get the topological order of the graph (**every edge going from left to right**).
 
-Following is the C++, Java, and Python implementation of the topological sort algorithm:
+Following is a TypeScript implementation of the topological sort algorithm:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    constructor(edges: [number, number][], n: number) {
+        // A list of lists to represent an adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the directed graph
-        for (auto &edge: edges) {
-            adjList[edge.src].push_back(edge.dest);
+        for (const [src, dest] of edges) {
+            // add an edge from source to destination
+            this.adjList[src].push(dest);
         }
     }
-};
+}
 
 // Perform DFS on the graph and set the departure time of all
 // vertices of the graph
-void DFS(Graph const &graph, int v, vector<bool>
-    &discovered, vector<int> &departure, int &time)
-{
+function DFS(graph: Graph, v: number, discovered: boolean[], departure: number[], time: number): number {
     // mark the current node as discovered
     discovered[v] = true;
 
@@ -74,11 +60,10 @@ void DFS(Graph const &graph, int v, vector<bool>
     time++;
 
     // do for every edge (v, u)
-    for (int u: graph.adjList[v])
-    {
+    for (const u of graph.adjList[v]) {
         // if `u` is not yet discovered
         if (!discovered[u]) {
-            DFS(graph, u, discovered, departure, time);
+            time = DFS(graph, u, discovered, departure, time);
         }
     }
 
@@ -86,270 +71,52 @@ void DFS(Graph const &graph, int v, vector<bool>
     // set departure time of vertex `v`
     departure[time] = v;
     time++;
+
+    return time;
 }
 
 // Function to perform a topological sort on a given DAG
-void doTopologicalSort(Graph const &graph, int n)
-{
+function doTopologicalSort(graph: Graph, n: number): void {
     // departure[] stores the vertex number using departure time as an index
-    vector<int> departure(2*n, -1);
+    const departure: number[] = new Array(2 * n).fill(-1);
 
     /* If we had done it the other way around, i.e., fill the array
        with departure time using vertex number as an index, we would
        need to sort it later */
 
     // to keep track of whether a vertex is discovered or not
-    vector<bool> discovered(n);
-    int time = 0;
+    const discovered: boolean[] = new Array(n).fill(false);
+    let time = 0;
 
     // perform DFS on all undiscovered vertices
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < n; i++) {
         if (!discovered[i]) {
-            DFS(graph, i, discovered, departure, time);
+            time = DFS(graph, i, discovered, departure, time);
         }
     }
 
     // Print the vertices in order of their decreasing
     // departure time in DFS, i.e., in topological order
-    for (int i = 2*n - 1; i >= 0; i--)
-    {
-        if (departure[i] != -1) {
-            cout << departure[i] << " ";
+    for (let i = 2 * n - 1; i >= 0; i--) {
+        if (departure[i] !== -1) {
+            process.stdout.write(departure[i] + ' ');
         }
     }
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        {0, 6}, {1, 2}, {1, 4}, {1, 6}, {3, 0}, {3, 4}, {5, 1}, {7, 0}, {7, 1}
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 6], [1, 2], [1, 4], [1, 6], [3, 0], [3, 4], [5, 1], [7, 0], [7, 1]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 7)
-    int n = 8;
+// total number of nodes in the graph (labelled from 0 to 7)
+const n = 8;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    // perform topological sort
-    doTopologicalSort(graph, n);
-
-    return 0;
-}
-```
-
-**Output:** 7 5 3 1 4 2 0 6
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        // allocate memory
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the directed graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            // add an edge from source to destination
-            adjList.get(src).add(dest);
-        }
-    }
-}
-
-class Main
-{
-    // Perform DFS on the graph and set the departure time of all
-    // vertices of the graph
-    static int DFS(Graph graph, int v, boolean[] discovered,
-                   int[] departure, int time)
-    {
-        // mark the current node as discovered
-        discovered[v] = true;
-
-        // set the arrival time of vertex `v`
-        time++;
-
-        // do for every edge (v, u)
-        for (int u: graph.adjList.get(v))
-        {
-            // if `u` is not yet discovered
-            if (!discovered[u]) {
-                time = DFS(graph, u, discovered, departure, time);
-            }
-        }
-
-        // ready to backtrack
-        // set departure time of vertex `v`
-        departure[time] = v;
-        time++;
-
-        return time;
-    }
-
-    // Function to perform a topological sort on a given DAG
-    public static void doTopologicalSort(Graph graph, int n)
-    {
-        // departure[] stores the vertex number using departure time as an index
-        int[] departure = new int[2*n];
-        Arrays.fill(departure, -1);
-
-        /* If we had done it the other way around, i.e., fill the array
-           with departure time using vertex number as an index, we would
-           need to sort it later */
-
-        // to keep track of whether a vertex is discovered or not
-        boolean[] discovered = new boolean[n];
-        int time = 0;
-
-        // perform DFS on all undiscovered vertices
-        for (int i = 0; i < n; i++)
-        {
-            if (!discovered[i]) {
-                time = DFS(graph, i, discovered, departure, time);
-            }
-        }
-
-        // Print the vertices in order of their decreasing
-        // departure time in DFS, i.e., in topological order
-        for (int i = 2*n - 1; i >= 0; i--)
-        {
-            if (departure[i] != -1) {
-                System.out.print(departure[i] + " ");
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 6), new Edge(1, 2), new Edge(1, 4),
-                new Edge(1, 6), new Edge(3, 0), new Edge(3, 4),
-                new Edge(5, 1), new Edge(7, 0), new Edge(7, 1)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 7)
-        int n = 8;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // perform topological sort
-        doTopologicalSort(graph, n);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the directed graph
-        for (src, dest) in edges:
-
-            # add an edge from source to destination
-            self.adjList[src].append(dest)
-
-# Perform DFS on the graph and set the departure time of all
-# vertices of the graph
-def DFS(graph, v, discovered, departure, time):
-
-    # mark the current node as discovered
-    discovered[v] = True
-
-    # set the arrival time of vertex `v`
-    time = time + 1
-
-    # do for every edge (v, u)
-    for u in graph.adjList[v]:
-        # if `u` is not yet discovered
-        if not discovered[u]:
-            time = DFS(graph, u, discovered, departure, time)
-
-    # ready to backtrack
-    # set departure time of vertex `v`
-    departure[time] = v
-    time = time + 1
-
-    return time
-
-# Function to perform a topological sort on a given DAG
-def doTopologicalSort(graph, n):
-
-    # departure[] stores the vertex number using departure time as an index
-    departure = [-1] * 2 * n
-
-    ''' If we had done it the other way around, i.e., fill the array
-        with departure time using vertex number as an index, we would
-        need to sort it later '''
-
-    # to keep track of whether a vertex is discovered or not
-    discovered = [False] * n
-    time = 0
-
-    # perform DFS on all undiscovered vertices
-    for i in range(n):
-        if not discovered[i]:
-            time = DFS(graph, i, discovered, departure, time)
-
-    # Print the vertices in order of their decreasing
-    # departure time in DFS, i.e., in topological order
-    for i in reversed(range(2*n)):
-        if departure[i] != -1:
-            print(departure[i], end=' ')
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 6), (1, 2), (1, 4), (1, 6), (3, 0), (3, 4), (5, 1), (7, 0), (7, 1)]
-
-    # total number of nodes in the graph (labelled from 0 to 7)
-    n = 8
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # perform topological sort
-    doTopologicalSort(graph, n)
+// perform topological sort
+doTopologicalSort(graph, n);
 ```
 
 The time complexity of the above implementation is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively.

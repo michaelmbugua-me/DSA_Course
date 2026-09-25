@@ -10,371 +10,119 @@ Given a doubly linked list, sort it using the merge sort algorithm.
 
 In the [previous post](https://techiedelight.com/merge-sort-singly-linked-list/), we have discussed the merge sort algorithm on a singly linked list. The merge sort algorithm on the doubly linked list works similarly by splitting the list into two halves, sorting each sublist recursively, and finally merge both the sorted lists together to get a single sorted list.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Doubly Linked List Node
-struct Node
-{
-    int data;
-    struct Node *next, *prev;
-};
+class Node {
+    constructor(public data: number,
+                public next: Node | null = null,
+                public prev: Node | null = null) {}
+}
 
 // Utility function to push a node at the beginning of the doubly linked list
-void push(struct Node** headRef, int key)
-{
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->data = key;
-    node->prev = NULL;
-    node->next = *headRef;
+function push(head: Node | null, key: number): Node {
+
+    const node = new Node(key, head);
 
     // change `prev` of the existing head node to point to the new node
-    if (*headRef != NULL) {
-        (*headRef)->prev = node;
+    if (head !== null) {
+        head.prev = node;
     }
 
-    // update head pointer
-    *headRef = node;
+    // return new head node
+    return node;
 }
 
 // Helper function to print nodes of a doubly linked list
-void printDDL(struct Node* head)
-{
-    while (head != NULL)
-    {
-        printf("%d ⇔ ", head->data);
-        head = head->next;
-    }
+function printDDL(head: Node | null): void {
 
-    printf("NULL");
+    while (head !== null) {
+        process.stdout.write(`${head.data} ⇔ `);
+        head = head.next;
+    }
+    console.log('null');
 }
 
 // Function to split nodes of the given doubly linked list into
 // two halves using the fast/slow pointer strategy
-void split(struct Node* head, struct Node** a, struct Node** b)
-{
-    struct Node* slow = head;
-    struct Node* fast = head->next;
+function split(head: Node): Node {
+
+    let slow: Node = head;
+    let fast: Node | null = head.next;
 
     // advance `fast` by two nodes, and advance `slow` by a single node
-    while (fast != NULL)
-    {
-        fast = fast->next;
-        if (fast != NULL)
-        {
-            slow = slow->next;
-            fast = fast->next;
+    while (fast !== null) {
+        fast = fast.next;
+        if (fast !== null) {
+            slow = slow.next!;
+            fast = fast.next;
         }
     }
 
-    *b = slow->next;
-    slow->next = NULL;
+    return slow;
 }
 
 // Recursive function to merge nodes of two sorted lists
 // into a single sorted list
-struct Node* merge(struct Node* a, struct Node* b)
-{
+function merge(a: Node | null, b: Node | null): Node | null {
+
     // base cases
-    if (a == NULL) {
+    if (a === null) {
         return b;
     }
 
-    if (b == NULL) {
+    if (b === null) {
         return a;
     }
 
     // pick either `a` or `b`, and recur
-    if (a->data <= b->data)
-    {
-        a->next = merge(a->next, b);
-        a->next->prev = a;
-        a->prev = NULL;
+    if (a.data <= b.data) {
+        a.next = merge(a.next, b);
+        a.next!.prev = a;
+        a.prev = null;
         return a;
     }
     else {
-        b->next = merge(a, b->next);
-        b->next->prev = b;
-        b->prev = NULL;
+        b.next = merge(a, b.next);
+        b.next!.prev = b;
+        b.prev = null;
         return b;
     }
 }
 
 // Function to sort a doubly-linked list using merge sort algorithm
-void mergesort(struct Node** head)
-{
+function mergesort(head: Node | null): Node | null {
+
     // base case: 0 or 1 node
-    if (*head == NULL || (*head)->next == NULL) {
-        return;
-    }
-
-    // split head into `a` and `b` sublists
-    struct Node* a = *head, *b = NULL;
-    split(*head, &a, &b);
-
-    // recursively sort the sublists
-    mergesort(&a);
-    mergesort(&b);
-
-    // merge the two sorted lists
-    *head = merge(a, b);
-}
-
-int main(void)
-{
-    int keys[] = { 6, 4, 8, 7, 9, 2, 1 };
-    int n = sizeof(keys)/sizeof(keys[0]);
-
-    struct Node* head = NULL;
-    for (int i = 0; i < n; i++) {
-        push(&head, keys[i]);
-    }
-
-    mergesort(&head);
-    printDDL(head);
-
-    return 0;
-}
-```
-
-**Output:** 1 ⇔ 2 ⇔ 4 ⇔ 6 ⇔ 7 ⇔ 8 ⇔ 9 ⇔ NULL
-
-##
-
-```java
-// A Doubly Linked List Node
-class Node
-{
-    int data;
-    Node next, prev;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Utility function to push a node at the beginning of the doubly linked list
-    public static Node push(Node head, int key)
-    {
-        Node node = new Node(key);
-        node.next = head;
-
-        // change `prev` of the existing head node to point to the new node
-        if (head != null) {
-            head.prev = node;
-        }
-
-        // return new head node
-        return node;
-    }
-
-    // Helper function to print nodes of a doubly linked list
-    public static void printDDL(Node head)
-    {
-        while (head != null)
-        {
-            System.out.print(head.data + " ⇔ ");
-            head = head.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Function to split nodes of the given doubly linked list into
-    // two halves using the fast/slow pointer strategy
-    public static Node split(Node head)
-    {
-        Node slow = head;
-        Node fast = head.next;
-
-        // advance `fast` by two nodes, and advance `slow` by a single node
-        while (fast != null)
-        {
-            fast = fast.next;
-            if (fast != null)
-            {
-                slow = slow.next;
-                fast = fast.next;
-            }
-        }
-
-        return slow;
-    }
-
-    // Recursive function to merge nodes of two sorted lists
-    // into a single sorted list
-    public static Node merge(Node a, Node b)
-    {
-        // base cases
-        if (a == null) {
-            return b;
-        }
-
-        if (b == null) {
-            return a;
-        }
-
-        // pick either `a` or `b`, and recur
-        if (a.data <= b.data)
-        {
-            a.next = merge(a.next, b);
-            a.next.prev = a;
-            a.prev = null;
-            return a;
-        }
-        else {
-            b.next = merge(a, b.next);
-            b.next.prev = b;
-            b.prev = null;
-            return b;
-        }
-    }
-
-    // Function to sort a doubly-linked list using merge sort algorithm
-    public static Node mergesort(Node head)
-    {
-        // base case: 0 or 1 node
-        if (head == null || head.next == null) {
-            return head;
-        }
-
-        // split head into `a` and `b` sublists
-        Node a = head, b;
-
-        Node slow = split(head);
-        b = slow.next;
-        slow.next = null;
-
-        // recursively sort the sublists
-        a = mergesort(a);
-        b = mergesort(b);
-
-        // merge the two sorted lists
-        head = merge(a, b);
+    if (head === null || head.next === null) {
         return head;
     }
 
-    public static void main(String[] args)
-    {
-        int[] keys = { 6, 4, 8, 7, 9, 2, 1 };
+    // split head into `a` and `b` sublists
+    let a: Node | null = head;
 
-        Node head = null;
-        for (int key: keys) {
-            head = push(head, key);
-        }
+    const slow = split(head);
+    let b = slow.next;
+    slow.next = null;
 
-        head = mergesort(head);
-        printDDL(head);
-    }
+    // recursively sort the sublists
+    a = mergesort(a);
+    b = mergesort(b);
+
+    // merge the two sorted lists
+    return merge(a, b);
 }
-```
 
-##
+const keys = [6, 4, 8, 7, 9, 2, 1];
 
-```python3
-# A Doubly Linked List Node
-class Node:
-    def __init__(self, data, next=None, prev=None):
-        self.data = data
-        self.next = next
-        self.prev = prev
+let head: Node | null = null;
+for (const key of keys) {
+    head = push(head, key);
+}
 
-# Utility function to push a node at the beginning of the doubly linked list
-def push(head, key):
-
-    node = Node(key, head)
-
-    # change `prev` of the existing head node to point to the new node
-    if head:
-        head.prev = node
-
-    # return new head node
-    return node
-
-# Helper function to print nodes of a doubly linked list
-def printDDL(head):
-
-    while head:
-        print(head.data, end=' ⇔ ')
-        head = head.next
-    print('None')
-
-# Function to split nodes of the given doubly linked list into
-# two halves using the fast/slow pointer strategy
-def split(head):
-
-    slow = head
-    fast = head.next
-
-    # advance `fast` by two nodes, and advance `slow` by a single node
-    while fast:
-        fast = fast.next
-        if fast:
-            slow = slow.next
-            fast = fast.next
-
-    return slow
-
-# Recursive function to merge nodes of two sorted lists
-# into a single sorted list
-def merge(a, b):
-
-    # base cases
-    if a is None:
-        return b
-
-    if b is None:
-        return a
-
-    # pick either `a` or `b`, and recur
-    if a.data <= b.data:
-        a.next = merge(a.next, b)
-        a.next.prev = a
-        a.prev = None
-        return a
-    else:
-        b.next = merge(a, b.next)
-        b.next.prev = b
-        b.prev = None
-        return b
-
-# Function to sort a doubly-linked list using merge sort algorithm
-def mergesort(head):
-
-    # base case: 0 or 1 node
-    if head is None or head.next is None:
-        return head
-
-    # split head into `a` and `b` sublists
-    a = head
-
-    slow = split(head)
-    b = slow.next
-    slow.next = None
-
-    # recursively sort the sublists
-    a = mergesort(a)
-    b = mergesort(b)
-
-    # merge the two sorted lists
-    head = merge(a, b)
-    return head
-
-if __name__ == '__main__':
-
-    keys = [6, 4, 8, 7, 9, 2, 1]
-
-    head = None
-    for key in keys:
-        head = push(head, key)
-
-    head = mergesort(head)
-    printDDL(head)
+head = mergesort(head);
+printDDL(head);
 ```
 
 The time complexity of the above solution is O(n.log(n)), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.

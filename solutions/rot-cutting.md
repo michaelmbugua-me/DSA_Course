@@ -14,32 +14,24 @@ We are given an array `price[]`, where the rod of length `i` has a value `price[
 
 rodcut(n) = max { price[i – 1] + rodCut(n – i) } where 1 <= i <= n
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <climits>
-using namespace std;
-
+```ts
 // Function to find the best way to cut a rod of length `n`
 // where the rod of length `i` has a cost `price[i-1]`
-int rodCut(int price[], int n)
-{
+function rodCut(price: number[], n: number): number {
     // base case
-    if (n == 0) {
+    if (n === 0) {
         return 0;
     }
 
-    int maxValue = INT_MIN;
+    let maxValue = Number.MIN_SAFE_INTEGER;
 
-    // one by one, partition the given rod of length `n` into two parts
-    // of length (1, n-1), (2, n-2), (3, n-3), … ,(n-1, 1), (n, 0)
-    // and take maximum
-    for (int i = 1; i <= n; i++)
-    {
+    // one by one, partition the given rod of length `n` into two parts of length
+    // (1, n-1), (2, n-2), (3, n-3), … ,(n-1, 1), (n, 0) and take maximum
+    for (let i = 1; i <= n; i++) {
         // rod of length `i` has a cost `price[i-1]`
-        int cost = price[i - 1] + rodCut(price, n - i);
+        const cost = price[i - 1] + rodCut(price, n - i);
 
         if (cost > maxValue) {
             maxValue = cost;
@@ -49,100 +41,13 @@ int rodCut(int price[], int n)
     return maxValue;
 }
 
-int main()
-{
-    int price[] = { 1, 5, 8, 9, 10, 17, 17, 20 };
+// demo
+const price = [1, 5, 8, 9, 10, 17, 17, 20];
 
-    // rod length
-    int n = 4;
+// rod length
+const n = 4;
 
-    cout << "Profit is " << rodCut(price, n);
-
-    return 0;
-}
-```
-
-**Output:** Profit is 10
-
-##
-
-```java
-class Main
-{
-    // Function to find the best way to cut a rod of length `n`
-    // where the rod of length `i` has a cost `price[i-1]`
-    public static int rodCut(int[] price, int n)
-    {
-        // base case
-        if (n == 0) {
-            return 0;
-        }
-
-        int maxValue = Integer.MIN_VALUE;
-
-        // one by one, partition the given rod of length `n` into two parts of
-        // length (1, n-1), (2, n-2), (3, n-3), … ,(n-1, 1), (n, 0) and
-        // take maximum
-        for (int i = 1; i <= n; i++)
-        {
-            // rod of length `i` has a cost `price[i-1]`
-            int cost = price[i - 1] + rodCut(price, n - i);
-
-            if (cost > maxValue) {
-                maxValue = cost;
-            }
-        }
-
-        return maxValue;
-    }
-
-    public static void main(String[] args)
-    {
-        int price[] = { 1, 5, 8, 9, 10, 17, 17, 20 };
-
-        // rod length
-        int n = 4;
-
-        System.out.println("Profit is " + rodCut(price, n));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to find the best way to cut a rod of length `n`
-# where the rod of length `i` has a cost `price[i-1]`
-def rodCut(price, n):
-
-    # base case
-    if n == 0:
-        return 0
-
-    maxValue = -sys.maxsize
-
-    # one by one, partition the given rod of length `n` into two parts of length
-    # (1, n-1), (2, n-2), (3, n-3), … ,(n-1, 1), (n, 0) and take maximum
-    for i in range(1, n + 1):
-
-        # rod of length `i` has a cost `price[i-1]`
-        cost = price[i - 1] + rodCut(price, n - i)
-
-        if cost > maxValue:
-            maxValue = cost
-
-    return maxValue
-
-if __name__ == '__main__':
-
-    price = [1, 5, 8, 9, 10, 17, 17, 20]
-
-    # rod length
-    n = 4
-
-    print('Profit is', rodCut(price, n))
+console.log('Profit is', rodCut(price, n));
 ```
 
 The time complexity of the above solution is O(nn) and occupies space in the call stack, where `n` is the rod length.
@@ -153,32 +58,21 @@ As we can see, the same subproblems (highlighted in the same color) are getting 
 
 We will solve this problem in a bottom-up manner. In the bottom-up approach, we solve smaller subproblems first, then solve larger subproblems from them. The following bottom-up approach computes `T[i]`, which stores maximum profit achieved from the rod of length `i` for each `1 <= i <= n`. It uses the value of smaller values `i` already computed.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the best way to cut a rod of length `n`
 // where the rod of length `i` has a cost `price[i-1]`
-int rodCut(int price[], int n)
-{
+function rodCut(price: number[], n: number): number {
     // `T[i]` stores the maximum profit achieved from a rod of length `i`
-    int T[n + 1];
-
-    // initialize maximum profit to 0
-    for (int i = 0; i <= n; i++) {
-        T[i] = 0;
-    }
+    const T: number[] = new Array(n + 1).fill(0);
 
     // consider a rod of length `i`
-    for (int i = 1; i <= n; i++)
-    {
+    for (let i = 1; i <= n; i++) {
         // divide the rod of length `i` into two rods of length `j`
         // and `i-j` each and take maximum
-        for (int j = 1; j <= i; j++) {
-            T[i] = max(T[i], price[j - 1] + T[i - j]);
+        for (let j = 1; j <= i; j++) {
+            T[i] = Math.max(T[i], price[j - 1] + T[i - j]);
         }
     }
 
@@ -186,83 +80,11 @@ int rodCut(int price[], int n)
     return T[n];
 }
 
-int main()
-{
-    int price[] = { 1, 5, 8, 9, 10, 17, 17, 20 };
+// demo
+const price = [1, 5, 8, 9, 10, 17, 17, 20];
+const n = 4;        // rod length
 
-    // rod length
-    int n = 4;
-
-    cout << "Profit is " << rodCut(price, n);
-
-    return 0;
-}
-```
-
-**Output:** Profit is 10
-
-##
-
-```java
-class Main
-{
-    // Function to find the best way to cut a rod of length `n`
-    // where the rod of length `i` has a cost `price[i-1]`
-    public static int rodCut(int[] price, int n)
-    {
-        // `T[i]` stores the maximum profit achieved from a rod of length `i`
-        int[] T = new int[n + 1];
-
-        // consider a rod of length `i`
-        for (int i = 1; i <= n; i++)
-        {
-            // divide the rod of length `i` into two rods of length `j`
-            // and `i-j` each and take maximum
-            for (int j = 1; j <= i; j++) {
-                T[i] = Integer.max(T[i], price[j - 1] + T[i - j]);
-            }
-        }
-
-        // `T[n]` stores the maximum profit achieved from a rod of length `n`
-        return T[n];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] price = { 1, 5, 8, 9, 10, 17, 17, 20 };
-        int n = 4;        // rod length
-
-        System.out.print("Profit is " + rodCut(price, n));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the best way to cut a rod of length `n`
-# where the rod of length `i` has a cost `price[i-1]`
-def rodCut(price, n):
-
-    # `T[i]` stores the maximum profit achieved from a rod of length `i`
-    T = [0] * (n + 1)
-
-    # consider a rod of length `i`
-    for i in range(1, n + 1):
-        # divide the rod of length `i` into two rods of length `j`
-        # and `i-j` each and take maximum
-        for j in range(1, i + 1):
-            T[i] = max(T[i], price[j - 1] + T[i - j])
-
-    # `T[n]` stores the maximum profit achieved from a rod of length `n`
-    return T[n]
-
-if __name__ == '__main__':
-
-    price = [1, 5, 8, 9, 10, 17, 17, 20]
-    n = 4        # rod length
-
-    print('Profit is', rodCut(price, n))
+console.log('Profit is', rodCut(price, n));
 ```
 
 The time complexity of the above bottom-up solution is O(n2) and requires O(n) extra space, where `n` is the rod length.

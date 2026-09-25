@@ -18,159 +18,49 @@ A simple solution would be to generate all substrings of the given string and pr
 
 We can solve this problem in O(n2) time and O(1) space. The idea is inspired by the [Longest Palindromic Substring](https://techiedelight.com/longest-palindromic-substring-non-dp-space-optimized-solution/) problem. For each character in the given string, consider it as the midpoint of a palindrome and expand in both directions to find all palindromes that have it as midpoint. For an even length palindrome, consider every adjacent pair of characters as the midpoint. We use a set to store all unique palindromic substrings.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_set>
-using namespace std;
-
+```ts
 // Expand in both directions of `low` and `high` to find all palindromes
-void expand(string str, int low, int high, auto &set)
-{
-    // run till `str[low.high]` is not a palindrome
-    while (low >= 0 && high < str.length() && str[low] == str[high])
-    {
+function expand(s: string, low: number, high: number, palindromes: Set<string>): void {
+
+    // run till `s[low.high]` is not a palindrome
+    while (low >= 0 && high < s.length && s[low] === s[high]) {
+
         // push all palindromes into a set
-        set.insert(str.substr(low, high - low + 1));
+        palindromes.add(s.slice(low, high + 1));
 
         // Expand in both directions
-        low--, high++;
+        low = low - 1;
+        high = high + 1;
     }
 }
 
 // Function to find all unique palindromic substrings of a given string
-void findPalindromicSubstrings(string str)
-{
+function findPalindromicSubstrings(s: string): void {
+
     // create an empty set to store all unique palindromic substrings
-    unordered_set<string> set;
+    const palindromes = new Set<string>();
 
-    for (int i = 0; i < str.length(); i++)
-    {
-        // find all odd length palindrome with `str[i]` as a midpoint
-        expand(str, i, i, set);
+    for (let i = 0; i < s.length; i++) {
 
-        // find all even length palindrome with `str[i]` and `str[i+1]` as
-        // its midpoints
-        expand(str, i, i + 1, set);
+        // find all odd length palindrome with `s[i]` as a midpoint
+        expand(s, i, i, palindromes);
+
+        // find all even length palindrome with `s[i]` and `s[i+1]`
+        // as its midpoints
+        expand(s, i, i + 1, palindromes);
     }
 
     // print all unique palindromic substrings
-    for (auto i: set) {
-        cout << i << " ";
-    }
+    console.log([...palindromes].join(' '));
 }
 
-int main()
-{
-    string str = "google";
-
-    findPalindromicSubstrings(str);
-
-    return 0;
-}
+const s = 'google';
+findPalindromicSubstrings(s);
 ```
 
 **Output:** e l g o oo goog
-
-##
-
-```java
-import java.util.HashSet;
-import java.util.Set;
-
-class Main
-{
-    // Expand in both directions of `low` and `high` to find all palindromes
-    public static void expand(String str, int low, int high, Set<String> set)
-    {
-        // run till `str[low.high]` is not a palindrome
-        while (low >= 0 && high < str.length()
-                && str.charAt(low) == str.charAt(high))
-        {
-            // push all palindromes into a set
-            set.add(str.substring(low, high + 1));
-
-            // Expand in both directions
-            low--;
-            high++;
-        }
-    }
-
-    // Function to find all unique palindromic substrings of a given string
-    public static void findPalindromicSubstrings(String str)
-    {
-        // base case
-        if (str == null) {
-            return;
-        }
-
-        // create an empty set to store all unique palindromic substrings
-        Set<String> set = new HashSet<>();
-
-        for (int i = 0; i < str.length(); i++)
-        {
-            // find all odd length palindrome with `str[i]` as a midpoint
-            expand(str, i, i, set);
-
-            // find all even length palindrome with `str[i]` and `str[i+1]`
-            // as its midpoints
-            expand(str, i, i + 1, set);
-        }
-
-        // print all unique palindromic substrings
-        System.out.print(set);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "google";
-
-        findPalindromicSubstrings(str);
-    }
-}
-```
-
-##
-
-```python3
-# Expand in both directions of `low` and `high` to find all palindromes
-def expand(s, low, high, palindromes):
-
-    # run till `s[low.high]` is not a palindrome
-    while low >= 0 and high < len(s) and s[low] == s[high]:
-
-        # push all palindromes into a set
-        palindromes.add(s[low: high + 1])
-
-        # Expand in both directions
-        low = low - 1
-        high = high + 1
-
-# Function to find all unique palindromic substrings of a given string
-def findPalindromicSubstrings(s):
-
-    # create an empty set to store all unique palindromic substrings
-    palindromes = set()
-
-    for i in range(len(s)):
-
-        # find all odd length palindrome with `s[i]` as a midpoint
-        expand(s, i, i, palindromes)
-
-        # find all even length palindrome with `s[i]` and `s[i+1]`
-        # as its midpoints
-        expand(s, i, i + 1, palindromes)
-
-    # print all unique palindromic substrings
-    print(palindromes, end='')
-
-if __name__ == '__main__':
-
-    s = 'google'
-    findPalindromicSubstrings(s)
-```
 
 Also See:
 

@@ -12,214 +12,65 @@ We know that the [height of a binary tree](https://techiedelight.com/calculate-h
 
 For typical binary trees, the left and right children of a leaf node are null pointers. But here, the left and right child of leaf nodes act like the previous and next pointer of the circular doubly linked list. For a node to be a leaf node, check if its left’s right and right’s left are pointing to the node itself.
 
-This approach is demonstrated below in C, Java, and Python:
+This approach is demonstrated below in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
-// Utility function to find the maximum of two integers
-int max(int x, int y) {
-    return (x > y) ? x : y;
-}
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    struct Node *left, *right;
-};
-
-// Utility function to allocate memory for a binary tree node
-struct Node* allocateNode(int data)
-{
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->data = data;
-    node->left = node->right = NULL;
-    return node;
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
 }
 
 // Recursive function to calculate the height of a binary tree with
 // leaf nodes forming a circular doubly linked list
-int height(struct Node* node)
-{
-    // base case: if the node is NULL
-    if (node == NULL) {
+const height = (node: TreeNode | null): number => {
+
+    // base case: if the node is null
+    if (node === null) {
         return 0;
     }
 
     // node is a leaf if its left's right and right's left
     // are pointing to the node itself
-    if ((node->left && node->left->right == node) &&
-        (node->right && node->right->left == node)) {
+    if ((node.left !== null && node.left.right === node) &&
+                (node.right !== null && node.right.left === node)) {
         return 1;
     }
 
     // recur for the left and right subtree and consider maximum depth
-    return 1 + max(height(node->left), height(node->right));
-}
+    return 1 + Math.max(height(node.left), height(node.right));
+};
 
-int main(void)
-{
-    struct Node* root = NULL;
+// construct the tree
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);      // leaf node
+root.right.right = new TreeNode(6);     // leaf node
+root.left.left.left = new TreeNode(7);  // leaf node
 
-    // construct the tree
-    root = allocateNode(1);
-    root->left = allocateNode(2);
-    root->right = allocateNode(3);
-    root->left->left = allocateNode(4);
-    root->left->right = allocateNode(5);        // leaf node
-    root->right->right = allocateNode(6);       // leaf node
-    root->left->left->left = allocateNode(7);   // leaf node
+// construct a circular doubly linked list from leaves
+const first = root.left.left.left!;
+const second = root.left.right!;
+const third = root.right.right!;
 
-    // construct a circular doubly linked list from leaves
-    struct Node* first = root->left->left->left;
-    struct Node* second = root->left->right;
-    struct Node* third = root->right->right;
+// set previous and next pointers of the linked list
+// (left and right child of a binary tree node, respectively)
+first.left = third;
+first.right = second;
 
-    // set previous and next pointers of the linked list
-    // (left and right pointer of a binary tree node, respectively)
-    first->left = third;
-    first->right = second;
+second.left = first;
+second.right = third;
 
-    second->left = first;
-    second->right = third;
+third.left = second;
+third.right = first;
 
-    third->left = second;
-    third->right = first;
-
-    printf("The height of the binary tree is %d", height(root));
-
-    return 0;
-}
+console.log(`The height of the binary tree is ${height(root)}`);
 ```
 
 **Output:** The height of the binary tree is 4
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-class Main
-{
-    // Recursive function to calculate the height of a binary tree with
-    // leaf nodes forming a circular doubly linked list
-    public static int height(Node node)
-    {
-        // base case: if the node is null
-        if (node == null) {
-            return 0;
-        }
-
-        // node is a leaf if its left's right and right's left
-        // are pointing to the node itself
-        if ((node.left != null && node.left.right == node) &&
-                    (node.right != null && node.right.left == node)) {
-            return 1;
-        }
-
-        // recur for the left and right subtree and consider maximum depth
-        return 1 + Math.max(height(node.left), height(node.right));
-    }
-
-    public static void main(String[] args)
-    {
-        // construct the tree
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);      // leaf node
-        root.right.right = new Node(6);     // leaf node
-        root.left.left.left = new Node(7);  // leaf node
-
-        // construct a circular doubly linked list from leaves
-        Node first = root.left.left.left;
-        Node second = root.left.right;
-        Node third = root.right.right;
-
-        // set previous and next pointers of the linked list
-        // (left and right child of a binary tree node, respectively)
-        first.left = third;
-        first.right = second;
-
-        second.left = first;
-        second.right = third;
-
-        third.left = second;
-        third.right = first;
-
-        System.out.println("The height of the binary tree is " + height(root));
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Recursive function to calculate the height of a binary tree with
-# leaf nodes forming a circular doubly linked list
-def height(node):
-
-    # base case: if the node is None
-    if node is None:
-        return 0
-
-    # node is a leaf if its left's right and right's left
-    # are pointing to the node itself
-    if ((node.left and node.left.right == node) and
-                (node.right and node.right.left == node)):
-        return 1
-
-    # recur for the left and right subtree and consider maximum depth
-    return 1 + max(height(node.left), height(node.right))
-
-if __name__ == '__main__':
-
-    # construct the tree
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)       # leaf node
-    root.right.right = Node(6)      # leaf node
-    root.left.left.left = Node(7)   # leaf node
-
-    # construct a circular doubly linked list from leaves
-    first = root.left.left.left
-    second = root.left.right
-    third = root.right.right
-
-    # set previous and next pointers of the linked list
-    # (left and right child of a binary tree node, respectively)
-    first.left = third
-    first.right = second
-
-    second.left = first
-    second.right = third
-
-    third.left = second
-    third.right = first
-
-    print('The height of the binary tree is', height(root))
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(h) for the call stack, where `h` is the height of the tree.
 

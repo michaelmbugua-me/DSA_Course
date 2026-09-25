@@ -22,89 +22,69 @@ So, from position `(x, y)`, we can move to:
 
 (x – 1, y – 1) (x – 1, y) (x – 1, y + 1) (x, y – 1) (x, y + 1) (x + 1, y – 1) (x + 1, y) (x + 1, y + 1)
 
-This can be implemented as follows in C++, Java, and Python:
+This can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <cstring>
-using namespace std;
-
-// Below arrays detail all eight possible movements from a cell
+```ts
+// Below lists detail all eight possible movements from a cell
 // (top, right, bottom, left, and four diagonal moves)
-int row[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
-int col[] = { -1, 1, 0, -1, -1, 1, 0, 1 };
+const row = [-1, -1, -1, 0, 1, 0, 1, 1];
+const col = [-1, 1, 0, -1, -1, 1, 0, 1];
 
 // Function to check if it is safe to go to position (x, y)
 // from the current position. The function returns false if (x, y)
 // is not valid matrix coordinates or (x, y) represents water or
-// position (x, y) is already processed
-
-bool isSafe(vector<vector<int>> const &mat, int x, int y,
-        vector<vector<bool>> const &processed)
-{
-    return (x >= 0 && x < mat.size()) && (y >= 0 && y < mat[0].size()) &&
-        mat[x][y] && !processed[x][y];
+// position (x, y) is already processed.
+function isSafe(mat: number[][], x: number, y: number, processed: boolean[][]): boolean {
+    return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) &&
+        mat[x][y] === 1 && !processed[x][y];
 }
 
-void BFS(vector<vector<int>> const &mat, vector<vector<bool>> &processed, int i, int j)
-{
+function BFS(mat: number[][], processed: boolean[][], i: number, j: number): void {
     // create an empty queue and enqueue source node
-    queue<pair<int, int>> q;
-    q.push(make_pair(i, j));
+    const q: number[][] = [];
+    q.push([i, j]);
 
     // mark source node as processed
     processed[i][j] = true;
 
     // loop till queue is empty
-    while (!q.empty())
-    {
+    while (q.length > 0) {
         // dequeue front node and process it
-        int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
+        const [x, y] = q.shift()!;
 
         // check for all eight possible movements from the current cell
         // and enqueue each valid movement
-        for (int k = 0; k < 8; k++)
-        {
-            // skip if the location is invalid, or already
-            // processed, or consists of water
-            if (isSafe(mat, x + row[k], y + col[k], processed))
-            {
-                // mark it as processed and enqueue it
-                processed[x + row[k]][y + col[k]] = 1;
-                q.push(make_pair(x + row[k], y + col[k]));
+        for (let k = 0; k < row.length; k++) {
+            // skip if the location is invalid, or already processed, or has water
+            if (isSafe(mat, x + row[k], y + col[k], processed)) {
+                // skip if the location is invalid, or it is already
+                // processed, or consists of water
+                processed[x + row[k]][y + col[k]] = true;
+                q.push([x + row[k], y + col[k]]);
             }
         }
     }
 }
 
-int countIslands(vector<vector<int>> const &mat)
-{
+function countIslands(mat: number[][]): number {
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return 0;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const [M, N] = [mat.length, mat[0].length];
 
     // stores if a cell is processed or not
-    vector<vector<bool>> processed(M, vector<bool>(N));
+    const processed: boolean[][] = Array.from({ length: M }, () => new Array(N).fill(false));
 
-    int island = 0;
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
+    let island = 0;
+    for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
             // start BFS from each unprocessed node and increment island count
-            if (mat[i][j] && processed[i][j] == 0)
-            {
+            if (mat[i][j] === 1 && !processed[i][j]) {
                 BFS(mat, processed, i, j);
-                island++;
+                island = island + 1;
             }
         }
     }
@@ -112,233 +92,23 @@ int countIslands(vector<vector<int>> const &mat)
     return island;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 1, 0, 1, 0, 0, 0, 1, 1, 1, 1 },
-        { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0 },
-        { 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 },
-        { 1, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
-        { 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
-        { 0, 1, 0, 1, 0, 0, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 0, 1, 1, 1, 0, 0 },
-        { 0, 0, 0, 1, 0, 0, 1, 1, 1, 0 },
-        { 1, 0, 1, 0, 1, 0, 0, 1, 0, 0 },
-        { 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 }
-    };
+const mat = [
+    [1, 0, 1, 0, 0, 0, 1, 1, 1, 1],
+    [0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+    [1, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 1, 1, 1],
+    [0, 1, 0, 1, 0, 0, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1, 1, 1, 0],
+    [1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 1, 1, 1]
+];
 
-    cout << "The total number of islands is " << countIslands(mat) << endl;
-
-    return 0;
-}
+console.log('The total number of islands is', countIslands(mat));
 ```
 
 **Output:** The total number of islands is 5
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-class Pair
-{
-    int x, y;
-
-    public Pair(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-}
-
-class Main
-{
-    // Below arrays detail all eight possible movements from a cell
-    // (top, right, bottom, left, and four diagonal moves)
-    private static final int[] row = { -1, -1, -1, 0, 1, 0, 1, 1 };
-    private static final int[] col = { -1, 1, 0, -1, -1, 1, 0, 1 };
-
-    // Function to check if it is safe to go to position (x, y)
-    // from the current position. The function returns false if (x, y)
-    // is not valid matrix coordinates or (x, y) represents water or
-    // position (x, y) is already processed
-
-    public static boolean isSafe(int[][] mat, int x, int y, boolean[][] processed)
-    {
-        return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length)
-                && mat[x][y] == 1 && !processed[x][y];
-    }
-
-    public static void BFS(int[][] mat, boolean[][] processed, int i, int j)
-    {
-        // create an empty queue and enqueue source node
-        Queue<Pair> q = new ArrayDeque<>();
-        q.add(new Pair(i, j));
-
-        // mark source node as processed
-        processed[i][j] = true;
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and process it
-            int x = q.peek().x;
-            int y = q.peek().y;
-            q.poll();
-
-            // check for all eight possible movements from the current cell
-            // and enqueue each valid movement
-            for (int k = 0; k < row.length; k++)
-            {
-                // skip if the location is invalid, or already processed, or has water
-                if (isSafe(mat, x + row[k], y + col[k], processed))
-                {
-                    // skip if the location is invalid, or it is already
-                    // processed, or consists of water
-                    processed[x + row[k]][y + col[k]] = true;
-                    q.add(new Pair(x + row[k], y + col[k]));
-                }
-            }
-        }
-    }
-
-    public static int countIslands(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // stores if a cell is processed or not
-        boolean[][] processed = new boolean[M][N];
-
-        int island = 0;
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                // start BFS from each unprocessed node and
-                // increment island count
-                if (mat[i][j] == 1 && !processed[i][j])
-                {
-                    BFS(mat, processed, i, j);
-                    island++;
-                }
-            }
-        }
-
-        return island;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat=
-                {
-                        { 1, 0, 1, 0, 0, 0, 1, 1, 1, 1 },
-                        { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0 },
-                        { 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 },
-                        { 1, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
-                        { 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
-                        { 0, 1, 0, 1, 0, 0, 1, 1, 1, 1 },
-                        { 0, 0, 0, 0, 0, 1, 1, 1, 0, 0 },
-                        { 0, 0, 0, 1, 0, 0, 1, 1, 1, 0 },
-                        { 1, 0, 1, 0, 1, 0, 0, 1, 0, 0 },
-                        { 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 }
-                };
-
-        System.out.print("The total number of islands is " + countIslands(mat));
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Below lists detail all eight possible movements from a cell
-# (top, right, bottom, left, and four diagonal moves)
-row = [-1, -1, -1, 0, 1, 0, 1, 1]
-col = [-1, 1, 0, -1, -1, 1, 0, 1]
-
-# Function to check if it is safe to go to position (x, y)
-# from the current position. The function returns false if (x, y)
-# is not valid matrix coordinates or (x, y) represents water or
-# position (x, y) is already processed.
-
-def isSafe(mat, x, y, processed):
-    return (x >= 0 and x < len(processed)) and (y >= 0 and y < len(processed[0])) and \
-           mat[x][y] == 1 and not processed[x][y]
-
-def BFS(mat, processed, i, j):
-
-    # create an empty queue and enqueue source node
-    q = deque()
-    q.append((i, j))
-
-    # mark source node as processed
-    processed[i][j] = True
-
-    # loop till queue is empty
-    while q:
-        # dequeue front node and process it
-        x, y = q.popleft()
-
-        # check for all eight possible movements from the current cell
-        # and enqueue each valid movement
-        for k in range(len(row)):
-            # skip if the location is invalid, or already processed, or has water
-            if isSafe(mat, x + row[k], y + col[k], processed):
-                # skip if the location is invalid, or it is already
-                # processed, or consists of water
-                processed[x + row[k]][y + col[k]] = True
-                q.append((x + row[k], y + col[k]))
-
-def countIslands(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # stores if a cell is processed or not
-    processed = [[False for x in range(N)] for y in range(M)]
-
-    island = 0
-    for i in range(M):
-        for j in range(N):
-            # start BFS from each unprocessed node and increment island count
-            if mat[i][j] == 1 and not processed[i][j]:
-                BFS(mat, processed, i, j)
-                island = island + 1
-
-    return island
-
-if __name__ == '__main__':
-
-    mat = [
-        [1, 0, 1, 0, 0, 0, 1, 1, 1, 1],
-        [0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [1, 1, 1, 1, 0, 0, 1, 0, 0, 0],
-        [1, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 1, 0, 0, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
-        [0, 0, 0, 1, 0, 0, 1, 1, 1, 0],
-        [1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1]
-    ]
-
-    print('The total number of islands is', countIslands(mat))
-```
 
 The time complexity of the proposed solution is O(M × N) and requires O(M × N) extra space, where `M` and `N` are dimensions of the matrix.
 

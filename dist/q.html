@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Search</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c0d10'/%3E%3Cpath d='M10 10v12l12-6z' fill='%23d9a253'/%3E%3C/svg%3E"><script>document.documentElement.dataset.theme=localStorage.getItem("theme")||"light";</script><link rel="stylesheet" href="/assets/style.css"><script src="/assets/marked.min.js"></script><script src="/assets/prism.js"></script><script src="/assets/app.js"></script></head><body>
+<header><a class="home" href="/">home</a><span class="crumb">search</span><button id="theme-toggle" type="button" aria-label="toggle dark mode"></button></header>
+<main>
+<input id="q" placeholder="type to search all 812 questions..." autofocus>
+<div id="out"></div>
+</main>
+<script>
+const inp = document.getElementById('q');
+const out = document.getElementById('out');
+let index = null;
+fetch('/search.json').then(r => r.json()).then(d => index = d);
+let t;
+inp.addEventListener('input', () => {
+  clearTimeout(t);
+  t = setTimeout(() => {
+    const term = inp.value.trim().toLowerCase();
+    if (term.length < 2) { out.innerHTML = ''; return; }
+    const results = (index || []).filter(x => x.title.toLowerCase().includes(term)).slice(0, 50);
+    out.innerHTML = results.map(x =>
+      `<a href="${x.href}">${x.title}<small>${x.cat}</small></a>`).join('')
+      || '<p style="color:#8b90a0">no matches</p>';
+  }, 150);
+});
+</script>
+</body></html>

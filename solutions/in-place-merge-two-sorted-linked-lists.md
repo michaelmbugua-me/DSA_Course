@@ -18,361 +18,114 @@ A simple solution would be to use the [merge procedure of the merge sort algorit
 
 The above solution violates the problem constraints by modifying links of the first list. However, there is no restriction on swapping data between the linked list nodes. The idea is to compare each node of the first list with the head node of the second list and swap their data if the first list’s current node is greater than the head node of the second list. The first list remains sorted with this data exchange, but the second list’s sorted order might be disturbed. To fix it, pop the front node from the second list and insert it at its correct place into the sorted second list using the [sortedInsert()](https://techiedelight.com/sorted-insert-in-linked-list/) function.
 
-Following is the C, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node *next;
-};
-
-// Helper function to create a new node of the linked list
-struct Node *newNode(int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = NULL;
-
-    return newNode;
+class ListNode {
+    constructor(public data: number, public next: ListNode | null = null) {}
 }
 
 // Helper function to print a given linked list
-void printList(char *msg, struct Node *head)
-{
-    printf("%s", msg);
-    while (head)
-    {
-        printf("%2d —> ", head->data);
-        head = head->next;
+function printList(msg: string, head: ListNode | null): void {
+
+    let out = msg;
+    while (head) {
+        out += `${head.data} —> `;
+        head = head.next;
     }
 
-    printf("NULL\n");
+    console.log(out + 'null');
+}
+
+// Function to exchange data of the given linked list nodes
+function swapData(first: ListNode, second: ListNode): void {
+
+    const data = first.data;
+    first.data = second.data;
+    second.data = data;
 }
 
 // Function to insert a given node at its correct sorted position into
 // a given list sorted in increasing order
-void sortedInsert(struct Node** head, struct Node *newNode)
-{
+function sortedInsert(head: ListNode | null, newNode: ListNode): ListNode | null {
+
     // special case for the head end
-    if (*head == NULL || (*head)->data >= newNode->data)
-    {
-        newNode->next = *head;
-        *head = newNode;
-        return;
+    if (head === null || head.data >= newNode.data) {
+        newNode.next = head;
+        head = newNode;
+        return head;
     }
 
-    // locate the node before the point of insertion
-    struct Node* current = *head;
-    while (current->next != NULL && current->next->data < newNode->data) {
-        current = current->next;
+    // Locate the node before the point of insertion
+    let current = head;
+    while (current.next !== null && current.next.data < newNode.data) {
+        current = current.next;
     }
 
-    newNode->next = current->next;
-    current->next = newNode;
-}
+    newNode.next = current.next;
+    current.next = newNode;
 
-// Function to exchange data of the given linked list nodes
-void swapData(struct Node *first, struct Node *second)
-{
-    int data = first->data;
-    first->data = second->data;
-    second->data = data;
+    return head;
 }
 
 // Function to in-place merge two sorted linked lists without
 // modifying links of the first list.
-// Note that the second list is a "reference" pointer to the head node,
-// whereas the first list is just a copy of the head node.
+function mergeLists(first: ListNode | null, second: ListNode | null): ListNode | null {
 
-void mergeLists(struct Node *first, struct Node** second)
-{
     // loop till either list runs out
-    while (first && *second)
-    {
+    while (first !== null && second !== null) {
+
         // compare each element of the first list with the first element
         // of the second list
-        if (first->data > (*second)->data)
-        {
+        if (first.data > second.data) {
             // exchange data if the current node of the first list has more value
             // than the first node of the second list
-            swapData(first, *second);
+            swapData(first, second);
 
             // pop the front node from the second list
-            struct Node* front = *second;
-            *second = (*second)->next;
+            const front = second;
+            second = second.next;
 
             // insert the front node at its correct place into the second list
-            sortedInsert(second, front);
+            second = sortedInsert(second, front);
         }
 
         // advance the first list to the next node
-        first = first->next;
+        first = first.next;
     }
+
+    return second;
 }
 
-int main(void)
-{
-    // construct the first list
-    struct Node* first = newNode(2);
-    first->next = newNode(6);
-    first->next->next = newNode(9);
-    first->next->next->next = newNode(10);
-    first->next->next->next->next = newNode(15);
+// construct the first list
+const first = new ListNode(2);
+first.next = new ListNode(6);
+first.next.next = new ListNode(9);
+first.next.next.next = new ListNode(10);
+first.next.next.next.next = new ListNode(15);
 
-    // construct the second list
-    struct Node* second = newNode(1);
-    second->next = newNode(4);
-    second->next->next = newNode(5);
-    second->next->next->next = newNode(20);
+// construct the second list
+let second: ListNode | null = new ListNode(1);
+second.next = new ListNode(4);
+second.next!.next = new ListNode(5);
+second.next!.next.next = new ListNode(20);
 
-    // print both lists before the merge
-    printf("Before Merging:\n\n");
-    printList("First List: ", first);
-    printList("Second List: ", second);
+// print both lists before the merge
+console.log('Before Merging:\n');
+printList('First List: ', first);
+printList('Second List: ', second);
 
-    // merge both lists
-    mergeLists(first, &second);
+// merge both lists
+second = mergeLists(first, second);
 
-    // print both lists after merge
-    printf("\n\nAfter Merging:\n\n");
-    printList("First List: ", first);
-    printList("Second List: ", second);
-
-    return 0;
-}
+// print both lists after merge
+console.log('\n\nAfter Merging:\n');
+printList('First List: ', first);
+printList('Second List: ', second);
 ```
 
 **Output:** **Before Merging:** First List: 2 —> 6 —> 9 —> 10 —> 15 —> NULL Second List: 1 —> 4 —> 5 —> 20 —> NULL **After Merging:** First List: 1 —> 2 —> 4 —> 5 —> 6 —> NULL Second List: 9 —> 10 —> 15 —> 20 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data)
-    {
-        this.data = data;
-        this.next = null;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(String msg, Node head)
-    {
-        System.out.print(msg);
-        while (head != null)
-        {
-            System.out.print(head.data + " —> ");
-            head = head.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Function to exchange data of the given linked list nodes
-    public static void swapData(Node first, Node second)
-    {
-        int data = first.data;
-        first.data = second.data;
-        second.data = data;
-    }
-
-    // Function to insert a given node at its correct sorted position into
-    // a given list sorted in increasing order
-    public static Node sortedInsert(Node head, Node newNode)
-    {
-        // special case for the head end
-        if (head == null || (head).data >= newNode.data)
-        {
-            newNode.next = head;
-            head = newNode;
-            return head;
-        }
-
-        // locate the node before the point of insertion
-        Node current = head;
-        while (current.next != null && current.next.data < newNode.data) {
-            current = current.next;
-        }
-
-        newNode.next = current.next;
-        current.next = newNode;
-
-        return head;
-    }
-
-    // Function to in-place merge two sorted linked lists without
-    // modifying links of the first list.
-    public static Node mergeLists(Node first, Node second)
-    {
-        // loop till either list runs out
-        while (first != null && second != null)
-        {
-            // compare each element of the first list with the first element
-            // of the second list
-            if (first.data > second.data)
-            {
-                // exchange data if the current node of the first list has more value
-                // than the first node of the second list
-                swapData(first, second);
-
-                // pop the front node from the second list
-                Node front = second;
-                second = (second).next;
-
-                // insert the front node at its correct place into the second list
-                second = sortedInsert(second, front);
-            }
-
-            // advance the first list to the next node
-            first = first.next;
-        }
-
-        return second;
-    }
-
-    public static void main(String[] args)
-    {
-        // construct the first list
-        Node first = new Node(2);
-        first.next = new Node(6);
-        first.next.next = new Node(9);
-        first.next.next.next = new Node(10);
-        first.next.next.next.next = new Node(15);
-
-        // construct the second list
-        Node second = new Node(1);
-        second.next = new Node(4);
-        second.next.next = new Node(5);
-        second.next.next.next = new Node(20);
-
-        // print both lists before the merge
-        System.out.print("Before Merging:\n\n");
-        printList("First List: ", first);
-        printList("Second List: ", second);
-
-        // merge both lists
-        second = mergeLists(first, second);
-
-        // print both lists after merge
-        System.out.print("\n\nAfter Merging:\n\n");
-        printList("First List: ", first);
-        printList("Second List: ", second);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(msg, head):
-
-    print(msg, end='')
-    while head:
-        print(head.data, end=' —> ')
-        head = head.next
-
-    print('None')
-
-# Function to exchange data of the given linked list nodes
-def swapData(first, second):
-
-    data = first.data
-    first.data = second.data
-    second.data = data
-
-# Function to insert a given node at its correct sorted position into
-# a given list sorted in increasing order
-def sortedInsert(head, newnode):
-
-    # special case for the head end
-    if head is None or head.data >= newnode.data:
-        newnode.next = head
-        head = newnode
-        return head
-
-    # Locate the node before the poof insertion
-    current = head
-    while current.next and current.next.data < newnode.data:
-        current = current.next
-
-    newnode.next = current.next
-    current.next = newnode
-
-    return head
-
-# Function to in-place merge two sorted linked lists without
-# modifying links of the first list.
-def mergeLists(first, second):
-
-    # loop till either list runs out
-    while first and second:
-
-        # compare each element of the first list with the first element
-        # of the second list
-        if first.data > second.data:
-            # exchange data if the current node of the first list has more value
-            # than the first node of the second list
-            swapData(first, second)
-
-            # pop the front node from the second list
-            front = second
-            second = second.next
-
-            # insert the front node at its correct place into the second list
-            second = sortedInsert(second, front)
-
-        # advance the first list to the next node
-        first = first.next
-
-    return second
-
-if __name__ == '__main__':
-
-    # construct the first list
-    first = Node(2)
-    first.next = Node(6)
-    first.next.next = Node(9)
-    first.next.next.next = Node(10)
-    first.next.next.next.next = Node(15)
-
-    # construct the second list
-    second = Node(1)
-    second.next = Node(4)
-    second.next.next = Node(5)
-    second.next.next.next = Node(20)
-
-    # print both lists before the merge
-    print('Before Merging:\n')
-    printList('First List: ', first)
-    printList('Second List: ', second)
-
-    # merge both lists
-    second = mergeLists(first, second)
-
-    # print both lists after merge
-    print('\n\nAfter Merging:\n')
-    printList('First List: ', first)
-    printList('Second List: ', second)
-```
 
 The worst-case time complexity of the above solution is O(m.n), where `m` and `n` are the total number of nodes in the first and second list, respectively. The merging is done [in-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/), but we might end up traversing the complete second list for each node in the first list. This accounts for O(m.n) time complexity.
 

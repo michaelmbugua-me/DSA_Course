@@ -30,355 +30,121 @@ nums = [2, 3, 5, 7, 8, 10, 12, 15, 18, 20] target = 7
 
 ## 1\. Iterative Implementation
 
-The algorithm can be implemented iteratively as follows in C, Java, and Python:
+The algorithm can be implemented iteratively as follows in TypeScript:
 
-```c
-#include <stdio.h>
+```ts
+// Function to determine if a `target` exists in the sorted list `nums`
+// or not using a binary search algorithm
+function binarySearch(nums: number[], target: number): number {
 
-// Iterative implementation of the binary search algorithm to return
-// the position of `target` in array `nums` of size `n`
-int binarySearch(int nums[], int n, int target)
-{
-    // search space is nums[low…high]
-    int low = 0, high = n - 1;
+    // search space is nums[left…right]
+    const [left, right] = [0, nums.length - 1];
+
+    let low = left, high = right;
 
     // loop till the search space is exhausted
-    while (low <= high)
-    {
-        // find the mid-value in the search space and
-        // compares it with the target
-
-        int mid = (low + high)/2;    // overflow can happen
-        // int mid = low + (high - low)/2;
-        // int mid = high - (high - low)/2;
-
-        // target value is found
-        if (target == nums[mid]) {
-            return mid;
-        }
-
-        // if the target is less than the middle element, discard all elements
-        // in the right search space, including the middle element
-        else if (target < nums[mid]) {
-            high = mid - 1;
-        }
-
-        // if the target is more than the middle element, discard all elements
-        // in the left search space, including the middle element
-        else {
-            low = mid + 1;
-        }
-    }
-
-    // target doesn't exist in the array
-    return -1;
-}
-
-int main(void)
-{
-    int nums[] = { 2, 5, 6, 8, 9, 10 };
-    int target = 5;
-
-    int n = sizeof(nums)/sizeof(nums[0]);
-    int index = binarySearch(nums, n, target);
-
-    if (index != -1) {
-        printf("Element found at index %d", index);
-    }
-    else {
-        printf("Element not found in the array");
-    }
-
-    return 0;
-}
-```
-
-**Output:** Element found at index 1
-
-##
-
-```java
-class Main
-{
-    // Function to determine if a `target` exists in the sorted array `nums`
-    // or not using a binary search algorithm
-    public static int binarySearch(int[] nums, int target)
-    {
-        // search space is nums[left…right]
-        int left = 0, right = nums.length - 1;
-
-        // loop till the search space is exhausted
-        while (left <= right)
-        {
-            // find the mid-value in the search space and
-            // compares it with the target
-
-            int mid = (left + right) / 2;
-
-            // overflow can happen. Use:
-            // int mid = left + (right - left) / 2;
-            // int mid = right - (right - left) / 2;
-
-            // target is found
-            if (target == nums[mid]) {
-                return mid;
-            }
-
-            // discard all elements in the right search space,
-            // including the middle element
-            else if (target < nums[mid]) {
-                right = mid - 1;
-            }
-
-            // discard all elements in the left search space,
-            // including the middle element
-            else {
-                left = mid + 1;
-            }
-        }
-
-        // `target` doesn't exist in the array
-        return -1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 2, 5, 6, 8, 9, 10 };
-        int target = 5;
-
-        int index = binarySearch(nums, target);
-
-        if (index != -1) {
-            System.out.println("Element found at index " + index);
-        }
-        else {
-            System.out.println("Element not found in the array");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to determine if a `target` exists in the sorted list `nums`
-# or not using a binary search algorithm
-def binarySearch(nums, target):
-
-    # search space is nums[left…right]
-    (left, right) = (0, len(nums) - 1)
-
-    # loop till the search space is exhausted
-    while left <= right:
-
-        # find the mid-value in the search space and
-        # compares it with the target
-
-        mid = (left + right) // 2
-
-        # overflow can happen. Use:
-        # mid = left + (right - left) / 2
-        # mid = right - (right - left) // 2
-
-        # target is found
-        if target == nums[mid]:
-            return mid
-
-        # discard all elements in the right search space,
-        # including the middle element
-        elif target < nums[mid]:
-            right = mid - 1
-
-        # discard all elements in the left search space,
-        # including the middle element
-        else:
-            left = mid + 1
-
-    # `target` doesn't exist in the list
-    return -1
-
-if __name__ == '__main__':
-
-    nums = [2, 5, 6, 8, 9, 10]
-    target = 5
-
-    index = binarySearch(nums, target)
-
-    if index != -1:
-        print('Element found at index', index)
-    else:
-        print('Element found not in the list')
-```
-
-## 2\. Recursive Implementation
-
-We can easily convert the above iterative version of the binary search algorithm into a recursive one. The algorithm can be implemented recursively as follows in C, Java, and Python:
-
-```c
-#include <stdio.h>
-
-// Recursive implementation of the binary search algorithm to return
-// the position of `target` in subarray nums[low…high]
-int binarySearch(int nums[], int low, int high, int target)
-{
-    // Base condition (search space is exhausted)
-    if (low > high) {
-        return -1;
-    }
-
-    // find the mid-value in the search space and
-    // compares it with the target
-
-    int mid = (low + high)/2;    // overflow can happen
-    // int mid = low + (high - low)/2;
-
-    // Base condition (target value is found)
-    if (target == nums[mid]) {
-        return mid;
-    }
-
-    // discard all elements in the right search space,
-    // including the middle element
-    else if (target < nums[mid]) {
-        return binarySearch(nums, low, mid - 1, target);
-    }
-
-    // discard all elements in the left search space,
-    // including the middle element
-    else {
-        return binarySearch(nums, mid + 1, high, target);
-    }
-}
-
-int main(void)
-{
-    int nums[] = { 2, 5, 6, 8, 9, 10 };
-    int target = 5;
-
-    int n = sizeof(nums)/sizeof(nums[0]);
-
-    int low = 0, high = n - 1;
-    int index = binarySearch(nums, low, high, target);
-
-    if (index != -1) {
-        printf("Element found at index %d", index);
-    }
-    else {
-        printf("Element not found in the array");
-    }
-
-    return 0;
-}
-```
-
-**Output:** Element found at index 1
-
-##
-
-```java
-class Main
-{
-    // Recursive implementation of the binary search algorithm to return
-    // the position of `target` in subarray nums[left…right]
-    public static int binarySearch(int[] nums, int left, int right, int target)
-    {
-        // Base condition (search space is exhausted)
-        if (left > right) {
-            return -1;
-        }
+    while (low <= high) {
 
         // find the mid-value in the search space and
         // compares it with the target
 
-        int mid = (left + right) / 2;
+        const mid = Math.floor((low + high) / 2);
 
-        // overflow can happen. Use below
-        // int mid = left + (right - left) / 2;
+        // overflow can happen. Use:
+        // mid = low + (high - low) / 2
+        // mid = high - (high - low) / 2
 
-        // Base condition (a target is found)
-        if (target == nums[mid]) {
+        // target is found
+        if (target === nums[mid]) {
             return mid;
         }
 
         // discard all elements in the right search space,
         // including the middle element
         else if (target < nums[mid]) {
-            return binarySearch(nums, left, mid - 1, target);
+            high = mid - 1;
         }
 
         // discard all elements in the left search space,
         // including the middle element
         else {
-            return binarySearch(nums, mid + 1, right, target);
+            low = mid + 1;
         }
     }
 
-    public static void main(String[] args)
-    {
-        int[] nums = { 2, 5, 6, 8, 9, 10 };
-        int target = 5;
+    // `target` doesn't exist in the list
+    return -1;
+}
 
-        int left = 0;
-        int right = nums.length - 1;
+const nums = [2, 5, 6, 8, 9, 10];
+const target = 5;
 
-        int index = binarySearch(nums, left, right, target);
+const index = binarySearch(nums, target);
 
-        if (index != -1) {
-            System.out.println("Element found at index " + index);
-        }
-        else {
-            System.out.println("Element not found in the array");
-        }
-    }
+if (index !== -1) {
+    console.log(`Element found at index ${index}`);
+} else {
+    console.log('Element found not in the list');
 }
 ```
 
-##
+**Output:** Element found at index 1
 
-```python3
-# Recursive implementation of the binary search algorithm to return
-# the position of `target` in subarray nums[left…right]
-def binarySearch(nums, left, right, target):
 
-    # Base condition (search space is exhausted)
-    if left > right:
-        return -1
+## 2\. Recursive Implementation
 
-    # find the mid-value in the search space and
-    # compares it with the target
+We can easily convert the above iterative version of the binary search algorithm into a recursive one. The algorithm can be implemented recursively as follows in TypeScript:
 
-    mid = (left + right) // 2
+```ts
+// Recursive implementation of the binary search algorithm to return
+// the position of `target` in subarray nums[left…right]
+function binarySearch(nums: number[], left: number, right: number, target: number): number {
 
-    # overflow can happen. Use below
-    # mid = left + (right - left) / 2
+    // Base condition (search space is exhausted)
+    if (left > right) {
+        return -1;
+    }
 
-    # Base condition (a target is found)
-    if target == nums[mid]:
-        return mid
+    // find the mid-value in the search space and
+    // compares it with the target
 
-    # discard all elements in the right search space,
-    # including the middle element
-    elif target < nums[mid]:
-        return binarySearch(nums, left, mid - 1, target)
+    const mid = Math.floor((left + right) / 2);
 
-    # discard all elements in the left search space,
-    # including the middle element
-    else:
-        return binarySearch(nums, mid + 1, right, target)
+    // overflow can happen. Use below
+    // mid = left + (right - low) / 2
 
-if __name__ == '__main__':
+    // Base condition (a target is found)
+    if (target === nums[mid]) {
+        return mid;
+    }
 
-    nums = [2, 5, 6, 8, 9, 10]
-    target = 5
+    // discard all elements in the right search space,
+    // including the middle element
+    else if (target < nums[mid]) {
+        return binarySearch(nums, left, mid - 1, target);
+    }
 
-    (left, right) = (0, len(nums) - 1)
-    index = binarySearch(nums, left, right, target)
+    // discard all elements in the left search space,
+    // including the middle element
+    else {
+        return binarySearch(nums, mid + 1, right, target);
+    }
+}
 
-    if index != -1:
-        print('Element found at index', index)
-    else:
-        print('Element found not in the list')
+const nums = [2, 5, 6, 8, 9, 10];
+const target = 5;
+
+const [left, right] = [0, nums.length - 1];
+const index = binarySearch(nums, left, right, target);
+
+if (index !== -1) {
+    console.log(`Element found at index ${index}`);
+} else {
+    console.log('Element found not in the list');
+}
 ```
+
+**Output:** Element found at index 1
 
 ## Performance of Binary Search
 

@@ -18,31 +18,32 @@ We can get the length of the longest balanced parenthesis ending at the current 
 
 For example, the following table demonstrates the above operations for string `(()())(()`. Note that the stack initially contains `-1` to handle the case when balanced parenthesis starts from index `0`.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <stack>
-using namespace std;
-
+```ts
 // Function to find the length of the longest balanced parenthesis in a string
-int findMaxLen(string str)
-{
+function findMaxLen(s: string): number {
+
+    // base case
+    if (!s) {
+        return 0;
+    }
+
     // create a stack of integers for storing an index of parenthesis in the string
-    stack<int> stack;
+    const stack: number[] = [];
 
     // initialize the stack by -1
     stack.push(-1);
 
     // stores the length of the longest balanced parenthesis
-    int len = 0;
+    let length = 0;
 
     // iterate over the characters of the string
-    for (int i = 0; i < str.length(); i++)
-    {
+    for (let i = 0; i < s.length; i++) {
+
         // if the current character is an opening parenthesis,
         // push its index in the stack
-        if (str[i] == '(') {
+        if (s[i] === '(') {
             stack.push(i);
         }
 
@@ -52,165 +53,30 @@ int findMaxLen(string str)
             stack.pop();
 
             // if the stack becomes empty, push the current index into the stack
-            if (stack.empty())
-            {
+            if (!stack.length) {
                 stack.push(i);
                 continue;
             }
 
-            // get length of the longest balanced parenthesis ending
-            // at current character
-            int curr_len = i - stack.top();
+            // get the length of the longest balanced parenthesis ending at the
+            // current character
+            const curr_len = i - stack[stack.length - 1];
 
             // update the length of the longest balanced parenthesis
-            if (len < curr_len) {
-                len = curr_len;
+            if (length < curr_len) {
+                length = curr_len;
             }
         }
     }
 
-    return len;
+    return length;
 }
 
-int main()
-{
-    cout << findMaxLen("((()()") << endl;       // prints 4
-    cout << findMaxLen("(((()") << endl;        // prints 2
-    cout << findMaxLen("((((") << endl;         // prints 0
-    cout << findMaxLen("()()") << endl;         // prints 4
-    cout << findMaxLen("(()())(()");            // prints 6
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Stack;
-
-class Main
-{
-    // Function to find the length of the longest balanced parenthesis in a string
-    public static int findMaxLen(String str)
-    {
-        // base case
-        if (str == null) {
-            return 0;
-        }
-
-        // create a stack of integers for storing an index of parenthesis in the string
-        Stack<Integer> stack = new Stack<>();
-
-        // initialize the stack by -1
-        stack.push(-1);
-
-        // stores the length of the longest balanced parenthesis
-        int len = 0;
-
-        // iterate over the characters of the string
-        for (int i = 0; i < str.length(); i++)
-        {
-            // if the current character is an opening parenthesis,
-            // push its index in the stack
-            if (str.charAt(i) == '(') {
-                stack.push(i);
-            }
-
-            // if the current character is a closing parenthesis
-            else
-            {
-                // pop the top index from the stack
-                stack.pop();
-
-                // if the stack becomes empty, push the current index into the stack
-                if (stack.empty())
-                {
-                    stack.push(i);
-                    continue;
-                }
-
-                // get length of the longest balanced parenthesis ending at the
-                // current character
-                int curr_len = i - stack.peek();
-
-                // update the length of the longest balanced parenthesis
-                if (len < curr_len) {
-                    len = curr_len;
-                }
-            }
-        }
-
-        return len;
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println(findMaxLen("((()()"));       // prints 4
-        System.out.println(findMaxLen("(((()"));        // prints 2
-        System.out.println(findMaxLen("(((("));         // prints 0
-        System.out.println(findMaxLen("()()"));         // prints 4
-        System.out.println(findMaxLen("(()())(()"));    // prints 6
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to find the length of the longest balanced parenthesis in a string
-def findMaxLen(s):
-
-    # base case
-    if not s:
-        return 0
-
-    # create a stack of integers for storing an index of parenthesis in the string
-    stack = deque()
-
-    # initialize the stack by -1
-    stack.append(-1)
-
-    # stores the length of the longest balanced parenthesis
-    length = 0
-
-    # iterate over the characters of the string
-    for i, e in enumerate(s):
-
-        # if the current character is an opening parenthesis,
-        # push its index in the stack
-        if e == '(':
-            stack.append(i)
-
-        # if the current character is a closing parenthesis
-        else:
-            # pop the top index from the stack
-            stack.pop()
-
-            # if the stack becomes empty, push the current index into the stack
-            if not stack:
-                stack.append(i)
-                continue
-
-            # get the length of the longest balanced parenthesis ending at the
-            # current character
-            curr_len = i - stack[-1]
-
-            # update the length of the longest balanced parenthesis
-            if length < curr_len:
-                length = curr_len
-
-    return length
-
-if __name__ == '__main__':
-
-    print(findMaxLen('((()()'))         # prints 4
-    print(findMaxLen('(((()'))          # prints 2
-    print(findMaxLen('(((('))           # prints 0
-    print(findMaxLen('()()'))           # prints 4
-    print(findMaxLen('(()())(()'))      # prints 6
+console.log(findMaxLen('((()()'));         // prints 4
+console.log(findMaxLen('(((()'));          // prints 2
+console.log(findMaxLen('(((('));           // prints 0
+console.log(findMaxLen('()()'));           // prints 4
+console.log(findMaxLen('(()())(()'));      // prints 6
 ```
 
 Also See:

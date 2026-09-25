@@ -14,253 +14,74 @@ For example,
 
 To split the given list into two, we can use temporary dummy header nodes for both lists as they are being built. Each sublist has a “tail” pointer that points to its current last node – that way, new nodes can be appended at the end of each list easily. The dummy nodes give the tail pointers something to point to initially. The dummy nodes are efficient in this case because they are temporary and allocated in the stack. Finally, after both lists are formed, we join them by rearranging their pointers and fixing the head node.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    Node* next;
-};
-
-// Helper function to print a given linked list
-void printList(Node* head)
-{
-    Node* ptr = head;
-    while (ptr)
-    {
-        cout << ptr->data << " —> ";
-        ptr = ptr->next;
-    }
-
-    cout << "null\n";
+class ListNode {
+    constructor(public val: number, public next: ListNode | null = null) {}
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(Node** headRef, int data)
-{
-    Node* newNode = new Node();
-    newNode->data = data;
-    newNode->next = *headRef;
-
-    *headRef = newNode;
+// Helper function to print a given linked list
+function printList(head: ListNode | null): void {
+    let ptr: ListNode | null = head;
+    while (ptr) {
+        console.log(ptr.val + ' —> ');
+        ptr = ptr.next;
+    }
+    console.log('null');
 }
 
 // Function to rearrange the linked list in a specific manner
-void rearrange(Node* head)
-{
+function rearrange(head: ListNode | null): void {
     // empty list or one node
-    if (head == nullptr || head->next == nullptr) {
+    if (head === null || head.next === null) {
         return;
     }
 
     // create two dummy nodes
-    Node dummyFirst, dummySecond;
+    const dummyFirst = new ListNode(0);
+    const dummySecond = new ListNode(0);
 
     // tail pointer for the first and second list
-    Node* first = &dummyFirst, *second = &dummySecond;
+    let first: ListNode = dummyFirst;
+    let second: ListNode = dummySecond;
 
-    Node* curr = head;
+    let curr: ListNode | null = head;
 
     // iterate through the list and process two nodes at a time
-    while (curr != nullptr)
-    {
+    while (curr !== null) {
         // move the current node to the first list
-        first->next = curr;
-        first = first->next;
+        first.next = curr;
+        first = first.next as ListNode;
 
         // move the next node to the second list
-        if (curr->next != nullptr)
-        {
-            second->next = curr->next;
-            second = second->next;
-            curr = curr->next;
+        if (curr.next !== null) {
+            second.next = curr.next;
+            second = second.next as ListNode;
+            curr = curr.next;
         }
-        curr = curr->next;
+        curr = curr.next;
     }
 
     // combine the first list with the second list
-    first->next = dummySecond.next;
-    second->next = nullptr;
+    first.next = dummySecond.next;
+    second.next = null;
 }
 
-int main()
-{
-    // input keys
-    vector<int> keys = { 1, 2, 3, 4, 5 };
+// input keys
+const keys = [1, 2, 3, 4, 5];
 
-    Node* head = nullptr;
-    for (int i = keys.size() - 1; i >= 0; i--) {
-        push(&head, keys[i]);
-    }
-
-    rearrange(head);
-    printList(head);
-
-    return 0;
+let head: ListNode | null = null;
+for (let i = keys.length - 1; i >= 0; i--) {
+    head = new ListNode(keys[i], head);
 }
+
+rearrange(head);
+printList(head);
 ```
 
 **Output:** 1 —> 3 —> 5 —> 2 —> 4 —> null
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    public Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-
-    public Node() {}
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Function to rearrange the linked list in a specific manner
-    public static void rearrange(Node head)
-    {
-        // empty list or one node
-        if (head == null || head.next == null) {
-            return;
-        }
-
-        // create two dummy nodes
-        Node dummyFirst = new Node();
-        Node dummySecond = new Node();
-
-        // tail pointer for the first and second list
-        Node first = dummyFirst;
-        Node second = dummySecond;
-
-        Node curr = head;
-
-        // iterate through the list and process two nodes at a time
-        while (curr != null)
-        {
-            // move the current node to the first list
-            first.next = curr;
-            first = first.next;
-
-            // move the next node to the second list
-            if (curr.next != null)
-            {
-                second.next = curr.next;
-                second = second.next;
-                curr = curr.next;
-            }
-            curr = curr.next;
-        }
-
-        // combine the first list with the second list
-        first.next = dummySecond.next;
-        second.next = null;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4, 5 };
-
-        Node head = null;
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
-        }
-
-        rearrange(head);
-
-        printList(head);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
-
-# Function to rearrange the linked list in a specific manner
-def rearrange(head):
-
-    # empty list or one node
-    if head is None or head.next is None:
-        return
-
-    # create two dummy nodes
-    dummyFirst = Node()
-    dummySecond = Node()
-
-    # tail pointer for the first and second list
-    first = dummyFirst
-    second = dummySecond
-
-    curr = head
-
-    # iterate through the list and process two nodes at a time
-    while curr:
-
-        # move the current node to the first list
-        first.next = curr
-        first = first.next
-
-        # move the next node to the second list
-        if curr.next:
-            second.next = curr.next
-            second = second.next
-            curr = curr.next
-
-        curr = curr.next
-
-    # combine the first list with the second list
-    first.next = dummySecond.next
-    second.next = None
-
-if __name__ == '__main__':
-
-    head = None
-    for i in reversed(range(5)):
-        head = Node(i + 1, head)
-
-    rearrange(head)
-    printList(head)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.
 

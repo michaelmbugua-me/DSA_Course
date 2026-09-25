@@ -18,16 +18,12 @@ The idea is to calculate the parity of an integer by recursively dividing the 32
 
 For example, we initially split the `32–bit (4 bytes)` integer into two `16–bit` chunks and take their XOR. Then again, we split the `16–bit` chunk into `8–bit` chunks and take their XOR. Then `8–bit` chunks further get divided into `4–bits` chunks and so on… This process continues until only the 1 bit is left.
 
-Following is the C++, Java, and Python implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
+```ts
 // Compute parity of a number `x` using the lookup table
-int findParity(int x)
-{
+function findParity(x: number): boolean {
+
     // recursively divide the (32–bit) integer into two equal
     // halves and take their XOR until only 1 bit is left
 
@@ -37,106 +33,30 @@ int findParity(int x)
     x = (x & 0x00000003) ^ (x >> 2);
     x = (x & 0x00000001) ^ (x >> 1);
 
-    // return 1 if the last bit is set; otherwise, return 0
-    return x & 1;
+    // return true if the last bit is set
+    return (x & 1) === 1;
 }
 
-int main()
-{
-    int x = 127;
+const x = 127;
 
-    cout << x << " in binary is " << bitset<8>(x) << endl;
+console.log(`${x} in binary is ${x.toString(2)}`);
 
-    if (findParity(x)) {
-        cout << x << " contains odd bits";
-    }
-    else {
-        cout << x << " contains even bits";
-    }
-
-    return 0;
+if (findParity(x)) {
+    console.log(`${x} contains odd bits`);
+}
+else {
+    console.log(`${x} contains even bits`);
 }
 ```
 
 **Output:** 127 in binary is 01111111 127 contains odd bits
 
-##
+Here's an optimized version of the above solution that involves a smaller number of operations:
 
-```java
-class Main
-{
-    // Compute parity of a number `x` using the lookup table
-    public static boolean findParity(int x)
-    {
-        // recursively divide the (32–bit) integer into two equal
-        // halves and take their XOR until only 1 bit is left
-
-        x = (x & 0x0000FFFF) ^ (x >> 16);
-        x = (x & 0x000000FF) ^ (x >> 8);
-        x = (x & 0x0000000F) ^ (x >> 4);
-        x = (x & 0x00000003) ^ (x >> 2);
-        x = (x & 0x00000001) ^ (x >> 1);
-
-        // return true if the last bit is set
-        return (x & 1) == 1;
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 127;
-
-        System.out.println(x + " in binary is " + Integer.toBinaryString(x));
-
-        if (findParity(x)) {
-            System.out.println(x + " contains odd bits");
-        }
-        else {
-            System.out.println(x + " contains even bits");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Compute parity of a number `x` using the lookup table
-def findParity(x):
-
-    # recursively divide the (32–bit) integer into two equal
-    # halves and take their XOR until only 1 bit is left
-
-    x = (x & 0x0000FFFF) ^ (x >> 16)
-    x = (x & 0x000000FF) ^ (x >> 8)
-    x = (x & 0x0000000F) ^ (x >> 4)
-    x = (x & 0x00000003) ^ (x >> 2)
-    x = (x & 0x00000001) ^ (x >> 1)
-
-    # return true if the last bit is set
-    return (x & 1) == 1
-
-if __name__ == '__main__':
-
-    x = 127
-
-    print(f'{x} in binary is {bin(x)}')
-
-    if findParity(x):
-        print(x, 'contains odd bits')
-    else:
-        print(x, 'contains even bits')
-```
-
-Here’s an optimized version of the above solution that involves a smaller number of operations:
-
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
+```ts
 // Compute parity of a number `x` using the lookup table
-int findParity(int x)
-{
+function findParity(x: number): boolean {
+
     // recursively divide the (32–bit) integer into two equal
     // halves and take their XOR until only 1 bit is left
 
@@ -146,95 +66,23 @@ int findParity(int x)
     x ^= x >> 2;
     x ^= x >> 1;
 
-    // return 1 if the last bit is set; otherwise, return 0
-    return x & 1;
+    // return true if the last bit is set
+    return (x & 1) === 1;
 }
 
-int main()
-{
-    int x = 15;
+const x = 15;
 
-    cout << x << " in binary is " << bitset<8>(x) << endl;
+console.log(`${x} in binary is ${x.toString(2)}`);
 
-    if (findParity(x)) {
-        cout << x << " contains odd bits";
-    }
-    else {
-        cout << x << " contains even bits";
-    }
-
-    return 0;
+if (findParity(x)) {
+    console.log(`${x} contains odd bits`);
+}
+else {
+    console.log(`${x} contains even bits`);
 }
 ```
 
 **Output:** 15 in binary is 00001111 15 contains even bits
-
-##
-
-```java
-class Main
-{
-    // Compute parity of a number `x` using the lookup table
-    public static boolean findParity(int x)
-    {
-        // recursively divide the (32–bit) integer into two equal
-        // halves and take their XOR until only 1 bit is left
-
-        x ^= x >> 16;
-        x ^= x >> 8;
-        x ^= x >> 4;
-        x ^= x >> 2;
-        x ^= x >> 1;
-
-        // return true if the last bit is set
-        return (x & 1) == 1;
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 15;
-
-        System.out.println(x + " in binary is " + Integer.toBinaryString(x));
-
-        if (findParity(x)) {
-            System.out.println(x + " contains odd number of bits");
-        }
-        else {
-            System.out.println(x + " contains even number of bits");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Compute parity of a number `x` using the lookup table
-def findParity(x):
-
-    # recursively divide the (32–bit) integer into two equal
-    # halves and take their XOR until only 1 bit is left
-
-    x ^= x >> 16
-    x ^= x >> 8
-    x ^= x >> 4
-    x ^= x >> 2
-    x ^= x >> 1
-
-    # return true if the last bit is set
-    return (x & 1) == 1
-
-if __name__ == '__main__':
-
-    x = 15
-
-    print(f'{x} in binary is {bin(x)}')
-
-    if findParity(x):
-        print('Number contains an odd number of bits')
-    else:
-        print('Number contains an even number of bits.')
-```
 
 ## 2\. Using a Lookup Table
 
@@ -242,7 +90,7 @@ We can use a lookup table to find parity in constant time. An integer in C/C++ u
 
 1 byte with all its bits set is 255 in decimal (`11111111` in binary), and all bits unset is 0 in decimal (`00000000` in binary). So, the lookup table should be of size 256 `(0-255)`.
 
-The following solution uses the macros to generate the lookup table. The lookup table will be generated at compile time by the preprocessor. The first and last few numbers of the sequence will be:
+The following solution generates the lookup table (TypeScript has no preprocessor, so the table is built at runtime). The first and last few numbers of the sequence will be:
 
 { 0, 1, 1, 0, 1, 0, … , 0, 1, 0, 1, 1, 0 } as The parity of 0 is 0 The parity of 1 is 1 The parity of 2 is 1 The parity of 3 is 0 The parity of 4 is 1 The parity of 5 is 0 …… …… The parity of 250 is 0 The parity of 251 is 1 The parity of 252 is 0 The parity of 253 is 1 The parity of 254 is 1 The parity of 255 is 0
 
@@ -250,31 +98,28 @@ Consider `n = 1691315356` (In binary `01100100110011110110110010011100`)
 
 **1\. Split the 32–bit integer into 16–bit chunks:** 0110010011001111 | 0110110010011100 **2\. Take their XOR:** 0110010011001111 ^ 0110110010011100 ~~~~~~~~~~~~~~~~ 0000100001010011 **3\. Split the 16–bit result into 8–bit chunks:** 00001000 | 01010011 **4\. Take their XOR:** 00001000 ^ 01010011 ~~~~~~~~ 01011011
 
-Now, `01011011` is 91 in decimal, and `lookup[91]` will return 1 (odd parity). The split and XOR operation happens in a single expression for each chunk in the following C++ solution:
+Now, `01011011` is 91 in decimal, and `lookup[91]` will return 1 (odd parity). The split and XOR operation happens in a single expression for each chunk in the following TypeScript solution:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
-// Macros to generate the lookup table (at compile-time)
-#define P2(n) n, n^1, n^1, n
-#define P4(n) P2(n), P2(n^1), P2(n^1), P2(n)
-#define P6(n) P4(n), P4(n^1), P4(n^1), P4(n)
-#define FIND_PARITY P6(0), P6(1), P6(1), P6(0)
-
+```ts
 // lookup table to store the parity of each index of the table.
-// The macro `FIND_PARITY` generates the table
-unsigned int lookup[256] = { FIND_PARITY };
+// The table is generated at runtime (same values the C++ macro version produced)
+const lookup: number[] = [];
+for (let i = 0; i < 256; i++) {
+    let n = i;
+    n = (n & 0x0F) ^ (n >> 4);
+    n = (n & 0x03) ^ (n >> 2);
+    n = (n & 0x01) ^ (n >> 1);
+    lookup[i] = n & 1;
+}
 
 // Function to find parity of `x`
-int findParity(int x)
-{
+function findParity(x: number): number {
+
     // print lookup table (parity of integer `i`)
 
     /*
-    for (int i = 0; i < 256; i++) {
-        cout << "The parity of " << i << " is " << lookup[i] << endl;
+    for (let i = 0; i < 256; i++) {
+        console.log(`The parity of ${i} is ${lookup[i]}`);
     }
     */
 
@@ -289,20 +134,15 @@ int findParity(int x)
     return lookup[x & 0xff];
 }
 
-int main()
-{
-    int x = 17;
+const x = 17;
 
-    cout << x << " in binary is " << bitset<8>(x) << endl;
+console.log(`${x} in binary is ${x.toString(2)}`);
 
-    if (findParity(x)) {
-        cout << x << " contains odd bits";
-    }
-    else {
-        cout << x << " contains even bits";
-    }
-
-    return 0;
+if (findParity(x)) {
+    console.log(`${x} contains odd bits`);
+}
+else {
+    console.log(`${x} contains even bits`);
 }
 ```
 

@@ -30,110 +30,101 @@ After processing all outgoing edges of `A`, we next consider a vertex having min
 
 We repeat the process till we have processed all the vertices, i.e., Set `S` becomes full.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <climits>
-using namespace std;
+```ts
+// min-heap assumed (JS has no builtin heap)
+class MinHeap {
+    data: { vertex: number; weight: number }[] = [];
 
-// Data structure to store a graph edge
-struct Edge {
-    int source, dest, weight;
-};
-
-// Data structure to store a heap node
-struct Node {
-    int vertex, weight;
-};
-
-// A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors of `Edge` to represent an adjacency list
-    vector<vector<Edge>> adjList;
-
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type vector<Edge>
-        adjList.resize(n);
-
-        // add edges to the directed graph
-        for (Edge const &edge: edges)
-        {
-            // insert at the end
-            adjList[edge.source].push_back(edge);
+    push(node: { vertex: number; weight: number }): void {
+        this.data.push(node);
+        let i = this.data.length - 1;
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (this.data[parent].weight <= this.data[i].weight) break;
+            [this.data[i], this.data[parent]] = [this.data[parent], this.data[i]];
+            i = parent;
         }
     }
-};
 
-void printPath(vector<int> const &prev, int i, int source)
-{
-    if (i < 0) {
-        return;
+    pop(): { vertex: number; weight: number } {
+        const top = this.data[0];
+        const last = this.data.pop()!;
+        if (this.data.length > 0) {
+            this.data[0] = last;
+            let i = 0;
+            for (;;) {
+                const left = 2 * i + 1, right = left + 1;
+                let smallest = i;
+                if (left < this.data.length && this.data[left].weight < this.data[smallest].weight) smallest = left;
+                if (right < this.data.length && this.data[right].weight < this.data[smallest].weight) smallest = right;
+                if (smallest === i) break;
+                [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]];
+                i = smallest;
+            }
+        }
+        return top;
     }
-    printPath(prev, prev[i], source);
-    if (i != source) {
-        cout << ", ";
+
+    get size(): number {
+        return this.data.length;
     }
-    cout << i;
 }
 
-// Comparison object to be used to order the heap
-struct comp
-{
-    bool operator()(const Node &lhs, const Node &rhs) const {
-        return lhs.weight > rhs.weight;
-    }
-};
+class Graph {
+    // adjacency list of (dest, weight) pairs
+    adjList: [number, number][][];
 
-// Run Dijkstra’s algorithm on the given graph
-void findShortestPaths(Graph const &graph, int source, int n)
-{
+    constructor(edges: [number, number, number][], n: number) {
+        // allocate memory for the adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
+
+        // add edges to the directed graph
+        for (const [source, dest, weight] of edges) {
+            this.adjList[source].push([dest, weight]);
+        }
+    }
+}
+
+function getRoute(prev: number[], i: number, route: number[]): void {
+    if (i >= 0) {
+        getRoute(prev, prev[i], route);
+        route.push(i);
+    }
+}
+
+// Run Dijkstra’s algorithm on a given graph
+function findShortestPaths(graph: Graph, source: number, n: number): void {
+
     // create a min-heap and push source node having distance 0
-    priority_queue<Node, vector<Node>, comp> min_heap;
-    min_heap.push({source, 0});
+    const pq = new MinHeap();
+    pq.push({ vertex: source, weight: 0 });
 
     // set initial distance from the source to `v` as infinity
-    vector<int> dist(n, INT_MAX);
+    const dist: number[] = new Array(n).fill(Number.MAX_SAFE_INTEGER);
 
     // distance from the source to itself is zero
     dist[source] = 0;
 
-    // boolean array to track vertices for which minimum
-    // cost is already found
-    vector<bool> done(n, false);
+    // list to track vertices for which minimum cost is already found
+    const done: boolean[] = new Array(n).fill(false);
     done[source] = true;
 
     // stores predecessor of a vertex (to a print path)
-    vector<int> prev(n, -1);
+    const prev: number[] = new Array(n).fill(-1);
 
     // run till min-heap is empty
-    while (!min_heap.empty())
-    {
-        // Remove and return the best vertex
-        Node node = min_heap.top();
-        min_heap.pop();
-
-        // get the vertex number
-        int u = node.vertex;
+    while (pq.size > 0) {
+        const node = pq.pop();      // Remove and return the best vertex
+        const u = node.vertex;      // get the vertex number
 
         // do for each neighbor `v` of `u`
-        for (auto i: graph.adjList[u])
-        {
-            int v = i.dest;
-            int weight = i.weight;
-
-            // Relaxation step
-            if (!done[v] && (dist[u] + weight) < dist[v])
-            {
+        for (const [v, weight] of graph.adjList[u]) {
+            if (!done[v] && (dist[u] + weight) < dist[v]) {     // Relaxation step
                 dist[v] = dist[u] + weight;
                 prev[v] = u;
-                min_heap.push({v, dist[v]});
+                pq.push({ vertex: v, weight: dist[v] });
             }
         }
 
@@ -141,286 +132,33 @@ void findShortestPaths(Graph const &graph, int source, int n)
         done[u] = true;
     }
 
-    for (int i = 0; i < n; i++)
-    {
-        if (i != source && dist[i] != INT_MAX)
-        {
-            cout << "Path (" << source << " —> " << i << "): Minimum cost = "
-                 << dist[i] << ", Route = [";
-            printPath(prev, i, source);
-            cout << "]" << endl;
+    const route: number[] = [];
+    for (let i = 0; i < n; i++) {
+        if (i !== source && dist[i] !== Number.MAX_SAFE_INTEGER) {
+            getRoute(prev, i, route);
+            console.log(`Path (${source} —> ${i}): Minimum cost = ${dist[i]}, Route = [${route.join(', ')}]`);
+            route.length = 0;
         }
     }
 }
 
-int main()
-{
-    // initialize edges as per the above diagram
-    // (u, v, w) represent edge from vertex `u` to vertex `v` having weight `w`
-    vector<Edge> edges =
-    {
-        {0, 1, 10}, {0, 4, 3}, {1, 2, 2}, {1, 4, 4}, {2, 3, 9},
-        {3, 2, 7}, {4, 1, 1}, {4, 2, 8}, {4, 3, 2}
-    };
+// initialize edges as per the above diagram
+// (u, v, w) represent edge from vertex `u` to vertex `v` having weight `w`
+const edges: [number, number, number][] = [
+    [0, 1, 10], [0, 4, 3], [1, 2, 2], [1, 4, 4], [2, 3, 9], [3, 2, 7],
+    [4, 1, 1], [4, 2, 8], [4, 3, 2]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 4)
-    int n = 5;
+// total number of nodes in the graph (labelled from 0 to 4)
+const n = 5;
 
-    // construct graph
-    Graph graph(edges, n);
+// construct graph
+const graph = new Graph(edges, n);
 
-    // run the Dijkstra’s algorithm from every node
-    for (int source = 0; source < n; source++) {
-        findShortestPaths(graph, source, n);
-    }
-
-    return 0;
+// run the Dijkstra’s algorithm from every node
+for (let source = 0; source < n; source++) {
+    findShortestPaths(graph, source, n);
 }
-```
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest, weight;
-
-    public Edge(int source, int dest, int weight)
-    {
-        this.source = source;
-        this.dest = dest;
-        this.weight = weight;
-    }
-}
-
-// A class to store a heap node
-class Node
-{
-    int vertex, weight;
-
-    public Node(int vertex, int weight)
-    {
-        this.vertex = vertex;
-        this.weight = weight;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Edge>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the directed graph
-        for (Edge edge: edges) {
-            adjList.get(edge.source).add(edge);
-        }
-    }
-}
-
-class Main
-{
-    private static void getRoute(int[] prev, int i, List<Integer> route)
-    {
-        if (i >= 0)
-        {
-            getRoute(prev, prev[i], route);
-            route.add(i);
-        }
-    }
-
-    // Run Dijkstra’s algorithm on a given graph
-    public static void findShortestPaths(Graph graph, int source, int n)
-    {
-        // create a min-heap and push source node having distance 0
-        PriorityQueue<Node> minHeap;
-        minHeap = new PriorityQueue<>(Comparator.comparingInt(node -> node.weight));
-        minHeap.add(new Node(source, 0));
-
-        // set initial distance from the source to `v` as infinity
-        List<Integer> dist;
-        dist = new ArrayList<>(Collections.nCopies(n, Integer.MAX_VALUE));
-
-        // distance from the source to itself is zero
-        dist.set(source, 0);
-
-        // boolean array to track vertices for which minimum
-        // cost is already found
-        boolean[] done = new boolean[n];
-        done[source] = true;
-
-        // stores predecessor of a vertex (to a print path)
-        int[] prev = new int[n];
-        prev[source] = -1;
-
-        // run till min-heap is empty
-        while (!minHeap.isEmpty())
-        {
-            // Remove and return the best vertex
-            Node node = minHeap.poll();
-
-            // get the vertex number
-            int u = node.vertex;
-
-            // do for each neighbor `v` of `u`
-            for (Edge edge: graph.adjList.get(u))
-            {
-                int v = edge.dest;
-                int weight = edge.weight;
-
-                // Relaxation step
-                if (!done[v] && (dist.get(u) + weight) < dist.get(v))
-                {
-                    dist.set(v, dist.get(u) + weight);
-                    prev[v] = u;
-                    minHeap.add(new Node(v, dist.get(v)));
-                }
-            }
-
-            // mark vertex `u` as done so it will not get picked up again
-            done[u] = true;
-        }
-
-        List<Integer> route = new ArrayList<>();
-
-        for (int i = 0; i < n; i++)
-        {
-            if (i != source && dist.get(i) != Integer.MAX_VALUE)
-            {
-                getRoute(prev, i, route);
-                System.out.printf("Path (%d —> %d): Minimum cost = %d, Route = %s\n",
-                                source, i, dist.get(i), route);
-                route.clear();
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // initialize edges as per the above diagram
-        // (u, v, w) represent edge from vertex `u` to vertex `v` having weight `w`
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1, 10), new Edge(0, 4, 3), new Edge(1, 2, 2),
-                new Edge(1, 4, 4), new Edge(2, 3, 9), new Edge(3, 2, 7),
-                new Edge(4, 1, 1), new Edge(4, 2, 8), new Edge(4, 3, 2)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 4)
-        int n = 5;
-
-        // construct graph
-        Graph graph = new Graph(edges, n);
-
-        // run the Dijkstra’s algorithm from every node
-        for (int source = 0; source < n; source++) {
-            findShortestPaths(graph, source, n);
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-from heapq import heappop, heappush
-
-# A class to store a heap node
-class Node:
-    def __init__(self, vertex, weight=0):
-        self.vertex = vertex
-        self.weight = weight
-
-    # Override the __lt__() function to make `Node` class work with a min-heap
-    def __lt__(self, other):
-        return self.weight < other.weight
-
-# A class to represent a graph object
-class Graph:
-    def __init__(self, edges, n):
-        # allocate memory for the adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the directed graph
-        for (source, dest, weight) in edges:
-            self.adjList[source].append((dest, weight))
-
-def get_route(prev, i, route):
-    if i >= 0:
-        get_route(prev, prev[i], route)
-        route.append(i)
-
-# Run Dijkstra’s algorithm on a given graph
-def findShortestPaths(graph, source, n):
-
-    # create a min-heap and push source node having distance 0
-    pq = []
-    heappush(pq, Node(source))
-
-    # set initial distance from the source to `v` as infinity
-    dist = [sys.maxsize] * n
-
-    # distance from the source to itself is zero
-    dist[source] = 0
-
-    # list to track vertices for which minimum cost is already found
-    done = [False] * n
-    done[source] = True
-
-    # stores predecessor of a vertex (to a print path)
-    prev = [-1] * n
-
-    # run till min-heap is empty
-    while pq:
-
-        node = heappop(pq)      # Remove and return the best vertex
-        u = node.vertex         # get the vertex number
-
-        # do for each neighbor `v` of `u`
-        for (v, weight) in graph.adjList[u]:
-            if not done[v] and (dist[u] + weight) < dist[v]:        # Relaxation step
-                dist[v] = dist[u] + weight
-                prev[v] = u
-                heappush(pq, Node(v, dist[v]))
-
-        # mark vertex `u` as done so it will not get picked up again
-        done[u] = True
-
-    route = []
-    for i in range(n):
-        if i != source and dist[i] != sys.maxsize:
-            get_route(prev, i, route)
-            print(f'Path ({source} —> {i}): Minimum cost = {dist[i]}, Route = {route}')
-            route.clear()
-
-if __name__ == '__main__':
-
-    # initialize edges as per the above diagram
-    # (u, v, w) represent edge from vertex `u` to vertex `v` having weight `w`
-    edges = [(0, 1, 10), (0, 4, 3), (1, 2, 2), (1, 4, 4), (2, 3, 9), (3, 2, 7),
-            (4, 1, 1), (4, 2, 8), (4, 3, 2)]
-
-    # total number of nodes in the graph (labelled from 0 to 4)
-    n = 5
-
-    # construct graph
-    graph = Graph(edges, n)
-
-    # run the Dijkstra’s algorithm from every node
-    for source in range(n):
-        findShortestPaths(graph, source, n)
 ```
 
 **Output:** Path (0 —> 1): Minimum cost = 4, Route = [0, 4, 1] Path (0 —> 2): Minimum cost = 6, Route = [0, 4, 1, 2] Path (0 —> 3): Minimum cost = 5, Route = [0, 4, 3] Path (0 —> 4): Minimum cost = 3, Route = [0, 4] Path (1 —> 2): Minimum cost = 2, Route = [1, 2] Path (1 —> 3): Minimum cost = 6, Route = [1, 4, 3] Path (1 —> 4): Minimum cost = 4, Route = [1, 4] Path (2 —> 3): Minimum cost = 9, Route = [2, 3] Path (3 —> 2): Minimum cost = 7, Route = [3, 2] Path (4 —> 1): Minimum cost = 1, Route = [4, 1] Path (4 —> 2): Minimum cost = 3, Route = [4, 1, 2] Path (4 —> 3): Minimum cost = 2, Route = [4, 3]

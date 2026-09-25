@@ -23,76 +23,24 @@ After separating even and odd bits, right shift the even bits by 1 position and 
 
 **1\. SEPARATE:** 00101101011001010111000110001001 & (n) 10101010101010101010101010101010 (0xAAAAAAAA) ———————————————————————————————— 00101000001000000010000010001000 (Contains all even bits) 00101101011001010111000110001001 & (n) 01010101010101010101010101010101 (0x55555555) ———————————————————————————————— 00000101010001010101000100000001 (Contains all odd bits) **2\. SHIFT & MERGE:** 00010100000100000001000001000100 | (Right shift even bits by 1) 00001010100010101010001000000010 (Left shift odd bits by 1) ———————————————————————————————— 00011110100110101011001001000110 (Adjacent bits swapped)
 
-Following is the C++, Java, and Python implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
+```ts
 // Function to swap adjacent bits of a given number
-inline int swapAdjacentBits(int n) {
+function swapAdjacentBits(n: number): number {
     return (((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1));
 }
 
-int main()
-{
-    int n = 761622921;
-
-    cout << n << " in binary is " << bitset<32>(n) << endl;
-    n = swapAdjacentBits(n);
-    cout << "\nAfter Swapping… " << endl;
-    cout << n << " in binary is " << bitset<32>(n) << endl;
-
-    return 0;
+function toBinaryString(n: number): string {
+    return (n >>> 0).toString(2).padStart(32, '0');
 }
-```
 
-**Output:** 761622921 in binary is 00101101011001010111000110001001 After Swapping… 513454662 in binary is 00011110100110101011001001000110
+let n = 761622921;
 
-##
-
-```java
-class Main
-{
-    public static String toBinaryString(int n)
-    {
-        return String.format("%32s", Integer.toBinaryString(n))
-                    .replaceAll(" ", "0");
-    }
-
-    // Function to swap adjacent bits of a given number
-    public static int swapAdjacentBits(int n) {
-        return (((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1));
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 761622921;
-
-        System.out.println(n + " in binary is " + toBinaryString(n));
-        n = swapAdjacentBits(n);
-        System.out.println("\nAfter Swapping…");
-        System.out.println(n + " in binary is " + toBinaryString(n));
-    }
-}
-```
-
-##
-
-```python3
-# Function to swap adjacent bits of a given number
-def swapAdjacentBits(n):
-    return ((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1)
-
-if __name__ == '__main__':
-
-    n = 761622921
-
-    print(f'{n} in binary is {bin(n)}')
-    n = swapAdjacentBits(n)
-    print('\nAfter Swapping…')
-    print(f'{n} in binary is {bin(n)}')
+console.log(`${n} in binary is ${toBinaryString(n)}`);
+n = swapAdjacentBits(n);
+console.log('After Swapping…');
+console.log(`${n} in binary is ${toBinaryString(n)}`);
 ```
 
 Rate this post

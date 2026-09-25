@@ -21,254 +21,76 @@ The idea is to traverse the tree in a [postorder fashion](https://techiedelight.
   * If its left child is empty, then make its right child as left’s and set right to null.
   * If the left child already exists, then make the right child of its left child point to its right child and set the right child to null.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+# A class to store a binary tree node
+class Node {
+    constructor(public key: number, public left: Node | null = null, public right: Node | null = null) {}
+}
 
 // Function to perform preorder traversal on a given binary tree.
-void preorder(Node* root)
-{
-    if (root == nullptr) {
+function preorder(root: Node | null): void {
+    if (root === null) {
         return;
     }
-
-    cout << root->key << " ";
-    preorder(root->left);
-    preorder(root->right);
+    process.stdout.write(`${root.key} `);
+    preorder(root.left);
+    preorder(root.right);
 }
 
 // Function to convert a normal binary tree into a Left–child
 // right–sibling (LC–RS) binary tree
-void convert(Node* root)
-{
+function convert(root: Node | null): void {
     // base case: empty tree
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // recursively convert the left and right subtree first
-    convert(root->left);
-    convert(root->right);
+    convert(root.left);
+    convert(root.right);
 
     // if the left child is empty, point it to the right child
     // and set the right child to null
-    if (root->left == nullptr)
-    {
-        root->left = root->right;
-        root->right = nullptr;
+    if (root.left === null) {
+        root.left = root.right;
+        root.right = null;
     }
-
     // if the left child already exists, then make its right child
     // point to the current node's right child and
-    // and set the right child as null
+    // set the right child as null
     else {
-        root->left->right = root->right;
-        root->right = nullptr;
+        root.left.right = root.right;
+        root.right = null;
     }
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-            /  \
-           /    \
-          2      3
-         / \    /
-        4   5  6
-              / \
-             7   8
-    */
+/* Construct the following tree
+          1
+        /  \
+       /    \
+      2      3
+     / \    /
+    4   5  6
+          / \
+         7   8
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+let root = new Node(1);
+root.left = new Node(2);
+root.right = new Node(3);
+root.left!.left = new Node(4);
+root.left!.right = new Node(5);
+root.right!.left = new Node(6);
+root.right!.left!.left = new Node(7);
+root.right!.left!.right = new Node(8);
 
-    convert(root);
-    preorder(root);
-
-    return 0;
-}
+convert(root);
+preorder(root);
 ```
 
 **Output:** 1 2 4 5 3 6 7 8
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-class Main
-{
-    // Function to perform preorder traversal on a given binary tree.
-    public static void preorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.key + " ");
-        preorder(root.left);
-        preorder(root.right);
-    }
-
-    // Function to convert a normal binary tree into a Left–child
-    // right–sibling (LC–RS) binary tree
-    public static void convert(Node root)
-    {
-        // base case: empty tree
-        if (root == null) {
-            return;
-        }
-
-        // recursively convert the left and right subtree first
-        convert(root.left);
-        convert(root.right);
-
-        // if the left child is empty, point it to the right child
-        // and set the right child to null
-        if (root.left == null)
-        {
-            root.left = root.right;
-            root.right = null;
-        }
-
-        // if the left child already exists, then make its right child
-        // point to the current node's right child and
-        // and set the right child as null
-        else {
-            root.left.right = root.right;
-            root.right = null;
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /  \
-               /    \
-              2      3
-             / \    /
-            4   5  6
-                  / \
-                 7   8
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        convert(root);
-        preorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Function to perform preorder traversal on a given binary tree.
-def preorder(root):
-
-    if root is None:
-        return
-
-    print(root.key, end=' ')
-    preorder(root.left)
-    preorder(root.right)
-
-# Function to convert a normal binary tree into a Left–child
-# right–sibling (LC–RS) binary tree
-def convert(root):
-
-    # base case: empty tree
-    if root is None:
-        return
-
-    # recursively convert the left and right subtree first
-    convert(root.left)
-    convert(root.right)
-
-    # if the left child is empty, point it to the right child
-    # and set the right child to None
-    if root.left is None:
-        root.left = root.right
-        root.right = None
-
-    # if the left child already exists, then make its right child
-    # point to the current node's right child and
-    # set the right child as None
-    else:
-        root.left.right = root.right
-        root.right = None
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /  \
-           /    \
-          2      3
-         / \    /
-        4   5  6
-              / \
-             7   8
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    convert(root)
-    preorder(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(h) for call stack, where `h` is the height of the tree.
 

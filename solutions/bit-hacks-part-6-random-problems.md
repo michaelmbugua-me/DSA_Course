@@ -16,77 +16,26 @@ For example,
 
 01000001 | (x = 65) 01010000 (y = 80) ~~~~~~~~ 01010001 (x | y) 01000001 & (x = 65) 01010000 (y = 80) ~~~~~~~~ 01000000 (x & y)
 
-Now, the result `x ^ y` would be `(x | y) - (x & y) = (01010001 - 01000000) = 00010001`. Following is the C++, Java, and Python program that demonstrates it:
+Now, the result `x ^ y` would be `(x | y) - (x & y) = (01010001 - 01000000) = 00010001`. Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
+```ts
 // Function to find XOR of two numbers without using XOR operator
-int findBits(int x, int y) {
+function findBits(x: number, y: number): number {
     return (x | y) - (x & y);
 }
 
-int main()
-{
-    int x = 65;
-    int y = 80;
+const x = 65;
+const y = 80;
 
-    cout << "The first number in binary is " << bitset<8>(x) << endl;
-    cout << "The second number in binary is " << bitset<8>(y) << endl;
+const toBinaryString = (n: number): string => n.toString(2).padStart(8, '0');
 
-    cout << "\nXOR is " << bitset<8>(findBits(x, y));
+console.log(`The first number in binary is ${toBinaryString(x | y)}`);
+console.log(`The second number in binary is ${toBinaryString(x & y)}`);
 
-    return 0;
-}
+console.log(`\nXOR is ${toBinaryString(findBits(x, y))}`);
 ```
 
 **Output:** The first number in binary is 01000001 The second number in binary is 01010000 XOR is 00010001
-
-##
-
-```java
-class Main
-{
-    // Function to find XOR of two numbers without using XOR operator
-    public static int findBits(int x, int y) {
-        return (x | y) - (x & y);
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 65;
-        int y = 80;
-
-        System.out.println("The first number in binary is " +
-                        Integer.toBinaryString((x | y)));
-
-        System.out.println("The second number in binary is " +
-                        Integer.toBinaryString((x & y)));
-
-        System.out.println("\nXOR is " + Integer.toBinaryString(findBits(x, y)));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find XOR of two numbers without using XOR operator
-def findBits(x, y):
-    return (x | y) - (x & y)
-
-if __name__ == '__main__':
-
-    x = 65
-    y = 80
-
-    print('The first number in binary is', bin((x | y)))
-    print('The second number in binary is', bin((x & y)))
-
-    print('\nXOR is', bin(findBits(x, y)))
-```
 
 **Suggested Read:** <https://graphics.stanford.edu/~seander/bithacks.html>
 

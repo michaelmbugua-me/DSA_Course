@@ -15,40 +15,35 @@ We can use a [stack](https://techiedelight.com/stack-implementation-in-cpp/) to 
   * If the current character in the expression is not a closing parenthesis `')'`, push the character into the stack.
   * If the current character in the expression is a closing parenthesis `')'`, check if the topmost element in the stack is an opening parenthesis or not. If it is an opening parenthesis, then the subexpression ending at the current character is of the form `((exp))`; otherwise, continue popping characters from the stack till matching `'('` is found for current `')'`.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <stack>
-using namespace std;
-
+```ts
 // Function to find duplicate parenthesis in an expression
-bool hasDuplicateParenthesis(string exp)
-{
-    if (exp.length() <= 3) {
+function hasDuplicateParenthesis(exp: string): boolean {
+
+    if (!exp || exp.length <= 3) {
         return false;
     }
 
     // take an empty stack of characters
-    stack<char> stack;
+    const stack: string[] = [];
 
     // traverse the input expression
-    for (char c: exp)
-    {
+    for (const c of exp) {
         // if the current char in the expression is not a closing parenthesis
-        if (c != ')') {
+        if (c !== ')') {
             stack.push(c);
         }
         // if the current char in the expression is a closing parenthesis
         else {
             // if the stack's top element is an opening parenthesis,
             // the subexpression of the form ((exp)) is found
-            if (stack.top() == '(') {
+            if (stack[stack.length - 1] === '(') {
                 return true;
             }
 
             // pop till '(' is found for current ')'
-            while (stack.top() != '(') {
+            while (stack[stack.length - 1] !== '(') {
                 stack.pop();
             }
 
@@ -62,130 +57,17 @@ bool hasDuplicateParenthesis(string exp)
     return false;
 }
 
-int main()
-{
-    string exp = "((x+y))";        // assumes valid expression
+const exp = '((x+y))'; // assumes valid expression
 
-    if (hasDuplicateParenthesis(exp)) {
-        cout << "The expression has duplicate parenthesis.";
-    }
-    else {
-        cout << "The expression does not have duplicate parenthesis";
-    }
-
-    return 0;
+if (hasDuplicateParenthesis(exp)) {
+    console.log('The expression has duplicate parenthesis.');
+}
+else {
+    console.log('The expression does not have duplicate parenthesis');
 }
 ```
 
 **Output:** The expression has duplicate parenthesis
-
-##
-
-```java
-import java.util.Stack;
-
-class Main
-{
-    // Function to find duplicate parenthesis in an expression
-    public static boolean hasDuplicateParenthesis(String exp)
-    {
-        if (exp == null || exp.length() <= 3) {
-            return false;
-        }
-
-        // take an empty stack of characters
-        Stack<Character> stack = new Stack<>();
-
-        // traverse the input expression
-        for (char c: exp.toCharArray())
-        {
-            // if the current char in the expression is not a closing parenthesis
-            if (c != ')') {
-                stack.push(c);
-            }
-            // if the current char in the expression is a closing parenthesis
-            else {
-                // if the stack's top element is an opening parenthesis,
-                // the subexpression of the form ((exp)) is found
-                if (stack.peek() == '(') {
-                    return true;
-                }
-
-                // pop till '(' is found for current ')'
-                while (stack.peek() != '(') {
-                    stack.pop();
-                }
-
-                // pop '('
-                stack.pop();
-            }
-        }
-
-        // if we reach here, then the expression does not have any
-        // duplicate parenthesis
-        return false;
-    }
-
-    public static void main(String[] args)
-    {
-        String exp = "((x+y))";        // assumes valid expression
-
-        if (hasDuplicateParenthesis(exp)) {
-            System.out.println("The expression has duplicate parenthesis.");
-        }
-        else {
-            System.out.println("The expression does not have duplicate parenthesis");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to find duplicate parenthesis in an expression
-def hasDuplicateParenthesis(exp):
-
-    if not exp or len(exp) <= 3:
-        return False
-
-    # take an empty stack of characters
-    stack = deque()
-
-    # traverse the input expression
-    for c in exp:
-        # if the current char in the expression is not a closing parenthesis
-        if c != ')':
-            stack.append(c)
-        # if the current char in the expression is a closing parenthesis
-        else:
-            # if the stack's top element is an opening parenthesis,
-            # the subexpression of the form ((exp)) is found
-            if stack[-1] == '(':
-                return True
-
-            # pop till '(' is found for current ')'
-            while stack[-1] != '(':
-                stack.pop()
-
-            # pop '('
-            stack.pop()
-
-    # if we reach here, then the expression does not have any
-    # duplicate parenthesis
-    return False
-
-if __name__ == '__main__':
-
-    exp = '((x+y))' # assumes valid expression
-
-    if hasDuplicateParenthesis(exp):
-        print('The expression has duplicate parenthesis.')
-    else:
-        print('The expression does not have duplicate parenthesis')
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the length of the input expression.
 

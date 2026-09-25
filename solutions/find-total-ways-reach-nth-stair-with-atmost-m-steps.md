@@ -22,112 +22,36 @@ For at most `m` steps, the recurrence relation `T(n)` can be written as:
 
 T(n) = T(n-1) + T(n-2) + … T(n-m)
 
-i.e. we can reach the `n'th` stair from either `(n-1)'th` stair, `(n-2)'th` stair, `(n-3)'th`. … `(n-m)'th` stair. Following is the C, Java, and Python program that implements the above recurrence:
+i.e. we can reach the `n'th` stair from either `(n-1)'th` stair, `(n-2)'th` stair, `(n-3)'th`. … `(n-m)'th` stair. Following is a TypeScript program that implements the above recurrence:
 
-```c
-#include <stdio.h>
-
+```ts
 // Recursive function to find total ways to reach the n'th stair from the bottom
 // when a person is allowed to take at most `m` steps at a time
-int totalWays(int n, int m)
-{
+const totalWays = (n: number, m: number): number => {
     // base case: invalid input
     if (n < 0) {
         return 0;
     }
 
     // base case: 1 way (with no steps)
-    if (n == 0) {
+    if (n === 0) {
         return 1;
     }
 
-    int count = 0;
-    for (int i = 1; i <= m; i++) {
+    let count = 0;
+    for (let i = 1; i <= m; i++) {
         count += totalWays(n - i, m);
     }
 
     return count;
-}
+};
 
-int main(void)
-{
-    int n = 4, m = 3;
-
-    printf("Total ways to reach the %d'th stair with at most %d steps are %d",
-            n, m, totalWays(n, m));
-
-    return 0;
-}
+const n = 4;
+const m = 3;
+console.log(`Total ways to reach the ${n}'th stair with at most ${m} steps are`, totalWays(n, m));
 ```
 
 **Output:** Total ways to reach the 4th stair with at most 3 steps are 7
-
-##
-
-```java
-class Main
-{
-    // Recursive function to find total ways to reach the n'th stair from the bottom
-    // when a person is allowed to take at most `m` steps at a time
-    public static int totalWays(int n, int m)
-    {
-        // base case: invalid input
-        if (n < 0) {
-            return 0;
-        }
-
-        // base case: 1 way (with no steps)
-        if (n == 0) {
-            return 1;
-        }
-
-        int count = 0;
-        for (int i = 1; i <= m; i++) {
-            count += totalWays(n - i, m);
-        }
-
-        return count;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 4, m = 3;
-
-        System.out.printf("Total ways to reach the %d'th stair with at most " +
-                                "%d steps are %d", n, m, totalWays(n, m));
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to find total ways to reach the n'th stair from the bottom
-# when a person is allowed to take at most `m` steps at a time
-def totalWays(n, m):
-
-    # base case: invalid input
-    if n < 0:
-        return 0
-
-    # base case: 1 way (with no steps)
-    if n == 0:
-        return 1
-
-    count = 0
-    for i in range(1, m + 1):
-        count += totalWays(n - i, m)
-
-    return count
-
-if __name__ == '__main__':
-
-    n = 4
-    m = 3
-
-    print(f'Total ways to reach the {n}\'th stair with at most {m} steps are',
-        totalWays(n, m))
-```
 
 The time complexity of the above solution is exponential since it computes solutions to the same subproblems repeatedly, i.e., the problem exhibits [overlapping subproblems](https://techiedelight.com/introduction-dynamic-programming/#overlapping-subproblems).
 
@@ -137,154 +61,60 @@ The problem has an [optimal substructure](https://techiedelight.com/introduction
 
 We can use memoization to solve this problem in a top-down fashion. The idea is to store the results of function calls and return the cached result when the same inputs occur again.
 
-Following is the C, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-#include <string.h>
-
+```ts
 // Recursive DP function to find total ways to reach the n'th stair from the bottom
 // when a person is allowed to take at most `m` steps at a time
-int totalWays(int n, int m, int lookup[])
-{
+const totalWays = (n: number, m: number, lookup: number[]): number => {
     // base case: invalid input
     if (n < 0) {
         return 0;
     }
 
     // base case: 1 way (with no steps)
-    if (n == 0) {
+    if (n === 0) {
         return 1;
     }
 
     // if the subproblem is not seen before
-    if (lookup[n] == 0)
-    {
-        for (int i = 1; i <= m; i++) {
+    if (lookup[n] === 0) {
+        for (let i = 1; i <= m; i++) {
             lookup[n] += totalWays(n - i, m, lookup);
         }
     }
 
     // return the subproblem solution
     return lookup[n];
-}
+};
 
-int main(void)
-{
-    int n = 4, m = 3;
+const n = 4;
+const m = 3;
 
-    // create an array of size `n+1` storing a solution to the subproblems
-    int lookup[n+1];
+// create a list of `n+1` size for storing a solution to the subproblems
+const lookup = new Array<number>(n + 1).fill(0);
 
-    // initialize the array by 0's
-    memset(lookup, 0, sizeof(int) * (n + 1));
-
-    printf("Total ways to reach the %d'th stair with at most %d steps are %d",
-        n, m, totalWays(n, m, lookup));
-
-    return 0;
-}
+console.log(`Total ways to reach the ${n}'th stair with at most ${m} steps are`,
+    totalWays(n, m, lookup));
 ```
 
 **Output:** Total ways to reach the 4th stair with at most 3 steps are 7
 
-##
-
-```java
-class Main
-{
-    // Recursive DP function to find total ways to reach the n'th stair from the bottom
-    // when a person is allowed to take at most `m` steps at a time
-    public static int totalWays(int n, int m, int[] lookup)
-    {
-        // base case: invalid input
-        if (n < 0) {
-            return 0;
-        }
-
-        // base case: 1 way (with no steps)
-        if (n == 0) {
-            return 1;
-        }
-
-        // if the subproblem is not seen before
-        if (lookup[n] == 0)
-        {
-            for (int i = 1; i <= m; i++) {
-                lookup[n] += totalWays(n - i, m, lookup);
-            }
-        }
-
-        // return the subproblem solution
-        return lookup[n];
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 4, m = 3;
-
-        // create an array of size `n+1` storing a solution to the subproblems
-        int[] lookup = new int[n+1];
-
-        System.out.printf("Total ways to reach the %d'th stair with at most " +
-                            "%d steps are %d", n, m, totalWays(n, m, lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Recursive DP function to find total ways to reach the n'th stair from the bottom
-# when a person is allowed to take at most `m` steps at a time
-def totalWays(n, m, lookup):
-
-    # base case: invalid input
-    if n < 0:
-        return 0
-
-    # base case: 1 way (with no steps)
-    if n == 0:
-        return 1
-
-    # if the subproblem is not seen before
-    if lookup[n] == 0:
-        for i in range(1, m + 1):
-            lookup[n] += totalWays(n - i, m, lookup)
-
-    # return the subproblem solution
-    return lookup[n]
-
-if __name__ == '__main__':
-
-    n = 4
-    m = 3
-
-    # create a list of `n+1` size for storing a solution to the subproblems
-    lookup = [0] * (n + 1)
-
-    print(f'Total ways to reach the {n}\'th stair with at most {m} steps are',
-        totalWays(n, m, lookup))
-```
-
 ## 2\. Bottom-Up Approach
 
-We can also use tabulation to solve this problem in a bottom-up fashion. The idea is to construct a temporary array that stores each subproblem results using already computed results of the smaller subproblems. The algorithm can be implemented as follows in C, Java, and Python:
+We can also use tabulation to solve this problem in a bottom-up fashion. The idea is to construct a temporary array that stores each subproblem results using already computed results of the smaller subproblems. The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
-// Recursive function to find total ways to reach the n'th stair from the bottom
+```ts
+// Function to find total ways to reach the n'th stair from the bottom
 // when a person is allowed to take at most `m` steps at a time
-int totalWays(int n, int m)
-{
+const totalWays = (n: number, m: number): number => {
     // base case
-    if (n == 1 || m == 1) {
+    if (n === 1 || m === 1) {
         return 1;
     }
 
     // create an array of size `n+1` for storing solutions to the subproblems
-    int lookup[n + 1];
+    const lookup = new Array<number>(n + 1);
 
     // base case: 1 way (with no steps)
     lookup[0] = 1;
@@ -296,26 +126,19 @@ int totalWays(int n, int m)
     lookup[2] = 2;
 
     // fill the lookup table in a bottom-up manner
-    for (int i = 3; i <= n; i++)
-    {
+    for (let i = 3; i <= n; i++) {
         lookup[i] = 0;
-        for (int j = 1; j <= m && (i - j) >= 0; j++) {
+        for (let j = 1; j <= m && (i - j) >= 0; j++) {
             lookup[i] += lookup[i - j];
         }
     }
 
     return lookup[n];
-}
+};
 
-int main(void)
-{
-    int n = 4, m = 3;
-
-    printf("Total ways to reach the %d'th stair with at most %d steps are %d",
-        n, m, totalWays(n, m));
-
-    return 0;
-}
+const n = 4;
+const m = 3;
+console.log(`Total ways to reach the ${n}'th stair with at most ${m} steps are`, totalWays(n, m));
 ```
 
 **Output:** Total ways to reach the 4th stair with at most 3 steps are 7

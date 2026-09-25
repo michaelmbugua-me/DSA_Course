@@ -16,219 +16,67 @@ We can use an alternative linear-time partition routine to solve this problem th
 
 The values equal to the pivot are already sorted, so only the less-than and greater-than partitions need to be recursively sorted. This linear-time partition routine is similar to 3–way partitioning for the [Dutch national flag problem](https://en.wikipedia.org/wiki/Dutch_national_flag_problem).
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+```ts
+function swap(nums: number[], i: number, j: number): void {
+    const temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
 
 // Partition routine using the Dutch national flag algorithm
-pair<int, int> partition(vector<int> &nums, int start, int end)
-{
-    int mid = start;
-    int pivot = nums[end];
+function partition(nums: number[], start: number, end: number): [number, number] {
+    let mid = start;
+    const pivot = nums[end];
 
-    while (mid <= end)
-    {
-        if (nums[mid] < pivot)
-        {
-            swap(nums[start], nums[mid]);
-            ++start, ++mid;
+    while (mid <= end) {
+        if (nums[mid] < pivot) {
+            swap(nums, start, mid);
+            start += 1;
+            mid += 1;
         }
-        else if (nums[mid] > pivot)
-        {
-            swap(nums[mid], nums[end]);
-            --end;
+        else if (nums[mid] > pivot) {
+            swap(nums, mid, end);
+            end -= 1;
         }
         else {
-            ++mid;
+            mid += 1;
         }
     }
 
     // nums[start … mid-1] contains all occurrences of a pivot
-    return make_pair(start - 1, mid);
+    return [start - 1, mid];
 }
 
 // 3–way Quicksort routine
-void quicksort(vector<int> &nums, int start, int end)
-{
+function quicksort(nums: number[], start: number, end: number): void {
+
     // base condition for 0 or 1 elements
     if (start >= end) {
         return;
     }
 
     // rearrange elements across pivot using the Dutch national flag algorithm
-    pair<int, int> pivot = partition(nums, start, end);
+    const [x, y] = partition(nums, start, end);
 
-    // recur on the subarray containing elements that are less than the pivot
-    quicksort(nums, start, pivot.first);
+    // recur on sublist containing elements that are less than the pivot
+    quicksort(nums, start, x);
 
-    // recur on the subarray containing elements that are more than the pivot
-    quicksort(nums, pivot.second, end);
+    // recur on sublist containing elements that are more than the pivot
+    quicksort(nums, y, end);
 }
 
-int main()
-{
-    vector<int> nums = { 2, 6, 5, 2, 6, 8, 6, 1, 2, 6 };
-    int n = nums.size();
+const nums = [2, 6, 5, 2, 6, 8, 6, 1, 2, 6];
 
-    // sort list
-    quicksort(nums, 0, n - 1);
+// sort list
+quicksort(nums, 0, nums.length - 1);
 
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << nums[i] << " ";
-    }
-
-    return 0;
-}
+// print the sorted list
+console.log(nums);
 ```
 
 **Output:** 1 2 2 2 5 6 6 6 6 8
-
-##
-
-```java
-import java.util.Arrays;
-
-// A simple pair class in Java
-class Pair
-{
-    private int x;
-    private int y;
-
-    Pair(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() { return x; }
-    public int getY() { return y; }
-}
-
-class Main
-{
-    public static void swap (int[] nums, int i, int j)
-    {
-        int temp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = temp;
-    }
-
-    // Partition routine using the Dutch national flag algorithm
-    public static Pair partition(int[] nums, int start, int end)
-    {
-        int mid = start;
-        int pivot = nums[end];
-
-        while (mid <= end)
-        {
-            if (nums[mid] < pivot)
-            {
-                swap(nums, start, mid);
-                ++start;
-                ++mid;
-            }
-            else if (nums[mid] > pivot)
-            {
-                swap(nums, mid, end);
-                --end;
-            }
-            else {
-                ++mid;
-            }
-        }
-
-        // nums[start … mid-1] contains all occurrences of a pivot
-        return new Pair(start - 1, mid);
-    }
-
-    // 3–way Quicksort routine
-    public static void quicksort(int[] nums, int start, int end)
-    {
-        // base condition for 0 or 1 elements
-        if (start >= end) {
-            return;
-        }
-
-        // rearrange elements across pivot using the Dutch national flag algorithm
-        Pair pivot = partition(nums, start, end);
-
-        // recur on the subarray containing elements that are less than the pivot
-        quicksort(nums, start, pivot.getX());
-
-        // recur on the subarray containing elements that are more than the pivot
-        quicksort(nums, pivot.getY(), end);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 2, 6, 5, 2, 6, 8, 6, 1, 2, 6 };
-
-        // sort list
-        quicksort(nums, 0, nums.length - 1);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(nums));
-    }
-}
-```
-
-##
-
-```python3
-def swap (nums, i, j):
-    temp = nums[i]
-    nums[i] = nums[j]
-    nums[j] = temp
-
-# Partition routine using the Dutch national flag algorithm
-def partition(nums, start, end):
-    mid = start
-    pivot = nums[end]
-
-    while mid <= end:
-        if nums[mid] < pivot:
-            swap(nums, start, mid)
-            start += 1
-            mid += 1
-        elif nums[mid] > pivot:
-            swap(nums, mid, end)
-            end -= 1
-        else:
-            mid += 1
-
-    # nums[start … mid-1] contains all occurrences of a pivot
-    return start - 1, mid
-
-# 3–way Quicksort routine
-def quicksort(nums, start, end):
-
-    # base condition for 0 or 1 elements
-    if start >= end:
-        return
-
-    # rearrange elements across pivot using the Dutch national flag algorithm
-    x, y = partition(nums, start, end)
-
-    # recur on sublist containing elements that are less than the pivot
-    quicksort(nums, start, x)
-
-    # recur on sublist containing elements that are more than the pivot
-    quicksort(nums, y, end)
-
-if __name__ == '__main__':
-
-    nums = [2, 6, 5, 2, 6, 8, 6, 1, 2, 6]
-
-    # sort list
-    quicksort(nums, 0, len(nums) - 1)
-
-    # print the sorted list
-    print(nums)
-```
 
 The algorithm’s best-case now occurs when all elements are equal (or are chosen from a small set of `k << n` elements). The modified Quicksort will perform at most two recursive calls on empty subarrays and thus finish linearly in all identical elements.
 

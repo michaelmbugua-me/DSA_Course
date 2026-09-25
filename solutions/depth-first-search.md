@@ -28,239 +28,66 @@ To turn this into a graph traversal algorithm, replace “child” with “neigh
 
 procedure dfs(vertex v) { visit(v); for each neighbor u of v if u is undiscovered call dfs(u); }
 
-The recursive algorithm can be implemented as follows in C++, Java, and Python:
+The recursive algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+  // a list of lists to represent an adjacency list
+  adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+  // Constructor
+  constructor(edges: [number, number][], n: number) {
+    // a list of lists to represent an adjacency list
+    this.adjList = Array.from({ length: n }, () => []);
 
-        // add edges to the undirected graph
-        for (auto &edge: edges)
-        {
-            adjList[edge.src].push_back(edge.dest);
-            adjList[edge.dest].push_back(edge.src);
-        }
+    // add edges to the undirected graph
+    for (const [src, dest] of edges) {
+      this.adjList[src].push(dest);
+      this.adjList[dest].push(src);
     }
-};
-
-// Function to perform DFS traversal on the graph on a graph
-void DFS(Graph const &graph, int v, vector<bool> &discovered)
-{
-    // mark the current node as discovered
-    discovered[v] = true;
-
-    // print the current node
-    cout << v << " ";
-
-    // do for every edge (v, u)
-    for (int u: graph.adjList[v])
-    {
-        // if `u` is not yet discovered
-        if (!discovered[u]) {
-            DFS(graph, u, discovered);
-        }
-    }
+  }
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        // Notice that node 0 is unconnected
-        {1, 2}, {1, 7}, {1, 8}, {2, 3}, {2, 6}, {3, 4},
-        {3, 5}, {8, 9}, {8, 12}, {9, 10}, {9, 11}
-    };
+// Function to perform DFS traversal on the graph on a graph
+function DFS(graph: Graph, v: number, discovered: boolean[]): void {
+  discovered[v] = true;   // mark the current node as discovered
+  console.log(v);         // print the current node
 
-    // total number of nodes in the graph (labelled from 0 to 12)
-    int n = 13;
-
-    // build a graph from the given edges
-    Graph graph(edges, n);
-
-    // to keep track of whether a vertex is discovered or not
-    vector<bool> discovered(n);
-
-    // Perform DFS traversal from all undiscovered nodes to
-    // cover all connected components of a graph
-    for (int i = 0; i < n; i++)
-    {
-        if (discovered[i] == false) {
-            DFS(graph, i, discovered);
-        }
+  // do for every edge (v, u)
+  for (const u of graph.adjList[v]) {
+    if (!discovered[u]) { // if `u` is not yet discovered
+      DFS(graph, u, discovered);
     }
+  }
+}
 
-    return 0;
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+  // Notice that node 0 is unconnected
+  [1, 2], [1, 7], [1, 8], [2, 3], [2, 6], [3, 4],
+  [3, 5], [8, 9], [8, 12], [9, 10], [9, 11]
+];
+
+// total number of nodes in the graph (labelled from 0 to 12)
+const n = 13;
+
+// build a graph from the given edges
+const graph = new Graph(edges, n);
+
+// to keep track of whether a vertex is discovered or not
+const discovered: boolean[] = new Array(n).fill(false);
+
+// Perform DFS traversal from all undiscovered nodes to
+// cover all connected components of a graph
+for (let i = 0; i < n; i++) {
+  if (!discovered[i]) {
+    DFS(graph, i, discovered);
+  }
 }
 ```
 
 **Output:** 0 1 2 3 4 5 6 7 8 9 10 11 12
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // Function to perform DFS traversal on the graph on a graph
-    public static void DFS(Graph graph, int v, boolean[] discovered)
-    {
-        // mark the current node as discovered
-        discovered[v] = true;
-
-        // print the current node
-        System.out.print(v + " ");
-
-        // do for every edge (v, u)
-        for (int u: graph.adjList.get(v))
-        {
-            // if `u` is not yet discovered
-            if (!discovered[u]) {
-                DFS(graph, u, discovered);
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                // Notice that node 0 is unconnected
-                new Edge(1, 2), new Edge(1, 7), new Edge(1, 8), new Edge(2, 3),
-                new Edge(2, 6), new Edge(3, 4), new Edge(3, 5), new Edge(8, 9),
-                new Edge(8, 12), new Edge(9, 10), new Edge(9, 11)
-            );
-
-        // total number of nodes in the graph (labelled from 0 to 12)
-        int n = 13;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // to keep track of whether a vertex is discovered or not
-        boolean[] discovered = new boolean[n];
-
-        // Perform DFS traversal from all undiscovered nodes to
-        // cover all connected components of a graph
-        for (int i = 0; i < n; i++)
-        {
-            if (!discovered[i]) {
-                DFS(graph, i, discovered);
-            }
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    # Constructor
-    def __init__(self, edges, n):
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-# Function to perform DFS traversal on the graph on a graph
-def DFS(graph, v, discovered):
-
-    discovered[v] = True            # mark the current node as discovered
-    print(v, end=' ')               # print the current node
-
-    # do for every edge (v, u)
-    for u in graph.adjList[v]:
-        if not discovered[u]:       # if `u` is not yet discovered
-            DFS(graph, u, discovered)
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [
-        # Notice that node 0 is unconnected
-        (1, 2), (1, 7), (1, 8), (2, 3), (2, 6), (3, 4),
-        (3, 5), (8, 9), (8, 12), (9, 10), (9, 11)
-    ]
-
-    # total number of nodes in the graph (labelled from 0 to 12)
-    n = 13
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # to keep track of whether a vertex is discovered or not
-    discovered = [False] * n
-
-    # Perform DFS traversal from all undiscovered nodes to
-    # cover all connected components of a graph
-    for i in range(n):
-        if not discovered[i]:
-            DFS(graph, i, discovered)
-```
 
 The time complexity of DFS traversal is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively. Please note that O(E) may vary between O(1) and O(V2), depending on how dense the graph is.
 
@@ -272,305 +99,88 @@ The non-recursive implementation of DFS is similar to the [non-recursive impleme
   * The DFS should mark discovered only after popping the vertex, not before pushing it.
   * It uses a reverse iterator instead of an iterator to produce the same results as recursive DFS.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <stack>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+  // A list of lists to represent an adjacency list
+  adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+  // Constructor
+  constructor(edges: [number, number][], n: number) {
+    // A list of lists to represent an adjacency list
+    this.adjList = Array.from({ length: n }, () => []);
 
-        // add edges to the undirected graph
-        for (auto &edge: edges)
-        {
-            adjList[edge.src].push_back(edge.dest);
-            adjList[edge.dest].push_back(edge.src);
-        }
+    // add edges to the undirected graph
+    for (const [src, dest] of edges) {
+      this.adjList[src].push(dest);
+      this.adjList[dest].push(src);
     }
-};
-
-// Perform iterative DFS on graph starting from vertex `v`
-void iterativeDFS(Graph const &graph, int v, vector<bool> &discovered)
-{
-    // create a stack used to do iterative DFS
-    stack<int> stack;
-
-    // push the source node into the stack
-    stack.push(v);
-
-    // loop till stack is empty
-    while (!stack.empty())
-    {
-        // Pop a vertex from the stack
-        v = stack.top();
-        stack.pop();
-
-        // if the vertex is already discovered yet,
-        // ignore it
-        if (discovered[v]) {
-            continue;
-        }
-
-        // we will reach here if the popped vertex `v` is not discovered yet;
-        // print `v` and process its undiscovered adjacent nodes into the stack
-        discovered[v] = true;
-        cout << v << " ";
-
-        // do for every edge (v, u)
-        // we are using reverse iterator (Why?)
-        for (auto it = graph.adjList[v].rbegin(); it != graph.adjList[v].rend(); it++)
-        {
-            int u = *it;
-            if (!discovered[u]) {
-                stack.push(u);
-            }
-        }
-    }
+  }
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        // Notice that node 0 is unconnected
-        {1, 2}, {1, 7}, {1, 8}, {2, 3}, {2, 6}, {3, 4},
-        {3, 5}, {8, 9}, {8, 12}, {9, 10}, {9, 11}
-        // {6, 9} introduces a cycle
-    };
+// Perform iterative DFS on graph starting from vertex `v`
+function iterativeDFS(graph: Graph, v: number, discovered: boolean[]): void {
+  // create a stack used to do iterative DFS
+  const stack: number[] = [];
 
-    // total number of nodes in the graph (labelled from 0 to 12)
-    int n = 13;
+  // push the source node into the stack
+  stack.push(v);
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+  // loop till stack is empty
+  while (stack.length > 0) {
+    // Pop a vertex from the stack
+    v = stack.pop()!;
 
-    // to keep track of whether a vertex is discovered or not
-    vector<bool> discovered(n);
-
-    // Do iterative DFS traversal from all undiscovered nodes to
-    // cover all connected components of a graph
-    for (int i = 0; i < n; i++)
-    {
-        if (discovered[i] == false) {
-            iterativeDFS(graph, i, discovered);
-        }
+    // if the vertex is already discovered yet, ignore it
+    if (discovered[v]) {
+      continue;
     }
 
-    return 0;
+    // we will reach here if the popped vertex `v` is not discovered yet;
+    // print `v` and process its undiscovered adjacent nodes into the stack
+    discovered[v] = true;
+    console.log(v);
+
+    // do for every edge (v, u)
+    const adjList = graph.adjList[v];
+    for (let i = adjList.length - 1; i >= 0; i--) {
+      const u = adjList[i];
+      if (!discovered[u]) {
+        stack.push(u);
+      }
+    }
+  }
+}
+
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+  // Notice that node 0 is unconnected
+  [1, 2], [1, 7], [1, 8], [2, 3], [2, 6], [3, 4],
+  [3, 5], [8, 9], [8, 12], [9, 10], [9, 11]
+  // (6, 9) introduces a cycle
+];
+
+// total number of nodes in the graph (labelled from 0 to 12)
+const n = 13;
+
+// build a graph from the given edges
+const graph = new Graph(edges, n);
+
+// to keep track of whether a vertex is discovered or not
+const discovered: boolean[] = new Array(n).fill(false);
+
+// Do iterative DFS traversal from all undiscovered nodes to
+// cover all connected components of a graph
+for (let i = 0; i < n; i++) {
+  if (!discovered[i]) {
+    iterativeDFS(graph, i, discovered);
+  }
 }
 ```
 
 **Output:** 0 1 2 3 4 5 6 7 8 9 10 11 12
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // Perform iterative DFS on graph starting from vertex `v`
-    public static void iterativeDFS(Graph graph, int v, boolean[] discovered)
-    {
-        // create a stack used to do iterative DFS
-        Stack<Integer> stack = new Stack<>();
-
-        // push the source node into the stack
-        stack.push(v);
-
-        // loop till stack is empty
-        while (!stack.empty())
-        {
-            // Pop a vertex from the stack
-            v = stack.pop();
-
-            // if the vertex is already discovered yet, ignore it
-            if (discovered[v]) {
-                continue;
-            }
-
-            // we will reach here if the popped vertex `v` is not discovered yet;
-            // print `v` and process its undiscovered adjacent nodes into the stack
-            discovered[v] = true;
-            System.out.print(v + " ");
-
-            // do for every edge (v, u)
-            List<Integer> adjList = graph.adjList.get(v);
-            for (int i = adjList.size() - 1; i >= 0; i--)
-            {
-                int u = adjList.get(i);
-                if (!discovered[u]) {
-                    stack.push(u);
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                // Notice that node 0 is unconnected
-                new Edge(1, 2), new Edge(1, 7), new Edge(1, 8), new Edge(2, 3),
-                new Edge(2, 6), new Edge(3, 4), new Edge(3, 5), new Edge(8, 9),
-                new Edge(8, 12), new Edge(9, 10), new Edge(9, 11)
-                // (6, 9) introduces a cycle
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 12)
-        int n = 13;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // to keep track of whether a vertex is discovered or not
-        boolean[] discovered = new boolean[n];
-
-        // Do iterative DFS traversal from all undiscovered nodes to
-        // cover all connected components of a graph
-        for (int i = 0; i < n; i++)
-        {
-            if (!discovered[i]) {
-                iterativeDFS(graph, i, discovered);
-            }
-        }
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to represent a graph object
-class Graph:
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-# Perform iterative DFS on graph starting from vertex `v`
-def iterativeDFS(graph, v, discovered):
-
-    # create a stack used to do iterative DFS
-    stack = deque()
-
-    # push the source node into the stack
-    stack.append(v)
-
-    # loop till stack is empty
-    while stack:
-
-        # Pop a vertex from the stack
-        v = stack.pop()
-
-        # if the vertex is already discovered yet, ignore it
-        if discovered[v]:
-            continue
-
-        # we will reach here if the popped vertex `v` is not discovered yet;
-        # print `v` and process its undiscovered adjacent nodes into the stack
-        discovered[v] = True
-        print(v, end=' ')
-
-        # do for every edge (v, u)
-        adjList = graph.adjList[v]
-        for i in reversed(range(len(adjList))):
-            u = adjList[i]
-            if not discovered[u]:
-                stack.append(u)
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [
-        # Notice that node 0 is unconnected
-        (1, 2), (1, 7), (1, 8), (2, 3), (2, 6), (3, 4),
-        (3, 5), (8, 9), (8, 12), (9, 10), (9, 11)
-        # (6, 9) introduces a cycle
-    ]
-
-    # total number of nodes in the graph (labelled from 0 to 12)
-    n = 13
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # to keep track of whether a vertex is discovered or not
-    discovered = [False] * n
-
-    # Do iterative DFS traversal from all undiscovered nodes to
-    # cover all connected components of a graph
-    for i in range(n):
-        if not discovered[i]:
-            iterativeDFS(graph, i, discovered)
-```
 
 ## Applications of DFS
 

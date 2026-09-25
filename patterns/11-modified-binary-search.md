@@ -12,18 +12,21 @@ Whenever data is **sorted** (array, list, matrix) and you search for a target or
 - "Find in O(log n)" — explicitly or implied by huge input sizes
 - Monotonic predicate: a yes/no question whose answer switches from no→yes at exactly one point ("minimum capacity to ship in D days" style problems are hidden binary searches)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def search(lo, hi, predicate):
-    # find the first index where predicate flips from False to True
-    while lo < hi:
-        mid = lo + (hi - lo) // 2    # avoids integer overflow
-        if predicate(mid):
-            hi = mid                 # keep mid: answer may be here
-        else:
-            lo = mid + 1
-    return lo
+```ts
+function search(lo: number, hi: number, predicate: (mid: number) => boolean): number {
+  // find the first index where predicate flips from false to true
+  while (lo < hi) {
+    const mid = lo + Math.floor((hi - lo) / 2); // avoids integer overflow
+    if (predicate(mid)) {
+      hi = mid; // keep mid: answer may be here
+    } else {
+      lo = mid + 1;
+    }
+  }
+  return lo;
+}
 ```
 
 Rotated-array twist: determine which half `[lo..mid]` or `[mid..hi]` is still sorted, then check whether the target lies inside that half.

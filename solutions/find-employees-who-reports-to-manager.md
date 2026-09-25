@@ -16,275 +16,91 @@ Here, `A` reports to himself, i.e., `A` is head of the company and is the manage
 
 > 
 
-The idea is to construct a reverse map containing manager to employee mappings and recursively find all reporting employees (direct and indirect) in every manager’s hierarchy. The algorithm can be implemented as follows in C++, Java, and Python:
+The idea is to construct a reverse map containing manager to employee mappings and recursively find all reporting employees (direct and indirect) in every manager’s hierarchy. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_set>
-#include <unordered_map>
-using namespace std;
-
-// Utility function to print a unordered_set
-void printSet(char c, unordered_set<char> const &v)
-{
-    cout << c << " —> [";
-    int n = v.size();
-    for (auto i: v) {
-        cout << i;
-        if (--n) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
+```ts
 // Recursive DP function to find all employees who directly or indirectly
 // report to a given manager and store the result in `result`
-unordered_set<char> findAllReportingEmployees(char manager,
-                                    auto &managerToEmployeeMappings,
-                                    auto &result)
-{
+function findAllReportingEmployees(manager: string,
+                    managerToEmployeeMappings: Map<string, Set<string>>,
+                    result: Map<string, Set<string>>): Set<string> {
+
     // if the subproblem is already seen before
-    if (result.find(manager) != result.end())
-    {
+    if (result.has(manager)) {
         // return the already computed mapping
-        return result[manager];
+        return result.get(manager) as Set<string>;
     }
 
     // find all employees reporting directly to the current manager
-    unordered_set<char> managerEmployees = managerToEmployeeMappings[manager];
+    const managerEmployees = managerToEmployeeMappings.get(manager) as Set<string>;
 
     // find all employees reporting indirectly to the current manager
-    for (char reportee: managerToEmployeeMappings[manager])
-    {
+    for (const reportee of [...managerEmployees]) {
         // find all employees reporting to the current employee
-        unordered_set<char> employees = findAllReportingEmployees(reportee,
-                                            managerToEmployeeMappings, result);
+        const employees = findAllReportingEmployees(reportee,
+                            managerToEmployeeMappings, result);
 
         // move those employees to the current manager
-        for (char c: employees) {
-            managerEmployees.insert(c);
+        if (employees) {
+            for (const c of employees) {
+                managerEmployees.add(c);
+            }
         }
     }
 
     // save the result to avoid recomputation and return it
-    result[manager] = managerEmployees;
+    result.set(manager, managerEmployees);
     return managerEmployees;
 }
 
 // Find all employees who directly or indirectly reports to a manager
-unordered_map<char, unordered_set<char>> findEmployees(auto &employeeToManagerMappings)
-{
+function findEmployees(employeeToManagerMappings: Map<string, string>): Map<string, Set<string>> {
+
     // store manager to employee mappings in a new map.
-    // `unordered_set<char>` is used since a manager can have several employees mapped
-    unordered_map<char, unordered_set<char>> managerToEmployeeMappings;
+    // `Set<string>` is used since a manager can have several employees mapped
+    const managerToEmployeeMappings = new Map<string, Set<string>>();
 
     // fill the above map with the manager to employee mappings
-    for (auto it: employeeToManagerMappings)
-    {
-        char employee = it.first;
-        char manager = it.second;
+    for (const [employee, manager] of employeeToManagerMappings) {
+        if (!managerToEmployeeMappings.has(employee)) {
+            managerToEmployeeMappings.set(employee, new Set<string>());
+        }
+        if (!managerToEmployeeMappings.has(manager)) {
+            managerToEmployeeMappings.set(manager, new Set<string>());
+        }
 
         // don't map an employee with itself
-        if (employee != manager) {
-            managerToEmployeeMappings[manager].insert(employee);
+        if (employee !== manager) {
+            (managerToEmployeeMappings.get(manager) as Set<string>).add(employee);
         }
     }
 
-    // construct an ordered map to store the result
-    unordered_map<char, unordered_set<char>> result;
+    // construct an empty map to store the result
+    const result = new Map<string, Set<string>>();
 
     // find all reporting employees (direct and indirect) for every manager
     // and store the result in a map
-    for (auto p: employeeToManagerMappings) {
-        findAllReportingEmployees(p.first, managerToEmployeeMappings, result);
+    for (const key of employeeToManagerMappings.keys()) {
+        findAllReportingEmployees(key, managerToEmployeeMappings, result);
     }
 
     return result;
 }
 
-int main()
-{
-    // construct a mapping from employee to manager
-    unordered_map<char, char> employeeToManagerMappings = {
-        {'A', 'A'}, {'B', 'A'}, {'C', 'B'}, {'D', 'B'}, {'E', 'D'}, {'F', 'E'}
-    };
+// construct a mapping from employee to manager
+const employeeToManagerMappings = new Map<string, string>([
+    ['A', 'A'], ['B', 'A'], ['C', 'B'], ['D', 'B'], ['E', 'D'], ['F', 'E']
+]);
 
-    auto result = findEmployees(employeeToManagerMappings);
+const result = findEmployees(employeeToManagerMappings);
 
-    // print contents of the resulting map
-    for (auto p: result) {
-        printSet(p.first, p.second);
-    }
-
-    return 0;
+// print contents of the resulting map
+for (const [key, value] of result) {
+    console.log(`${key} —> [${[...value].join(', ')}]`);
 }
 ```
 
 **Output:** A —> [C, D, F, B, E] E —> [F] F —> [] D —> [F, E] C —> [] B —> [E, F, D, C]
-
-##
-
-```java
-import java.util.*;
-
-class Main
-{
-    // Recursive DP function to find all employees who directly or indirectly
-    // report to a given manager and store the result in `result`
-    private static Set<Character> findAllReportingEmployees(Character manager,
-                            Map<Character, Set<Character>> managerToEmployeeMappings,
-                            Map<Character, Set<Character>> result)
-    {
-        // if the subproblem is already seen before
-        if (result.containsKey(manager))
-        {
-            // return the already computed mapping
-            return result.get(manager);
-        }
-
-        // find all employees reporting directly to the current manager
-        Set<Character> managerEmployees = managerToEmployeeMappings.get(manager);
-
-        // find all employees reporting indirectly to the current manager
-        for (char reportee: new ArrayList<>(managerEmployees))
-        {
-            // find all employees reporting to the current employee
-            Set<Character> employees = findAllReportingEmployees(reportee,
-                    managerToEmployeeMappings, result);
-
-            // move those employees to the current manager
-            if (employees != null) {
-                managerEmployees.addAll(employees);
-            }
-        }
-
-        // save the result to avoid recomputation and return it
-        result.put(manager, managerEmployees);
-        return managerEmployees;
-    }
-
-    // Find all employees who directly or indirectly reports to a manager
-    public static Map<Character, Set<Character>> findEmployees(Map<Character, Character>
-                                             employeeToManagerMappings)
-    {
-        // store manager to employee mappings in a new map.
-        // `List<Character>` is used since a manager can have several employees mapped
-        Map<Character, Set<Character>> managerToEmployeeMappings = new HashMap<>();
-
-        // fill the above map with the manager to employee mappings
-        for (var entry: employeeToManagerMappings.entrySet())
-        {
-            char employee = entry.getKey();
-            char manager = entry.getValue();
-
-            managerToEmployeeMappings.putIfAbsent(manager, new HashSet<>());
-            managerToEmployeeMappings.putIfAbsent(employee, new HashSet<>());
-
-            // don't map an employee with itself
-            if (employee != manager) {
-                managerToEmployeeMappings.get(manager).add(employee);
-            }
-        }
-
-        // construct an ordered map to store the result
-        Map<Character, Set<Character>> result = new HashMap<>();
-
-        // find all reporting employees (direct and indirect) for every manager
-        // and store the result in a map
-        for (var entry: employeeToManagerMappings.entrySet()) {
-            findAllReportingEmployees(entry.getKey(), managerToEmployeeMappings,
-                    result);
-        }
-
-        return result;
-    }
-
-    public static void main(String[] args)
-    {
-        // construct a mapping from employee to manager
-        Map<Character, Character> employeeToManagerMappings = new HashMap<>();
-
-        employeeToManagerMappings.put('A', 'A');
-        employeeToManagerMappings.put('B', 'A');
-        employeeToManagerMappings.put('C', 'B');
-        employeeToManagerMappings.put('D', 'B');
-        employeeToManagerMappings.put('E', 'D');
-        employeeToManagerMappings.put('F', 'E');
-
-        Map<Character, Set<Character>> result = findEmployees(employeeToManagerMappings);
-
-        // print contents of the resulting map
-        for (var entry: result.entrySet()) {
-            System.out.println(entry.getKey() + " —> " + entry.getValue());
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Recursive DP function to find all employees who directly or indirectly
-# report to a given manager and store the result in `result`
-def findAllReportingEmployees(manager, managerToEmployeeMappings, result):
-
-    # if the subproblem is already seen before
-    if manager in result:
-        # return the already computed mapping
-        return result.get(manager)
-
-    # find all employees reporting directly to the current manager
-    managerEmployees = managerToEmployeeMappings.get(manager)
-
-    # find all employees reporting indirectly to the current manager
-    for reportee in managerEmployees.copy():
-        # find all employees reporting to the current employee
-        employees = findAllReportingEmployees(reportee, managerToEmployeeMappings,
-                                                result)
-
-        # move those employees to the current manager
-        if employees:
-            managerEmployees.update(employees)
-
-    # save the result to avoid recomputation and return it
-    result[manager] = managerEmployees
-    return managerEmployees
-
-# Find all employees who directly or indirectly reports to a manager
-def findEmployees(employeeToManagerMappings):
-
-    # store manager to employee mappings in a new dictionary
-    managerToEmployeeMappings = {}
-
-    # fill the above dictionary with the manager to employee mappings
-    for employee, manager in employeeToManagerMappings.items():
-        managerToEmployeeMappings.setdefault(employee, set())
-        # don't map an employee with itself
-        if employee != manager:
-            managerToEmployeeMappings.setdefault(manager, set()).add(employee)
-
-    # construct an empty dictionary to store the result
-    result = {}
-
-    # find all reporting employees (direct and indirect) for every manager
-    # and store the result in a dictionary
-    for key in employeeToManagerMappings.keys():
-        findAllReportingEmployees(key, managerToEmployeeMappings, result)
-
-    return result
-
-if __name__ == '__main__':
-
-    # construct a mapping from employee to manager
-    employeeToManagerMappings = {'A': 'A', 'B': 'A', 'C': 'B',
-                                'D': 'B', 'E': 'D', 'F': 'E'}
-    result = findEmployees(employeeToManagerMappings)
-
-    # print contents of the resulting dictionary
-    for key, value in result.items():
-        print(key, '—>', value)
-```
 
 Rate this post
 

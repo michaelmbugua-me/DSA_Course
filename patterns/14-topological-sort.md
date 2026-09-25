@@ -13,29 +13,34 @@ Find a linear ordering of elements with dependencies on each other (a DAG): if B
 - Verifying an order is valid / counting distinct valid orders
 - Graph must be **directed** and acyclic for a total order to exist
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-from collections import deque
+```ts
+function topologicalSort<V>(vertices: V[], edges: [V, V][]): V[] {
+  const graph = new Map<V, V[]>(vertices.map((v) => [v, []]));
+  const inDegree = new Map<V, number>(vertices.map((v) => [v, 0]));
+  for (const [parent, child] of edges) {
+    // parent must come before child
+    graph.get(parent)!.push(child);
+    inDegree.set(child, inDegree.get(child)! + 1);
+  }
 
-def topological_sort(vertices, edges):
-    graph = {v: [] for v in vertices}
-    in_degree = {v: 0 for v in vertices}
-    for parent, child in edges:      # parent must come before child
-        graph[parent].append(child)
-        in_degree[child] += 1
+  // deque as a plain array (shift/push)
+  const sources: V[] = vertices.filter((v) => inDegree.get(v) === 0);
+  const order: V[] = [];
+  while (sources.length > 0) {
+    const v = sources.shift()!;
+    order.push(v);
+    for (const child of graph.get(v)!) {
+      inDegree.set(child, inDegree.get(child)! - 1);
+      if (inDegree.get(child) === 0) {
+        sources.push(child);
+      }
+    }
+  }
 
-    sources = deque(v for v in vertices if in_degree[v] == 0)
-    order = []
-    while sources:
-        v = sources.popleft()
-        order.append(v)
-        for child in graph[v]:
-            in_degree[child] -= 1
-            if in_degree[child] == 0:
-                sources.append(child)
-
-    return order if len(order) == len(vertices) else []  # [] => cycle
+  return order.length === vertices.length ? order : []; // [] => cycle
+}
 ```
 
 ## Complexity

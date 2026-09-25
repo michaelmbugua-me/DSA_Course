@@ -13,19 +13,21 @@ At each step take the choice that looks locally best, never revisiting it. A gre
 - Sometimes combined with a heap (always keep the current best candidate at hand)
 - Warning: if you can't articulate the exchange argument, the problem probably needs DP
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def greedy(intervals):
-    intervals.sort(key=lambda x: x[1])   # the crux: pick the sort key
-    count = 0
-    last_end = -inf
-    for start, end in intervals:
-        if start >= last_end:            # provably safe to take
-            count += 1
-            last_end = end
-    return count
-```
+```ts
+function greedy(intervals: [number, number][]): number {
+    intervals.sort((a, b) => a[1] - b[1]); // the crux: pick the sort key
+    let count = 0;
+    let lastEnd = -Infinity;
+    for (const [start, end] of intervals) {
+        if (start >= lastEnd) {          // provably safe to take
+            count += 1;
+            lastEnd = end;
+        }
+    }
+    return count;
+}
 
 ## Complexity
 

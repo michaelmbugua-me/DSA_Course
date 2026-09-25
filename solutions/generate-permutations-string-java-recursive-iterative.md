@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/generate-permutations-string-java-recursive-iterative/
 
-Write a Java program to generate all permutations of a string.
+Write a TypeScript program to generate all permutations of a string.
 
 For example, the string `ABC` has 6 permutations, i.e., `ABC, ACB, BAC, BCA, CBA, CAB`.
 
@@ -10,154 +10,130 @@ For example, the string `ABC` has 6 permutations, i.e., `ABC, ACB, BAC, BCA, CBA
 
 ## 1\. Recursive Approach
 
-Since the string is immutable in Java, the idea is to [convert the string into a character array](https://techiedelight.com/convert-string-to-character-array-java/). Then we can [in-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) generate all permutations of the given string using [backtracking](https://techiedelight.com/backtracking-interview-questions/) by swapping each of the remaining characters in the string with its first character and then generating all the permutations of the remaining characters using a recursive call.
+Since the string is immutable in TypeScript, the idea is to [convert the string into a character array](https://techiedelight.com/convert-string-to-character-array-java/). Then we can [in-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) generate all permutations of the given string using [backtracking](https://techiedelight.com/backtracking-interview-questions/) by swapping each of the remaining characters in the string with its first character and then generating all the permutations of the remaining characters using a recursive call.
 
-Below is the recursion tree for printing all permutations of the string “ABC”, followed by the Java implementation.
+Below is the recursion tree for printing all permutations of the string “ABC”, followed by the TypeScript implementation.
 
-```
-class Main
-{
-    // Utility function to swap two characters in a character array
-    private static void swap(char[] chars, int i, int j)
-    {
-        char temp = chars[i];
-        chars[i] = chars[j];
-        chars[j] = temp;
+```ts
+// Utility function to swap two characters in a character array
+function swap(chars: string[], i: number, j: number): void {
+    const temp = chars[i];
+    chars[i] = chars[j];
+    chars[j] = temp;
+}
+
+// Recursive function to generate all permutations of a string
+function permutations(chars: string[], currentIndex: number): void {
+    if (currentIndex === chars.length - 1) {
+        console.log(chars.join(''));
     }
 
-    // Recursive function to generate all permutations of a string
-    private static void permutations(char[] chars, int currentIndex)
+    for (let i = currentIndex; i < chars.length; i++)
     {
-        if (currentIndex == chars.length - 1) {
-            System.out.println(String.valueOf(chars));
-        }
-
-        for (int i = currentIndex; i < chars.length; i++)
-        {
-            swap(chars, currentIndex, i);
-            permutations(chars, currentIndex + 1);
-            swap(chars, currentIndex, i);
-        }
-    }
-
-    public static void findPermutations(String str) {
-
-        // base case
-        if (str == null || str.length() == 0) {
-            return;
-        }
-
-        permutations(str.toCharArray(), 0);
-    }
-
-    // generate all permutations of a string in Java
-    public static void main(String[] args)
-    {
-        String str = "ABC";
-        findPermutations(str);
+        swap(chars, currentIndex, i);
+        permutations(chars, currentIndex + 1);
+        swap(chars, currentIndex, i);
     }
 }
+
+function findPermutations(str: string): void {
+
+    // base case
+    if (str === null || str.length === 0) {
+        return;
+    }
+
+    permutations(str.split(''), 0);
+}
+
+// generate all permutations of a string in TypeScript
+const str = "ABC";
+findPermutations(str);
 ```
 
 **Output:** ABC ACB BAC BCA CBA CAB
 
-Here’s another Java implementation that doesn’t convert the string into a character array.
+Here’s another TypeScript implementation that doesn’t convert the string into a character array.
 
-```
-class Main
-{
-    // Recursive function to generate all permutations of a string
-    private static void permutations(String candidate, String remaining)
-    {
-        // base case
-        if (remaining == null) {
-            return;
-        }
-
-        if (remaining.length() == 0) {
-            System.out.println(candidate);
-        }
-
-        for (int i = 0; i < remaining.length(); i++)
-        {
-            String newCandidate = candidate + remaining.charAt(i);
-
-            String newRemaining = remaining.substring(0, i) +
-                    remaining.substring(i + 1);
-
-            permutations(newCandidate, newRemaining);
-        }
+```ts
+// Recursive function to generate all permutations of a string
+function permutations(candidate: string, remaining: string | null): void {
+    // base case
+    if (remaining === null) {
+        return;
     }
 
-    // Find Permutations of a string in Java
-    public static void main(String[] args)
+    if (remaining.length === 0) {
+        console.log(candidate);
+    }
+
+    for (let i = 0; i < remaining.length; i++)
     {
-        String str = "ABC";
-        permutations("", str);
+        const newCandidate = candidate + remaining[i];
+
+        const newRemaining = remaining.slice(0, i) +
+                remaining.slice(i + 1);
+
+        permutations(newCandidate, newRemaining);
     }
 }
+
+// Find Permutations of a string in TypeScript
+const str = "ABC";
+permutations("", str);
 ```
 
 **Output:** ABC ACB BAC BCA CAB CBA
 
 ## 2\. Iterative Approach: Using Collection
 
-The following implementation uses `ArrayList` to store the partially generated permutations and then use it to generate the final permutations in further iterations.
+The following implementation uses an array to store the partially generated permutations and then use it to generate the final permutations in further iterations.
 
-```
-import java.util.ArrayList;
-import java.util.List;
-
-class Main
+```ts
+// Iterative function to generate all permutations of a string in TypeScript
+// using an array
+function findPermutations(str: string): void
 {
-    // Iterative function to generate all permutations of a string in Java
-    // using Collections
-    public static void findPermutations(String str)
+    // base case
+    if (str === null || str.length === 0) {
+        return;
+    }
+
+    // create an empty array to store (partial) permutations
+    const partial: string[] = [];
+
+    // initialize the list with the first character of the string
+    partial.push(str[0]);
+
+    // do for every character of the specified string
+    for (let i = 1; i < str.length; i++)
     {
-        // base case
-        if (str == null || str.length() == 0) {
-            return;
-        }
+        // consider previously constructed partial permutation one by one
 
-        // create an empty ArrayList to store (partial) permutations
-        List<String> partial = new ArrayList<>();
-
-        // initialize the list with the first character of the string
-        partial.add(String.valueOf(str.charAt(0)));
-
-        // do for every character of the specified string
-        for (int i = 1; i < str.length(); i++)
+        // (iterate backward to avoid processing newly inserted items)
+        for (let j = partial.length - 1; j >= 0; j--)
         {
-            // consider previously constructed partial permutation one by one
+            // remove current partial permutation from the array
+            const s = partial.splice(j, 1)[0];
 
-            // (iterate backward to avoid ConcurrentModificationException)
-            for (int j = partial.size() - 1; j >= 0 ; j--)
+            // Insert the next character of the specified string at all
+            // possible positions of current partial permutation. Then
+            // insert each of these newly constructed strings in the list
+
+            for (let k = 0; k <= s.length; k++)
             {
-                // remove current partial permutation from the ArrayList
-                String s = partial.remove(j);
-
-                // Insert the next character of the specified string at all
-                // possible positions of current partial permutation. Then
-                // insert each of these newly constructed strings in the list
-
-                for (int k = 0; k <= s.length(); k++)
-                {
-                    // Advice: use StringBuilder for concatenation
-                    partial.add(s.substring(0, k) + str.charAt(i) + s.substring(k));
-                }
+                // Advice: use template literals for concatenation
+                partial.push(s.slice(0, k) + str[i] + s.slice(k));
             }
         }
-
-        System.out.println(partial);
     }
 
-    // Iterative program to generate all permutations of a string in Java
-    public static void main(String[] args)
-    {
-        String str = "ABC";
-        findPermutations(str);
-    }
+    console.log(partial);
 }
+
+// Iterative program to generate all permutations of a string in TypeScript
+const str = "ABC";
+findPermutations(str);
 ```
 
 **Output:** [CAB, ACB, ABC, CBA, BCA, BAC]

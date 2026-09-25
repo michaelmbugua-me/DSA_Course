@@ -8,61 +8,38 @@ Given a number, determine if it is even or odd without using any conditional sta
 
 ## Method 1: Using string array
 
-The idea is to use the modulo operator or LSB to determine if a number is even or odd. Instead of using a conditional statement to output odd/even, we can use a string array index as demonstrated below in C/C++:
+The idea is to use the modulo operator or LSB to determine if a number is even or odd. Instead of using a conditional statement to output odd/even, we can use a string array index as demonstrated below in TypeScript:
 
-```
-#include <iostream>
-using namespace std;
+```ts
+const n = 6;
+const arr = ["even", "odd"];
 
-int main()
-{
-    int n = 6;
-    string arr[] = {"even", "odd"};
-
-    // using modulo operator
-    cout << arr[n % 2];
-
-    return 0;
-}
+// using modulo operator
+console.log(arr[n % 2]);
 ```
 
 OR
 
-```
-#include <iostream>
-using namespace std;
+```ts
+const n = 6;
+const arr = ["even", "odd"];
 
-int main()
-{
-    int n = 6;
-    string arr[] = {"even", "odd"};
-
-    // checking LSB of number for even/odd
-    cout << arr[n & 1];
-
-    return 0;
-}
+// checking LSB of number for even/odd
+console.log(arr[n & 1]);
 ```
 
 OR
 
-```
-#include <stdio.h>
+```ts
+let n = 8;
+const arr = ["odd", "even"];
 
-int main()
-{
-    int n = 8;
-    char* arr[] = {"odd", "even"};
+// repeated subtraction
+while (n-- && --n > 0) {}
 
-    // repeated subtraction
-    while (n-- && --n > 0) {}
-
-    // if `n` is 0, the number is even
-    // if `n` is -1, the number is odd
-    printf("%s", arr[n + 1]);
-
-    return 0;
-}
+// if `n` is 0, the number is even
+// if `n` is -1, the number is odd
+console.log(arr[n + 1]);
 ```
 
 ## Method 2: Using short-circuiting in boolean expressions
@@ -71,53 +48,32 @@ We can take advantage of [short-circuiting](https://en.wikipedia.org/wiki/Short-
 
 We can apply this logic to solve a given problem. Consider the following code snippet:
 
-`((n & 1) && printf("odd")) || printf("even");`
+`((n & 1) && process.stdout.write("odd")) || process.stdout.write("even");`
 
-Initially, check if `n` is odd or even. If `n` is odd, the first subexpression of `AND` becomes true, and its second subexpression `printf("odd")` gets evaluated. Otherwise, if `n` is even, the first subexpression of `OR` will become false, and its second subexpression `printf("even")` gets evaluated.
+Initially, check if `n` is odd or even. If `n` is odd, the first subexpression of `AND` becomes true, and its second subexpression `process.stdout.write("odd")` gets evaluated. Otherwise, if `n` is even, the first subexpression of `OR` will become false, and its second subexpression `process.stdout.write("even")` gets evaluated.
 
-This approach is demonstrated below in C:
+This approach is demonstrated below in TypeScript:
 
-```
-#include <stdio.h>
-
-int main()
-{
-    int n = 6;
-    ((n & 1) && printf("odd")) || printf("even");
-
-    return 0;
-}
+```ts
+const n = 6;
+((n & 1) && process.stdout.write("odd")) || process.stdout.write("even");
 ```
 
 OR
 
-```
-#include <stdio.h>
-
-int main()
-{
-    int n = 6;
-    ((n % 2) && printf("odd")) || printf("even");
-
-    return 0;
-}
+```ts
+const n = 6;
+((n % 2) && process.stdout.write("odd")) || process.stdout.write("even");
 ```
 
 OR
 
-```
-#include <stdio.h>
+```ts
+let n = 9;
 
-int main()
-{
-    int n = 9;
+while (n-- && --n > 0) {}
 
-    while (n-- && --n > 0) {}
-
-    ((n == 0) && printf("even")) || printf("odd");
-
-    return 0;
-}
+((n === 0) && process.stdout.write("even")) || process.stdout.write("odd");
 ```
 
 Don’t forget to share with us if you find any more interesting methods to solve this problem.

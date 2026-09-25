@@ -55,223 +55,69 @@ One way of implementing these might be:
 
 **function** _MakeSet_(x) x.parent = x **function** _Find_(x) if x.parent == x return x else return _Find_(x.parent) **function** _Union_(x, y) xRoot = _Find_(x) yRoot = _Find_(y) xRoot.parent = yRoot
 
-Following is the C++, Java, and Python implementation of union–find that uses a [hash table](https://techiedelight.com/hashing-in-data-structure/) to implement a disjoint set:
+Following is a TypeScript implementation of union–find that uses a [hash table](https://techiedelight.com/hashing-in-data-structure/) to implement a disjoint set:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // A class to represent a disjoint set
-class DisjointSet
-{
-    unordered_map<int, int> parent;
-
-public:
+class DisjointSet {
+    parent: Map<number, number> = new Map();
 
     // perform MakeSet operation
-    void makeSet(vector<int> const &universe)
-    {
+    makeSet(universe: number[]): void {
         // create `n` disjoint sets (one for each item)
-        for (int i: universe) {
-            parent[i] = i;
+        for (const i of universe) {
+            this.parent.set(i, i);
         }
     }
 
     // Find the root of the set in which element `k` belongs
-    int Find(int k)
-    {
+    Find(k: number): number {
         // if `k` is root
-        if (parent[k] == k) {
+        if (this.parent.get(k) === k) {
             return k;
         }
-
         // recur for the parent until we find the root
-        return Find(parent[k]);
+        return this.Find(this.parent.get(k) as number);
     }
 
     // Perform Union of two subsets
-    void Union(int a, int b)
-    {
-        // find the root of the sets in which elements `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
+    Union(a: number, b: number): void {
+        // find the root of the sets in which elements
+        // `x` and `y` belongs
+        const x = this.Find(a);
+        const y = this.Find(b);
 
-        parent[x] = y;
+        this.parent.set(x, y);
     }
-};
+}
 
-void printSets(vector<int> const &universe, DisjointSet &ds)
-{
-    for (int i: universe) {
-        cout << ds.Find(i) << " ";
-    }
-    cout << endl;
+function printSets(universe: number[], ds: DisjointSet): void {
+    console.log(universe.map((i) => ds.Find(i)));
 }
 
 // Disjoint–Set data structure (Union–Find algorithm)
-int main()
-{
-    // universe of items
-    vector<int> universe = { 1, 2, 3, 4, 5 };
 
-    // initialize `DisjointSet` class
-    DisjointSet ds;
+// universe of items
+const universe = [1, 2, 3, 4, 5];
 
-    // create a singleton set for each element of the universe
-    ds.makeSet(universe);
-    printSets(universe, ds);
+// initialize disjoint set
+const ds = new DisjointSet();
 
-    ds.Union(4, 3);        // 4 and 3 are in the same set
-    printSets(universe, ds);
+// create a singleton set for each element of the universe
+ds.makeSet(universe);
+printSets(universe, ds);
 
-    ds.Union(2, 1);        // 1 and 2 are in the same set
-    printSets(universe, ds);
+ds.Union(4, 3); // 4 and 3 are in the same set
+printSets(universe, ds);
 
-    ds.Union(1, 3);        // 1, 2, 3, 4 are in the same set
-    printSets(universe, ds);
+ds.Union(2, 1); // 1 and 2 are in the same set
+printSets(universe, ds);
 
-    return 0;
-}
+ds.Union(1, 3); // 1, 2, 3, 4 are in the same set
+printSets(universe, ds);
 ```
 
 **Output:** 1 2 3 4 5 1 2 3 3 5 1 1 3 3 5 3 3 3 3 5
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to represent a disjoint set
-class DisjointSet
-{
-    private Map<Integer, Integer> parent = new HashMap<>();
-
-    // perform MakeSet operation
-    public void makeSet(int[] universe)
-    {
-        // create `n` disjoint sets (one for each item)
-        for (int i: universe) {
-            parent.put(i, i);
-        }
-    }
-
-    // Find the root of the set in which element `k` belongs
-    public int Find(int k)
-    {
-        // if `k` is root
-        if (parent.get(k) == k) {
-            return k;
-        }
-
-        // recur for the parent until we find the root
-        return Find(parent.get(k));
-    }
-
-    // Perform Union of two subsets
-    public void Union(int a, int b)
-    {
-        // find the root of the sets in which elements `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
-
-        parent.put(x, y);
-    }
-}
-
-class Main
-{
-    public static void printSets(int[] universe, DisjointSet ds)
-    {
-        for (int i: universe) {
-            System.out.print(ds.Find(i) + " ");
-        }
-
-        System.out.println();
-    }
-
-    // Disjoint–Set data structure (Union–Find algorithm)
-    public static void main(String[] args)
-    {
-        // universe of items
-        int[] universe = { 1, 2, 3, 4, 5 };
-
-        // initialize `DisjointSet` class
-        DisjointSet ds = new DisjointSet();
-
-        // create a singleton set for each element of the universe
-        ds.makeSet(universe);
-        printSets(universe, ds);
-
-        ds.Union(4, 3);        // 4 and 3 are in the same set
-        printSets(universe, ds);
-
-        ds.Union(2, 1);        // 1 and 2 are in the same set
-        printSets(universe, ds);
-
-        ds.Union(1, 3);        // 1, 2, 3, 4 are in the same set
-        printSets(universe, ds);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a disjoint set
-class DisjointSet:
-    parent = {}
-
-    # perform MakeSet operation
-    def makeSet(self, universe):
-        # create `n` disjoint sets (one for each item)
-        for i in universe:
-            self.parent[i] = i
-
-    # Find the root of the set in which element `k` belongs
-    def Find(self, k):
-        # if `k` is root
-        if self.parent[k] == k:
-            return k
-        # recur for the parent until we find the root
-        return self.Find(self.parent[k])
-
-    # Perform Union of two subsets
-    def Union(self, a, b):
-        # find the root of the sets in which elements
-        # `x` and `y` belongs
-        x = self.Find(a)
-        y = self.Find(b)
-
-        self.parent[x] = y
-
-def printSets(universe, ds):
-    print([ds.Find(i) for i in universe])
-
-# Disjoint–Set data structure (Union–Find algorithm)
-if __name__ == '__main__':
-
-    # universe of items
-    universe = [1, 2, 3, 4, 5]
-
-    # initialize disjoint set
-    ds = DisjointSet()
-
-    # create a singleton set for each element of the universe
-    ds.makeSet(universe)
-    printSets(universe, ds)
-
-    ds.Union(4, 3) # 4 and 3 are in the same set
-    printSets(universe, ds)
-
-    ds.Union(2, 1) # 1 and 2 are in the same set
-    printSets(universe, ds)
-
-    ds.Union(1, 3) # 1, 2, 3, 4 are in the same set
-    printSets(universe, ds)
-```
 
 The above approach is no better than the [linked list](https://techiedelight.com/introduction-linked-lists/) approach because the tree it creates can be highly unbalanced; however, we can enhance it in two ways.
 
@@ -283,274 +129,84 @@ Pseudocode for the improved `_MakeSet_` and `_Union_`:
 
 **function** _MakeSet_(x) x.parent = x x.rank = 0 **function** _Union_(x, y) xRoot = _Find_(x) yRoot = _Find_(y) if xRoot == yRoot return // `x` and `y` are not already in the same set. Merge them. if xRoot.rank < yRoot.rank xRoot.parent = yRoot else if xRoot.rank > yRoot.rank yRoot.parent = xRoot else yRoot.parent = xRoot xRoot.rank = xRoot.rank + 1
 
-These two techniques complement each other, and running time per operation is effectively a small constant. The algorithm can be implemented as follows in C++, Java, and Python:
+These two techniques complement each other, and running time per operation is effectively a small constant. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // A class to represent a disjoint set
-class DisjointSet
-{
-    unordered_map<int, int> parent;
+class DisjointSet {
+    parent: Map<number, number> = new Map();
 
     // stores the depth of trees
-    unordered_map<int, int> rank;
+    rank: Map<number, number> = new Map();
 
-public:
     // perform MakeSet operation
-    void makeSet(vector<int> const &universe)
-    {
+    makeSet(universe: number[]): void {
         // create `n` disjoint sets (one for each item)
-        for (int i: universe)
-        {
-            parent[i] = i;
-            rank[i] = 0;
+        for (const i of universe) {
+            this.parent.set(i, i);
+            this.rank.set(i, 0);
         }
     }
 
     // Find the root of the set in which element `k` belongs
-    int Find(int k)
-    {
+    Find(k: number): number {
         // if `k` is not the root
-        if (parent[k] != k)
-        {
+        if (this.parent.get(k) !== k) {
             // path compression
-            parent[k] = Find(parent[k]);
+            this.parent.set(k, this.Find(this.parent.get(k) as number));
         }
-
-        return parent[k];
+        return this.parent.get(k) as number;
     }
 
     // Perform Union of two subsets
-    void Union(int a, int b)
-    {
+    Union(a: number, b: number): void {
         // find the root of the sets in which elements `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
+        const x = this.Find(a);
+        const y = this.Find(b);
 
         // if `x` and `y` are present in the same set
-        if (x == y) {
+        if (x === y) {
             return;
         }
 
         // Always attach a smaller depth tree under the root of the deeper tree.
-        if (rank[x] > rank[y]) {
-            parent[y] = x;
+        if (this.rank.get(x) as number > this.rank.get(y) as number) {
+            this.parent.set(y, x);
         }
-        else if (rank[x] < rank[y]) {
-            parent[x] = y;
+        else if (this.rank.get(x) as number < this.rank.get(y) as number) {
+            this.parent.set(x, y);
         }
         else {
-            parent[x] = y;
-            rank[y]++;
+            this.parent.set(x, y);
+            this.rank.set(y, (this.rank.get(y) as number) + 1);
         }
     }
-};
+}
 
-void printSets(vector<int> const &universe, DisjointSet &ds)
-{
-    for (int i: universe) {
-        cout << ds.Find(i) << ' ';
-    }
-    cout << endl;
+function printSets(universe: number[], ds: DisjointSet): void {
+    console.log(universe.map((i) => ds.Find(i)));
 }
 
 // Disjoint–Set data structure (Union–Find algorithm)
-int main()
-{
-    // universe of items
-    vector<int> universe = { 1, 2, 3, 4, 5 };
 
-    // initialize `DisjointSet` class
-    DisjointSet ds;
+// universe of items
+const universe = [1, 2, 3, 4, 5];
 
-    // create a singleton set for each element of the universe
-    ds.makeSet(universe);
-    printSets(universe, ds);
+// initialize `DisjointSet` class
+const ds = new DisjointSet();
 
-    ds.Union(4, 3);        // 4 and 3 are in the same set
-    printSets(universe, ds);
+// create a singleton set for each element of the universe
+ds.makeSet(universe);
+printSets(universe, ds);
 
-    ds.Union(2, 1);        // 1 and 2 are in the same set
-    printSets(universe, ds);
+ds.Union(4, 3); // 4 and 3 are in the same set
+printSets(universe, ds);
 
-    ds.Union(1, 3);        // 1, 2, 3, 4 are in the same set
-    printSets(universe, ds);
+ds.Union(2, 1); // 1 and 2 are in the same set
+printSets(universe, ds);
 
-    return 0;
-}
-```
-
-**Output:** 1 2 3 4 5 1 2 3 3 5 1 1 3 3 5 3 3 3 3 5
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to represent a disjoint set
-class DisjointSet
-{
-    private Map<Integer, Integer> parent = new HashMap<>();
-
-    // stores the depth of trees
-    private Map<Integer, Integer> rank = new HashMap<>();
-
-    // perform MakeSet operation
-    public void makeSet(int[] universe)
-    {
-        // create `n` disjoint sets (one for each item)
-        for (int i: universe)
-        {
-            parent.put(i, i);
-            rank.put(i, 0);
-        }
-    }
-
-    // Find the root of the set in which element `k` belongs
-    public int Find(int k)
-    {
-        // if `k` is not the root
-        if (parent.get(k) != k)
-        {
-            // path compression
-            parent.put(k, Find(parent.get(k)));
-        }
-
-        return parent.get(k);
-    }
-
-    // Perform Union of two subsets
-    public void Union(int a, int b)
-    {
-        // find the root of the sets in which elements `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
-
-        // if `x` and `y` are present in the same set
-        if (x == y) {
-            return;
-        }
-
-        // Always attach a smaller depth tree under the root of the deeper tree.
-        if (rank.get(x) > rank.get(y)) {
-            parent.put(y, x);
-        }
-        else if (rank.get(x) < rank.get(y)) {
-            parent.put(x, y);
-        }
-        else {
-            parent.put(x, y);
-            rank.put(y, rank.get(y) + 1);
-        }
-    }
-}
-
-class Main
-{
-    public static void printSets(int[] universe, DisjointSet ds)
-    {
-        for (int i: universe) {
-            System.out.print(ds.Find(i) + " ");
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args)
-    {
-        // universe of items
-        int[] universe = { 1, 2, 3, 4, 5 };
-
-        // initialize `DisjointSet` class
-        DisjointSet ds = new DisjointSet();
-
-        // create a singleton set for each element of the universe
-        ds.makeSet(universe);
-        printSets(universe, ds);
-
-        ds.Union(4, 3);        // 4 and 3 are in the same set
-        printSets(universe, ds);
-
-        ds.Union(2, 1);        // 1 and 2 are in the same set
-        printSets(universe, ds);
-
-        ds.Union(1, 3);        // 1, 2, 3, 4 are in the same set
-        printSets(universe, ds);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a disjoint set
-class DisjointSet:
-    parent = {}
-
-    # stores the depth of trees
-    rank = {}
-
-    # perform MakeSet operation
-    def makeSet(self, universe):
-        # create `n` disjoint sets (one for each item)
-        for i in universe:
-            self.parent[i] = i
-            self.rank[i] = 0
-
-    # Find the root of the set in which element `k` belongs
-    def Find(self, k):
-        # if `k` is not the root
-        if self.parent[k] != k:
-            # path compression
-            self.parent[k] = self.Find(self.parent[k])
-        return self.parent[k]
-
-    # Perform Union of two subsets
-    def Union(self, a, b):
-        # find the root of the sets in which elements `x` and `y` belongs
-        x = self.Find(a)
-        y = self.Find(b)
-
-        # if `x` and `y` are present in the same set
-        if x == y:
-            return
-
-        # Always attach a smaller depth tree under the root of the deeper tree.
-        if self.rank[x] > self.rank[y]:
-            self.parent[y] = x
-        elif self.rank[x] < self.rank[y]:
-            self.parent[x] = y
-        else:
-            self.parent[x] = y
-            self.rank[y] = self.rank[y] + 1
-
-def printSets(universe, ds):
-    print([ds.Find(i) for i in universe])
-
-if __name__ == '__main__':
-
-    # universe of items
-    universe = [1, 2, 3, 4, 5]
-
-    # initialize `DisjointSet` class
-    ds = DisjointSet()
-
-    # create a singleton set for each element of the universe
-    ds.makeSet(universe)
-    printSets(universe, ds)
-
-    ds.Union(4, 3)        # 4 and 3 are in the same set
-    printSets(universe, ds)
-
-    ds.Union(2, 1)        # 1 and 2 are in the same set
-    printSets(universe, ds)
-
-    ds.Union(1, 3)        # 1, 2, 3, 4 are in the same set
-    printSets(universe, ds)
+ds.Union(1, 3); // 1, 2, 3, 4 are in the same set
+printSets(universe, ds);
 ```
 
 **Applications of Union–Find Algorithm:**

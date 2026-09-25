@@ -13,20 +13,22 @@ Perform an operation over a variable (or fixed) size "window" of an array, strin
 - Key phrases: "contiguous", "subarray of size K", "at most K distinct", "no repeats"
 - Brute force would enumerate all subarrays/substrings → think window
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def sliding_window(s):
-    left = 0
-    window_state = {}   # e.g. char counts, running sum
-    best = 0
-    for right, ch in enumerate(s):
-        # 1. add s[right] to window_state
-        # 2. while window is INVALID: shrink from left
-        #    left += 1 ; remove s[left] from state
-        # 3. window [left..right] is valid: update best
-        pass
-    return best
+```ts
+function slidingWindow(s: string): number {
+  let left = 0;
+  const windowState = new Map<string, number>();   // e.g. char counts, running sum
+  let best = 0;
+  for (let right = 0; right < s.length; right++) {
+    // 1. add s[right] to window_state
+    // 2. while window is INVALID: shrink from left
+    //    left += 1 ; remove s[left] from state
+    // 3. window [left..right] is valid: update best
+    // TODO
+  }
+  return best;
+}
 ```
 
 Two variants:

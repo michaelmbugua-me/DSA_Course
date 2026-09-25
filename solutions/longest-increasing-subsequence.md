@@ -27,63 +27,62 @@ Inserting 2 —- S = {2} – New largest LIS Inserting 6 —- S = {2, 6} – New
 
 So, the length of the LIS is 5 (the size of `S`). Please note that here `S[i]` is defined as the smallest integer that ends an increasing sequence of length `i`. Therefore, `S` does not represent an actual sequence, but S’s size represents the LIS length.
 
-The following C++ solution uses `std::set`, which is implemented as a red–black [binary search tree](https://techiedelight.com/binary-search-tree-bst-interview-questions/) with the worst-case time complexity of O(log(n)) for insertion.
+The following TypeScript solution uses an ordered set (implemented as a sorted array with [binary search](https://techiedelight.com/binary-search/)), which has the worst-case time complexity of O(log(n)) for insertion:
 
-```
-#include <iostream>
-#include <vector>
-#include <set>
-#include <iterator>
-using namespace std;
-
+```ts
 // Function to find the length of the longest increasing subsequence in a given array
-int findLISLength(vector<int> const &input)
-{
+function findLISLength(input: number[]): number {
     // base case
-    if (input.size() == 0) {
+    if (input.length === 0) {
         return 0;
     }
 
     // create an empty ordered set `s`. The i'th element in `s` is defined as the
     // smallest integer that ends an increasing sequence of length `i`
-    set<int> s;
+    // (JS has no builtin ordered set, so keep it as a sorted array)
+    const s: number[] = [];
+
+    // binary search for the smallest element greater than or equal to `x`
+    const lowerBound = (arr: number[], x: number): number => {
+        let lo = 0, hi = arr.length;
+        while (lo < hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            if (arr[mid] < x) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        return lo;
+    };
 
     // process every element one by one
-    for (int i = 0; i < input.size(); i++)
-    {
+    for (const item of input) {
         // ignore the current element if it is already present in the set
-        if (s.find(input[i]) != s.end()) {
+        const idx = lowerBound(s, item);
+        if (idx < s.length && s[idx] === item) {
             continue;
         }
 
         // insert the current element into the set
-        auto ret = s.insert(input[i]);
-
-        // get an iterator to the inserted item
-        set<int>::iterator it;
-        if (ret.second) {
-            it = ret.first;
-        }
+        s.splice(idx, 0, item);
 
         // if the element is not inserted at the end, then delete the next
         // greater element from the set
-        if (++it != s.end()) {
-            s.erase(it);
+        if (idx + 1 < s.length) {
+            s.splice(idx + 1, 1);
         }
     }
 
     // length of LIS is the total number of elements in the set
-    return s.size();
+    return s.length;
 }
 
-int main()
-{
-    vector<int> input = { 2, 6, 3, 4, 1, 2, 9, 5, 8 };
+(function main() {
+    const input = [2, 6, 3, 4, 1, 2, 9, 5, 8];
 
-    cout << "The length of the LIS is " << findLISLength(input);
-
-    return 0;
-}
+    console.log("The length of the LIS is " + findLISLength(input));
+})();
 ```
 
 **Output:** The length of the LIS is 5
@@ -96,108 +95,100 @@ To reconstruct the actual LIS, we have to use a parent array. Let `parent[i]` be
 
 input[s[lastElementOfS]], input[parent[s[lastElementOfS]]], input[parent[parent[s[lastElementOfS]]]], ………
 
-The following C++ solution stores both actual integers and their indices in the set for easier implementation:
+The following TypeScript solution stores both actual integers and their indices in the set for easier implementation:
 
-```
-#include <iostream>
-#include <vector>
-#include <stack>
-#include <set>
-#include <map>
-using namespace std;
-
+```ts
 // Data structure to store an element and its index in an array
-struct Node
-{
-    int elem;
-    int index;
-};
-
-// Overload compare operator for inserting into a set
-inline bool operator<(const Node &lhs, const Node &rhs) {
-    return lhs.elem < rhs.elem;
+class Node {
+    constructor(public elem: number, public index: number) {}
 }
 
 // Function to print LIS using parent array
-void print(vector<int> const &input, auto parent, set<Node> s)
-{
+function print(input: number[], parent: Map<number, number>, s: Node[]): void {
     // container to store LIS in reverse order
-    stack<int> lis;
+    const lis: number[] = [];
 
     // start from the last element of `s`
-    int index = s.rbegin()->index;
+    let index = s[s.length - 1].index;
 
     // get length of LIS
-    int n = s.size();
+    let n = s.length;
 
     // retrieve LIS from parent array
-    while (n--)
-    {
+    while (n--) {
         lis.push(input[index]);
-        index = parent[index];
+        index = parent.get(index) as number;
     }
 
     // print LIS
-    cout << "LIS is ";
-    while (!lis.empty())
-    {
-        cout << lis.top() << " ";
-        lis.pop();
+    process.stdout.write("LIS is ");
+    while (lis.length > 0) {
+        process.stdout.write(`${lis.pop()} `);
     }
 }
 
 // Function to find the longest increasing subsequence in a given array
-void printLIS(vector<int> const &input)
-{
+function printLIS(input: number[]): void {
     // base case
-    if (input.size() == 0) {
+    if (input.length === 0) {
         return;
     }
 
     // create an empty ordered set `s` (i'th element in `s` is defined as the
     // smallest integer that ends an increasing sequence of length `i`)
-    set<Node> s;
+    // (JS has no builtin ordered set, so keep it as a sorted array of nodes)
+    const s: Node[] = [];
 
     // `parent[i]` will store the predecessor of an element with index `i` in the LIS,
     // ending at the element with index `i`.
-    map<int, int> parent;
+    const parent = new Map<number, number>();
+
+    // binary search for the smallest node whose element is greater than or equal to `e`
+    const lowerBound = (arr: Node[], e: number): number => {
+        let lo = 0, hi = arr.length;
+        while (lo < hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            if (arr[mid].elem < e) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        return lo;
+    };
 
     // process every element one by one
-    for (int i = 0; i < input.size(); i++)
-    {
+    for (let i = 0; i < input.length; i++) {
         // construct node from the current element and its index
-        Node curr = {input[i], i};
+        const curr = new Node(input[i], i);
 
         // ignore the current element if it is already present in the set
-        if (s.find(curr) != s.end()) {
+        let it = lowerBound(s, curr.elem);
+        if (it < s.length && s[it].elem === curr.elem) {
             continue;
         }
 
-        // insert the current node into the set and get an iterator to the
-        // inserted node
-        auto it = s.insert(curr).first;
+        // insert the current node into the set
+        s.splice(it, 0, curr);
 
         // if the node is not inserted at the end, then delete the next node
-        if (++it != s.end()) {
-            s.erase(it);
+        if (it + 1 < s.length) {
+            s.splice(it + 1, 1);
         }
 
         // get an iterator to the current node and update the parent
-        it = s.find(curr);
-        parent[i] = (--it)->index;
+        it = lowerBound(s, curr.elem);
+        parent.set(i, s[it - 1].index);
     }
 
     // print LIS using parent map
     print(input, parent, s);
 }
 
-int main()
-{
-    vector<int> input = { 2, 6, 3, 4, 1, 2, 9, 5, 8 };
+(function main() {
+    const input = [2, 6, 3, 4, 1, 2, 9, 5, 8];
     printLIS(input);
-
-    return 0;
-}
+})();
 ```
 
 **Output:** LIS is 2 3 4 5 8
@@ -208,7 +199,7 @@ The time complexity of the above solution is O(n.log(n)) and requires O(n) extra
 
 <https://stackoverflow.com/questions/2631726/how-to-determine-the-longest-increasing-subsequence-using-dynamic-programming>
 
-Contribute Java code to this problem, share by commenting or [send us in email](https://techiedelight.com/contact/).
+Contribute more code to this problem, share by commenting or [send us in email](https://techiedelight.com/contact/).
 
 Also See:
 

@@ -17,173 +17,47 @@ The problem looks complicated at first look but has a straightforward solution. 
   3. Generate a random number `k` between 1 and the count of the maximum occurring element.
   4. Traverse the input and return the index of the `k'th` occurrence of the maximum occurring element.
 
-Following is the C++, Java, and Python implementation of the algorithm:
+Following is a TypeScript implementation of the algorithm:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <climits>
-#include <ctime>
-#include <cstdlib>
-#include <unistd.h>        // for `sleep()`
-using namespace std;
-
+```ts
 // Return the index of the maximum occurring element with equal probability
-int findIndex(vector<int> const &nums)
-{
-    // store count of each input element in an `unordered_map`
-    unordered_map<int, int> count;
-    for (int i: nums) {
-        count[i]++;
+function findIndex(nums: number[]): number {
+
+    // store count of each array element in a map
+    const count = new Map<number, number>();
+    for (const i of nums) {
+        count.set(i, (count.get(i) || 0) + 1);
     }
 
     // traverse the array and find the first maximum occurring element
-    int max_occurring = nums[0];
-    for (int i: nums)
-    {
-        if (count[max_occurring] < count[i]) {
-            max_occurring = i;
+    let maxOccurring = nums[0];
+    for (const i of nums) {
+        if ((count.get(maxOccurring) as number) < (count.get(i) as number)) {
+            maxOccurring = i;
         }
     }
 
-    // initialize the srand with a distinctive value and generate a random
-    // number `k` between 1 and count of the maximum occurring element
-    srand(time(nullptr));
-    int k = (rand() % count[max_occurring]) + 1;
+    // generate a random number `k` between 1 and count of the maximum occurring element
+    let k = Math.floor(Math.random() * (count.get(maxOccurring) as number)) + 1;
 
-    // traverse the input vector and return the index of the k'th occurrence
-    // of the maximum occurring element
-    int index = 0;
-    while (k && index < nums.size())
-    {
-        if (nums[index] == max_occurring) {
+    // traverse the input array and return the index of the k'th
+    // occurrence of the maximum occurring element
+    let index = 0;
+    while (k && index < nums.length) {
+        if (nums[index] === maxOccurring) {
             k--;
         }
-
         index++;
     }
 
     return index - 1;
 }
 
-int main()
-{
-    vector<int> nums = { 4, 3, 6, 8, 4, 6, 2, 4, 5, 9, 7, 4 };
+const nums = [4, 3, 6, 8, 4, 6, 2, 4, 5, 9, 7, 4];
 
-    for (int i = 0; i < 5; i++)
-    {
-        sleep(1);
-        cout << "The index of the maximum occurring element is "
-             << findIndex(nums) << endl;
-    }
-
-    return 0;
+for (let i = 0; i < 5; i++) {
+    console.log('The index of the maximum occurring element is', findIndex(nums));
 }
-```
-
-##
-
-```java
-import java.util.*;
-
-class Main
-{
-    public static int rand(int min, int max)
-    {
-        if (min > max || (max - min + 1 > Integer.MAX_VALUE)) {
-            throw new IllegalArgumentException("Invalid range");
-        }
-        return new Random().nextInt(max - min + 1) + min;
-    }
-
-    // Return the index of the maximum occurring element with equal probability
-    public static int findIndex(int[] nums)
-    {
-        // store count of each list element in a `HashMap`
-        Map<Integer, Integer> count = new HashMap<>();
-        for (int i: nums) {
-            count.put(i, count.getOrDefault(i, 0) + 1);
-        }
-
-        // traverse the array and find the first maximum occurring element
-        int max_occurring = nums[0];
-        for (int i: nums)
-        {
-            if (count.get(max_occurring) < count.get(i)) {
-                max_occurring = i;
-            }
-        }
-
-        // generate a random number `k` between 1 and count of the
-        // maximum occurring element
-        int k = rand(1, count.get(max_occurring));
-
-        // traverse the input list and return the index of the k'th
-        // occurrence of the maximum occurring element
-        int index = 0;
-        while (k != 0 && index < nums.length)
-        {
-            if (nums[index] == max_occurring) {
-                k--;
-            }
-            index++;
-        }
-
-        return index - 1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = {4, 3, 6, 8, 4, 6, 2, 4, 5, 9, 7, 4};
-
-        for (int i = 0; i < 5; i++)
-        {
-            System.out.println("The index of the maximum occurring element is "
-                    + findIndex(nums));
-        }
-    }
-}
-```
-
-##
-
-```python3
-from random import randint
-
-# Return the index of the maximum occurring element with equal probability
-def findIndex(nums):
-
-    # store count of each list element in a dictionary
-    count = {}
-    for i in nums:
-        count[i] = count.get(i, 0) + 1
-
-    # traverse the array and find the first maximum occurring element
-    max_occurring = nums[0]
-    for i in nums:
-        if count[max_occurring] < count[i]:
-            max_occurring = i
-
-    # generate a random number `k` between 1 and count of the maximum occurring element
-    k = randint(1, count[max_occurring])
-
-    # traverse the input list and return the index of the k'th occurrence
-    # of the maximum occurring element
-    index = 0
-    while k and index < len(nums):
-        if nums[index] == max_occurring:
-            k = k - 1
-        index = index + 1
-
-    return index - 1
-
-if __name__ == '__main__':
-
-    nums = [4, 3, 6, 8, 4, 6, 2, 4, 5, 9, 7, 4]
-
-    for i in range(5):
-        print('The index of the maximum occurring element is', findIndex(nums))
 ```
 
 **Output (will vary):** The index of the maximum occurring element is 11 The index of the maximum occurring element is 4 The index of the maximum occurring element is 11 The index of the maximum occurring element is 0 The index of the maximum occurring element is 7

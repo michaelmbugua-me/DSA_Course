@@ -14,199 +14,60 @@ A simple solution would be to calculate the left and right subtree’s height fo
 
 We can solve this problem in linear time by doing a [postorder traversal](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/) on the tree. Instead of calculating the height of the left and the right subtree for every node in the tree, get the height in constant time. The idea is to start from the bottom of the tree and return the height of the subtree rooted at a given node to its parent. The height of a subtree rooted at any node is one more than the maximum height of the left or right subtree.
 
-The algorithm can be implemented as follows in C++, Java, and Python. Here, we pass diameter by reference to the function (_instead of returning it_) and update its value within the function itself using the left and right subtree height.
+The algorithm can be implemented as follows in TypeScript. Here, we pass diameter by reference to the function (_instead of returning it_) and update its value within the function itself using the left and right subtree height.
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+class TreeNode {
+    constructor(public val: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Function to find the diameter of the binary tree. Note that the function
 // returns the height of the subtree rooted at a given node, and the diameter
 // is updated within the function as it is passed by reference
-int getDiameter(Node* root, int &diameter)
-{
+function getDiameter(root: TreeNode | null, diameter: { value: number }): number {
+
     // base case: tree is empty
-    if (root == nullptr) {
+    if (root === null) {
         return 0;
     }
 
     // get heights of left and right subtrees
-    int left_height = getDiameter(root->left, diameter);
-    int right_height = getDiameter(root->right, diameter);
+    const leftHeight = getDiameter(root.left, diameter);
+    const rightHeight = getDiameter(root.right, diameter);
 
     // calculate diameter "through" the current node
-    int max_diameter = left_height + right_height + 1;
+    const maxDiameter = leftHeight + rightHeight + 1;
 
     // update maximum diameter (note that diameter "excluding" the current
     // node in the subtree rooted at the current node is already updated
     // since we are doing postorder traversal)
-    diameter = max(diameter, max_diameter);
+    diameter.value = Math.max(diameter.value, maxDiameter);
 
     // it is important to return the height of the subtree rooted at the current node
-    return max(left_height, right_height) + 1;
+    return Math.max(leftHeight, rightHeight) + 1;
 }
 
-int getDiameter(Node* root)
-{
-    int diameter = 0;
+function getBTDiameter(root: TreeNode | null): number {
+    const diameter = { value: 0 };
     getDiameter(root, diameter);
-
-    return diameter;
+    return diameter.value;
 }
 
-int main()
-{
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    cout << "The diameter of the tree is " << getDiameter(root);
-
-    return 0;
-}
+console.log(`The diameter of the tree is ${getBTDiameter(root)}`);
 ```
 
 **Output:** The diameter of the tree is 6
-
-##
-
-```java
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to find the diameter of the binary tree. Note that the
-    // function returns the height of the subtree rooted at a given node,
-    // and the diameter is updated within the function as it is passed by
-    // reference using the `AtomicInteger` class.
-    public static int getDiameter(Node root, AtomicInteger diameter)
-    {
-        // base case: tree is empty
-        if (root == null) {
-            return 0;
-        }
-
-        // get heights of left and right subtrees
-        int left_height = getDiameter(root.left, diameter);
-        int right_height = getDiameter(root.right, diameter);
-
-        // calculate diameter "through" the current node
-        int max_diameter = left_height + right_height + 1;
-
-        // update maximum diameter (note that diameter "excluding" the current
-        // node in the subtree rooted at the current node is already updated
-        // since we are doing postorder traversal)
-        diameter.set(Math.max(diameter.get(), max_diameter));
-
-        // it is important to return the height of the subtree rooted at the
-        // current node
-        return Math.max(left_height, right_height) + 1;
-    }
-
-    public static int getDiameter(Node root)
-    {
-        AtomicInteger diameter = new AtomicInteger(0);
-        getDiameter(root, diameter);
-
-        return diameter.get();
-    }
-
-    public static void main(String[] args)
-    {
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        System.out.print("The diameter of the tree is " + getDiameter(root));
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to find the diameter of the binary tree. Note that the function
-# returns the height of the subtree rooted at a given node and the diameter.
-def getDiameter(root, diameter):
-
-    # base case: tree is empty
-    if root is None:
-        return 0, diameter
-
-    # get heights of left and right subtrees
-    left_height, diameter = getDiameter(root.left, diameter)
-    right_height, diameter = getDiameter(root.right, diameter)
-
-    # calculate diameter "through" the current node
-    max_diameter = left_height + right_height + 1
-
-    # update maximum diameter (note that diameter "excluding" the current
-    # node in the subtree rooted at the current node is already updated
-    # since we are doing postorder traversal)
-    diameter = max(diameter, max_diameter)
-
-    # it is important to return the height of the subtree rooted at the current node
-    return max(left_height, right_height) + 1, diameter
-
-def getBTDiameter(root):
-
-    diameter = 0
-    return getDiameter(root, diameter)[1]
-
-if __name__ == '__main__':
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    print('The diameter of the tree is', getBTDiameter(root))
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

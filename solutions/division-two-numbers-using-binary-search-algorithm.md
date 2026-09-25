@@ -14,184 +14,63 @@ Based on a comparison result between `x` and `y × mid`, either update `low` or 
   * `y × mid` is less than `x`, update `low` to `mid`.
   * `y × mid` is more than `x`, update `high` to `mid`.
 
-We also need to take care of a few conditions like divisibility by 0, the result’s sign, etc., as demonstrated in below in C, Java, and Python:
+We also need to take care of a few conditions like divisibility by 0, the result’s sign, etc., as demonstrated below in TypeScript:
 
-```c
-#include <stdio.h>
-#include <limits.h>
+```ts
+// Function to perform a division of two numbers using the
+// binary search algorithm
+function divide(x: number, y: number): number {
 
-// Define INFINITY as `ULONG_MAX`
-#define INF ULONG_MAX
+    const INF = 100000000000.0;    // take a huge number as INFINITY
 
-double getAbsolute(double i) {
-    return i >= 0 ? i : -i;
-}
-
-// Function to perform a division of two numbers using the binary search algorithm
-double divide(double x, double y)
-{
     // handle divisibility by 0
-    if (y == 0) {
-        return INF;        // return INFINITY
+    if (y === 0) {
+        return INF;          // return INFINITY
     }
 
-    // Set range for result [low, high]. The `high` is set to INFINITY
-    // to handle the case when `y < 1`, and `x < result < INF`
-    double low = 0, high = INF;
+    // Set range for result [left, right].
+    // The `right` is set to INFINITY to handle the case
+    // when `y < 1`, and `x < result < INFINITY`
+    let left = 0.0;
+    let right = INF;
 
     // set accuracy of the result
-    double precision = 0.001;
+    const precision = 0.001;
 
     // store sign of the result
-    int sign = 1;
+    let sign = 1;
     if (x * y < 0) {
         sign = -1;
     }
 
     // make both input numbers positive
-    x = getAbsolute(x);
-    y = getAbsolute(y);
+    x = Math.abs(x);
+    y = Math.abs(y);
 
-    while (1)
-    {
+    while (true) {
         // calculate mid
-        double mid = low + ((high - low)/2);
+        const mid = left + (right - left) / 2;
 
         // if `y×mid` is almost equal to `x`, return `mid`
-        if (getAbsolute(y * mid - x) <= precision) {
+        if (Math.abs(y * mid - x) <= precision) {
             return mid * sign;
         }
 
-        // if `y×mid` is less than `x`, update `low` to `mid`
+        // if `y×mid` is less than `x`, update `left` to `mid`
         if (y * mid < x) {
-            low = mid;
+            left = mid;
         }
         else {
-            // if `y×mid` is more than `x`, update `high` to `mid`
-            high = mid;
+            // if `y×mid` is more than `x`, update `right` to `mid`
+            right = mid;
         }
     }
 }
 
-int main(void)
-{
-    printf("%f", divide(22, 7));
-
-    return 0;
-}
+console.log(divide(22, 7));
 ```
 
 **Output:** 3.142822
-
-##
-
-```java
-class Main
-{
-    // Function to perform a division of two numbers using the
-    // binary search algorithm
-    public static double divide(double x, double y)
-    {
-        // handle divisibility by 0
-        if (y == 0) {
-            return Double.MAX_VALUE;        // return INFINITY
-        }
-
-        // Set range for result [left, right].
-        // `right` is set to INFINITY to handle the case
-        // when `y < 1`, and `x < result < Double.MAX_VALUE`
-        double left = 0.0, right = Double.MAX_VALUE;
-
-        // set accuracy of the result
-        double precision = 0.001;
-
-        // store sign of the result
-        int sign = 1;
-        if (x * y < 0) {
-            sign = -1;
-        }
-
-        // make both input numbers positive
-        x = Math.abs(x);
-        y = Math.abs(y);
-
-        while (true)
-        {
-            // calculate mid
-            double mid = left + ((right - left) / 2);
-
-            // if `y×mid` is almost equal to `x`, return `mid`
-            if (Math.abs(y * mid - x) <= precision) {
-                return mid * sign;
-            }
-
-            // if `y×mid` is less than `x`, update `left` to `mid`
-            if (y * mid < x) {
-                left = mid;
-            }
-            else {
-                // if `y×mid` is more than `x`, update `right` to `mid`
-                right = mid;
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(divide(22, 7));
-    }
-}
-```
-
-##
-
-```python3
-# Function to perform a division of two numbers using the
-# binary search algorithm
-def divide(x, y):
-
-    INF = 100000000000.0    # take a huge number as INFINITY
-
-    # handle divisibility by 0
-    if y == 0:
-        return INF          # return INFINITY
-
-    # Set range for result [left, right].
-    # The `right` is set to INFINITY to handle the case
-    # when `y < 1`, and `x < result < INFINITY`
-    left = 0.0
-    right = INF
-
-    # set accuracy of the result
-    precision = 0.001
-
-    # store sign of the result
-    sign = 1
-    if x * y < 0:
-        sign = -1
-
-    # make both input numbers positive
-    x = abs(x)
-    y = abs(y)
-
-    while True:
-        # calculate mid
-        mid = left + (right - left) / 2
-
-        # if `y×mid` is almost equal to `x`, return `mid`
-        if abs(y * mid - x) <= precision:
-            return mid * sign
-
-        # if `y×mid` is less than `x`, update `left` to `mid`
-        if y * mid < x:
-            left = mid
-        else:
-            # if `y×mid` is more than `x`, update `right` to `mid`
-            right = mid
-
-if __name__ == '__main__':
-
-    print(divide(22, 7))
-```
 
 The time complexity of the above solution is O(log(n)), where `n` is equal to `MAX_VAL`.
 

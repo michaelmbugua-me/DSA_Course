@@ -26,133 +26,32 @@ The problem is very similar to the [0/1 knapsack problem](https://techiedelight.
   1. Consider that element.
   2. Don’t consider that element.
 
-All combinations of subsets can be generated as follows in C++, Java, and Python, using the above logic:
+All combinations of subsets can be generated as follows in TypeScript, using the above logic:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+```ts
+// Function to generate a power set of given set `S`
+function findPowerSet(S: number[], s: number[], n: number): void {
 
-// Function to print a given set
-void printSet(vector<int> const &input)
-{
-    cout << "[";
-    int n = input.size();
-    for (int i: input) {
-        cout << i;
-        if (--n) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
-// Function to generate power set of a given set `S`
-void printPowerSet(vector<int> const &S, vector<int> &set, int n)
-{
     // if we have considered all elements
-    if (n == 0)
-    {
-        printSet(set);
+    if (n === 0) {
+        console.log(`[${s.join(', ')}]`);
         return;
     }
 
     // consider the n'th element
-    set.push_back(S[n - 1]);
-    printPowerSet(S, set, n - 1);
+    s.push(S[n - 1]);
+    findPowerSet(S, s, n - 1);
 
-    set.pop_back();                    // backtrack
+    s.pop();                    // backtrack
 
     // or don't consider the n'th element
-    printPowerSet(S, set, n - 1);
+    findPowerSet(S, s, n - 1);
 }
 
-// Wrapper over `printPowerSet()` function
-void findPowerSet(vector<int> const &S)        // no-ref, no-const
-{
-    // create an empty vector to store elements of a subset
-    vector<int> set;
-    printPowerSet(S, set, S.size());
-}
+const S = [1, 2, 3];
 
-int main()
-{
-    vector<int> S = { 1, 2, 3 };
-
-    findPowerSet(S);
-
-    return 0;
-}
-```
-
-**Output:** [3, 2, 1] [3, 2] [3, 1] [3] [2, 1] [2] [1] []
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Deque;
-
-class Main
-{
-    // Function to generate power set of a given set `S`
-    public static void findPowerSet(int[] S, Deque<Integer> set, int n)
-    {
-        // if we have considered all elements
-        if (n == 0)
-        {
-            System.out.println(set);
-            return;
-        }
-
-        // consider the n'th element
-        set.addLast(S[n - 1]);
-        findPowerSet(S, set, n - 1);
-
-        set.removeLast();                    // backtrack
-
-        // or don't consider the n'th element
-        findPowerSet(S, set, n - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] S = { 1, 2, 3 };
-
-        Deque<Integer> set = new ArrayDeque<>();
-        findPowerSet(S, set, S.length);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to generate a power set of given set `S`
-def findPowerSet(S, s, n):
-
-    # if we have considered all elements
-    if n == 0:
-        print(s)
-        return
-
-    # consider the n'th element
-    s.append(S[n - 1])
-    findPowerSet(S, s, n - 1)
-
-    s.pop()                    # backtrack
-
-    # or don't consider the n'th element
-    findPowerSet(S, s, n - 1)
-
-if __name__ == '__main__':
-
-    S = [1, 2, 3]
-
-    s = []
-    findPowerSet(S, s, len(S))
+const s: number[] = [];
+findPowerSet(S, s, S.length);
 ```
 
 ## Approach 2
@@ -170,123 +69,31 @@ For example, for the set `S {_x_ , _y_ , _z_}`, generate binary numbers from `0`
   * 6 = 110 = {_x_ , _y_}
   * 7 = 111 = {_x_ , _y_ , _z_}
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cmath>
-using namespace std;
-
-// Function to print a given set
-void printSet(vector<int> const &input)
-{
-    cout << "[";
-    int n = input.size();
-    for (int i: input) {
-        cout << i;
-        if (--n) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
-void findPowerSet(vector<int> const &S)
-{
+```ts
+function findPowerSet(S: number[]): void {
     // `N` stores the total number of subsets
-    int N = pow(2, S.size());
+    const N = Math.pow(2, S.length);
+    const s: number[] = [];
 
     // generate each subset one by one
-    for (int i = 0; i < N; i++)
-    {
-        vector<int> input;
+    for (let i = 0; i < N; i++) {
         // check every bit of `i`
-        for (int j = 0; j < S.size(); j++)
-        {
+        for (let j = 0; j < S.length; j++) {
             // if j'th bit of `i` is set, print `S[j]`
             if (i & (1 << j)) {
-                input.push_back(S[j]);
+                s.push(S[j]);
             }
         }
-        printSet(input);
+
+        console.log(`[${s.join(', ')}]`);
+        s.length = 0;
     }
 }
 
-int main()
-{
-    vector<int> S = { 1, 2, 3 };
-
-    findPowerSet(S);
-
-    return 0;
-}
-```
-
-**Output:** [] [1] [2] [1, 2] [3] [1, 3] [2, 3] [1, 2, 3]
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-class Main
-{
-    public static void findPowerSet(int[] S)
-    {
-        // `N` stores the total number of subsets
-        int N = (int) Math.pow(2, S.length);
-
-        // generate each subset one by one
-        for (int i = 0; i < N; i++)
-        {
-            List<Integer> set = new ArrayList<>();
-
-            // check every bit of `i`
-            for (int j = 0; j < S.length; j++)
-            {
-                // if j'th bit of `i` is set, print `S[j]`
-                if ((i & (1 << j)) != 0) {
-                    set.add(S[j]);
-                }
-            }
-            System.out.println(set);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] S = { 1, 2, 3 };
-        findPowerSet(S);
-    }
-}
-```
-
-##
-
-```python3
-def findPowerSet(S):
-
-    # `N` stores the total number of subsets
-    N = int(pow(2, len(S)))
-    s = list()
-
-    # generate each subset one by one
-    for i in range(N):
-        # check every bit of `i`
-        for j in range(len(S)):
-            # if j'th bit of `i` is set, print `S[j]`
-            if i & (1 << j):
-                s.append(S[j])
-
-        print(s)
-        s.clear()
-
-if __name__ == '__main__':
-
-    S = [1, 2, 3]
-    findPowerSet(S)
+const S = [1, 2, 3];
+findPowerSet(S);
 ```
 
 The time complexity of both above-discussed methods is O(n.2n), where `n` is the size of the given set.

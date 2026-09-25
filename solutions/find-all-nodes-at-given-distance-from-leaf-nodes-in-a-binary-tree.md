@@ -14,286 +14,88 @@ The nodes present at a distance of 1 from any leaf node are 10, 16, 20 The nodes
 
 The idea is to traverse the tree in a [preorder fashion](https://techiedelight.com/preorder-tree-traversal-iterative-recursive/) and use a list to store the current node’s ancestors in the preorder traversal. If we encounter a leaf node, print the ancestor present at a given distance from it. To avoid printing duplicates, insert the nodes into a set and print it later.
 
-Following is the implementation of the idea in C++, Java, and Python:
+Following is the implementation of the idea in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_set>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Function to check if a given node is a leaf node or not
-bool isLeaf(Node* node) {
-    return (node->left == nullptr && node->right == nullptr);
+function isLeaf(node: TreeNode): boolean {
+    return node.left === null && node.right === null;
 }
 
 // Recursive function to find all nodes at a given distance from leaf nodes
-void leafNodeDistance(Node* node, vector<Node*> path,
-                    unordered_set<Node*> &set, int dist)
-{
+function leafNodeDistance(node: TreeNode | null, path: TreeNode[], set: Set<TreeNode>, dist: number): void {
+
     // base case: empty tree
-    if (node == nullptr) {
+    if (node === null) {
         return;
     }
 
     // if a leaf node is found, insert the node at a distance `dist` from the
     // leaf node into the set
-    if (isLeaf(node) && path.size() >= dist)
-    {
-        set.insert(path.at(path.size() - dist));
+    if (isLeaf(node) && path.length >= dist) {
+        set.add(path[path.length - dist]);
         return;
     }
 
     // include the current node in the current path
-    path.push_back(node);
+    path.push(node);
 
     // recur for the left and right subtree
-    leafNodeDistance(node->left, path, set, dist);
-    leafNodeDistance(node->right, path, set, dist);
+    leafNodeDistance(node.left, path, set, dist);
+    leafNodeDistance(node.right, path, set, dist);
+
+    // remove the current node from the current path
+    const idx = path.indexOf(node);
+    path.splice(idx, 1);
 }
 
 // Find all distinct nodes at a given distance from leaf nodes
-void leafNodeDistance(Node* node, int dist)
-{
-    // vector to store root-to-leaf path
-    vector<Node*> path;
+function printLeafNodeDistance(node: TreeNode | null, dist: number): void {
+
+    // list to store root-to-leaf path
+    const path: TreeNode[] = [];
 
     // create an empty set to store distinct nodes at a given
     // distance from leaf nodes
-    unordered_set<Node*> set;
+    const s = new Set<TreeNode>();
 
     // find all nodes
-    leafNodeDistance(node, path, set, dist);
+    leafNodeDistance(node, path, s, dist);
 
     // print output
-    for (Node* node: set) {
-        cout << node->data << " ";
-    }
+    console.log([...s].map((e) => e.val));
 }
 
-int main()
-{
-    /* Construct the following tree
-              15
-            /    \
-           /      \
-          10       20
-         / \      /  \
-        8   12   16  25
-                /
-               18
-    */
+/* Construct the following tree
+          15
+        /    \
+       /      \
+      10       20
+     / \      /  \
+    8   12   16  25
+            /
+           18
+*/
 
-    Node* root = new Node(15);
-    root->left = new Node(10);
-    root->right = new Node(20);
-    root->left->left = new Node(8);
-    root->left->right = new Node(12);
-    root->right->left = new Node(16);
-    root->right->right = new Node(25);
-    root->right->left->left = new Node(18);
+const root = new TreeNode(15);
+root.left = new TreeNode(10);
+root.right = new TreeNode(20);
+root.left.left = new TreeNode(8);
+root.left.right = new TreeNode(12);
+root.right.left = new TreeNode(16);
+root.right.right = new TreeNode(25);
+root.right.left.left = new TreeNode(18);
 
-    int dist = 1;
-    leafNodeDistance(root, dist);
-
-    return 0;
-}
+const dist = 1;
+printLeafNodeDistance(root, dist);
 ```
 
 **Output:** 10 16 20
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to check if a given node is a leaf node or not
-    public static boolean isLeaf(Node node) {
-        return (node.left == null && node.right == null);
-    }
-
-    // Recursive function to find all nodes at a given distance from leaf nodes
-    public static void leafNodeDistance(Node node, List<Node> path,
-                                        Set<Node> set, int dist)
-    {
-        // base case: empty tree
-        if (node == null) {
-            return;
-        }
-
-        // if a leaf node is found, insert the node at a distance `dist` from the
-        // leaf node into the set
-        if (isLeaf(node) && path.size() >= dist)
-        {
-            set.add(path.get(path.size() - dist));
-            return;
-        }
-
-        // include the current node in the current path
-        path.add(node);
-
-        // recur for the left and right subtree
-        leafNodeDistance(node.left, path, set, dist);
-        leafNodeDistance(node.right, path, set, dist);
-
-        // remove the current node from the current path
-        path.remove(node);
-    }
-
-    // Find all distinct nodes at a given distance from leaf nodes
-    public static void leafNodeDistance(Node node, int dist)
-    {
-        // list to store root-to-leaf path
-        List<Node> path = new ArrayList<>();
-
-        // create an empty set to store distinct nodes at a given
-        // distance from leaf nodes
-        Set<Node> set = new HashSet<>();
-
-        // find all nodes
-        leafNodeDistance(node, path, set, dist);
-
-        // print output
-        for (Node e: set) {
-            System.out.print(e.data + " ");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  15
-                /    \
-               /      \
-              10       20
-             / \      /  \
-            8   12   16  25
-                    /
-                   18
-        */
-
-        Node root = new Node(15);
-        root.left = new Node(10);
-        root.right = new Node(20);
-        root.left.left = new Node(8);
-        root.left.right = new Node(12);
-        root.right.left = new Node(16);
-        root.right.right = new Node(25);
-        root.right.left.left = new Node(18);
-
-        int dist = 1;
-        leafNodeDistance(root, dist);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to check if a given node is a leaf node or not
-def isLeaf(node):
-    return node.left is None and node.right is None
-
-# Recursive function to find all nodes at a given distance from leaf nodes
-def leafNodeDistance(node, path, set, dist):
-
-    # base case: empty tree
-    if node is None:
-        return
-
-    # if a leaf node is found, insert the node at a distance `dist` from the
-    # leaf node into the set
-    if isLeaf(node) and len(path) >= dist:
-        set.add(path[-dist])
-        return
-
-    # include the current node in the current path
-    path.append(node)
-
-    # recur for the left and right subtree
-    leafNodeDistance(node.left, path, set, dist)
-    leafNodeDistance(node.right, path, set, dist)
-
-    # remove the current node from the current path
-    path.remove(node)
-
-# Find all distinct nodes at a given distance from leaf nodes
-def printLeafNodeDistance(node, dist):
-
-    # list to store root-to-leaf path
-    path = []
-
-    # create an empty set to store distinct nodes at a given
-    # distance from leaf nodes
-    s = set()
-
-    # find all nodes
-    leafNodeDistance(node, path, s, dist)
-
-    # print output
-    print([e.data for e in s])
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               15
-             /    \
-            /      \
-          10       20
-         / \      /  \
-        8   12   16  25
-                /
-               18
-    '''
-
-    root = Node(15)
-    root.left = Node(10)
-    root.right = Node(20)
-    root.left.left = Node(8)
-    root.left.right = Node(12)
-    root.right.left = Node(16)
-    root.right.right = Node(25)
-    root.right.left.left = Node(18)
-
-    dist = 1
-    printLeafNodeDistance(root, dist)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the size of the binary tree.
 

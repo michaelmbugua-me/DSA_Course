@@ -16,75 +16,46 @@ After we have preprocessed the matrix to create the sum matrix, consider every s
 
 submatrix sum = S[j+1][n+1] – S[j+1][m] – S[i][n+1] + S[i][m]
 
-If the submatrix sum is more than the maximum found so far, we update the maximum sum. We can also store the submatrix coordinates to print the maximum sum submatrix. The algorithm can be implemented as follows in C++, Java, and Python:
+If the submatrix sum is more than the maximum found so far, we update the maximum sum. We can also store the submatrix coordinates to print the maximum sum submatrix. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-using namespace std;
-
-void printVector(vector<int> const &input)
-{
-    cout << "[";
-    for (int i = 0; i < input.size(); i++) {
-        cout << input[i];
-        if (i < input.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
+```ts
 // Find the maximum sum submatrix present in a given matrix
-int findMaxSumSubmatrix(vector<vector<int>> const &mat)
-{
+function findMaxSumSubmatrix(mat: number[][]): number {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return 0;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const [M, N] = [mat.length, mat[0].length];
 
     // `S[i][j]` stores the sum of submatrix formed by row 0 to `i-1`
     // and column 0 to `j-1`
-    int S[M+1][N+1];
+    const S: number[][] = Array.from({ length: M + 1 }, () => Array(N + 1).fill(0));
 
     // preprocess the matrix to fill `S`
-    for (int i = 0; i <= M; i++)
-    {
-        for (int j = 0; j <= N; j++)
-        {
-            if (i == 0 || j == 0) {
-                S[i][j] = 0;
-            }
-            else {
-                S[i][j] = S[i-1][j] + S[i][j-1] - S[i-1][j-1] + mat[i-1][j-1];
-            }
+    for (let i = 1; i <= M; i++) {
+        for (let j = 1; j <= N; j++) {
+            S[i][j] = S[i - 1][j] + S[i][j - 1] - S[i - 1][j - 1] + mat[i - 1][j - 1];
         }
     }
 
-    int maxSum = INT_MIN;
-    int rowStart, rowEnd, colStart, colEnd;
+    let maxSum = -Infinity;
+    let rowStart = 0, rowEnd = 0, colStart = 0, colEnd = 0;
 
     // consider every submatrix formed by row `i` to `j`
     // and column `m` to `n`
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = i; j < M; j++)
-        {
-            for (int m = 0; m < N; m++)
-            {
-                for (int n = m; n < N; n++)
-                {
-                    // calculate the submatrix sum using `S[][]` in O(1) time
-                    int submatrix_sum = S[j+1][n+1] - S[j+1][m] - S[i][n+1] + S[i][m];
+    for (let i = 0; i < M; i++) {
+        for (let j = i; j < M; j++) {
+            for (let m = 0; m < N; m++) {
+                for (let n = m; n < N; n++) {
+                    // calculate the submatrix sum using `S` in `O(1)` time
+                    const submatrix_sum = S[j + 1][n + 1] - S[j + 1][m]
+                                    - S[i][n + 1] + S[i][m];
 
                     // if the submatrix sum is more than the maximum found so far
-                    if (submatrix_sum > maxSum)
-                    {
+                    if (submatrix_sum > maxSum) {
                         maxSum = submatrix_sum;
                         rowStart = i;
                         rowEnd = j;
@@ -96,203 +67,25 @@ int findMaxSumSubmatrix(vector<vector<int>> const &mat)
         }
     }
 
-    cout << "The maximum sum submatrix is\n\n";
-    for (int i = rowStart; i <= rowEnd; i++) {
-        vector<int> row;
-        for (int j = colStart; j <= colEnd; j++) {
-            row.push_back(mat[i][j]);
-        }
-        printVector(row);
-    }
+    const output = Array.from({ length: rowEnd - rowStart + 1 }, (_, i) =>
+        Array.from({ length: colEnd - colStart + 1 }, (_, j) =>
+            mat[rowStart + i][colStart + j]));
 
+    console.log('The maximum sum submatrix is', output);
     return maxSum;
 }
 
-int main()
-{
-    // input matrix
-    vector<vector<int>> mat =
-    {
-        { -5, -6, 3, 1, 0 },
-        { 9, 7, 8, 3, 7 },
-        { -6, -2, -1, 2, -4 },
-        { -7, 5, 5, 2, -6 },
-        { 3, 2, 9, -5, 1 }
-    };
+// input matrix
+const matrix = [
+    [-5, -6, 3, 1, 0],
+    [9, 7, 8, 3, 7],
+    [-6, -2, -1, 2, -4],
+    [-7, 5, 5, 2, -6],
+    [3, 2, 9, -5, 1]
+];
 
-    // find the maximum sum submatrix
-    cout << "\nThe maximum sum is " << findMaxSumSubmatrix(mat);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-class Main
-{
-    // Find the maximum sum submatrix present in a given matrix
-    public static int findMaxSumSubmatrix(int[][] matrix)
-    {
-        // base case
-        if (matrix == null || matrix.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = matrix.length;
-        int N = matrix[0].length;
-
-        // `S[i][j]` stores the sum of submatrix formed by row 0 to `i-1`
-        // and column 0 to `j-1`
-        int[][] S = new int[M+1][N+1];
-
-        // preprocess the matrix to fill `S`
-        for (int i = 0; i <= M; i++)
-        {
-            for (int j = 0; j <= N; j++)
-            {
-                if (i == 0 || j == 0) {
-                    S[i][j] = 0;
-                }
-                else {
-                    S[i][j] = S[i-1][j] + S[i][j-1] - S[i-1][j-1] +
-                            matrix[i-1][j-1];
-                }
-            }
-        }
-
-        int maxSum = Integer.MIN_VALUE;
-        int rowStart = 0, rowEnd = 0, colStart = 0, colEnd = 0;
-
-        // consider every submatrix formed by row `i` to `j`
-        // and column `m` to `n`
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = i; j < M; j++)
-            {
-                for (int m = 0; m < N; m++)
-                {
-                    for (int n = m; n < N; n++)
-                    {
-                        // calculate the submatrix sum using `S[][]` in O(1) time
-                        int submatrix_sum = S[j+1][n+1] - S[j+1][m]
-                                - S[i][n+1] + S[i][m];
-
-                        // if the submatrix sum is more than the maximum found so far
-                        if (submatrix_sum > maxSum)
-                        {
-                            maxSum = submatrix_sum;
-                            rowStart = i;
-                            rowEnd = j;
-                            colStart = m;
-                            colEnd = n;
-                        }
-                    }
-                }
-            }
-        }
-
-        List<List<Integer>> result = new ArrayList<>();
-        for (int i = rowStart; i <= rowEnd; i++) {
-            List<Integer> row = new ArrayList<>();
-            for (int j = colStart; j <= colEnd; j++) {
-                row.add(matrix[i][j]);
-            }
-            result.add(row);
-        }
-
-        System.out.println("The maximum sum submatrix is " + result);
-        return maxSum;
-    }
-
-    public static void main(String[] args)
-    {
-        // input matrix
-        int[][] mat =
-        {
-            { -5, -6, 3, 1, 0 },
-            { 9, 7, 8, 3, 7 },
-            { -6, -2, -1, 2, -4 },
-            { -7, 5, 5, 2, -6 },
-            { 3, 2, 9, -5, 1 }
-        };
-
-        // find the maximum sum submatrix
-        System.out.print("The maximum sum is " + findMaxSumSubmatrix(mat));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Find the maximum sum submatrix present in a given matrix
-def findMaxSumSubmatrix(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return []
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # `S[i][j]` stores the sum of submatrix formed by row 0 to `i-1`
-    # and column 0 to `j-1`
-    S = [[0 for x in range(N + 1)] for y in range(M + 1)]
-
-    # preprocess the matrix to fill `S`
-    for i in range(1, M + 1):
-        for j in range(1, N + 1):
-            S[i][j] = S[i - 1][j] + S[i][j - 1] - S[i - 1][j - 1] \
-                      + mat[i - 1][j - 1]
-
-    maxSum = -sys.maxsize
-    rowStart = rowEnd = colStart = colEnd = 0
-
-    # consider every submatrix formed by row `i` to `j`
-    # and column `m` to `n`
-    for i in range(M):
-        for j in range(i, M):
-            for m in range(N):
-                for n in range(m, N):
-                    # calculate the submatrix sum using `S` in `O(1)` time
-                    submatrix_sum = S[j + 1][n + 1] - S[j + 1][m] \
-                                    - S[i][n + 1] + S[i][m]
-
-                    # if the submatrix sum is more than the maximum found so far
-                    if submatrix_sum > maxSum:
-                        maxSum = submatrix_sum
-                        rowStart = i
-                        rowEnd = j
-                        colStart = m
-                        colEnd = n
-
-    output = [[mat[i][j] for j in range(colStart, colEnd + 1)]
-              for i in range(rowStart, rowEnd + 1)]
-
-    print('The maximum sum submatrix is', output)
-    return maxSum
-
-if __name__ == '__main__':
-
-    # input matrix
-    matrix = [
-        [-5, -6, 3, 1, 0],
-        [9, 7, 8, 3, 7],
-        [-6, -2, -1, 2, -4],
-        [-7, 5, 5, 2, -6],
-        [3, 2, 9, -5, 1]
-    ]
-
-    # find the maximum sum submatrix
-    print("The maximum sum is", findMaxSumSubmatrix(matrix))
+// find the maximum sum submatrix
+console.log(`The maximum sum is ${findMaxSumSubmatrix(matrix)}`);
 ```
 
 **Output:** The maximum sum submatrix is [[7, 8, 3], [-2, -1, 2], [5, 5, 2], [2, 9, -5]] The maximum sum is 35

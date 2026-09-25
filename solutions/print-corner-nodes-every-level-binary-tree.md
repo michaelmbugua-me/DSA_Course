@@ -12,273 +12,85 @@ For example, consider the following tree:
 
 The idea is simple. First, modify the [level order traversal](https://techiedelight.com/level-order-traversal-binary-tree/) on a given binary tree to maintain the level of each node. Then while doing level order traversal, if the current node happens to be the first or last node at the current level, print it.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is the implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-#include <queue>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Iterative function to print corner nodes of every level in a binary tree
-void print(Node* root)
-{
+function printTree(root: TreeNode | null): void {
+
     // return if the tree is empty
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // create an empty queue to store tree nodes
-    queue<Node*> q;
+    const q: TreeNode[] = [];
 
     // enqueue root node
     q.push(root);
 
     // loop till queue is empty
-    while (!q.empty())
-    {
+    while (q.length > 0) {
+
         // get the size of the current level
-        int size = q.size();
-        int n = size;
+        const size = q.length;
+        let n = size;
 
         // process all nodes present in the current level
-        while (n--)
-        {
-            Node* node = q.front();
-            q.pop();
+        while (n > 0) {
+            n = n - 1;
+            const node = q.shift()!;
 
             // if the corner node is found, print it
-            if (n == size - 1 || n == 0) {
-                cout << node->data << " ";
+            if (n === size - 1 || n === 0) {
+                process.stdout.write(node.val + ' ');
             }
 
             // enqueue left and right child of the current node
-            if (node->left != nullptr) {
-                q.push(node->left);
+            if (node.left) {
+                q.push(node.left);
             }
 
-            if (node->right != nullptr) {
-                q.push(node->right);
+            if (node.right) {
+                q.push(node.right);
             }
         }
 
         // terminate level by printing an empty line
-        cout << endl;
+        console.log();
     }
 }
 
-int main()
-{
-    /* Construct the following tree
-                 1
-               /   \
-              2     3
-            /     /   \
-           4     5     6
-         /     /   \     \
-        7     8     9     10
-    */
+/* Construct the following tree
+             1
+           /   \
+          2     3
+        /     /   \
+       4     5     6
+     /     /   \     \
+    7     8     9     10
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->left->left->left = new Node(7);
-    root->right->left->left = new Node(8);
-    root->right->left->right = new Node(9);
-    root->right->right->right = new Node(10);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.left.left.left = new TreeNode(7);
+root.right.left.left = new TreeNode(8);
+root.right.left.right = new TreeNode(9);
+root.right.right.right = new TreeNode(10);
 
-    print(root);
-
-    return 0;
-}
+printTree(root);
 ```
 
 **Output:** 1 2 3 4 6 7 10
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Iterative function to print corner nodes of every level in the binary tree
-    public static void print(Node root)
-    {
-        // return if the tree is empty
-        if (root == null) {
-            return;
-        }
-
-        // create an empty queue to store tree nodes
-        Queue<Node> q = new ArrayDeque<>();
-
-        // enqueue root node
-        q.add(root);
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // get the size of the current level
-            int size = q.size();
-            int n = size;
-
-            // process all nodes present in the current level
-            while (n-- > 0)
-            {
-                Node node = q.poll();
-
-                // if the corner node is found, print it
-                if (n == size - 1 || n == 0) {
-                    System.out.print(node.data + " ");
-                }
-
-                // enqueue left and right child of the current node
-                if (node.left != null) {
-                    q.add(node.left);
-                }
-
-                if (node.right != null) {
-                    q.add(node.right);
-                }
-            }
-
-            // terminate level by printing an empty line
-            System.out.println();
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                     1
-                   /   \
-                  2     3
-                /     /   \
-               4     5     6
-             /     /   \     \
-            7     8     9     10
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.left.left.left = new Node(7);
-        root.right.left.left = new Node(8);
-        root.right.left.right = new Node(9);
-        root.right.right.right = new Node(10);
-
-        print(root);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Iterative function to print corner nodes of every level in a binary tree
-def printTree(root):
-
-    # return if the tree is empty
-    if root is None:
-        return
-
-    # create an empty queue to store tree nodes
-    q = deque()
-
-    # enqueue root node
-    q.append(root)
-
-    # loop till queue is empty
-    while q:
-
-        # get the size of the current level
-        size = len(q)
-        n = size
-
-        # process all nodes present in the current level
-        while n:
-            n = n - 1
-            node = q.popleft()
-
-            # if the corner node is found, print it
-            if n == size - 1 or n == 0:
-                print(node.data, end=' ')
-
-            # enqueue left and right child of the current node
-            if node.left:
-                q.append(node.left)
-
-            if node.right:
-                q.append(node.right)
-
-        # terminate level by printing an empty line
-        print()
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-                 1
-               /   \
-              2     3
-            /     /   \
-           4     5     6
-         /     /   \     \
-        7     8     9     10
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.left.left.left = Node(7)
-    root.right.left.left = Node(8)
-    root.right.left.right = Node(9)
-    root.right.right.right = Node(10)
-
-    printTree(root)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the size of the binary tree.
 

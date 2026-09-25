@@ -15,39 +15,49 @@ Use cases: autocomplete, spell-check, word games on grids (Boggle), longest comm
 - Word search on a character matrix (trie + DFS combo)
 - Duplicate detection over a stream of strings (trie leaves = unique strings)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-class TrieNode:
-    def __init__(self):
-        self.children = {}
-        self.is_word = False
+```ts
+class TrieNode {
+    children = new Map<string, TrieNode>();
+    isWord = false;
+}
 
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+class Trie {
+    root = new TrieNode();
 
-    def insert(self, word):
-        node = self.root
-        for ch in word:
-            node = node.children.setdefault(ch, TrieNode())
-        node.is_word = True
+    insert(word: string): void {
+        let node = this.root;
+        for (const ch of word) {
+            if (!node.children.has(ch)) {
+                node.children.set(ch, new TrieNode());
+            }
+            node = node.children.get(ch)!;
+        }
+        node.isWord = true;
+    }
 
-    def search(self, word):
-        node = self._walk(word)
-        return node is not None and node.is_word
+    search(word: string): boolean {
+        const node = this.walk(word);
+        return node !== null && node.isWord;
+    }
 
-    def starts_with(self, prefix):
-        return self._walk(prefix) is not None
+    startsWith(prefix: string): boolean {
+        return this.walk(prefix) !== null;
+    }
 
-    def _walk(self, s):
-        node = self.root
-        for ch in s:
-            if ch not in node.children:
-                return None
-            node = node.children[ch]
-        return node
-```
+    private walk(s: string): TrieNode | null {
+        let node = this.root;
+        for (const ch of s) {
+            const next = node.children.get(ch);
+            if (next === undefined) {
+                return null;
+            }
+            node = next;
+        }
+        return node;
+    }
+}
 
 ## Complexity
 

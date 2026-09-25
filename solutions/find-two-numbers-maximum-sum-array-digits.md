@@ -14,131 +14,40 @@ We know that a maximum number can be formed from the given digits `0–9` when t
 
 The idea is to [sort the given array in descending order](https://techiedelight.com/sort-array-descending-order-cpp/) and construct two numbers `x` and `y` by picking alternate digits from the array, where `x` is filled with digits at the odd indices, `y` is filled with digits at the even index of the sorted array.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-#include <vector>
-using namespace std;
-
-// Find two numbers with a maximum sum formed by digits of an array
-pair<int, int> findMaximum(vector<int> input)        // no-ref, no-const
-{
-    // base case: invalid input
-    if (input.size() <= 1) {
-        return make_pair(-1, -1);
+```ts
+// Find two numbers with a maximum sum formed by digits of a list
+const findMaximum = (input: number[]): void => {
+    // base case
+    if (input.length <= 1) {
+        return;
     }
 
-    // sort the array in descending order
-    sort(input.rbegin(), input.rend());
+    // sort the list in descending order
+    input.sort((a, b) => b - a);
 
-    // fill `x` with digits at the odd indices of the sorted array
-    int x = 0;
-    for (int i = 0; i < input.size(); i = i + 2) {
+    // fill `x` with digits at the odd indices of the sorted list
+    let x = 0;
+    for (let i = 0; i < input.length; i = i + 2) {
         x = x * 10 + input[i];
     }
 
-    // fill `y` with digits at the even indices of the sorted array
-    int y = 0;
-    for (int i = 1; i < input.size(); i = i + 2) {
+    // fill `y` with digits at the even indices of the sorted list
+    let y = 0;
+    for (let i = 1; i < input.length; i = i + 2) {
         y = y * 10 + input[i];
     }
 
-    // return `x` and `y`
-    return make_pair(x, y);
-}
+    // print `x` and `y`
+    console.log(`The two numbers with maximum sum are ${x} and ${y}`);
+};
 
-int main()
-{
-    vector<int> input = { 4, 6, 2, 7, 9, 8 };
-
-    pair<int, int> p = findMaximum(input);
-    cout << "The two numbers with maximum sum are "
-         << p.first << " and " << p.second;
-
-    return 0;
-}
+const input = [4, 6, 2, 7, 9, 8];
+findMaximum(input);
 ```
 
 **Output:** The two numbers with maximum sum are 974 and 862
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.Comparator;
-
-class Main
-{
-    // Find two numbers with a maximum sum formed by digits of an array
-    public static void findMaximum(Integer[] input)
-    {
-        // base case
-        if (input.length <= 1) {
-            return;
-        }
-
-        // sort the array in descending order
-        Arrays.sort(input, Comparator.reverseOrder());
-
-        // fill `x` with digits at the odd indices of the sorted array
-        int x = 0;
-        for (int i = 0; i < input.length; i = i + 2) {
-            x = x * 10 + input[i];
-        }
-
-        // fill `y` with digits at the even indices of the sorted array
-        int y = 0;
-        for (int i = 1; i < input.length; i = i + 2) {
-            y = y * 10 + input[i];
-        }
-
-        // print `x` and `y`
-        System.out.println("The two numbers with maximum sum are "
-                + x + " and " + y);
-    }
-
-    public static void main(String[] args)
-    {
-        Integer[] input = { 4, 6, 2, 7, 9, 8 };
-
-        findMaximum(input);
-    }
-}
-```
-
-##
-
-```python3
-# Find two numbers with a maximum sum formed by digits of a list
-def findMaximum(input):
-
-    # base case
-    if len(input) <= 1:
-        return
-
-    # sort the list in descending order
-    input.sort(reverse=True)
-
-    # fill `x` with digits at the odd indices of the sorted list
-    x = 0
-    for i in range (0, len(input), 2):
-        x = x * 10 + input[i]
-
-    # fill `y` with digits at the even indices of the sorted list
-    y = 0
-    for i in range (1, len(input), 2):
-        y = y * 10 + input[i]
-
-    # print `x` and `y`
-    print(f'The two numbers with maximum sum are {x} and {y}')
-
-if __name__ == '__main__':
-
-    input = [4, 6, 2, 7, 9, 8]
-    findMaximum(input)
-```
 
 The time complexity of the above solution is O(n.log(n)) and doesn’t require any extra space, where `n` is the size of the input.
 

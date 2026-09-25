@@ -31,10 +31,9 @@ If a problem can be solved by combining optimal solutions to non-overlapping sub
 
 Let’s consider a naive implementation of a function finding the `n'th` member of the Fibonacci sequence:
 
-```
+```ts
 // Function to find n'th Fibonacci number
-int fib(int n)
-{
+function fib(n: number): number {
     if (n <= 1) {
         return n;
     }
@@ -49,95 +48,29 @@ In particular, `fib(3)` was calculated twice, and `fib(2)` was calculated three 
 
 Now, suppose we have a simple map object, `lookup`, which maps each value of `fib` that has already been calculated to its result, and we modify our function to use it and update it. The resulting function runs in O(n) time instead of exponential time (but requires O(n) space):
 
-Following is the dynamic programming implementation in C++, Java, and Python based on the above idea:
+Following is the dynamic programming implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
+```ts
+// Function to find the n'th Fibonacci number
+function fib(n: number, lookup: Map<number, number>): number {
 
-// Function to find n'th Fibonacci number
-int fib(int n, auto &lookup)
-{
     if (n <= 1) {
         return n;
     }
 
     // if the subproblem is seen for the first time
-    if (lookup.find(n) == lookup.end()) {
-        lookup[n] = fib(n - 1, lookup) + fib(n - 2, lookup);
+    if (!lookup.has(n)) {
+        const val = fib(n - 1, lookup) + fib(n - 2, lookup);
+        lookup.set(n, val);
     }
 
-    return lookup[n];
+    return lookup.get(n)!;
 }
 
-int main()
-{
-    unordered_map<int, int> lookup;
+const n = 8;
+const lookup = new Map<number, number>();
 
-    cout << fib(8, lookup);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to find the n'th Fibonacci number
-    public static int fib(int n, Map<Integer, Integer> lookup)
-    {
-        if (n <= 1) {
-            return n;
-        }
-
-        // if the subproblem is seen for the first time
-        if (!lookup.containsKey(n))
-        {
-            int val = fib(n - 1, lookup) + fib(n - 2, lookup);
-            lookup.put(n, val);
-        }
-
-        return lookup.get(n);
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 8;
-        Map<Integer, Integer> lookup = new HashMap<>();
-
-        System.out.println(fib(n, lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the n'th Fibonacci number
-def fib(n, lookup):
-
-    if n <= 1:
-        return n
-
-    # if the subproblem is seen for the first time
-    if n not in lookup:
-        val = fib(n - 1, lookup) + fib(n - 2, lookup)
-        lookup[n] = val
-
-    return lookup[n]
-
-if __name__ == '__main__':
-
-    n = 8
-    lookup = {}
-
-    print(fib(n, lookup))
+console.log(fib(n, lookup));
 ```
 
 Note that we can also use an array instead of a map. Check implementation [here](https://techiedelight.com/compiler/?run=cNebNT).
@@ -146,24 +79,21 @@ As already discussed, this technique of saving values that have already been cal
 
 In the bottom-up approach, we calculate the smaller values of `fib` first, then build larger values from them. This method also uses O(n) time since it contains a loop that repeats `n-1` times, but it only takes constant O(1) space, in contrast to the top-down approach, which requires O(n) space to store the map.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to find n'th Fibonacci number
-int fib(int n)
-{
+function fib(n: number): number {
+
     if (n <= 1) {
         return n;
     }
 
-    int previousFib = 0, currentFib = 1;
-    for (int i = 0; i < n - 1; i++)
-    {
-        int newFib = previousFib + currentFib;
+    let previousFib = 0;
+    let currentFib = 1;
+
+    for (let i = 0; i < n - 1; i++) {
+        const newFib = previousFib + currentFib;
         previousFib = currentFib;
         currentFib = newFib;
     }
@@ -171,67 +101,10 @@ int fib(int n)
     return currentFib;
 }
 
-int main()
-{
-    cout << fib(8);
-    return 0;
-}
+console.log(fib(8));
 ```
 
 **Output:** 21
-
-##
-
-```java
-class Main
-{
-    // Function to find n'th Fibonacci number
-    public static int fib(int n)
-    {
-        if (n <= 1) {
-            return n;
-        }
-
-        int previousFib = 0, currentFib = 1;
-        for (int i = 0; i < n - 1; i++)
-        {
-            int newFib = previousFib + currentFib;
-            previousFib = currentFib;
-            currentFib = newFib;
-        }
-
-        return currentFib;
-    }
-
-    public static void main(String[] args) {
-        System.out.print(fib(8));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find n'th Fibonacci number
-def fib(n):
-
-    if n <= 1:
-        return n
-
-    previousFib = 0
-    currentFib = 1
-
-    for i in range(n - 1):
-        newFib = previousFib + currentFib
-        previousFib = currentFib
-        currentFib = newFib
-
-    return currentFib
-
-if __name__ == '__main__':
-
-    print(fib(8))
-```
 
 In both examples, we only calculate `fib(2)` once and then use it to calculate both `fib(4)` and `fib(3)`, instead of computing it every time either of them is evaluated.
 

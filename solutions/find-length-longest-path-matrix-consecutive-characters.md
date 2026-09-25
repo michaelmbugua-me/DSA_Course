@@ -22,303 +22,95 @@ We can find all the possible locations we can move to from the given location by
 
 row[] = { -1, -1, -1, 0, 0, 1, 1, 1 } col[] = { -1, 0, 1, -1, 1, -1, 0, 1 } So, from position `(x, y)`, we can move to: (x – 1, y – 1) (x – 1, y) (x – 1, y + 1) (x, y – 1) (x, y + 1) (x + 1, y – 1) (x + 1, y) (x + 1, y + 1)
 
-The algorithm can be implemented as follows in C++, Java, and Python. Note that we don’t need to keep track of cells involved in the current path in a matrix since the path is formed by consecutive characters that are strictly increasing, and there won’t be any cycles in the output path.
+The algorithm can be implemented as follows in TypeScript. Note that we don’t need to keep track of cells involved in the current path in a matrix since the path is formed by consecutive characters that are strictly increasing, and there won’t be any cycles in the output path.
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Below arrays detail all eight possible movements
-int row[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-int col[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+```ts
+// Below lists detail all eight possible movements
+const row = [-1, -1, -1, 0, 0, 1, 1, 1];
+const col = [-1, 0, 1, -1, 1, -1, 0, 1];
 
 // check whether cell (x, y) is valid or not
-bool isValid(int x, int y, int M, int N) {
-    return (x >= 0 && x < M && y >= 0 && y < N);
+function isValid(x: number, y: number, mat: string[][]): boolean {
+    return 0 <= x && x < mat.length && 0 <= y && y < mat[0].length;
 }
 
 // Find the length of the longest path in matrix `mat[][]` with consecutive characters.
 // The path should continue from the previous character.
 // Here, (i, j) denotes the coordinates of the current cell.
-int findMaxLen(vector<vector<char>> const &mat, int x, int y, char previous)
-{
-    // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+function findMaxLength(mat: string[][], x: number, y: number, previous: string): number {
 
     // base case: return length 0 if the current cell (x, y) is invalid or
     // the current character is not consecutive to the previous character
-    if (!isValid(x, y, M, N) || previous + 1 != mat[x][y]) {
+    if (!isValid(x, y, mat) || String.fromCharCode(previous.charCodeAt(0) + 1) !== mat[x][y]) {
         return 0;
     }
 
     // stores length of the longest path
-    int max_length = 0;
+    let max_len = 0;
 
     // recur for all eight adjacent cells from the current cell
-    for (int k = 0; k < 8; k++)
-    {
-        // visit position (x + row[k], y + col[k]) and find the
-        // maximum length from that path
-        int len = findMaxLen(mat, x + row[k], y + col[k], mat[x][y]);
+    for (let k = 0; k < row.length; k++) {
+
+        // visit position (x + row[k], y + col[k]) and find the maximum length
+        // from that path
+        const length = findMaxLength(mat, x + row[k], y + col[k], mat[x][y]);
 
         // update the length of the longest path if required
-        max_length = max(max_length, 1 + len);
+        max_len = Math.max(max_len, 1 + length);
     }
 
-    return max_length;
+    return max_len;
 }
 
-int findMaxLength(vector<vector<char>> const &mat, char ch)
-{
+// Find the length of the longest path in a matrix with consecutive characters
+function findMaximumLength(mat: string[][], ch: string): number {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return 0;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const [M, N] = [mat.length, mat[0].length];
 
     // stores length of the longest path
-    int max_length = 0;
+    let max_len = 0;
 
     // traverse the matrix
-    for (int x = 0; x < M; x++)
-    {
-        for (int y = 0; y < N; y++)
-        {
-            // start from the current cell if its value matches with
-            // the given character
-            if (mat[x][y] == ch)
-            {
+    for (let x = 0; x < M; x++) {
+        for (let y = 0; y < N; y++) {
+            // start from the current cell if its value matches with the given character
+            if (mat[x][y] === ch) {
                 // recur for all eight adjacent cells from the current cell
-                for (int k = 0; k < 8; k++)
-                {
-                    // visit position (x + row[k], y + col[k]) and find the
-                    // maximum length from that path
-                    int len = findMaxLen(mat, x + row[k], y + col[k], ch);
+                for (let k = 0; k < row.length; k++) {
+                    // visit position (x + row[k], y + col[k]) and
+                    // find the maximum length from that path
+                    const length = findMaxLength(mat, x + row[k], y + col[k], ch);
 
                     // update the length of the longest path if required
-                    max_length = max(max_length, 1 + len);
+                    max_len = Math.max(max_len, 1 + length);
                 }
             }
         }
     }
 
-    return max_length;
+    return max_len;
 }
 
-int main()
-{
-    // input matrix
-    vector<vector<char>> mat =
-    {
-        { 'D', 'E', 'H', 'X', 'B' },
-        { 'A', 'O', 'G', 'P', 'E' },
-        { 'D', 'D', 'C', 'F', 'D' },
-        { 'E', 'B', 'E', 'A', 'S' },
-        { 'C', 'D', 'Y', 'E', 'N' }
-    };
+// input matrix
+const mat = [
+    ['D', 'E', 'H', 'X', 'B'],
+    ['A', 'O', 'G', 'P', 'E'],
+    ['D', 'D', 'C', 'F', 'D'],
+    ['E', 'B', 'E', 'A', 'S'],
+    ['C', 'D', 'Y', 'E', 'N']
+];
 
-    // starting character
-    char ch = 'C';
+// starting character
+const ch = 'C';
 
-    cout << "The length of the longest path with consecutive characters "
-         << "starting from character " << ch << " is "
-         << findMaxLength(mat, ch) << endl;
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Below arrays detail all eight possible movements
-    private static int[] row = { -1, -1, -1, 0, 0, 1, 1, 1 };
-    private static int[] col = { -1, 0, 1, -1, 1, -1, 0, 1 };
-
-    // check whether cell (x, y) is valid or not
-    private static boolean isValid(int x, int y, char[][] mat) {
-        return (x >= 0 && x < mat.length) && (y >= 0 && y < mat[0].length);
-    }
-
-    // Find the length of the longest path in matrix `mat[][]` with consecutive
-    // characters. The path should continue from the previous character.
-    // Here, (i, j) denotes the coordinates of the current cell.
-    public static int findMaxLength(char[][] mat, int x, int y, char previous)
-    {
-        // base case: return length 0 if the current cell (x, y) is invalid or
-        // the current character is not consecutive to the previous character
-        if (!isValid(x, y, mat) || previous + 1 != mat[x][y]) {
-            return 0;
-        }
-
-        // stores length of the longest path
-        int max_length = 0;
-
-        // recur for all eight adjacent cells from the current cell
-        for (int k = 0; k < 8; k++)
-        {
-            // visit position (x + row[k], y + col[k]) and find maximum length
-            // from that path
-            int len = findMaxLength(mat, x + row[k], y + col[k], mat[x][y]);
-
-            // update the length of the longest path if required
-            max_length = Math.max(max_length, 1 + len);
-        }
-
-        return max_length;
-    }
-
-    // Find the length of the longest path in a matrix with consecutive characters
-    public static int findMaxLength(char[][] mat, char ch)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // stores length of the longest path
-        int max_length = 0;
-
-        // traverse the matrix
-        for (int x = 0; x < M; x++)
-        {
-            for (int y = 0; y < N; y++)
-            {
-                // start from the current cell if its value matches with the
-                // given character
-                if (mat[x][y] == ch)
-                {
-                    // recur for all eight adjacent cells from the current cell
-                    for (int k = 0; k < row.length; k++)
-                    {
-                        // visit position (x + row[k], y + col[k]) and
-                        // find the maximum length from that path
-                        int len = findMaxLength(mat, x + row[k], y + col[k], ch);
-
-                        // update the length of the longest path if required
-                        max_length = Math.max(max_length, 1 + len);
-                    }
-                }
-            }
-        }
-
-        return max_length;
-    }
-
-    public static void main(String[] args)
-    {
-        // input matrix
-        char[][] mat =
-        {
-            { 'D', 'E', 'H', 'X', 'B' },
-            { 'A', 'O', 'G', 'P', 'E' },
-            { 'D', 'D', 'C', 'F', 'D' },
-            { 'E', 'B', 'E', 'A', 'S' },
-            { 'C', 'D', 'Y', 'E', 'N' }
-        };
-
-        // starting character
-        char ch = 'C';
-
-        System.out.print("The length of the longest path with consecutive characters "
-                                + "starting from character " + ch + " is "
-                                + findMaxLength(mat, ch));
-    }
-}
-```
-
-##
-
-```python3
-# Below lists detail all eight possible movements
-row = [-1, -1, -1, 0, 0, 1, 1, 1]
-col = [-1, 0, 1, -1, 1, -1, 0, 1]
-
-# check whether cell (x, y) is valid or not
-def isValid(x, y, mat):
-    return 0 <= x < len(mat) and 0 <= y < len(mat[0])
-
-# Find the length of the longest path in matrix `mat[][]` with consecutive characters.
-# The path should continue from the previous character.
-# Here, (i, j) denotes the coordinates of the current cell.
-def findMaxLength(mat, x, y, previous):
-
-    # base case: return length 0 if the current cell (x, y) is invalid or
-    # the current character is not consecutive to the previous character
-    if not isValid(x, y, mat) or chr(ord(previous) + 1) != mat[x][y]:
-        return 0
-
-    # stores length of the longest path
-    max_len = 0
-
-    # recur for all eight adjacent cells from the current cell
-    for k in range(len(row)):
-
-        # visit position (x + row[k], y + col[k]) and find the maximum length
-        # from that path
-        length = findMaxLength(mat, x + row[k], y + col[k], mat[x][y])
-
-        # update the length of the longest path if required
-        max_len = max(max_len, 1 + length)
-
-    return max_len
-
-# Find the length of the longest path in a matrix with consecutive characters
-def findMaximumLength(mat, ch):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # stores length of the longest path
-    max_len = 0
-
-    # traverse the matrix
-    for x in range(M):
-        for y in range(N):
-            # start from the current cell if its value matches with the given character
-            if mat[x][y] == ch:
-                # recur for all eight adjacent cells from the current cell
-                for k in range(len(row)):
-                    # visit position (x + row[k], y + col[k]) and
-                    # find the maximum length from that path
-                    length = findMaxLength(mat, x + row[k], y + col[k], ch)
-
-                    # update the length of the longest path if required
-                    max_len = max(max_len, 1 + length)
-
-    return max_len
-
-if __name__ == '__main__':
-
-    # input matrix
-    mat = [
-        ['D', 'E', 'H', 'X', 'B'],
-        ['A', 'O', 'G', 'P', 'E'],
-        ['D', 'D', 'C', 'F', 'D'],
-        ['E', 'B', 'E', 'A', 'S'],
-        ['C', 'D', 'Y', 'E', 'N']
-    ]
-
-    # starting character
-    ch = 'C'
-
-    print("The length of the longest path with consecutive characters starting from "
-        "character", ch, "is", findMaximumLength(mat, ch))
+console.log('The length of the longest path with consecutive characters starting from ' +
+    'character', ch, 'is', findMaximumLength(mat, ch));
 ```
 
 **Output:** The length of the longest path with consecutive characters starting from character C is 6

@@ -14,339 +14,111 @@ For example,
 
 The idea is to perform an [inorder traversal](https://techiedelight.com/inorder-tree-traversal-iterative-recursive/) on the tree, and for every node encountered, insert it at the beginning of a doubly linked list. Since we are inserting nodes at the beginning of the doubly linked list, reverse the linked list to follow the same order of nodes as in the inorder traversal.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is the implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
+// Function to print a given doubly linked list
+function printDLL(head: TreeNode | null): void {
 
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
-
-// Helper function to print a given doubly linked list
-void printDLL(Node* &head)
-{
-    Node* curr = head;
-    while (curr != nullptr)
-    {
-        cout << curr->data << " ";
-        curr = curr->right;
+    let curr = head;
+    while (curr) {
+        process.stdout.write(`${curr.data} `);
+        curr = curr.right;
     }
 }
 
 // Function to in-place convert a given binary tree into a doubly linked list
 // by doing normal inorder traversal
-void convert(Node* root, Node* &head)
-{
+function convert(root: TreeNode | null, head: TreeNode | null): TreeNode | null {
+
     // base case: tree is empty
-    if (root == nullptr) {
-        return;
+    if (root === null) {
+        return head;
     }
 
     // recursively convert the left subtree first
-    convert(root->left, head);
-    root->left = nullptr;
+    head = convert(root.left, head);
+    root.left = null;
 
     // store right child
-    Node* right = root->right;
+    const right = root.right;
 
     // insert the current node at the beginning of a doubly linked list
-    root->right = head;
-    if (head != nullptr) {
-        head->left = root;
+    root.right = head;
+    if (head) {
+        head.left = root;
     }
 
     head = root;
 
     // recursively convert the right subtree
-    convert(right, head);
+    return convert(right, head);
 }
 
 // Function to reverse a doubly-linked list
-void reverse(Node*& head)
-{
-    Node* prev = nullptr;
-    Node* current = head;
+function reverse(head: TreeNode | null): TreeNode | null {
 
-    while (current)
-    {
-        swap(current->left, current->right);
+    let prev: TreeNode | null = null;
+    let current = head;
+
+    while (current) {
+        // swap current.left with current.right
+        const temp = current.left;
+        current.left = current.right;
+        current.right = temp;
+
         prev = current;
-        current = current->left;
+        current = current.left;
     }
 
-    if (prev != nullptr) {
-        head = prev;
-    }
+    return prev;
 }
 
 // The main function to in-place convert a given binary tree into a
 // doubly linked list
-void convert(Node* root)
-{
+function convertBinaryTreeToDDL(root: TreeNode | null): void {
+
     // head of the doubly linked list
-    Node* head = nullptr;
+    let head: TreeNode | null = null;
 
     // convert the above binary tree into doubly linked list
-    convert(root, head);
+    head = convert(root, head);
 
     // reverse the linked list
-    reverse(head);
+    head = reverse(head);
 
     // print the list
     printDLL(head);
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    */
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     / \     / \
+    4   5   6   7
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
 
-    convert(root);
-
-    return 0;
-}
+convertBinaryTreeToDDL(root);
 ```
 
 **Output:** 4 2 5 1 6 3 7
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given doubly linked list
-    public static void printDLL(Node head)
-    {
-        Node curr = head;
-        while (curr != null)
-        {
-            System.out.print(curr.data + " ");
-            curr = curr.right;
-        }
-    }
-
-    // Function to in-place convert a given binary tree into a doubly linked list
-    // by doing normal inorder traversal
-    public static Node convert(Node root, Node head)
-    {
-        // base case: tree is empty
-        if (root == null) {
-            return head;
-        }
-
-        // recursively convert the left subtree first
-        head = convert(root.left, head);
-        root.left = null;
-
-        // store right child
-        Node right = root.right;
-
-        // insert the current node at the beginning of a doubly linked list
-        root.right = head;
-        if (head != null) {
-            head.left = root;
-        }
-
-        head = root;
-
-        // recursively convert the right subtree
-        return convert(right, head);
-    }
-
-    // Function to reverse a doubly-linked list
-    public static Node reverse(Node head)
-    {
-        Node prev = null;
-        Node current = head;
-
-        while (current != null)
-        {
-            // swap current.left with current.right
-            Node temp = current.left;
-            current.left = current.right;
-            current.right = temp;
-
-            prev = current;
-            current = current.left;
-        }
-
-        return prev;
-    }
-
-    // The main function to in-place convert a given binary tree into a
-    // doubly linked list
-    public static void convert(Node root)
-    {
-        // head of the doubly linked list
-        Node head = null;
-
-        // convert the above binary tree into doubly linked list
-        head = convert(root, head);
-
-        // reverse the linked list
-        head = reverse(head);
-
-        // print the list
-        printDLL(head);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             / \     / \
-            4   5   6   7
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-
-        convert(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to print a given doubly linked list
-def printDLL(head):
-
-    curr = head
-    while curr:
-        print(curr.data, end=' ')
-        curr = curr.right
-
-# Function to in-place convert a given binary tree into a doubly linked list
-# by doing normal inorder traversal
-def convert(root, head):
-
-    # base case: tree is empty
-    if root is None:
-        return head
-
-    # recursively convert the left subtree first
-    head = convert(root.left, head)
-    root.left = None;
-
-    # store right child
-    right = root.right
-
-    # insert the current node at the beginning of a doubly linked list
-    root.right = head
-    if head:
-        head.left = root
-
-    head = root
-
-    # recursively convert the right subtree
-    return convert(right, head)
-
-# Function to reverse a doubly-linked list
-def reverse(head):
-
-    prev = None
-    current = head
-
-    while current:
-        # swap current.left with current.right
-        temp = current.left
-        current.left = current.right
-        current.right = temp
-
-        prev = current
-        current = current.left
-
-    return prev
-
-# The main function to in-place convert a given binary tree into a
-# doubly linked list
-def convertBinaryTreeToDDL(root):
-
-    # head of the doubly linked list
-    head = None
-
-    # convert the above binary tree into doubly linked list
-    head = convert(root, head)
-
-    # reverse the linked list
-    head = reverse(head)
-
-    # print the list
-    printDLL(head)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-
-    convertBinaryTreeToDDL(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 
@@ -354,262 +126,85 @@ The time complexity of the above solution is O(n), where `n` is the total number
 
 The above approach requires two passes – one pass for converting a binary tree into a doubly linked list and one pass to reverse the DDL. We can solve this problem in a single traversal of the tree using reverse inorder traversal instead of normal inorder traversal. In reverse inorder traversal, we process the right subtree before the left subtree. Now, the nodes will follow the order of inorder traversal.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Helper function to print a given doubly linked list
-void printDLL(Node* &head)
-{
-    Node* curr = head;
-    while (curr != nullptr)
-    {
-        cout << curr->data << " ";
-        curr = curr->right;
+function printDLL(head: TreeNode | null): void {
+
+    let curr = head;
+    while (curr) {
+        process.stdout.write(`${curr.data} `);
+        curr = curr.right;
     }
 }
 
 // Function to in-place convert a given binary tree into a doubly linked list
 // by doing reverse inorder traversal
-void convert(Node* root, Node* &head)
-{
+function convert(root: TreeNode | null, head: TreeNode | null): TreeNode | null {
+
     // base case: tree is empty
-    if (root == nullptr) {
-        return;
+    if (root === null) {
+        return head;
     }
 
     // recursively convert the right subtree first
-    convert(root->right, head);
+    head = convert(root.right, head);
 
     // insert the current node at the beginning of a doubly linked list
-    root->right = head;
+    root.right = head;
 
-    if (head != nullptr) {
-        head->left = root;
+    if (head) {
+        head.left = root;
     }
 
     head = root;
 
     // recursively convert the left subtree
-    convert(root->left, head);
+    return convert(root.left, head);
 }
 
 // In-place convert a given binary tree into a doubly linked list
-void convert(Node* root)
-{
+function convertBT(root: TreeNode | null): TreeNode | null {
+
     // head of the doubly linked list
-    Node* head = nullptr;
+    const head: TreeNode | null = null;
 
     // convert the above binary tree into doubly linked list
-    convert(root, head);
-
-    // print the list
-    printDLL(head);
+    return convert(root, head);
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-           /    \
-          2      3
-         / \    / \
-        4   5  6   7
-    */
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     / \     / \
+    4   5   6   7
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
+let root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
 
-    convert(root);
+root = convertBT(root);
 
-    return 0;
-}
+// print the list
+printDLL(root);
 ```
 
 **Output:** 4 2 5 1 6 3 7
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given doubly linked list
-    public static void printDLL(Node head)
-    {
-        Node curr = head;
-        while (curr != null)
-        {
-            System.out.print(curr.data + " ");
-            curr = curr.right;
-        }
-    }
-
-    // Function to in-place convert a given binary tree into a doubly linked list
-    // by doing reverse inorder traversal
-    public static Node convert(Node root, Node head)
-    {
-        // base case: tree is empty
-        if (root == null) {
-            return head;
-        }
-
-        // recursively convert the right subtree first
-        head = convert(root.right, head);
-
-        // insert the current node at the beginning of a doubly linked list
-        root.right = head;
-
-        if (head != null) {
-            head.left = root;
-        }
-
-        head = root;
-
-        // recursively convert the left subtree
-        return convert(root.left, head);
-    }
-
-    // In-place convert a given binary tree into a doubly linked list
-    public static Node convert(Node root)
-    {
-        // head of the doubly linked list
-        Node head = null;
-
-        // convert the above binary tree into doubly linked list
-        return convert(root, head);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             / \     / \
-            4   5   6   7
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-
-        root = convert(root);
-
-        // print the list
-        printDLL(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Helper function to print a given doubly linked list
-def printDLL(head):
-
-    curr = head
-    while curr:
-        print(curr.data, end=' ')
-        curr = curr.right
-
-# Function to in-place convert a given binary tree into a doubly linked list
-# by doing reverse inorder traversal
-def convert(root, head):
-
-    # base case: tree is empty
-    if root is None:
-        return head
-
-    # recursively convert the right subtree first
-    head = convert(root.right, head)
-
-    # insert the current node at the beginning of a doubly linked list
-    root.right = head
-
-    if head:
-        head.left = root
-
-    head = root
-
-    # recursively convert the left subtree
-    return convert(root.left, head)
-
-# In-place convert a given binary tree into a doubly linked list
-def convertBT(root):
-
-    # head of the doubly linked list
-    head = None
-
-    # convert the above binary tree into doubly linked list
-    return convert(root, head)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-
-    root = convertBT(root)
-
-    # print the list
-    printDLL(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 
@@ -617,114 +212,100 @@ The time complexity of the above solution is O(n), where `n` is the total number
 
 We can solve this problem in a single traversal by doing inorder traversal only. The idea is to keep track of the previously processed node in the inorder traversal, and for every encountered node, set its left child to prev and prev’s right child to the current node.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Helper function to print a given doubly linked list
-void printDLL(Node* &head)
-{
-    Node* curr = head;
-    while (curr != nullptr)
-    {
-        cout << curr->data << " ";
-        curr = curr->right;
+function printDLL(head: TreeNode | null): void {
+
+    let curr = head;
+    while (curr) {
+        process.stdout.write(`${curr.data} `);
+        curr = curr.right;
     }
 }
 
 // Function to in-place convert a given binary tree into a doubly linked list
 
-// root —> current node
-// head —> head of the doubly linked list (Passed by reference)
-// prev —> previously processed node (Passed by reference)
-void convert(Node* curr, Node*& head, Node* &prev)
-{
+// curr —> current node
+// head —> head of the doubly linked list
+// prev —> previously processed node
+function convert(curr: TreeNode | null, head: { node: TreeNode | null },
+                 prev: { node: TreeNode | null }): void {
+
     // base case: tree is empty
-    if (curr == nullptr) {
+    if (curr === null) {
         return;
     }
 
     // recursively convert the left subtree first
-    convert(curr->left, head, prev);
+    convert(curr.left, head, prev);
 
     // adjust pointers
-    if (prev != nullptr)
-    {
+    if (prev.node !== null) {
         // set the current node's left child to `prev`
-        curr->left = prev;
+        curr.left = prev.node;
 
         // make the previous node's right child as `curr`
-        prev->right = curr;
-    }
-
-    // if `prev` is null, then update the head of doubly linked list
-    // as this is the first node in inorder
-    else {
-        head = curr;
+        prev.node.right = curr;
+    } else {
+        // if `prev` is null, then update the head of doubly linked list
+        // as this is the first node in inorder
+        head.node = curr;
     }
 
     // after the current node is visited, update the previous pointer
     // to the current node
-    prev = curr;
+    prev.node = curr;
 
     // recursively convert the right subtree
-    convert(curr->right, head, prev);
+    convert(curr.right, head, prev);
 }
 
 // In-place convert a given binary tree into a doubly linked list
-void convert(Node* root)
-{
+function convertTree(root: TreeNode | null): TreeNode | null {
     // `prev` keeps track of the previously processed node in the
     // inorder traversal
-    Node* prev = nullptr;
+    const prev = { node: null as TreeNode | null };
+
+    // head of the doubly linked list
+    const head = { node: null as TreeNode | null };
 
     // convert the above binary tree into doubly linked list
     // (using inorder traversal)
-    convert(root, root, prev);
+    convert(root, head, prev);
 
-    // root is now head of the doubly linked list
-
-    // print the list
-    printDLL(root);
+    // head is now head of the doubly linked list
+    return head.node;
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    */
+/* Construct the following tree
+          1
+        /     \
+       2       3
+      / \     / \
+     4   5   6   7
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
+let root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
 
-    convert(root);
+root = convertTree(root);
 
-    return 0;
-}
+// print the list
+printDLL(root);
 ```
 
 **Output:** 4 2 5 1 6 3 7

@@ -1,16 +1,16 @@
 # Trie (10 problems)
 
 
-1.   Trie Implementation — [C](solutions/trie-implementation-insert-search-delete.md), [C++](solutions/cpp-implementation-trie-data-structure.md), [Java](solutions/implement-trie-data-structure-java.md), [Python](solutions/trie-implementation-python.md)
-2.   [Memory Efficient Implementation of Trie | Insert, Search and Delete](solutions/memory-efficient-trie-implementation-using-map-insert-search-delete.md)
-3.   [Longest Common Prefix in given set of strings (using Trie)](solutions/longest-common-prefix-given-set-strings-using-trie.md)
-4.   [Lexicographic sorting of given set of keys](solutions/lexicographic-sorting-given-set-of-keys.md)
-5.   [Find maximum occurring word in given set of strings](solutions/find-maximum-occurring-word-given-set-strings.md)
-6.   [Find first k maximum occurring words in given set of strings](solutions/find-first-k-maximum-occurring-words-given-set-strings.md)
-7.   [Find Duplicate rows in a binary matrix](solutions/find-duplicate-rows-binary-matrix.md)
-8.   [Word Break Problem | Using Trie](solutions/word-break-problem-using-trie.md)
-9.   [Generate list of possible words from a character matrix](solutions/generate-list-of-possible-words-from-a-character-matrix.md)
-10.   [Find all words matching a pattern in the given dictionary](solutions/find-all-words-matching-pattern-dictionary.md)
+1.   Trie Implementation — [C](../solutions/trie-implementation-insert-search-delete.md), [C++](../solutions/cpp-implementation-trie-data-structure.md), [Java](../solutions/implement-trie-data-structure-java.md), [Python](../solutions/trie-implementation-python.md)
+2.   [Memory Efficient Implementation of Trie | Insert, Search and Delete](../solutions/memory-efficient-trie-implementation-using-map-insert-search-delete.md)
+3.   [Longest Common Prefix in given set of strings (using Trie)](../solutions/longest-common-prefix-given-set-strings-using-trie.md)
+4.   [Lexicographic sorting of given set of keys](../solutions/lexicographic-sorting-given-set-of-keys.md)
+5.   [Find maximum occurring word in given set of strings](../solutions/find-maximum-occurring-word-given-set-strings.md)
+6.   [Find first k maximum occurring words in given set of strings](../solutions/find-first-k-maximum-occurring-words-given-set-strings.md)
+7.   [Find Duplicate rows in a binary matrix](../solutions/find-duplicate-rows-binary-matrix.md)
+8.   [Word Break Problem | Using Trie](../solutions/word-break-problem-using-trie.md)
+9.   [Generate list of possible words from a character matrix](../solutions/generate-list-of-possible-words-from-a-character-matrix.md)
+10.   [Find all words matching a pattern in the given dictionary](../solutions/find-all-words-matching-pattern-dictionary.md)
 
 [Programming](https://medium.com/tag/programming?source=post_page---footer_tags--35afe8a1e222-----------------------------------------)
 

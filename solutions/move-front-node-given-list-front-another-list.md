@@ -14,204 +14,56 @@ For example,
 
 This is a variant on [push()](https://techiedelight.com/linked-list-implementation-part-1/). Instead of creating a new node and pushing it onto the given list, it takes two lists, removes the front node from the second list, and moves it to the front of the first. This turns out to be a handy utility function to have for several later problems.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
+class ListNode {
+    constructor(public data: number, public next: ListNode | null = null) {}
+}
 
 // Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
-    }
+function printList(msg: string, head: ListNode | null): void {
 
-    printf("NULL\n");
+    process.stdout.write(msg);
+    let ptr = head;
+    while (ptr) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
+    }
+    console.log('null');
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = *head;
-    *head = newNode;
+// construct the first linked list
+let a: ListNode | null = null;
+for (let i = 3; i >= 1; i--) {
+    a = new ListNode(i, a);
 }
 
-// Function takes the node from the front of the source and move it
-// to the front of the destination
-void moveNode(struct Node** destRef, struct Node** sourceRef)
-{
-    // if the source list empty, do nothing
-    if (*sourceRef == NULL) {
-        return;
-    }
-
-    struct Node* newNode = *sourceRef;  // the front source node
-    *sourceRef = (*sourceRef)->next;    // advance the source pointer
-    newNode->next = *destRef;           // link the old dest off the new node
-    *destRef = newNode;                 // move dest to point to the new node
+// construct the second linked list
+let b: ListNode | null = null;
+for (let i = 1; i <= 3; i++) {
+    b = new ListNode(2 * i, b);
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3 };
-    int n = sizeof(keys)/sizeof(keys[0]);
+if (b) {
 
-    // construct the first linked list
-    struct Node* a = NULL;
-    for (int i = n-1; i >= 0; i--) {
-        push(&a, keys[i]);
-    }
+    // take the node from the front of list `b` and move it
+    // to the front of the list `a`
 
-    // construct the second linked list
-    struct Node* b = NULL;
-    for (int i = 0; i < n; i++) {
-        push(&b, 2*keys[i]);
-    }
+    const newNode = b;   // the front source node
+    b = b.next;          // advance the source
 
-    // move the front node of the list `b` to the front of the list `a`
-    moveNode(&a, &b);
-
-    // print both lists
-    printf("First List: ");
-    printList(a);
-
-    printf("Second List: ");
-    printList(b);
-
-    return 0;
+    newNode.next = a;    // link the old dest off the new node
+    a = newNode;         // move dest to point to the new node
 }
+
+// print both lists
+printList('First List: ', a);
+printList('Second List: ', b);
 ```
 
 **Output:** First List: 6 —> 1 —> 2 —> 3 —> NULL Second List: 4 —> 2 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(String msg, Node head)
-    {
-        System.out.print(msg);
-
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-        System.out.println("null");
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3 };
-
-        // construct the first linked list
-        Node a = null;
-        for (int i = keys.length - 1; i >= 0; i--) {
-            a = new Node(keys[i], a);
-        }
-
-        // construct a second linked list
-        Node b = null;
-        for (int i = 0; i < keys.length; i++) {
-            b = new Node(2 * keys[i], b);
-        }
-
-        if (b != null)
-        {
-            // take the node from the front of list `b`, and move it
-            // to the front of the list `a`
-
-            Node newNode = b;   // the front source node
-            b = b.next;         // advance the source
-
-            newNode.next = a;   // link the old dest off the new node
-            a = newNode;        // move dest to point to the new node
-        }
-
-        // print both lists
-        printList("First List: ", a);
-        printList("Second List: ", b);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(msg, head):
-
-    print(msg, end='')
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
-
-if __name__ == '__main__':
-
-    # construct the first linked list
-    a = None
-    for i in reversed(range(3)):
-        a = Node(i + 1, a)
-
-    # construct the second linked list
-    b = None
-    for i in range(3):
-        b = Node(2 * (i + 1), b)
-
-    if b:
-
-        # take the node from the front of list `b` and move it
-        # to the front of the list `a`
-
-        newNode = b         # the front source node
-        b = b.next          # advance the source
-
-        newNode.next = a    # link the old dest off the new node
-        a = newNode         # move dest to point to the new node
-
-    # print both lists
-    printList('First List: ', a)
-    printList('Second List: ', b)
-```
 
 The time complexity of the above solution is O(1).
 

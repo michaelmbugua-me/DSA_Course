@@ -25,19 +25,17 @@ The above relation states that `T[t][i]` would be a maximum of below:
   1. `T[t][i-1]`, which represents not doing any transaction on the `i'th` day.
   2. Maximum profit gained by selling on the `i'th` day. To sell shares on the `i'th` day, we need to purchase them on any previous day. If we buy shares on the `j'th` day and sell it on the `i'th` day, the maximum profit will be `price[i] - price[j] + T[t-1][j]`, where `j` varies from 0 to `i-1` and `T[t-1][j]` is the best with one less transaction till the `j'th` day.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+**Output:** The maximum possible profit is 10
 
+```ts
 // Find maximum profit earned from at most `k` stock transactions.
 // Input to the function is stock prices of `n` days and positive number `k`
-int findMaxProfit(vector<int> const &price, int k)
-{
+function findMaxProfit(price: number[], k: number): number {
+
     // get the number of days `n`
-    int n = price.size();
+    const n = price.length;
 
     // base case
     if (n <= 1) {
@@ -46,156 +44,38 @@ int findMaxProfit(vector<int> const &price, int k)
 
     // profit[i][j] stores the maximum profit gained by doing
     // at most `i` transactions till j'th day
-    int profit[k+1][n];
+    const profit: number[][] = Array.from({ length: k + 1 }, () => Array(n).fill(0));
 
     // fill profit[][] in a bottom-up fashion
-    for (int i = 0; i <= k; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            // profit is 0 when:
+    for (let i = 0; i <= k; i++) {
+        for (let j = 0; j < n; j++) {
+            // profit is 0 when
             // i = 0, i.e., for 0th day
             // j = 0, i.e., no transaction is being performed
 
-            if (i == 0 || j == 0) {
+            if (i === 0 || j === 0) {
                 profit[i][j] = 0;
-            }
-            else {
-                int max_so_far = 0;
-                for (int k = 0; k < j; k++)
-                {
-                    int curr_price = price[j] - price[k] + profit[i-1][k];
+            } else {
+                let max_so_far = 0;
+                for (let x = 0; x < j; x++) {
+                    const curr_price = price[j] - price[x] + profit[i - 1][x];
                     if (max_so_far < curr_price) {
                         max_so_far = curr_price;
                     }
                 }
 
-                profit[i][j] = max(profit[i][j-1], max_so_far);
+                profit[i][j] = Math.max(profit[i][j - 1], max_so_far);
             }
         }
     }
 
-    return profit[k][n-1];
+    return profit[k][n - 1];
 }
 
-int main()
-{
-    vector<int> price = { 1, 5, 2, 3, 7, 6, 4, 5 };
-    int k = 3;
+const price = [1, 5, 2, 3, 7, 6, 4, 5];
+const k = 3;
 
-    cout << "The maximum possible profit is " << findMaxProfit(price, k);
-
-    return 0;
-}
-```
-
-**Output:** The maximum possible profit is 10
-
-##
-
-```java
-class Main
-{
-    // Find maximum profit earned from at most `k` stock transactions.
-    // Input to the function is stock prices of `n` days and positive number `k`
-    public static int findMaxProfit(int[] price, int k)
-    {
-        // get the number of days `n`
-        int n = price.length;
-
-        // base case
-        if (n <= 1) {
-            return 0;
-        }
-
-        // profit[i][j] stores the maximum profit gained by doing
-        // at most `i` transactions till j'th day
-        int[][] profit = new int[k + 1][n];
-
-        // fill profit[][] in a bottom-up fashion
-        for (int i = 0; i <= k; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                // profit is 0 when:
-                // i = 0, i.e., for 0th day
-                // j = 0, i.e., no transaction is being performed
-
-                if (i == 0 || j == 0) {
-                    profit[i][j] = 0;
-                }
-                else {
-                    int max_so_far = 0;
-                    for (int x = 0; x < j; x++)
-                    {
-                        int curr_price = price[j] - price[x] + profit[i-1][x];
-                        if (max_so_far < curr_price) {
-                            max_so_far = curr_price;
-                        }
-                    }
-
-                    profit[i][j] = Math.max(profit[i][j-1], max_so_far);
-                }
-            }
-        }
-
-        return profit[k][n-1];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] price = { 1, 5, 2, 3, 7, 6, 4, 5 };
-        int k = 3;
-
-        System.out.println("The maximum possible profit is " + findMaxProfit(price, k));
-    }
-}
-```
-
-##
-
-```python3
-# Find maximum profit earned from at most `k` stock transactions.
-# Input to the function is stock prices of `n` days and positive number `k`
-def findMaxProfit(price, k):
-
-    # get the number of days `n`
-    n = len(price)
-
-    # base case
-    if n <= 1:
-        return 0
-
-    # profit[i][j] stores the maximum profit gained by doing
-    # at most `i` transactions till j'th day
-    profit = [[0 for x in range(n)] for y in range(k + 1)]
-
-    # fill profit[][] in a bottom-up fashion
-    for i in range(k + 1):
-        for j in range(n):
-            # profit is 0 when
-            # i = 0, i.e., for 0th day
-            # j = 0, i.e., no transaction is being performed
-
-            if i == 0 or j == 0:
-                profit[i][j] = 0
-            else:
-                max_so_far = 0
-                for x in range(j):
-                    curr_price = price[j] - price[x] + profit[i-1][x]
-                    if max_so_far < curr_price:
-                        max_so_far = curr_price
-
-                profit[i][j] = max(profit[i][j-1], max_so_far)
-
-    return profit[k][n-1]
-
-if __name__ == '__main__':
-
-    price = [1, 5, 2, 3, 7, 6, 4, 5]
-    k = 3
-
-    print('The maximum possible profit is', findMaxProfit(price, k))
+console.log(`The maximum possible profit is ${findMaxProfit(price, k)}`);
 ```
 
 The time complexity of the above solution is O(n2k) and requires O(n.k) extra space, where `n` is the total number of given days and `k` is the maximum number of allowed stock transactions. We can easily optimize the code to run in O(n.k) time if we can calculate the maximum profit gained by selling shares on the `i'th` day in constant time.
@@ -214,21 +94,17 @@ Since we have already calculated `max(T[t-1][j] - price[j])` for every `j` withi
 
 T[t][i] = max(T[t][i-1], price[i] + max(prev_diff, T[t-1][i-1] – price[i-1])) where prev_diff is max(T[t-1][j] – price[j]) and j varies from 0 to i-2
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-#include <algorithm>
-using namespace std;
+**Output:** The maximum possible profit is 10
 
+```ts
 // Find maximum profit earned from at most `k` stock transactions.
 // Input to the function is stock prices of `n` days and positive number `k`
-int findMaxProfit(vector<int> const &price, int k)
-{
+function findMaxProfit(price: number[], k: number): number {
+
     // get the number of days `n`
-    int n = price.size();
+    const n = price.length;
 
     // base case
     if (n <= 1) {
@@ -237,26 +113,24 @@ int findMaxProfit(vector<int> const &price, int k)
 
     // profit[i][j] stores the maximum profit gained by doing
     // at most `i` transactions till j'th day
-    int profit[k+1][n+1];
+    const profit: number[][] = Array.from({ length: k + 1 }, () => Array(n + 1).fill(0));
 
     // fill profit[][] in a bottom-up fashion
-    for (int i = 0; i <= k; i++)
-    {
-        // initialize `prev` diff to `-INFINITY`
-        int prev_diff = INT_MIN;
+    for (let i = 0; i <= k; i++) {
 
-        for (int j = 0; j < n; j++)
-        {
-            // profit is 0 when:
+        // initialize `prev` diff to `-INFINITY`
+        let prev_diff = -Infinity;
+
+        for (let j = 0; j < n; j++) {
+
+            // profit is 0 when
             // i = 0, i.e., for 0th day
             // j = 0, i.e., no transaction is being performed
-
-            if (i == 0 || j == 0) {
+            if (i === 0 || j === 0) {
                 profit[i][j] = 0;
-            }
-            else {
-                prev_diff = max(prev_diff, profit[i-1][j-1] - price[j-1]);
-                profit[i][j] = max(profit[i][j-1], price[j] + prev_diff);
+            } else {
+                prev_diff = Math.max(prev_diff, profit[i - 1][j - 1] - price[j - 1]);
+                profit[i][j] = Math.max(profit[i][j - 1], price[j] + prev_diff);
             }
         }
     }
@@ -264,119 +138,10 @@ int findMaxProfit(vector<int> const &price, int k)
     return profit[k][n - 1];
 }
 
-int main()
-{
-    vector<int> price = { 1, 5, 2, 3, 7, 6, 4, 5 };
-    int k = 3;
+const price = [1, 5, 2, 3, 7, 6, 4, 5];
+const k = 3;
 
-    cout << "The maximum possible profit is " << findMaxProfit(price, k);
-
-    return 0;
-}
-```
-
-**Output:** The maximum possible profit is 10
-
-##
-
-```java
-class Main
-{
-    // Find maximum profit earned from at most `k` stock transactions.
-    // Input to the function is stock prices of `n` days and positive number `k`
-    public static int findMaxProfit(int[] price, int k)
-    {
-        // get the number of days `n`
-        int n = price.length;
-
-        // base case
-        if (n <= 1) {
-            return 0;
-        }
-
-        // profit[i][j] stores the maximum profit gained by doing
-        // at most `i` transactions till j'th day
-        int[][] profit = new int[k+1][n+1];
-
-        // fill profit[][] in a bottom-up fashion
-        for (int i = 0; i <= k; i++)
-        {
-            // initialize `prev` diff to
-            int prev_diff = Integer.MIN_VALUE;
-
-            for (int j = 0; j < n; j++)
-            {
-                // profit is 0 when:
-                // i = 0, i.e., for 0th day
-                // j = 0, i.e., no transaction is being performed
-                if (i == 0 || j == 0) {
-                    profit[i][j] = 0;
-                }
-                else {
-                    prev_diff = Math.max(prev_diff, profit[i-1][j-1] - price[j-1]);
-                    profit[i][j] = Math.max(profit[i][j-1], price[j] + prev_diff);
-                }
-            }
-        }
-
-        return profit[k][n - 1];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] price = {1, 5, 2, 3, 7, 6, 4, 5};
-        int k = 3;
-
-        System.out.println("The maximum possible profit is " + findMaxProfit(price, k));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Find maximum profit earned from at most `k` stock transactions.
-# Input to the function is stock prices of `n` days and positive number `k`
-def findMaxProfit(price, k):
-
-    # get the number of days `n`
-    n = len(price)
-
-    # base case
-    if n <= 1:
-        return 0
-
-    # profit[i][j] stores the maximum profit gained by doing
-    # at most `i` transactions till j'th day
-    profit = [[0 for x in range(n + 1)] for y in range(k + 1)]
-
-    # fill profit[][] in a bottom-up fashion
-    for i in range(k + 1):
-
-        # initialize `prev` diff to `-INFINITY`
-        prev_diff = -sys.maxsize
-
-        for j in range(n):
-
-            # profit is 0 when
-            # i = 0, i.e., for 0th day
-            # j = 0, i.e., no transaction is being performed
-            if i == 0 or j == 0:
-                profit[i][j] = 0
-            else:
-                prev_diff = max(prev_diff, profit[i-1][j-1] - price[j-1])
-                profit[i][j] = max(profit[i][j-1], price[j] + prev_diff)
-
-    return profit[k][n - 1]
-
-if __name__ == '__main__':
-
-    price = [1, 5, 2, 3, 7, 6, 4, 5]
-    k = 3
-
-    print('The maximum possible profit is', findMaxProfit(price, k))
+console.log(`The maximum possible profit is ${findMaxProfit(price, k)}`);
 ```
 
 The time complexity of the above solution is O(n.k) and requires O(n.k) extra space, where `n` is the total number of given days and `k` is the maximum number of allowed stock transactions. The space complexity can be further reduced to O(n) since we only need results from the last transaction.

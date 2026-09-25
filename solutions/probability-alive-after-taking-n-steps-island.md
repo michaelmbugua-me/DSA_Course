@@ -16,31 +16,25 @@ We can easily solve this problem with the help of [dynamic programming](https://
 
 Prob(x, y, n) = (Prob(x – 1, y, n – 1) + Prob(x + 1, y, n – 1) + Prob(x, y – 1, n – 1) + Prob(x, y + 1, n – 1)) / 4
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <map>
-#include <string>
-using namespace std;
-
+```ts
 // Find the probability that a person is alive after he walks `n` steps
 // from location (x, y) on an `N × N` island
-double aliveProbability(int N, int x, int y, int n, map<string, double> &dp)
-{
+function aliveProbability(N: number, x: number, y: number, n: number, dp: Map<string, number>): number {
+
     // base case
-    if (n == 0) {
+    if (n === 0) {
         return 1.0;
     }
 
     // calculate unique map key from current coordinates (x, y) of person
     // and number of steps(n) left
-    string key = to_string(x) + "|" + to_string(y) + "|" + to_string(n);
+    const key = `${x}|${y}|${n}`;
 
     // if the subproblem is seen for the first time
-    if (dp.find(key) == dp.end())
-    {
-        double p = 0.0;
+    if (!dp.has(key)) {
+        let p = 0.0;
 
         // move one step up
         if (x > 0) {
@@ -62,150 +56,24 @@ double aliveProbability(int N, int x, int y, int n, map<string, double> &dp)
             p += 0.25 * aliveProbability(N, x, y + 1, n - 1, dp);
         }
 
-        dp[key] = p;
+        dp.set(key, p);
     }
 
-    return dp[key];
+    return dp.get(key)!;
 }
 
-int main()
-{
-    int N = 3;          // `N × N` island
-    int n = 3;          // total number of steps to be taken
-    int x = 0, y = 0;   // starting coordinates
+const N = 3;          // `N × N` island
+const n = 3;          // total number of steps to be taken
+const x = 0, y = 0;   // starting coordinates
 
-    // map to store solution to already computed subproblems
-    map<string, double> dp;
+// map to store solution to already computed subproblems
+const dp = new Map<string, number>();
 
-    // calculate alive probability
-    cout << "The alive probability is " << aliveProbability(N, x, y, n, dp);
-
-    return 0;
-}
+// calculate alive probability
+console.log(`The alive probability is ${aliveProbability(N, x, y, n, dp)}`);
 ```
 
 **Output:** The alive probability is 0.25
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Find the probability that a person is alive after he walks `n` steps
-    // from location (x, y) on an `N × N` island
-    public static double aliveProbability(int N, int x, int y, int n, Map<String, Double> dp)
-    {
-        // base case
-        if (n == 0) {
-            return 1.0;
-        }
-
-        // calculate unique map key from current coordinates(x, y)
-        // of person and number of steps(n) left
-        String key = x + "|" + y + "|" + n;
-
-        // if the subproblem is seen for the first time
-        if (!dp.containsKey(key))
-        {
-            double p = 0.0;
-
-            // move one step up
-            if (x > 0) {
-                p += 0.25 * aliveProbability(N, x - 1, y, n - 1, dp);
-            }
-
-            // move one step down
-            if (x < N - 1) {
-                p += 0.25 * aliveProbability(N, x + 1, y, n - 1, dp);
-            }
-
-            // move one step left
-            if (y > 0) {
-                p += 0.25 * aliveProbability(N, x, y - 1, n - 1, dp);
-            }
-
-            // move one step right
-            if (y < N - 1) {
-                p += 0.25 * aliveProbability(N, x, y + 1, n - 1, dp);
-            }
-
-            dp.put(key, p);
-        }
-
-        return dp.get(key);
-    }
-
-    public static void main(String[] args)
-    {
-        int N = 3;          // `N × N` island
-        int n = 3;          // total number of steps to be taken
-        int x = 0, y = 0;   // starting coordinates
-
-        // map to store solution to already computed subproblems
-        Map<String, Double> dp = new HashMap<>();
-
-        // calculate the alive probability
-        System.out.println("The alive probability is "
-                + aliveProbability(N, x, y, n, dp));
-    }
-}
-```
-
-##
-
-```python3
-# Find the probability that a person is alive after he walks `n` steps
-# from location (x, y) on an `N × N` island
-def aliveProbability(N, x, y, n, dp):
-
-    # base case
-    if n == 0:
-        return 1.0
-
-    # calculate unique key from current coordinates (x, y) of person
-    # and number of steps(n) left
-    key = (x, y, n)
-
-    # if the subproblem is seen for the first time
-    if key not in dp:
-
-        p = 0.0
-
-        # move one step up
-        if x > 0:
-            p += 0.25 * aliveProbability(N, x - 1, y, n - 1, dp)
-
-        # move one step down
-        if x < N - 1:
-            p += 0.25 * aliveProbability(N, x + 1, y, n - 1, dp)
-
-        # move one step left
-        if y > 0:
-            p += 0.25 * aliveProbability(N, x, y - 1, n - 1, dp)
-
-        # move one step right
-        if y < N - 1:
-            p += 0.25 * aliveProbability(N, x, y + 1, n - 1, dp)
-
-        dp[key] = p
-
-    return dp[key]
-
-if __name__ == '__main__':
-
-    N = 3           # `N × N` island
-    n = 3           # total number of steps to be taken
-    x = y = 0       # starting coordinates
-
-    # dictionary to store solution to already computed subproblems
-    dp = {}
-
-    # calculate alive probability
-    print("The alive probability is", aliveProbability(N, x, y, n, dp))
-```
 
 The time complexity of the proposed solution is O(N2) for an `N × N` matrix. The auxiliary space required by the program is O(N2).
 

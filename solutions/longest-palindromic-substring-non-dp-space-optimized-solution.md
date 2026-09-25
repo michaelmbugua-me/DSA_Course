@@ -16,74 +16,63 @@ The [dynamic programming](https://techiedelight.com/introduction-dynamic-program
 
 The idea is simple and effective – for each character in the given string, consider it the midpoint of a palindrome and expand in both directions to find the maximum length palindrome. For an even length palindrome, consider every adjacent pair of characters as the midpoint.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Expand in both directions of `low` and `high` to find maximum length palindrome
-string expand(string str, int low, int high)
-{
-    // run till `str[low.high]` is a palindrome
-    while (low >= 0 && high < str.length() && (str[low] == str[high])) {
-        low--, high++;        // Expand in both directions
+function expand(s: string, low: number, high: number): string {
+    // expand in both directions
+    while (low >= 0 && high < s.length && s[low] === s[high]) {
+        low--;
+        high++;
     }
 
     // return palindromic substring
-    return str.substr(low + 1, high - low - 1);
+    return s.slice(low + 1, high);
 }
 
 // Function to find the longest palindromic substring in `O(n²)` time and `O(1)` space
-string findLongestPalindromicSubstring(string str)
-{
+function findLongestPalindromicSubstring(s: string): string {
+
     // base case
-    if (str.length() == 0) {
-        return str;
+    if (!s) {
+        return '';
     }
 
-    // `max_str` stores the maximum length palindromic substring
-    // found so far
-
-    string max_str = "", curr_str;
+    // `max_str` stores the maximum length palindromic substring found so far
+    let max_str = '';
 
     // `max_length` stores the maximum length of palindromic
     // substring found so far
-
-    int max_length = 0, curr_length;
+    let max_length = 0;
 
     // consider every character of the given string as a midpoint and expand
     // in both directions to find maximum length palindrome
 
-    for (int i = 0; i < str.length(); i++)
+    for (let i = 0; i < s.length; i++)
     {
-        // find the longest odd length palindrome with `str[i]` as a midpoint
+        // find the longest odd length palindrome with `s[i]` as a midpoint
+        let curr_str = expand(s, i, i);
+        let curr_length = curr_str.length;
 
-        curr_str = expand(str, i, i);
-        curr_length = curr_str.length();
-
-        // update maximum length palindromic substring if odd length
+        // update maximum length palindromic substring if the odd length
         // palindrome has a greater length
 
-        if (curr_length > max_length)
-        {
+        if (curr_length > max_length) {
             max_length = curr_length;
             max_str = curr_str;
         }
 
-        // Find the longest even length palindrome with `str[i]` and `str[i+1]`
-        // as midpoints. Note that an even length palindrome has two
-        // midpoints.
+        // Find the longest even length palindrome with `s[i]` and `s[i+1]` as
+        // midpoints. Note that an even length palindrome has two midpoints.
 
-        curr_str = expand(str, i, i + 1);
-        curr_length = curr_str.length();
+        curr_str = expand(s, i, i + 1);
+        curr_length = curr_str.length;
 
         // update maximum length palindromic substring if even length
         // palindrome has a greater length
 
-        if (curr_length > max_length)
-        {
+        if (curr_length > max_length) {
             max_length = curr_length;
             max_str = curr_str;
         }
@@ -92,173 +81,12 @@ string findLongestPalindromicSubstring(string str)
     return max_str;
 }
 
-int main()
-{
-    string str = "ABDCBCDBDCBBC";
+const s = 'ABDCBCDBDCBBC';
 
-    cout << "The longest palindromic substring of " << str << " is "
-         << findLongestPalindromicSubstring(str);
-
-    return 0;
-}
+console.log(`The longest palindromic substring of ${s} is ${findLongestPalindromicSubstring(s)}`);
 ```
 
 **Output:** The longest palindromic substring of ABDCBCDBDCBBC is BDCBCDB
-
-##
-
-```java
-class Main
-{
-    // Expand in both directions of `low` and `high` to find maximum length palindrome
-    public static String expand(String str, int low, int high)
-    {
-        // expand in both directions
-        while (low >= 0 && high < str.length() &&
-                (str.charAt(low) == str.charAt(high))) {
-            low--;
-            high++;
-        }
-
-        // return palindromic substring
-        return str.substring(low + 1, high);
-    }
-
-    // Function to find the longest palindromic substring in `O(n²)` time
-    // and `O(1)` space
-    public static String findLongestPalindromicSubstring(String str)
-    {
-        // base case
-        if (str == null || str.length() == 0) {
-            return str;
-        }
-
-        // `max_str` stores the maximum length palindromic substring
-        // found so far
-
-        String max_str = "", curr_str;
-
-        // `max_length` stores the maximum length of palindromic
-        // substring found so far
-
-        int max_length = 0, curr_length;
-
-        // consider every character of the given string as a midpoint and expand
-        // in both directions to find maximum length palindrome
-
-        for (int i = 0; i < str.length(); i++)
-        {
-            // find the longest odd length palindrome with `str[i]` as a midpoint
-
-            curr_str = expand(str, i, i);
-            curr_length = curr_str.length();
-
-            // update maximum length palindromic substring if odd length
-            // palindrome has a greater length
-
-            if (curr_length > max_length)
-            {
-                max_length = curr_length;
-                max_str = curr_str;
-            }
-
-            // Find the longest even length palindrome with str[i] and
-            // str[i+1] as midpoints. Note that an even length palindrome
-            // has two midpoints.
-
-            curr_str = expand(str, i, i + 1);
-            curr_length = curr_str.length();
-
-            // update maximum length palindromic substring if even length
-            // palindrome has a greater length
-
-            if (curr_length > max_length)
-            {
-                max_length = curr_length;
-                max_str = curr_str;
-            }
-        }
-
-        return max_str;
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "ABDCBCDBDCBBC";
-
-        System.out.println("The longest palindromic substring of " + str + " is "
-                + findLongestPalindromicSubstring(str));
-    }
-}
-```
-
-##
-
-```python3
-# Expand in both directions of `low` and `high` to find maximum length palindrome
-def expand(s, low, high):
-    length = len(s)
-
-    # expand in both directions
-    while low >= 0 and high < length and s[low] == s[high]:
-        low = low - 1
-        high = high + 1
-
-    # return palindromic substring
-    return s[low + 1:high]
-
-# Function to find the longest palindromic substring in `O(n²)` time and `O(1)` space
-def findLongestPalindromicSubstring(s):
-
-    # base case
-    if not s:
-        return ''
-
-    # `max_str` stores the maximum length palindromic substring found so far
-    max_str = ''
-
-    # `max_length` stores the maximum length of palindromic
-    # substring found so far
-    max_length = 0
-
-    # consider every character of the given string as a midpoint and expand
-    # in both directions to find maximum length palindrome
-
-    for i in range(len(s)):
-
-        # find the longest odd length palindrome with `s[i]` as a midpoint
-        curr_str = expand(s, i, i)
-        curr_length = len(curr_str)
-
-        # update maximum length palindromic substring if the odd length
-        # palindrome has a greater length
-
-        if curr_length > max_length:
-            max_length = curr_length
-            max_str = curr_str
-
-        # Find the longest even length palindrome with `s[i]` and `s[i+1]` as
-        # midpoints. Note that an even length palindrome has two midpoints.
-
-        curr_str = expand(s, i, i + 1)
-        curr_length = len(curr_str)
-
-        # update maximum length palindromic substring if even length
-        # palindrome has a greater length
-
-        if curr_length > max_length:
-            max_length = curr_length
-            max_str = curr_str
-
-    return max_str
-
-if __name__ == '__main__':
-
-    s = 'ABDCBCDBDCBBC'
-
-    print(f'The longest palindromic substring of {s} is',
-            findLongestPalindromicSubstring(s))
-```
 
 The time complexity of the above solution is O(n2) and requires O(n) extra space, where `n` is the length of the input string. Note that O(n) solution is also possible for this problem by using [Manacher’s algorithm](https://en.wikipedia.org/wiki/Longest_palindromic_substring#Manacher.27s_algorithm).
 

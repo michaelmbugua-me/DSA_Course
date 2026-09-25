@@ -16,248 +16,73 @@ For height-balanced BSTs, with each comparison, skip about half of the tree so t
 
 We can easily modify the solution to get height-balanced BSTs if all keys are known in advance. The idea is to [sort the given keys](https://techiedelight.com/sort-array-ascending-order-cpp/) first. Then the root will be the middle element of the sorted array, and we recursively construct the left subtree of the root by keys less than the middle element and the right subtree of the root by keys more than the middle element. For example,
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-// Data structure to store a BST node
-struct Node
-{
-    int data;
-    Node* left = nullptr, *right = nullptr;
-
-    Node() {}
-    Node(int data): data(data) {}
-};
+```ts
+// A class to store a BST node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Function to perform inorder traversal on the tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+function inorder(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
 
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
+    inorder(root.left, output);
+    output.push(root.data);
+    inorder(root.right, output);
 }
 
-// Recursive function to insert a key into a BST
-Node* insert(Node* root, int key)
-{
-    // if the root is null, create a new node and return it
-    if (root == nullptr) {
-        return new Node(key);
-    }
+// Function to construct balanced BST from the given sorted list
+function construct(keys: number[], low: number, high: number, root: Node | null): Node | null {
 
-    // if the given key is less than the root node, recur for the left subtree
-    if (key < root->data) {
-        root->left = insert(root->left, key);
-    }
-
-    // if the given key is more than the root node, recur for the right subtree
-    else {
-        root->right = insert(root->right, key);
-    }
-
-    return root;
-}
-
-// Function to construct balanced BST from the given sorted array.
-// Note that the root of the tree is passed by reference here
-void convert(vector<int> const &keys, int low, int high, Node* &root)
-{
     // base case
     if (low > high) {
-        return;
+        return root;
     }
 
     // find the middle element of the current range
-    int mid = (low + high) / 2;
+    const mid = (low + high) / 2;
 
     // construct a new node from the middle element and assign it to the root
     root = new Node(keys[mid]);
 
     // left subtree of the root will be formed by keys less than middle element
-    convert(keys, low, mid - 1, root->left);
+    root.left = construct(keys, low, mid - 1, root.left);
 
     // right subtree of the root will be formed by keys more than the middle element
-    convert(keys, mid + 1, high, root->right);
-}
+    root.right = construct(keys, mid + 1, high, root.right);
 
-// Function to construct balanced BST from the given unsorted array
-Node* convert(vector<int> keys)
-{
-    // sort the keys first
-    sort(keys.begin(), keys.end());
-
-    // construct a balanced BST
-    Node* root = nullptr;
-    convert(keys, 0, keys.size() - 1, root);
-
-    // return root node of the tree
     return root;
 }
 
-int main()
-{
-    // input keys
-    vector<int> keys = { 15, 10, 20, 8, 12, 16, 25 };
+// Function to construct balanced BST from the given unsorted list
+function constructBST(keys: number[]): Node | null {
 
-    // construct a balanced binary search tree
-    Node* root = convert(keys);
+    // sort the keys first
+    keys.sort((a, b) => a - b);
 
-    // print the keys in an inorder fashion
-    inorder(root);
-
-    return 0;
+    // construct a balanced BST and return the root node of the tree
+    return construct(keys, 0, keys.length - 1, null);
 }
+
+// input keys
+const keys = [15, 10, 20, 8, 12, 16, 25];
+
+// construct a balanced binary search tree
+const root = constructBST(keys);
+
+// print the keys in an inorder fashion
+const output: number[] = [];
+inorder(root, output);
+console.log(output.join(' '));
 ```
 
 **Output:** 8 10 12 15 16 20 25
-
-##
-
-```java
-import java.util.Arrays;
-
-// A class to store a BST node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform inorder traversal on the tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // Function to construct balanced BST from the given sorted array
-    public static Node convert(int[] keys, int low, int high, Node root)
-    {
-        // base case
-        if (low > high) {
-            return root;
-        }
-
-        // find the middle element of the current range
-        int mid = (low + high) / 2;
-
-        // construct a new node from the middle element and assign it to the root
-        root = new Node(keys[mid]);
-
-        // left subtree of the root will be formed by keys less than middle element
-        root.left = convert(keys, low, mid - 1, root.left);
-
-        // right subtree of the root will be formed by keys more than the
-        // middle element
-        root.right = convert(keys, mid + 1, high, root.right);
-
-        return root;
-    }
-
-    // Function to construct balanced BST from the given unsorted array
-    public static Node convert(int[] keys)
-    {
-        // sort the keys first
-        Arrays.sort(keys);
-
-        // construct a balanced BST and return the root node of the tree
-        return convert(keys, 0, keys.length - 1, null);
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 15, 10, 20, 8, 12, 16, 25 };
-
-        // construct a balanced binary search tree
-        Node root = convert(keys);
-
-        // print the keys in an inorder fashion
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a BST node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform inorder traversal on the tree
-def inorder(root):
-    if root is None:
-        return
-
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# Function to construct balanced BST from the given sorted list
-def construct(keys, low, high, root):
-
-    # base case
-    if low > high:
-        return root
-
-    # find the middle element of the current range
-    mid = (low + high) // 2
-
-    # construct a new node from the middle element and assign it to the root
-    root = Node(keys[mid])
-
-    # left subtree of the root will be formed by keys less than middle element
-    root.left = construct(keys, low, mid - 1, root.left)
-
-    # right subtree of the root will be formed by keys more than the middle element
-    root.right = construct(keys, mid + 1, high, root.right)
-
-    return root
-
-# Function to construct balanced BST from the given unsorted list
-def constructBST(keys):
-
-    # sort the keys first
-    keys.sort()
-
-    # construct a balanced BST and return the root node of the tree
-    return construct(keys, 0, len(keys) - 1, None)
-
-if __name__ == '__main__':
-
-    # input keys
-    keys = [15, 10, 20, 8, 12, 16, 25]
-
-    # construct a balanced binary search tree
-    root = constructBST(keys)
-
-    # print the keys in an inorder fashion
-    inorder(root)
-```
 
 The time complexity of the above solution is O(n.log(n)), where `n` is the size of the BST, and requires space proportional to the tree’s height for the call stack.
 

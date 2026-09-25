@@ -12,171 +12,55 @@ The shortest route to construct string `TECHIE` with the device’s help is `BBB
 
 The idea is to consider all characters of the specified string, and for each character, print out the shortest route to the next character from it. For finding the shortest route, compare the coordinates of the current character with the coordinates of the next character in the matrix. Based on the difference between the x–coordinate and y–coordinate of the current and next character, move left, right, top, or bottom.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is the implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Find the shortest route in a device to construct the given string
-void printPath(string str)
-{
-    // start from the top-left corner with coordinates, i.e., (0, 0) cell
-    int x = 0, y = 0;
+function printPath(s: string): void {
 
-    int n = str.length();
-    for (int i = 0; i < n; i++)
-    {
+    // start from the top-left corner with coordinates, i.e., (0, 0) cell
+    let x = 0, y = 0;
+
+    for (const c of s) {
+
         // find coordinates of the next character
-        int X = (str[i] - 'A') / 5;
-        int Y = (str[i] - 'A') % 5;
+        const X = Math.floor((c.charCodeAt(0) - 'A'.charCodeAt(0)) / 5);
+        const Y = (c.charCodeAt(0) - 'A'.charCodeAt(0)) % 5;
 
         // if the next character is above the current character
-        while (x > X)
-        {
-            cout << "T";
-            x--;            // Go up
+        while (x > X) {
+            process.stdout.write('T');
+            x = x - 1;      // Go up
         }
 
         // if the next character is below the current character
-        while (x < X)
-        {
-            cout << "B";
-            x++;            // Go down
+        while (x < X) {
+            process.stdout.write('B');
+            x = x + 1;      // Go down
         }
 
         // if the next character is to the left of the current character
-        while (y > Y)
-        {
-            cout << "L";
-            y--;            // Go left
+        while (y > Y) {
+            process.stdout.write('L');
+            y = y - 1;      // Go left
         }
 
         // if the next character is to the right of the current character
-        while (y < Y)
-        {
-            cout << "R";
-            y++;            // Go right
+        while (y < Y) {
+            process.stdout.write('R');
+            y = y + 1;      // Go right
         }
 
         // next character is found
-        cout << "M";
+        process.stdout.write('M');
     }
 }
 
-int main()
-{
-    string str = "TECHIE";
-
-    printPath(str);
-
-    return 0;
-}
+const s = 'TECHIE';
+printPath(s);
 ```
 
 **Output:** BBBRRRRMTTTMLLMBMRMTRM
-
-##
-
-```java
-class Main
-{
-    // Find the shortest route in a device to construct the given string
-    private static void printPath(String str)
-    {
-        // start from the top-left corner with coordinates, i.e., (0, 0) cell
-        int x = 0, y = 0;
-
-        for (char c: str.toCharArray())
-        {
-            // find coordinates of the next character
-            int X = (c - 'A') / 5;
-            int Y = (c - 'A') % 5;
-
-            // if the next character is above the current character
-            while (x > X)
-            {
-                System.out.print("T");
-                x--;            // Go up
-            }
-
-            // if the next character is below the current character
-            while (x < X)
-            {
-                System.out.print("B");
-                x++;            // Go down
-            }
-
-            // if the next character is to the left of the current character
-            while (y > Y)
-            {
-                System.out.print("L");
-                y--;            // Go left
-            }
-
-            // if the next character is to the right of the current character
-            while (y < Y)
-            {
-                System.out.print("R");
-                y++;            // Go right
-            }
-
-            // next character is found
-            System.out.print("M");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "TECHIE";
-        printPath(str);
-    }
-}
-```
-
-##
-
-```python3
-# Find the shortest route in a device to construct the given string
-def printPath(s):
-
-    # start from the top-left corner with coordinates, i.e., (0, 0) cell
-    x = y = 0
-
-    for c in s:
-
-        # find coordinates of the next character
-        X = (ord(c) - ord('A')) // 5
-        Y = (ord(c) - ord('A')) % 5
-
-        # if the next character is above the current character
-        while x > X:
-            print('T', end='')
-            x = x - 1        # Go up
-
-        # if the next character is below the current character
-        while x < X:
-            print('B', end='')
-            x = x + 1        # Go down
-
-        # if the next character is to the left of the current character
-        while y > Y:
-            print('L', end='')
-            y = y - 1        # Go left
-
-        # if the next character is to the right of the current character
-        while y < Y:
-            print('R', end='')
-            y = y + 1        # Go right
-
-        # next character is found
-        print('M', end='')
-
-if __name__ == '__main__':
-
-    s = 'TECHIE'
-    printPath(s)
-```
 
 The time complexity of the above solution is O(n.c), where `n` is the input string’s length and `c` is a constant less than equal to 10. The auxiliary space required by the program is O(1).
 

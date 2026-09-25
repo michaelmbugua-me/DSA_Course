@@ -12,119 +12,34 @@ For example, the following image shows numbers corresponding to Excel columns:
 
 The main trick in this problem lies in handling the boundary cases, such as the number `26` corresponds to column `Z`, and the number `27` corresponds to column `AA`. Similarly, the number `1014` corresponds to column `ALZ`, and the number `1015` corresponds to column `AMA`.
 
-Following is the C++, Java, and Python program that handles all these cases beautifully:
+Following is a TypeScript program that handles all these cases beautifully:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#include <ctime>
-using namespace std;
-
+```ts
 // Function to convert a given number to an Excel column
-string getColumnName(int n)
-{
-    // initialize output string as empty
-    string result = "";
+function getColumnName(n: number): string {
 
-    while (n > 0)
-    {
+    // initialize output string as empty
+    let result = '';
+
+    while (n > 0) {
+
         // find the index of the next letter and concatenate the letter
         // to the solution
 
         // here index 0 corresponds to 'A', and 25 corresponds to 'Z'
-        int index = (n - 1) % 26;
-        result = char(index + 'A') + result;
-        n = (n - 1) / 26;
+        const index = (n - 1) % 26;
+        result += String.fromCharCode(index + 'A'.charCodeAt(0));
+        n = Math.floor((n - 1) / 26);
     }
 
-    return result;
+    return result.split('').reverse().join('');
 }
 
-int main()
-{
-    // seed for random input
-    srand(time(NULL));
-
-    // generate column names for 10 random numbers between 1–1000
-    for (int i = 1; i <= 10; i++)
-    {
-        int r = rand() % 1000 + 1;
-        cout << r << " — " << getColumnName(r) << endl;
-    }
-
-    return 0;
+// generate column names for 10 random numbers between 1–1000
+for (let i = 1; i <= 10; i++) {
+    const r = Math.floor(Math.random() * 1000) + 1;
+    console.log(`${r} — ${getColumnName(r)}`);
 }
-```
-
-##
-
-```java
-import java.util.Random;
-
-class Main
-{
-    // Function to convert a given number to an Excel column
-    public static String getColumnName(int n)
-    {
-        // initialize output string as empty
-        StringBuilder result = new StringBuilder();
-
-        while (n > 0)
-        {
-            // find the index of the next letter and concatenate the letter
-            // to the solution
-
-            // here index 0 corresponds to 'A', and 25 corresponds to 'Z'
-            int index = (n - 1) % 26;
-            result.append((char)(index + 'A'));
-            n = (n - 1) / 26;
-        }
-
-        return result.reverse().toString();
-    }
-
-    public static void main(String[] args)
-    {
-        // generate column names for 10 random numbers between 1–1000
-        for (int i = 1; i <= 10; i++)
-        {
-            int r = new Random().nextInt(1000) + 1;
-            System.out.println(r + " — " + getColumnName(r));
-        }
-    }
-}
-```
-
-##
-
-```python3
-from random import randint
-
-# Function to convert a given number to an Excel column
-def getColumnName(n):
-
-    # initialize output string as empty
-    result = ''
-
-    while n > 0:
-
-        # find the index of the next letter and concatenate the letter
-        # to the solution
-
-        # here index 0 corresponds to 'A', and 25 corresponds to 'Z'
-        index = (n - 1) % 26
-        result += chr(index + ord('A'))
-        n = (n - 1) // 26
-
-    return result[::-1]
-
-if __name__ == '__main__':
-
-    # generate column names for 10 random numbers between 1–1000
-    for i in range(1, 11):
-        r = randint(1, 1000)
-        print(r, '—', getColumnName(r))
 ```
 
 **Output (will vary):** 585 — VM 873 — AGO 269 — JI 849 — AFQ 288 — KB 962 — AJZ 549 — UC 572 — UZ 485 — RQ 704 — AAB

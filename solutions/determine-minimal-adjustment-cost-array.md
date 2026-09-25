@@ -20,192 +20,54 @@ We can use [dynamic programming](https://techiedelight.com/introduction-dynamic-
 
 Here, `0 <= i < n` and `0 <= j <= M`, where `n` is the total number of elements in the array. We have to consider all `k` such that `max(j - target, 0) <= k <= min(M, j + target)`. Finally, the minimum adjustment cost of the array will be `min{T[n - 1][j]}` for all `0 <= j <= M`.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <limits.h>
-#include <stdlib.h>
-
-#define M 100
-
-int max(int x, int y) { return (x > y)? x : y; }
-int min(int x, int y) { return (x < y)? x : y; }
+```ts
+const M = 100;
 
 // Find the minimum adjustment cost of an array
-int findMinAdjustmentCost(int A[], int n, int target)
-{
-    // base case
-    if (n == 0) {
-        return 0;
-    }
-
-    // T[i][j] stores the minimal adjustment cost on changing A[i] to j
-    int T[n][M + 1];
-
-    // do for each array element
-    for (int i = 0; i < n; i++)
-    {
-        // replace A[i] to `j` and calculate minimal adjustment cost T[i][j]
-        for (int j = 0; j <= M; j++)
-        {
-            // separately handle the first array element
-            if (i == 0) {
-                T[i][j] = abs(j - A[i]);
-            }
-            else {
-                // initialize minimal adjustment cost with `INT_MAX`
-                T[i][j] = INT_MAX;
-
-                // consider all `k` such that k >= max(j - target, 0) and
-                // k <= min(M, j + target) and take minimum
-
-                int k = max(j - target, 0);
-                while (k <= min(M, j + target))
-                {
-                    T[i][j] = min(T[i][j], T[i - 1][k] + abs(A[i] - j));
-                    k++;
-                }
-            }
-        }
-    }
-
-    // return minimum value from the last row of T[][]
-    int result = INT_MAX;
-    for (int j = 0; j <= M; j++) {
-        result = min(result, T[n - 1][j]);
-    }
-
-    return result;
-}
-
-int main(void)
-{
-    int A[] = { 55, 77, 52, 61, 39, 6, 25, 60, 49, 47 };
-    int target = 10;
-
-    int n = sizeof(A) / sizeof(A[0]);
-    printf("The minimal adjustment cost is %d", findMinAdjustmentCost(A, n, target));
-
+function findMinAdjustmentCost(A: number[], target: number): number {
+  // base case
+  if (A.length === 0) {
     return 0;
-}
-```
+  }
 
-**Output:** The minimal adjustment cost is 75
+  // T[i][j] stores the minimal adjustment cost on changing A[i] to j
+  const T: number[][] = Array.from({ length: A.length }, () => new Array(M + 1).fill(0));
 
-##
+  // do for each array element
+  for (let i = 0; i < A.length; i++) {
+    // replace A[i] to `j` and calculate minimal adjustment cost T[i][j]
+    for (let j = 0; j <= M; j++) {
+      // separately handle the first array element
+      if (i === 0) {
+        T[i][j] = Math.abs(j - A[i]);
+      } else {
+        // initialize minimal adjustment cost with infinity
+        T[i][j] = Number.MAX_SAFE_INTEGER;
 
-```java
-class Main
-{
-    private static final int M = 100;
-
-    // Find the minimum adjustment cost of an array
-    public static int findMinAdjustmentCost(int[] A, int target)
-    {
-        // base case
-        if (A == null || A.length == 0) {
-            return 0;
+        // consider all `k` such that k >= max(j - target, 0) and
+        // k <= min(M, j + target) and take minimum
+        for (let k = Math.max(j - target, 0); k <= Math.min(M, j + target); k++) {
+          T[i][j] = Math.min(T[i][j], T[i - 1][k] + Math.abs(A[i] - j));
         }
-
-        // T[i][j] stores the minimal adjustment cost on changing A[i] to j
-        int[][] T = new int[A.length][M + 1];
-
-        // do for each array element
-        for (int i = 0; i < A.length; i++)
-        {
-            // replace A[i] to `j` and calculate minimal adjustment cost T[i][j]
-            for (int j = 0; j <= M; j++)
-            {
-                // separately handle the first array element
-                if (i == 0) {
-                    T[i][j] = Math.abs(j - A[i]);
-                }
-                else {
-                    // initialize minimal adjustment cost with infinity
-                    T[i][j] = Integer.MAX_VALUE;
-
-                    // consider all `k` such that k >= max(j - target, 0) and
-                    // k <= min(M, j + target) and take minimum
-
-                    int k = Integer.max(j - target, 0);
-                    while (k <= Integer.min(M, j + target))
-                    {
-                        T[i][j] = Integer.min(T[i][j], T[i-1][k] + Math.abs(A[i] - j));
-                        k++;
-                    }
-                }
-            }
-        }
-
-        // return minimum value from the last row of T[][]
-        int result = Integer.MAX_VALUE;
-        for (int j = 0; j <= M; j++) {
-            result = Integer.min(result, T[A.length - 1][j]);
-        }
-
-        return result;
+      }
     }
+  }
 
-    public static void main(String[] args)
-    {
-        int[] A = { 55, 77, 52, 61, 39, 6, 25, 60, 49, 47 };
-        int target = 10;
+  // return minimum value from the last row of T[][]
+  let result = Number.MAX_SAFE_INTEGER;
+  for (let j = 0; j <= M; j++) {
+    result = Math.min(result, T[A.length - 1][j]);
+  }
 
-        System.out.println("The minimal adjustment cost is " +
-                    findMinAdjustmentCost(A, target));
-    }
+  return result;
 }
-```
 
-##
+const A = [55, 77, 52, 61, 39, 6, 25, 60, 49, 47];
+const target = 10;
 
-```python3
-import sys
-
-# Find the minimum adjustment cost of a list
-def findMinAdjustmentCost(A, target):
-
-    # base case
-    if not A:
-        return 0
-
-    # T[i][j] stores the minimal adjustment cost on changing A[i] to j
-    T = [[0 for x in range(M + 1)] for y in range(len(A))]
-
-    # do for each element in the list
-    for i in range(len(A)):
-
-        # replace A[i] to `j` and calculate minimal adjustment cost T[i][j]
-        for j in range(M + 1):
-
-            # separately handle the first element in the list
-            if i == 0:
-                T[i][j] = abs(j - A[i])
-            else:
-                # initialize minimal adjustment cost with `sys.maxsize`
-                T[i][j] = sys.maxsize
-
-                # consider all `k` such that k >= max(j - target, 0) and
-                # k <= min(M, j + target) and take minimum
-                for k in range(max(j - target, 0), min(M, j + target) + 1):
-                    T[i][j] = min(T[i][j], T[i - 1][k] + abs(A[i] - j))
-
-    # return minimum value from the last row of `T`
-    result = sys.maxsize
-    for j in range(M + 1):
-        result = min(result, T[-1][j])
-
-    return result
-
-if __name__ == '__main__':
-
-    A = [55, 77, 52, 61, 39, 6, 25, 60, 49, 47]
-    target = 10
-
-    M = 100
-
-    print('The minimal adjustment cost is', findMinAdjustmentCost(A, target))
+console.log(`The minimal adjustment cost is ${findMinAdjustmentCost(A, target)}`);
 ```
 
 **Author:** Aditya Goel

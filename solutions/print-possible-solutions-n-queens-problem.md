@@ -14,73 +14,57 @@ Note that the solution exists for all natural numbers `n`, except for `n = 2` an
 
 We can solve this problem with the help of [backtracking](https://techiedelight.com/backtracking-interview-questions/). The idea is to start from the first row and place Queen in each square of the first row and recursively explore the remaining rows to check if they lead to the solution or not. If the current configuration doesn’t result in a solution, backtrack. Before exploring any square, ignore the square if two queens threaten each other.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <string.h>
-
-// `N × N` chessboard
-#define N 8
-
+```ts
 // Function to check if two queens threaten each other or not
-int isSafe(char mat[][N], int r, int c)
-{
-    // return 0 if two queens share the same column
-    for (int i = 0; i < r; i++)
-    {
-        if (mat[i][c] == 'Q') {
-            return 0;
+function isSafe(mat: string[][], r: number, c: number): boolean {
+
+    // return false if two queens share the same column
+    for (let i = 0; i < r; i++) {
+        if (mat[i][c] === 'Q') {
+            return false;
         }
     }
 
-    // return 0 if two queens share the same `` diagonal
-    for (int i = r, j = c; i >= 0 && j >= 0; i--, j--)
-    {
-        if (mat[i][j] == 'Q') {
-            return 0;
+    // return false if two queens share the same `` diagonal
+    for (let i = r, j = c; i >= 0 && j >= 0; i--, j--) {
+        if (mat[i][j] === 'Q') {
+            return false;
         }
     }
 
-    // return 0 if two queens share the same `/` diagonal
-    for (int i = r, j = c; i >= 0 && j < N; i--, j++)
-    {
-        if (mat[i][j] == 'Q') {
-            return 0;
+    // return false if two queens share the same `/` diagonal
+    for (let i = r, j = c; i >= 0 && j < mat.length; i--, j++) {
+        if (mat[i][j] === 'Q') {
+            return false;
         }
     }
 
-    return 1;
+    return true;
 }
 
-void printSolution(char mat[][N])
-{
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++) {
-            printf("%c ", mat[i][j]);
-        }
-        printf("\n");
+function printSolution(mat: string[][]): void {
+    for (const r of mat) {
+        console.log(r.join(' '));
     }
-    printf("\n");
+    console.log();
 }
 
-void nQueen(char mat[][N], int r)
-{
+function nQueen(mat: string[][], r: number): void {
+
     // if `N` queens are placed successfully, print the solution
-    if (r == N)
-    {
+    if (r === mat.length) {
         printSolution(mat);
         return;
     }
 
     // place queen at every square in the current row `r`
     // and recur for each valid movement
-    for (int i = 0; i < N; i++)
-    {
+    for (let i = 0; i < mat.length; i++) {
+
         // if no two queens threaten each other
-        if (isSafe(mat, r, i))
-        {
+        if (isSafe(mat, r, i)) {
             // place queen on the current square
             mat[r][i] = 'Q';
 
@@ -88,183 +72,19 @@ void nQueen(char mat[][N], int r)
             nQueen(mat, r + 1);
 
             // backtrack and remove the queen from the current square
-            mat[r][i] = '-';
+            mat[r][i] = '–';
         }
     }
 }
 
-int main()
-{
-    // `mat[][]` keeps track of the position of queens in the current configuration
-    char mat[N][N];
+// `N × N` chessboard
+const N = 8;
 
-    // initialize `mat[][]` by `-`
-    memset(mat, '-', sizeof mat);
+// `mat[][]` keeps track of the position of queens in
+// the current configuration
+const mat: string[][] = Array.from({ length: N }, () => Array(N).fill('–'));
 
-    nQueen(mat, 0);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Function to check if two queens threaten each other or not
-    private static boolean isSafe(char[][] mat, int r, int c)
-    {
-        // return false if two queens share the same column
-        for (int i = 0; i < r; i++)
-        {
-            if (mat[i][c] == 'Q') {
-                return false;
-            }
-        }
-
-        // return false if two queens share the same `` diagonal
-        for (int i = r, j = c; i >= 0 && j >= 0; i--, j--)
-        {
-            if (mat[i][j] == 'Q') {
-                return false;
-            }
-        }
-
-        // return false if two queens share the same `/` diagonal
-        for (int i = r, j = c; i >= 0 && j < mat.length; i--, j++)
-        {
-            if (mat[i][j] == 'Q') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static void printSolution(char[][] mat)
-    {
-        for (char[] chars: mat) {
-            System.out.println(Arrays.toString(chars).replaceAll(",", ""));
-        }
-        System.out.println();
-    }
-
-    private static void nQueen(char[][] mat, int r)
-    {
-        // if `N` queens are placed successfully, print the solution
-        if (r == mat.length)
-        {
-            printSolution(mat);
-            return;
-        }
-
-        // place queen at every square in the current row `r`
-        // and recur for each valid movement
-        for (int i = 0; i < mat.length; i++)
-        {
-            // if no two queens threaten each other
-            if (isSafe(mat, r, i))
-            {
-                // place queen on the current square
-                mat[r][i] = 'Q';
-
-                // recur for the next row
-                nQueen(mat, r + 1);
-
-                // backtrack and remove the queen from the current square
-                mat[r][i] = '–';
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // `N × N` chessboard
-        int N = 8;
-
-        // `mat[][]` keeps track of the position of queens in
-        // the current configuration
-        char[][] mat = new char[N][N];
-
-        // initialize `mat[][]` by `-`
-        for (int i = 0; i < N; i++) {
-            Arrays.fill(mat[i], '–');
-        }
-
-        nQueen(mat, 0);
-    }
-}
-```
-
-##
-
-```python3
-# Function to check if two queens threaten each other or not
-def isSafe(mat, r, c):
-
-    # return false if two queens share the same column
-    for i in range(r):
-        if mat[i][c] == 'Q':
-            return False
-
-    # return false if two queens share the same `` diagonal
-    (i, j) = (r, c)
-    while i >= 0 and j >= 0:
-        if mat[i][j] == 'Q':
-            return False
-        i = i - 1
-        j = j - 1
-
-    # return false if two queens share the same `/` diagonal
-    (i, j) = (r, c)
-    while i >= 0 and j < len(mat):
-        if mat[i][j] == 'Q':
-            return False
-        i = i - 1
-        j = j + 1
-
-    return True
-
-def printSolution(mat):
-    for r in mat:
-        print(str(r).replace(',', '').replace('\'', ''))
-    print()
-
-def nQueen(mat, r):
-
-    # if `N` queens are placed successfully, print the solution
-    if r == len(mat):
-        printSolution(mat)
-        return
-
-    # place queen at every square in the current row `r`
-    # and recur for each valid movement
-    for i in range(len(mat)):
-
-        # if no two queens threaten each other
-        if isSafe(mat, r, i):
-            # place queen on the current square
-            mat[r][i] = 'Q'
-
-            # recur for the next row
-            nQueen(mat, r + 1)
-
-            # backtrack and remove the queen from the current square
-            mat[r][i] = '–'
-
-if __name__ == '__main__':
-
-    # `N × N` chessboard
-    N = 8
-
-    # `mat[][]` keeps track of the position of queens in
-    # the current configuration
-    mat = [['–' for x in range(N)] for y in range(N)]
-
-    nQueen(mat, 0)
+nQueen(mat, 0);
 ```
 
 **Output:** Q – – – – – – – – – – – Q – – – – – – – – – – Q – – – – – Q – – – – Q – – – – – – – – – – – Q – – Q – – – – – – – – – Q – – – – Q – – – – – – – – – – – – Q – – – – – – – – – Q – – Q – – – – – – – – – – – Q – – – – Q – – – – – Q – – – – – – – – – – Q – – – And 90 other distinct solutions to the eight queens problem.

@@ -20,130 +20,41 @@ If `n = 25000`, `m` can be any of `1729`, `4104`, `13832`, or `20683` as these n
 
 The idea is simple. We know that any number `m` that satisfies the constraint will have two distinct pairs (let's say `(a, b)` and `(c, d)`). Since `m < n`, we can say that `a`, `b`, `c`, and `d` are less than `_n 1/3_`. Now for every distinct pair `(x, y)` formed by numbers less than the `_n 1/3_`, store their sum `x3 + y3` into a set. If two pairs with the same sum exist, print the sum.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <unordered_set>
-#include <cmath>
-using namespace std;
+```ts
+function findAllNumbers(n: number): void {
 
-void findAllNumbers(int n)
-{
     // find the cube root of `n`
-    int cb = pow(n, 1.0 / 3);
+    const cb = Math.floor(Math.pow(n, 1.0 / 3));
 
     // create an empty set
-    unordered_set<int> s;
+    const s = new Set<number>();
 
-    for (int i = 1; i < cb - 1; i++)
-    {
-        for (int j = i + 1; j < cb + 1; j++)
-        {
+    for (let i = 1; i < cb - 1; i++) {
+        for (let j = i + 1; j < cb + 1; j++) {
+
             // (i, j) forms a pair
-            int sum = (i*i*i) + (j*j*j);
+            const sum = (i * i * i) + (j * j * j);
 
             // sum is seen before
-            if (s.find(sum) != s.end()) {
+            if (s.has(sum)) {
                 if (sum <= n) {
-                    cout << sum << endl;
+                    console.log(sum);
                 }
-            }
-            else {
+            } else {
                 // sum is not seen before
-                s.insert(sum);
+                s.add(sum);
             }
         }
     }
 }
 
-int main()
-{
-    int n = 25000;
-
-    findAllNumbers(n);
-
-    return 0;
-}
+const n = 25000;
+findAllNumbers(n);
 ```
 
 **Output:** 1729 4104 13832 20683
-
-##
-
-```java
-import java.util.HashSet;
-import java.util.Set;
-
-class Main
-{
-    public static void findAllNumbers(int n)
-    {
-        // find the cube root of `n`
-        int cb = (int)Math.pow(n, 1.0 / 3);
-
-        // create an empty set
-        Set<Integer> s = new HashSet<>();
-
-        for (int i = 1; i < cb - 1; i++)
-        {
-            for (int j = i + 1; j < cb + 1; j++)
-            {
-                // (i, j) forms a pair
-                int sum = (i*i*i) + (j*j*j);
-
-                // sum is seen before
-                if (s.contains(sum)) {
-                    if (sum <= n) {
-                        System.out.println(sum);
-                    }
-                }
-                else {
-                    // sum is not seen before
-                    s.add(sum);
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 25000;
-        findAllNumbers(n);
-    }
-}
-```
-
-##
-
-```python3
-def findAllNumbers(n):
-
-    # find the cube root of `n`
-    cb = int(pow(n, 1.0 / 3))
-
-    # create an empty set
-    s = set()
-
-    for i in range(1, cb - 1):
-        for j in range(i + 1, cb + 1):
-
-            # (i, j) forms a pair
-            sum = (i*i*i) + (j*j*j)
-
-            # sum is seen before
-            if sum in s:
-                if sum <= n:
-                    print(sum)
-            else:
-                # sum is not seen before
-                s.add(sum)
-
-if __name__ == '__main__':
-
-    n = 25000
-    findAllNumbers(n)
-```
 
 The time complexity of the above solution is O(n2/3).
 

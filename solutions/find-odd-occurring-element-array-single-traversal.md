@@ -16,100 +16,24 @@ We can solve this problem in a single traversal of the array and constant space.
 
 XOR of ‘x’ with 0: x ^ 0 = x XOR of ‘x’ with itself even number of times: x ^ x = 0 x ^ x ^ x ^ x = (x ^ x) ^ (x ^ x) = 0 ^ 0 = 0 XOR of ‘x’ with itself odd number of times: (x ^ x ^ x) = (x ^ (x ^ x)) = (x ^ 0) = x (x ^ x ^ x ^ x ^ x) = (x ^ (x ^ x) ^ (x ^ x)) = (x ^ 0 ^ 0) = x
 
-So, if we take XOR of all array elements, even appearing elements will cancel each other, and we are left with the only odd appearing element. Following is the C, Java, and Python implementation of the idea:
+So, if we take XOR of all array elements, even appearing elements will cancel each other, and we are left with the only odd appearing element. Following is the TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to find an odd occurring element in a given array
-int findOddOccuring(int arr[], int n)
-{
-    int xor = 0;
-    for (int i = 0; i < n; i++) {
-        xor = xor ^ arr[i];
+const findOddOccuring = (arr: number[]): number => {
+    let xor = 0;
+    for (const i of arr) {
+        xor = xor ^ i;
     }
 
     return xor;
-}
+};
 
-int main()
-{
-    int arr[] = { 4, 3, 6, 2, 6, 4, 2, 3, 4, 3, 3 };
-    int n = sizeof(arr) / sizeof(arr[0]);
-
-    printf("The odd occurring element is %d", findOddOccuring(arr, n));
-
-    return 0;
-}
+const arr = [4, 3, 6, 2, 6, 4, 2, 3, 4, 3, 3];
+console.log(`The odd occurring element is ${findOddOccuring(arr)}`);
 ```
 
 **Output:** The odd occurring element is 4
-
-##
-
-```cpp
-#include <iostream>
-#include <vector>
-#include <numeric>
-using namespace std;
-
-// Function to find an odd occurring element in a given array
-int findOddOccuring(vector<int> const &arr) {
-    return accumulate(arr.begin(), next(arr.begin(), arr.size()), 0, bit_xor<int>());
-}
-
-int main()
-{
-    vector<int> arr = { 4, 3, 6, 2, 6, 4, 2, 3, 4, 3, 3 };
-
-    cout << "The odd occurring element is " << findOddOccuring(arr);
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to find an odd occurring element in a given array
-    public static int findOddOccuring(int[] arr)
-    {
-        int xor = 0;
-        for (int i: arr) {
-            xor = xor ^ i;
-        }
-
-        return xor;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 4, 3, 6, 2, 6, 4, 2, 3, 4, 3, 3 };
-
-        System.out.println("The odd occurring element is " + findOddOccuring(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find an odd occurring element in a given list
-def findOddOccuring(arr):
-
-    xor = 0
-    for i in arr:
-        xor = xor ^ i
-
-    return xor
-
-if __name__ == '__main__':
-
-    arr = [4, 3, 6, 2, 6, 4, 2, 3, 4, 3, 3]
-    print('The odd occurring element is', findOddOccuring(arr))
-```
 
 Also See:
 

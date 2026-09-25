@@ -20,241 +20,81 @@ For example, consider array `{2, 1, -5, 4, -3, 1, -3, 4, -1}`. The sequence havi
 
 We can find the maximum-sum non-circular sequence in linear time by using [Kadane’s algorithm](https://techiedelight.com/maximum-subarray-problem-kadanes-algorithm/). We can find a maximum-sum circular sequence by inverting the sign of all array elements and then applying Kadane’s algorithm.
 
-For example, if we invert signs of array `{2, 1, -5, 4, -3, 1, -3, 4, -1}`, we get `{-2, -1, 5, -4, 3, -1, 3, -4, 1}` which has maximum sum sequence `{5, -4, 3, -1, 3}` having sum `6`. Now inverting the signs back, we get a minimum sum sequence `{-5, 4, -3, 1, -3}` having sum `-6`. The algorithm can be implemented as follows in C++, Java, and Python:
+For example, if we invert signs of array `{2, 1, -5, 4, -3, 1, -3, 4, -1}`, we get `{-2, -1, 5, -4, 3, -1, 3, -4, 1}` which has maximum sum sequence `{5, -4, 3, -1, 3}` having sum `6`. Now inverting the signs back, we get a minimum sum sequence `{-5, 4, -3, 1, -3}` having sum `-6`. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <numeric>
-#include <algorithm>
-using namespace std;
-
-// Function to find contiguous subarray with the largest sum
+```ts
+// Function to find contiguous sublist with the largest sum
 // in a given set of integers
-int kadane(int arr[], int n)
-{
-    // stores the sum of maximum subarray found so far
-    int max_so_far = 0;
+function kadane(A: number[]): number {
 
-    // stores the maximum sum of subarray ending at the current position
-    int max_ending_here = 0;
+    // stores the sum of maximum sublist found so far
+    let max_so_far = 0;
 
-    // traverse the given array
-    for (int i = 0; i < n; i++)
-    {
-        // update the maximum sum of subarray "ending" at index `i` (by adding the
+    // stores the maximum sum of sublist ending at the current position
+    let max_ending_here = 0;
+
+    // traverse the given list
+    for (let i = 0; i < A.length; i++) {
+
+        // update the maximum sum of sublist "ending" at index `i` (by adding the
         // current element to maximum sum ending at previous index `i-1`)
-        max_ending_here = max_ending_here + arr[i];
+        max_ending_here = max_ending_here + A[i];
 
         // if the maximum sum is negative, set it to 0 (which represents
-        // an empty subarray)
-        max_ending_here = max(max_ending_here, 0);
+        // an empty sublist)
+        max_ending_here = Math.max(max_ending_here, 0);
 
-        // update result if the current subarray sum is found to be greater
-        max_so_far = max(max_so_far, max_ending_here);
+        // update result if the current sublist sum is found to be greater
+        max_so_far = Math.max(max_so_far, max_ending_here);
     }
 
     return max_so_far;
 }
 
-// Function to find the maximum sum circular subarray in a given array
-int runCircularKadane(int arr[], int n)
-{
+// Function to find the maximum sum circular sublist in a given list
+function runCircularKadane(A: number[]): number {
+
     // empty array has sum of 0
-    if (n == 0) {
+    if (A.length === 0) {
         return 0;
     }
 
-    // find the maximum element present in a given array
-    int max_num = *max_element(arr, arr + n);
+    // find the maximum element present in a given list
+    const maximum = Math.max(...A);
 
-    // if the array contains all negative values, return the maximum element
-    if (max_num < 0) {
-        return max_num;
+    // if the list contains all negative values, return the maximum element
+    if (maximum < 0) {
+        return maximum;
     }
 
-    // negate all the array elements
-    for (int i = 0; i < n; i++) {
-        arr[i] = -arr[i];
+    // negate all elements in the list
+    for (let i = 0; i < A.length; i++) {
+        A[i] = -A[i];
     }
 
-    // run Kadane’s algorithm on the modified array
-    int neg_max_sum = kadane(arr, n);
+    // run Kadane’s algorithm on the modified list
+    const neg_max_sum = kadane(A);
 
-    // restore the array
-    for (int i = 0; i < n; i++) {
-        arr[i] = -arr[i];
+    // restore the list
+    for (let i = 0; i < A.length; i++) {
+        A[i] = -A[i];
     }
 
-    /* Return the maximum of the following:
-        1. Sum returned by Kadane’s algorithm on the original array.
-        2. Sum returned by Kadane’s algorithm on the modified array +
-           the sum of all the array elements.
-    */
-
-    return max(kadane(arr, n), accumulate(arr, arr + n, 0) + neg_max_sum);
-}
-
-int main()
-{
-    int arr[] = { 2, 1, -5, 4, -3, 1, -3, 4, -1 };
-    int n = sizeof(arr)/sizeof(arr[0]);
-
-    cout << "The sum of the subarray with the largest sum is " <<
-            runCircularKadane(arr, n);
-
-    return 0;
-}
-```
-
-**Output:** The sum of the subarray with the largest sum is 6
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Function to find contiguous subarray with the largest sum
-    // in a given set of integers
-    public static int kadane(int[] A)
-    {
-        // stores the sum of maximum subarray found so far
-        int max_so_far = 0;
-
-        // stores the maximum sum of subarray ending at the current position
-        int max_ending_here = 0;
-
-        // traverse the given array
-        for (int value: A)
-        {
-            // update the maximum sum of subarray "ending" at index `i` (by adding the
-            // current element to maximum sum ending at previous index `i-1`)
-            max_ending_here = max_ending_here + value;
-
-            // if the maximum sum is negative, set it to 0 (which represents
-            // an empty subarray)
-            max_ending_here = Integer.max(max_ending_here, 0);
-
-            // update result if the current subarray sum is found to be greater
-            max_so_far = Integer.max(max_so_far, max_ending_here);
-        }
-
-        return max_so_far;
-    }
-
-    // Function to find the maximum sum circular subarray in a given array
-    public static int runCircularKadane(int[] A)
-    {
-        // empty array has sum of 0
-        if (A.length == 0) {
-            return 0;
-        }
-
-        // find the maximum element present in a given array
-        int max = Arrays.stream(A).max().getAsInt();
-
-        // if the array contains all negative values, return the maximum element
-        if (max < 0) {
-            return max;
-        }
-
-        // negate all the array elements
-        Arrays.setAll(A, i -> -A[i]);
-
-        // run Kadane’s algorithm on the modified array
-        int neg_max_sum = kadane(A);
-
-        // restore the array
-        Arrays.setAll(A, i -> -A[i]);
-
-        /* Return the maximum of the following:
-            1. Sum returned by Kadane’s algorithm on the original array.
-            2. Sum returned by Kadane’s algorithm on the modified array +
-               the sum of all the array elements.
-        */
-
-        return Integer.max(kadane(A), Arrays.stream(A).sum() + neg_max_sum);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 2, 1, -5, 4, -3, 1, -3, 4, -1 };
-
-        System.out.println("The sum of the subarray with the largest sum is " +
-                runCircularKadane(A));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find contiguous sublist with the largest sum
-# in a given set of integers
-def kadane(A):
-
-    # stores the sum of maximum sublist found so far
-    max_so_far = 0
-
-    # stores the maximum sum of sublist ending at the current position
-    max_ending_here = 0
-
-    # traverse the given list
-    for i in range(len(A)):
-
-        # update the maximum sum of sublist "ending" at index `i` (by adding the
-        # current element to maximum sum ending at previous index `i-1`)
-        max_ending_here = max_ending_here + A[i]
-
-        # if the maximum sum is negative, set it to 0 (which represents
-        # an empty sublist)
-        max_ending_here = max(max_ending_here, 0)
-
-        # update result if the current sublist sum is found to be greater
-        max_so_far = max(max_so_far, max_ending_here)
-
-    return max_so_far
-
-# Function to find the maximum sum circular sublist in a given list
-def runCircularKadane(A):
-
-    # empty array has sum of 0
-    if len(A) == 0:
-        return 0
-
-    # find the maximum element present in a given list
-    maximum = max(A)
-
-    # if the list contains all negative values, return the maximum element
-    if maximum < 0:
-        return maximum
-
-    # negate all elements in the list
-    for i in range(len(A)):
-        A[i] = -A[i]
-
-    # run Kadane’s algorithm on the modified list
-    neg_max_sum = kadane(A)
-
-    # restore the list
-    for i in range(len(A)):
-        A[i] = -A[i]
-
-    ''' return the maximum of the following:
+    /* return the maximum of the following:
         1. Sum returned by Kadane’s algorithm on the original list.
         2. Sum returned by Kadane’s algorithm on modified list +
            the sum of all elements in the list.
-    '''
+    */
 
-    return max(kadane(A), sum(A) + neg_max_sum)
+    return Math.max(kadane(A), A.reduce((a, b) => a + b, 0) + neg_max_sum);
+}
 
-if __name__ == '__main__':
+const A = [2, 1, -5, 4, -3, 1, -3, 4, -1];
 
-    A = [2, 1, -5, 4, -3, 1, -3, 4, -1]
-
-    print("The sum of the sublist with the largest sum is", runCircularKadane(A))
+console.log(`The sum of the sublist with the largest sum is ${runCircularKadane(A)}`);
 ```
+
+**Output:** The sum of the subarray with the largest sum is 6
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.
 

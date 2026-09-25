@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/queue-implementation-in-java/
 
-This article covers queue implementation in Java. A queue is a linear data structure that follows the FIFO (First–In, First–Out) principle. That means the object inserted first will be the first one out, followed by the object inserted next.
+This article covers queue implementation in TypeScript. A queue is a linear data structure that follows the FIFO (First–In, First–Out) principle. That means the object inserted first will be the first one out, followed by the object inserted next.
 
 The queue supports the following core operations:
 
@@ -16,118 +16,103 @@ The queue supports the following core operations:
 
 Queue Implementation using an array:
 
-```
-
+```ts
 // A class to represent a queue
-class Queue
-{
-    private int[] arr;      // array to store queue elements
-    private int front;      // front points to the front element in the queue
-    private int rear;       // rear points to the last element in the queue
-    private int capacity;   // maximum capacity of the queue
-    private int count;      // current size of the queue
+class Queue {
+    private arr: number[];      // array to store queue elements
+    private front: number;      // front points to the front element in the queue
+    private rear: number;       // rear points to the last element in the queue
+    private capacity: number;   // maximum capacity of the queue
+    private count: number;      // current size of the queue
 
     // Constructor to initialize a queue
-    Queue(int size)
-    {
-        arr = new int[size];
-        capacity = size;
-        front = 0;
-        rear = -1;
-        count = 0;
+    constructor(size: number) {
+        this.arr = new Array<number>(size);
+        this.capacity = size;
+        this.front = 0;
+        this.rear = -1;
+        this.count = 0;
     }
 
     // Utility function to dequeue the front element
-    public int dequeue()
-    {
+    dequeue(): number {
         // check for queue underflow
-        if (isEmpty())
-        {
-            System.out.println("Underflow\nProgram Terminated");
-            System.exit(-1);
+        if (this.isEmpty()) {
+            console.log("Underflow\nProgram Terminated");
+            process.exit(-1);
         }
 
-        int x = arr[front];
+        const x = this.arr[this.front];
 
-        System.out.println("Removing " + x);
+        console.log("Removing " + x);
 
-        front = (front + 1) % capacity;
-        count--;
+        this.front = (this.front + 1) % this.capacity;
+        this.count--;
 
         return x;
     }
 
     // Utility function to add an item to the queue
-    public void enqueue(int item)
-    {
+    enqueue(item: number): void {
         // check for queue overflow
-        if (isFull())
-        {
-            System.out.println("Overflow\nProgram Terminated");
-            System.exit(-1);
+        if (this.isFull()) {
+            console.log("Overflow\nProgram Terminated");
+            process.exit(-1);
         }
 
-        System.out.println("Inserting " + item);
+        console.log("Inserting " + item);
 
-        rear = (rear + 1) % capacity;
-        arr[rear] = item;
-        count++;
+        this.rear = (this.rear + 1) % this.capacity;
+        this.arr[this.rear] = item;
+        this.count++;
     }
 
     // Utility function to return the front element of the queue
-    public int peek()
-    {
-        if (isEmpty())
-        {
-            System.out.println("Underflow\nProgram Terminated");
-            System.exit(-1);
+    peek(): number {
+        if (this.isEmpty()) {
+            console.log("Underflow\nProgram Terminated");
+            process.exit(-1);
         }
-        return arr[front];
+        return this.arr[this.front];
     }
 
     // Utility function to return the size of the queue
-    public int size() {
-        return count;
+    size(): number {
+        return this.count;
     }
 
     // Utility function to check if the queue is empty or not
-    public boolean isEmpty() {
-        return (size() == 0);
+    isEmpty(): boolean {
+        return this.size() === 0;
     }
 
     // Utility function to check if the queue is full or not
-    public boolean isFull() {
-        return (size() == capacity);
+    isFull(): boolean {
+        return this.size() === this.capacity;
     }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        // create a queue of capacity 5
-        Queue q = new Queue(5);
+// create a queue of capacity 5
+const q = new Queue(5);
 
-        q.enqueue(1);
-        q.enqueue(2);
-        q.enqueue(3);
+q.enqueue(1);
+q.enqueue(2);
+q.enqueue(3);
 
-        System.out.println("The front element is " + q.peek());
-        q.dequeue();
-        System.out.println("The front element is " + q.peek());
+console.log("The front element is " + q.peek());
+q.dequeue();
+console.log("The front element is " + q.peek());
 
-        System.out.println("The queue size is " + q.size());
+console.log("The queue size is " + q.size());
 
-        q.dequeue();
-        q.dequeue();
+q.dequeue();
+q.dequeue();
 
-        if (q.isEmpty()) {
-            System.out.println("The queue is empty");
-        }
-        else {
-            System.out.println("The queue is not empty");
-        }
-    }
+if (q.isEmpty()) {
+    console.log("The queue is empty");
+}
+else {
+    console.log("The queue is not empty");
 }
 ```
 
@@ -135,45 +120,36 @@ class Main
 
 The time complexity of `enqueue()`, `dequeue()`, `peek()`, `isEmpty()` and `size()` functions is constant, i.e., O(1).
 
-Using `Queue` Interface:
+Using an Array:
 
-Java’s library also contains [Queue](https://docs.oracle.com/javase/8/docs/api/java/util/Queue.html) interface that specifies queue operations. Following is an example of the `Queue` interface using the `LinkedList` class:
+The TypeScript standard library also provides array operations that specify queue operations. Following is an example of using an array with `push`/`shift` as a queue:
 
-```
-import java.util.LinkedList;
-import java.util.Queue;
+```ts
+const queue: string[] = [];
 
-class Main
-{
-    public static void main(String[] args)
-    {
-        Queue<String> queue = new LinkedList<String>();
+queue.push("A");     // Insert `A` into the queue
+queue.push("B");     // Insert `B` into the queue
+queue.push("C");     // Insert `C` into the queue
+queue.push("D");     // Insert `D` into the queue
 
-        queue.add("A");     // Insert `A` into the queue
-        queue.add("B");     // Insert `B` into the queue
-        queue.add("C");     // Insert `C` into the queue
-        queue.add("D");     // Insert `D` into the queue
+// Prints the front of the queue (`A`)
+console.log("The front element is " + queue[0]);
 
-        // Prints the front of the queue (`A`)
-        System.out.println("The front element is " + queue.peek());
+queue.shift();       // removing the front element (`A`)
+queue.shift();       // removing the front element (`B`)
 
-        queue.remove();     // removing the front element (`A`)
-        queue.remove();     // removing the front element (`B`)
+// Prints the front of the queue (`C`)
+console.log("The front element is " + queue[0]);
 
-        // Prints the front of the queue (`C`)
-        System.out.println("The front element is " + queue.peek());
+// Returns the total number of elements present in the queue
+console.log("The queue size is " + queue.length);
 
-        // Returns the total number of elements present in the queue
-        System.out.println("The queue size is " + queue.size());
-
-        // check if the queue is empty
-        if (queue.isEmpty()) {
-            System.out.println("The queue is empty");
-        }
-        else {
-            System.out.println("The queue is not empty");
-        }
-    }
+// check if the queue is empty
+if (queue.length === 0) {
+    console.log("The queue is empty");
+}
+else {
+    console.log("The queue is not empty");
 }
 ```
 

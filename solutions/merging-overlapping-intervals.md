@@ -15,189 +15,54 @@ The idea is to [sort the intervals](https://techiedelight.com/sort-vector-cpp/) 
   * If the [stack](https://techiedelight.com/stack-implementation/) is empty or the top interval in the stack does not overlap with the current interval, push it into the stack.
   * If the top interval of the stack overlaps with the current interval, merge both intervals by updating the end of the top interval at the ending of the current interval.
 
-Finally, print all non-overlapping intervals present in the stack. The algorithm can be implemented as follows in C++, Java, and Python:
+Finally, print all non-overlapping intervals present in the stack. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <stack>
-#include <algorithm>
-using namespace std;
-
-// Data structure to represent an interval
-struct Interval
-{
-    int begin, end;
-
-    bool operator<(Interval const &i) {
-        return (begin < i.begin);
-    }
-};
+```ts
+// A class to represent an interval
+class Interval {
+    constructor(public begin: number, public end: number) {}
+}
 
 // Function to merge overlapping intervals
-void mergeIntervals(vector<Interval> intervals)        // no-ref, no-const
-{
+function mergeIntervals(intervals: Interval[]): void {
+
     // sort the intervals in increasing order of their starting time
-    sort(intervals.begin(), intervals.end());
+    intervals.sort((a, b) => a.begin - b.begin);
 
     // create an empty stack
-    stack<Interval> s;
+    const stack: Interval[] = [];
 
     // do for each interval
-    for (const Interval &curr: intervals)
-    {
+    for (const curr of intervals) {
+
         // if the stack is empty or the top interval in the stack does not overlap
         // with the current interval, push it into the stack
-        if (s.empty() || curr.begin > s.top().end) {
-            s.push(curr);
+        if (!stack.length || curr.begin > stack[stack.length - 1].end) {
+            stack.push(curr);
         }
 
         // if the top interval of the stack overlaps with the current interval,
         // merge two intervals by updating the end of the top interval
         // to the current interval
-        if (s.top().end < curr.end) {
-            s.top().end = curr.end;
+        if (stack[stack.length - 1].end < curr.end) {
+            stack[stack.length - 1].end = curr.end;
         }
     }
 
     // print all non-overlapping intervals
-    while (!s.empty())
-    {
-        cout << '{' << s.top().begin << ", " << s.top().end << "}\n";
-        s.pop();
+    while (stack.length) {
+        const top = stack.pop()!;
+        console.log(`{${top.begin}, ${top.end}}`);
     }
 }
 
-int main()
-{
-    vector<Interval> intervals = { { 1, 5 }, { 2, 3 }, { 4, 6 }, { 7, 8 },
-                            { 8, 10 }, {12, 15} };
+const intervals = [new Interval(1, 5), new Interval(2, 3), new Interval(4, 6),
+               new Interval(7, 8), new Interval(8, 10), new Interval(12, 15)];
 
-    mergeIntervals(intervals);
-
-    return 0;
-}
+mergeIntervals(intervals);
 ```
 
 **Output:** {12, 15} {7, 10} {1, 6}
-
-##
-
-```java
-import java.util.*;
-
-// A class to represent an interval
-class Interval
-{
-    int begin, end;
-
-    Interval(int begin, int end)
-    {
-        this.begin = begin;
-        this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + begin + ", " + end + "}";
-    }
-}
-
-class Main
-{
-    // Function to merge overlapping intervals
-    public static void mergeIntervals(List<Interval> intervals)
-    {
-        // sort the intervals in increasing order of their starting time
-        Collections.sort(intervals, Comparator.comparingInt(a -> a.begin));
-
-        // create an empty stack
-        Stack<Interval> stack = new Stack<>();
-
-        // do for each interval
-        for (Interval curr: intervals)
-        {
-            // if the stack is empty or the top interval in the stack does not overlap
-            // with the current interval, push it into the stack
-            if (stack.empty() || curr.begin > stack.peek().end) {
-                stack.push(curr);
-            }
-
-            // if the top interval of the stack overlaps with the current interval,
-            // merge two intervals by updating the end of the top interval
-            // to the current interval
-            if (stack.peek().end < curr.end) {
-                stack.peek().end = curr.end;
-            }
-        }
-
-        // print all non-overlapping intervals
-        while (!stack.empty()) {
-            System.out.println(stack.pop());
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        List<Interval> intervals = Arrays.asList(
-                new Interval(1, 5), new Interval(2, 3),
-                new Interval(4, 6), new Interval(7, 8),
-                new Interval(8, 10), new Interval(12, 15)
-        );
-
-        mergeIntervals(intervals);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to represent an interval
-class Interval:
-    def __init__(self, begin, end):
-        self.begin = begin
-        self.end = end
-
-    def __repr__(self):
-        return str((self.begin, self.end))
-
-# Function to merge overlapping intervals
-def mergeIntervals(intervals):
-
-    # sort the intervals in increasing order of their starting time
-    intervals.sort(key=lambda x: x.begin)
-
-    # create an empty stack
-    stack = deque()
-
-    # do for each interval
-    for curr in intervals:
-
-        # if the stack is empty or the top interval in the stack does not overlap
-        # with the current interval, push it into the stack
-        if not stack or curr.begin > stack[-1].end:
-            stack.append(curr)
-
-        # if the top interval of the stack overlaps with the current interval,
-        # merge two intervals by updating the end of the top interval
-        # to the current interval
-        if stack[-1].end < curr.end:
-            stack[-1].end = curr.end
-
-    # print all non-overlapping intervals
-    while stack:
-        print(stack.pop())
-
-if __name__ == '__main__':
-
-    intervals = [Interval(1, 5), Interval(2, 3), Interval(4, 6),
-                Interval(7, 8), Interval(8, 10), Interval(12, 15)]
-
-    mergeIntervals(intervals)
-```
 
 The time complexity of the above solution O(n.log(n)) and requires O(n) extra space, where `n` is the total number of given intervals.
 

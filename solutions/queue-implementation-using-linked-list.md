@@ -10,343 +10,109 @@ A queue can be easily implemented using a linked list. In singly linked list imp
 
 Since a doubly linked list offers O(1) insertion and deletion at both ends, use it if we want to enqueue to happen at the beginning and dequeuing to occur at the tail of the linked list.
 
-Following is the implementation of the queue using a linked list in C, Java, and Python:
+Following is the implementation of the queue using a linked list in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;               // integer data
-    struct Node* next;      // pointer to the next node
-}*rear = NULL, *front = NULL;
-
-// Utility function to allocate the new queue node
-struct Node* newNode(int item)
-{
-    // allocate a new node in a heap
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-
-    // check if the queue (heap) is full. Then inserting an element would
-    // lead to heap overflow
-    if (node != NULL)
-    {
+class Node {
+    constructor(public data: number, public next: Node | null = null) {
         // set data in the allocated node and return it
-        node->data = item;
-        node->next = NULL;
-        return node;
-    }
-    else {
-        printf("\nHeap Overflow");
-        exit(EXIT_FAILURE);
     }
 }
 
-// Utility function to dequeue the front element
-int dequeue()        // delete at the beginning
-{
-    if (front == NULL)
-    {
-        printf("\nQueue Underflow");
-        exit(EXIT_FAILURE);
-    }
-
-    struct Node* temp = front;
-    printf("Removing %d\n", temp->data);
-
-    // advance front to the next node
-    front = front->next;
-
-    // if the list becomes empty
-    if (front == NULL) {
-        rear = NULL;
-    }
-
-    // deallocate the memory of the removed node and optionally return the removed item
-    int item = temp->data;
-    free(temp);
-    return item;
-}
-
-// Utility function to add an item to the queue
-void enqueue(int item)        // insertion at the end
-{
-    // allocate a new node in a heap
-    struct Node* node = newNode(item);
-    printf("Inserting %d\n", item);
-
-    // special case: queue was empty
-    if (front == NULL)
-    {
-        // initialize both front and rear
-        front = node;
-        rear = node;
-    }
-    else {
-        // update rear
-        rear->next = node;
-        rear = node;
-    }
-}
-
-// Utility function to return the top element in a queue
-int peek()
-{
-    // check for an empty queue
-    if (front != NULL) {
-        return front->data;
-    }
-    else {
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Utility function to check if the queue is empty or not
-int isEmpty() {
-    return rear == NULL && front == NULL;
-}
-
-int main()
-{
-    enqueue(1);
-    enqueue(2);
-    enqueue(3);
-    enqueue(4);
-
-    printf("The front element is %d\n", peek());
-
-    dequeue();
-    dequeue();
-    dequeue();
-    dequeue();
-
-    if (isEmpty()) {
-        printf("The queue is empty");
-    }
-    else {
-        printf("The queue is not empty");
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;       // integer data
-    Node next;      // pointer to the next node
-
-    public Node(int data)
-    {
-        // set data in the allocated node and return it
-        this.data = data;
-        this.next = null;
-    }
-}
-
-class Queue
-{
-    private static Node rear = null, front = null;
-    private static int count = 0;
+class Queue {
+    private rear: Node | null = null;
+    private front: Node | null = null;
+    private count = 0;
 
     // Utility function to dequeue the front element
-    public static int dequeue()     // delete at the beginning
-    {
-        if (front == null)
-        {
-            System.out.println("\nQueue Underflow");
-            System.exit(-1);
+    dequeue(): number {          // delete at the beginning
+        if (this.front === null) {
+            console.log('Queue Underflow');
+            process.exit(-1);
         }
 
-        Node temp = front;
-        System.out.printf("Removing %d\n", temp.data);
+        const temp = this.front;
+        console.log('Removing…', temp.data);
 
         // advance front to the next node
-        front = front.next;
+        this.front = this.front.next;
 
         // if the list becomes empty
-        if (front == null) {
-            rear = null;
+        if (this.front === null) {
+            this.rear = null;
         }
 
         // decrease the node's count by 1
-        count -= 1;
+        this.count -= 1;
 
         // return the removed item
         return temp.data;
     }
 
     // Utility function to add an item to the queue
-    public static void enqueue(int item)     // insertion at the end
-    {
-        // allocate a new node in a heap
-        Node node = new Node(item);
-        System.out.printf("Inserting %d\n", item);
+    enqueue(item: number): void {    // insertion at the end
+        // allocate the node in a heap
+        const node = new Node(item);
+        console.log('Inserting…', item);
 
         // special case: queue was empty
-        if (front == null)
-        {
+        if (this.front === null) {
             // initialize both front and rear
-            front = node;
-            rear = node;
+            this.front = node;
+            this.rear = node;
         }
         else {
             // update rear
-            rear.next = node;
-            rear = node;
+            this.rear!.next = node;
+            this.rear = node;
         }
 
         // increase the node's count by 1
-        count += 1;
+        this.count += 1;
     }
 
     // Utility function to return the top element in a queue
-    public static int peek()
-    {
+    peek(): number {
         // check for an empty queue
-        if (front == null) {
-            System.exit(-1);
+        if (this.front) {
+            return this.front.data;
         }
-
-        return front.data;
+        else {
+            process.exit(-1);
+        }
     }
 
     // Utility function to check if the queue is empty or not
-    public static boolean isEmpty() {
-        return rear == null && front == null;
+    isEmpty(): boolean {
+        return this.rear === null && this.front === null;
     }
 
     // Function to return the size of the queue
-    private static int size() {
-        return count;
+    size(): number {
+        return this.count;
     }
 }
 
-class Main
-{
-    public static void main(String[] args)
-    {
-        Queue q = new Queue();
-        q.enqueue(1);
-        q.enqueue(2);
-        q.enqueue(3);
-        q.enqueue(4);
+const q = new Queue();
+q.enqueue(1);
+q.enqueue(2);
+q.enqueue(3);
+q.enqueue(4);
 
-        System.out.printf("The front element is %d\n", q.peek());
+console.log('The front element is', q.peek());
 
-        q.dequeue();
-        q.dequeue();
-        q.dequeue();
-        q.dequeue();
+q.dequeue();
+q.dequeue();
+q.dequeue();
+q.dequeue();
 
-        if (q.isEmpty()) {
-            System.out.println("The queue is empty");
-        }
-        else {
-            System.out.println("The queue is not empty");
-        }
-    }
+if (q.isEmpty()) {
+    console.log('The queue is empty');
 }
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        # set data in the allocated node and return it
-        self.data = data
-        self.next = None
-
-class Queue:
-    def __init__(self):
-        self.rear = None
-        self.front = None
-        self.count = 0
-
-    # Utility function to dequeue the front element
-    def dequeue(self):          # delete at the beginning
-        if self.front is None:
-            print('Queue Underflow')
-            exit(-1)
-
-        temp = self.front
-        print('Removing…', temp.data)
-
-        # advance front to the next node
-        self.front = self.front.next
-
-        # if the list becomes empty
-        if self.front is None:
-            self.rear = None
-
-        # decrease the node's count by 1
-        self.count -= 1
-
-        # return the removed item
-        return temp.data
-
-    # Utility function to add an item to the queue
-    def enqueue(self, item):    # insertion at the end
-        # allocate the node in a heap
-        node = Node(item)
-        print('Inserting…', item)
-
-        # special case: queue was empty
-        if self.front is None:
-            # initialize both front and rear
-            self.front = node
-            self.rear = node
-        else:
-            # update rear
-            self.rear.next = node
-            self.rear = node
-
-        # increase the node's count by 1
-        self.count += 1
-
-    # Utility function to return the top element in a queue
-    def peek(self):
-        # check for an empty queue
-        if self.front:
-            return self.front.data
-        else:
-            exit(-1)
-
-    # Utility function to check if the queue is empty or not
-    def isEmpty(self):
-        return self.rear is None and self.front is None
-
-    # Function to return the size of the queue
-    def size(self):
-        return self.count
-
-if __name__ == '__main__':
-
-    q = Queue()
-    q.enqueue(1)
-    q.enqueue(2)
-    q.enqueue(3)
-    q.enqueue(4)
-
-    print('The front element is', q.peek())
-
-    q.dequeue()
-    q.dequeue()
-    q.dequeue()
-    q.dequeue()
-
-    if q.isEmpty():
-        print('The queue is empty')
-    else:
-        print('The queue is not empty')
+else {
+    console.log('The queue is not empty');
+}
 ```
 
 **Output:** Inserting 1 Inserting 2 Inserting 3 Inserting 4 The front element is 1 Removing 1 Removing 2 Removing 3 Removing 4 The queue is empty

@@ -26,145 +26,48 @@ The time complexity of this solution is O(n.log(n)) and doesn’t require any ex
 
 An efficient solution doesn’t involve sorting the array or the use of extra space. The idea is to start from the second array element and increment the index by 2 for each loop’s iteration. If the last element is greater than the current element, swap the elements. Similarly, if the next element is greater than the current element, swap both elements. At the end of the loop, we will get the desired array that satisfies given constraints.
 
-Following is the implementation in C, Java, and Python based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```c
-#include <stdio.h>
+```ts
+// Utility function to swap elements `A[i]` and `A[j]` in the list
+function swap(A: number[], i: number, j: number): void {
 
-// Utility function to swap elements `arr[i]` and `arr[j]` in an array
-void swap(int arr[], int i, int j)
-{
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
 }
 
-// Function to rearrange the array such that every second element
-// of the array is greater than its left and right elements
-void rearrangeArray(int arr[], int n)
-{
+// Function to rearrange the list such that every second element
+// of the list is greater than its left and right elements
+function rearrangeArray(A: number[]): void {
+
     // start from the second element and increment index
     // by 2 for each iteration of the loop
-    for (int i = 1; i < n; i += 2)
-    {
+    for (let i = 1; i < A.length; i += 2) {
+
         // if the previous element is greater than the current element,
         // swap the elements
-        if (arr[i - 1] > arr[i]) {
-            swap(arr, i - 1, i);
+        if (A[i - 1] > A[i]) {
+            swap(A, i - 1, i);
         }
 
         // if the next element is greater than the current element,
         // swap the elements
-        if (i + 1 < n && arr[i + 1] > arr[i]) {
-            swap(arr, i + 1, i);
+        if (i + 1 < A.length && A[i + 1] > A[i]) {
+            swap(A, i + 1, i);
         }
     }
 }
 
-int main(void)
-{
-    int arr[] = { 9, 6, 8, 3, 7 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+const A = [9, 6, 8, 3, 7];
 
-    rearrangeArray(arr, n);
+rearrangeArray(A);
 
-    // print output array
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-
-    return 0;
-}
+// print output list
+console.log(A);
 ```
 
 **Output:** 6 9 3 8 7
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Utility function to swap elements `A[i]` and `A[j]` in the array
-    private static void swap(int[] A, int i, int j)
-    {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
-    }
-
-    // Function to rearrange the array such that every second element
-    // of the array is greater than its left and right elements
-    public static void rearrangeArray(int[] A)
-    {
-        // start from the second element and increment index
-        // by 2 for each iteration of the loop
-        for (int i = 1; i < A.length; i += 2)
-        {
-            // if the previous element is greater than the current element,
-            // swap the elements
-            if (A[i - 1] > A[i]) {
-                swap(A, i - 1, i);
-            }
-
-            // if the next element is greater than the current element,
-            // swap the elements
-            if (i + 1 < A.length && A[i + 1] > A[i]) {
-                swap(A, i + 1, i);
-            }
-        }
-    }
-
-    public static void main (String[] args)
-    {
-        int[] A = { 9, 6, 8, 3, 7 };
-
-        rearrangeArray(A);
-
-        // print output array
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# Utility function to swap elements `A[i]` and `A[j]` in the list
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Function to rearrange the list such that every second element
-# of the list is greater than its left and right elements
-def rearrangeArray(A):
-
-    # start from the second element and increment index
-    # by 2 for each iteration of the loop
-    for i in range(1, len(A), 2):
-
-        # if the previous element is greater than the current element,
-        # swap the elements
-        if A[i - 1] > A[i]:
-            swap(A, i - 1, i)
-
-        # if the next element is greater than the current element,
-        # swap the elements
-        if i + 1 < len(A) and A[i + 1] > A[i]:
-            swap(A, i + 1, i)
-
-if __name__ == '__main__':
-
-    A = [9, 6, 8, 3, 7]
-
-    rearrangeArray(A)
-
-    # print output list
-    print(A)
-```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space.
 

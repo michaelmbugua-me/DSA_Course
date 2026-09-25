@@ -19,40 +19,32 @@ The idea is to take advantage of the fact that the matrix is row-wise and column
   * If the current element is negative, increment the negative count and move to the next row.
   * If the current element is positive, move to the left cell.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-int count(vector<vector<int>> const &mat)
-{
+```ts
+function count(mat: number[][]): number {
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return 0;
     }
 
-    int M = mat.size();
-    int N = mat[0].size();
+    // `M × N` matrix
+    const [M, N] = [mat.length, mat[0].length];
 
     // variable to store negative number count
-    int negative = 0;
+    let negative = 0;
 
     // start from `(0, N-1)` cell, i.e., top-rightmost cell of the matrix
-    int i = 0, j = N - 1;
+    let [i, j] = [0, N - 1];
 
     // run till matrix boundary is reached
-    while (i <= M - 1 && j >= 0)
-    {
+    while (i <= M - 1 && j >= 0) {
         // if the current element is negative
-        if (mat[i][j] < 0)
-        {
+        if (mat[i][j] < 0) {
             negative += j + 1;  // increment the negative count
-            i++;                // move to the next row
-        }
-        else {
-            j--;                // move to the cell to the left
+            i = i + 1;          // move to the next row
+        } else {
+            j = j - 1;          // move to the cell to the left
         }
     }
 
@@ -60,121 +52,17 @@ int count(vector<vector<int>> const &mat)
     return negative;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { -7, -3, -1, 3, 5 },
-        { -3, -2, 2, 4, 6 },
-        { -1, 1, 3, 5, 8 },
-        { 3, 4, 7, 8, 9 }
-    };
+const mat = [
+    [-7, -3, -1, 3, 5],
+    [-3, -2, 2, 4, 6],
+    [-1, 1, 3, 5, 8],
+    [3, 4, 7, 8, 9]
+];
 
-    cout << "The total number of negative elements present is " << count(mat);
-
-    return 0;
-}
+console.log("The total number of negative elements present is", count(mat));
 ```
 
 **Output:** The total number of negative elements present is 6
-
-##
-
-```java
-class Main
-{
-    public static int count(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // variable to store negative number count
-        int negative = 0;
-
-        // start from `(0, N-1)` cell, i.e., top-rightmost cell of the matrix
-        int i = 0, j = N - 1;
-
-        // run till matrix boundary is reached
-        while (i <= M - 1 && j >= 0)
-        {
-            // if the current element is negative
-            if (mat[i][j] < 0)
-            {
-                negative += j + 1;  // increment the negative count
-                i++;                // move to the next row
-            }
-            else {
-                j--;                // move to the cell to the left
-            }
-        }
-
-        // return negative number count
-        return negative;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { -7, -3, -1, 3, 5 },
-            { -3, -2, 2, 4, 6 },
-            { -1, 1, 3, 5, 8 },
-            { 3, 4, 7, 8, 9 }
-        };
-
-        System.out.print("The total number of negative elements present is "
-                    + count(mat));
-    }
-}
-```
-
-##
-
-```python3
-def count(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # variable to store negative number count
-    negative = 0
-
-    # start from `(0, N-1)` cell, i.e., top-rightmost cell of the matrix
-    (i, j) = (0, N - 1)
-
-    # run till matrix boundary is reached
-    while i <= M - 1 and j >= 0:
-        # if the current element is negative
-        if mat[i][j] < 0:
-            negative += j + 1   # increment the negative count
-            i = i + 1           # move to the next row
-        else:
-            j = j - 1           # move to the cell to the left
-
-    # return negative number count
-    return negative
-
-if __name__ == '__main__':
-
-    mat = [
-        [-7, -3, -1, 3, 5],
-        [-3, -2, 2, 4, 6],
-        [-1, 1, 3, 5, 8],
-        [3, 4, 7, 8, 9]
-    ]
-
-    print("The total number of negative elements present is", count(mat))
-```
 
 The time complexity of the proposed solution is O(M + N) for an `M × N` matrix and doesn’t require any extra space.
 

@@ -18,148 +18,47 @@ We can rearrange the array in a single traversal using an alternative **linear-t
   * The values equal to the pivot, and
   * The values greater than the pivot.
 
-To solve this particular problem, consider 1 as a pivot. The following linear-time partition routine in C++, Java, and Python is similar to 3–way partitioning for the [Dutch national flag problem](https://en.wikipedia.org/wiki/Dutch_national_flag_problem).
+To solve this particular problem, consider 1 as a pivot. The following linear-time partition routine in TypeScript is similar to 3–way partitioning for the [Dutch national flag problem](https://en.wikipedia.org/wiki/Dutch_national_flag_problem).
 
-```cpp
-#include <stdio.h>
-
+```ts
 // Utility function to swap elements `A[i]` and `A[j]` in an array
-void swap(int A[], int i, int j)
-{
-    int temp = A[i];
-    A[i] = A[j];
-    A[j] = temp;
+function swap(A: number[], i: number, j: number): void {
+    [A[i], A[j]] = [A[j], A[i]];
 }
 
 // Linear time partition routine to sort an array containing 0, 1, and 2.
 // It is similar to 3–way partitioning for the Dutch national flag problem.
-void threeWayPartition(int A[], int end)
-{
-    int start = 0, mid = 0;
-    int pivot = 1;
+function threeWayPartition(A: number[]): void {
 
-    while (mid <= end)
-    {
-        if (A[mid] < pivot)         // current element is 0
-        {
+    let start = 0, mid = 0;
+    const pivot = 1;
+    let end = A.length - 1;
+
+    while (mid <= end) {
+        if (A[mid] < pivot) {       // current element is 0
             swap(A, start, mid);
-            ++start, ++mid;
+            start++;
+            mid++;
         }
-        else if (A[mid] > pivot)    // current element is 2
-        {
+        else if (A[mid] > pivot) {  // current element is 2
             swap(A, mid, end);
-            --end;
+            end--;
         }
         else {                      // current element is 1
-            ++mid;
+            mid++;
         }
     }
 }
 
-int main()
-{
-    int A[] = { 0, 1, 2, 2, 1, 0, 0, 2, 0, 1, 1, 0 };
-    int n = sizeof(A)/sizeof(A[0]);
+const A = [0, 1, 2, 2, 1, 0, 0, 2, 0, 1, 1, 0];
 
-    threeWayPartition(A, n - 1);
+threeWayPartition(A);
 
-    for (int i = 0; i < n; i++) {
-        printf("%d ", A[i]);
-    }
-
-    return 0;
-}
+// print the sorted array
+console.log(A);
 ```
 
-**Output:** 0 0 0 0 0 1 1 1 1 2 2 2
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Linear time partition routine to sort an array containing 0, 1, and 2.
-    // It is similar to 3–way partitioning for the Dutch national flag problem.
-    public static void threeWayPartition(int[] A)
-    {
-        int start = 0, mid = 0;
-        int pivot = 1;
-        int end = A.length - 1;
-
-        while (mid <= end)
-        {
-            if (A[mid] < pivot)         // current element is 0
-            {
-                swap(A, start, mid);
-                ++start;
-                ++mid;
-            }
-            else if (A[mid] > pivot)    // current element is 2
-            {
-                swap(A, mid, end);
-                --end;
-            }
-            else {                      // current element is 1
-                ++mid;
-            }
-        }
-    }
-
-    // Utility function to swap elements `A[i]` and `A[j]` in the array
-    private static void swap(int[] A, int i, int j)
-    {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
-    }
-
-    public static void main (String[] args)
-    {
-        int[] A = { 0, 1, 2, 2, 1, 0, 0, 2, 0, 1, 1, 0 };
-
-        threeWayPartition(A);
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# Utility function to swap elements `A[i]` and `A[j]` in the list
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Linear time partition routine to sort a list containing 0, 1, and 2.
-# It is similar to 3–way partitioning for the Dutch national flag problem.
-def threeWayPartition(A):
-
-    start = mid = 0
-    pivot = 1
-    end = len(A) - 1
-
-    while mid <= end:
-        if A[mid] < pivot:      # current element is 0
-            swap(A, start, mid)
-            start = start + 1
-            mid = mid + 1
-        elif A[mid] > pivot:    # current element is 2
-            swap(A, mid, end)
-            end = end - 1
-        else:                   # current element is 1
-            mid = mid + 1
-
-if __name__ == '__main__':
-
-    A = [0, 1, 2, 2, 1, 0, 0, 2, 0, 1, 1, 0]
-    threeWayPartition(A)
-    print(A)
-```
+**Output:** [0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2]
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.
 

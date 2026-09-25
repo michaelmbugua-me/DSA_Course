@@ -20,358 +20,102 @@ In the [previous post](https://techiedelight.com/topological-sorting-dag/), we h
 
 The idea remains similar to Kahn’s topological sort, where we find vertices with no incoming edges and removing all outgoing edges from these vertices. We build all possible orderings from left to right, where the vertices with in-degree zero become candidates for the next vertex. We can do this using [backtracking](https://techiedelight.com/backtracking-interview-questions/), where the graph state is restored after processing the selected vertex.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <list>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
+class Graph {
+    adjList: number[][];
+    indegree: number[];
 
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+    constructor(edges: [number, number][], n: number) {
+        // A list of lists to represent an adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
 
-    // construct another vector for storing in-degree of the vertices
-    vector<int> indegree;
-
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the adjacency list to `n` elements of type `vector<int>`
-        adjList.resize(n);
-
-        // resize the in-degree vector for `n` vertices
-        indegree.resize(n);
+        // stores in-degree of a vertex
+        // initialize in-degree of each vertex by 0
+        this.indegree = new Array(n).fill(0);
 
         // add edges to the directed graph
-        for (auto &edge: edges)
-        {
-            adjList[edge.src].push_back(edge.dest);
+        for (const [src, dest] of edges) {
+            // add an edge from source to destination
+            this.adjList[src].push(dest);
 
             // increment in-degree of destination vertex by 1
-            indegree[edge.dest]++;
+            this.indegree[dest] = this.indegree[dest] + 1;
         }
     }
-};
-
-// Utility function to print contents of a given list
-void printPath(list<int> list)        // no ref, no const
-{
-    while (!list.empty())
-    {
-        cout << list.front() << ' ';
-        list.pop_front();
-    }
-    cout << endl;
 }
 
 // Recursive function to find all topological orderings of a given DAG
-void findAllTopologicalOrderings(Graph &graph, auto &path, auto &discovered, int n)
-{
+function findAllTopologicalOrderings(graph: Graph, path: number[], discovered: boolean[], n: number): void {
+
     // do for every vertex
-    for (int v = 0; v < n; v++)
-    {
+    for (let v = 0; v < n; v++) {
+
         // proceed only if the current node's in-degree is 0 and
         // the current node is not processed yet
-        if (graph.indegree[v] == 0 && !discovered[v])
-        {
+        if (graph.indegree[v] === 0 && !discovered[v]) {
+
             // for every adjacent vertex `u` of `v`, reduce the in-degree of `u` by 1
-            for (int u: graph.adjList[v]) {
-                graph.indegree[u]--;
+            for (const u of graph.adjList[v]) {
+                graph.indegree[u] = graph.indegree[u] - 1;
             }
 
             // include the current node in the path and mark it as discovered
-            path.push_back(v);
+            path.push(v);
             discovered[v] = true;
 
             // recur
             findAllTopologicalOrderings(graph, path, discovered, n);
 
             // backtrack: reset in-degree information for the current node
-            for (int u: graph.adjList[v]) {
-                graph.indegree[u]++;
+            for (const u of graph.adjList[v]) {
+                graph.indegree[u] = graph.indegree[u] + 1;
             }
 
             // backtrack: remove the current node from the path and
             // mark it as undiscovered
-            path.pop_back();
+            path.pop();
             discovered[v] = false;
         }
     }
 
     // print the topological order if all vertices are included in the path
-    if (path.size() == n) {
-        printPath(path);
+    if (path.length === n) {
+        console.log(path);
     }
 }
 
 // Print all topological orderings of a given DAG
-void printAllTopologicalOrders(Graph &graph)
-{
-    // get the total number of nodes in the graph
-    int n = graph.adjList.size();
+function printAllTopologicalOrders(graph: Graph): void {
 
-    // create an auxiliary array to keep track of whether a vertex is discovered
-    vector<bool> discovered(n);
+    // get the total number of nodes in the graph
+    const n = graph.adjList.length;
+
+    // create an auxiliary space to keep track of whether the vertex is discovered
+    const discovered: boolean[] = new Array(n).fill(false);
 
     // list to store the topological order
-    list<int> path;
+    const path: number[] = [];
 
     // find all topological ordering and print them
     findAllTopologicalOrderings(graph, path, discovered, n);
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        {0, 6}, {1, 2}, {1, 4}, {1, 6}, {3, 0},
-        {3, 4}, {5, 1}, {7, 0}, {7, 1}
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 6], [1, 2], [1, 4], [1, 6], [3, 0], [3, 4], [5, 1], [7, 0], [7, 1]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 7)
-    int n = 8;
+// total number of nodes in the graph (labelled from 0 to 7)
+const n = 8;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    // print all topological ordering of the graph
-    printAllTopologicalOrders(graph);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // stores in-degree of a vertex
-    List<Integer> indegree = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // initialize in-degree of each vertex by 0
-        indegree = new ArrayList<>(Collections.nCopies(n, 0));
-
-        // add edges to the directed graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            // add an edge from source to destination
-            adjList.get(src).add(dest);
-
-            // increment in-degree of destination vertex by 1
-            indegree.set(dest, indegree.get(dest) + 1);
-        }
-    }
-}
-
-class Main
-{
-    // Recursive function to find all topological orderings of a given DAG
-    public static void findAllTopologicalOrderings(Graph graph, Stack<Integer> path,
-                                            boolean[] discovered, int n)
-    {
-        // do for every vertex
-        for (int v = 0; v < n; v++)
-        {
-            // proceed only if the current node's in-degree is 0 and
-            // the current node is not processed yet
-            if (graph.indegree.get(v) == 0 && !discovered[v])
-            {
-                // for every adjacent vertex `u` of `v`, reduce the in-degree of
-                // `u` by 1
-                for (int u: graph.adjList.get(v)) {
-                    graph.indegree.set(u, graph.indegree.get(u) - 1);
-                }
-
-                // include the current node in the path and mark it as discovered
-                path.add(v);
-                discovered[v] = true;
-
-                // recur
-                findAllTopologicalOrderings(graph, path, discovered, n);
-
-                // backtrack: reset in-degree information for the current node
-                for (int u: graph.adjList.get(v)) {
-                    graph.indegree.set(u, graph.indegree.get(u) + 1);
-                }
-
-                // backtrack: remove the current node from the path and
-                // mark it as undiscovered
-                path.pop();
-                discovered[v] = false;
-            }
-        }
-
-        // print the topological order if all vertices are included in the path
-        if (path.size() == n) {
-            System.out.println(path);
-        }
-    }
-
-    // Print all topological orderings of a given DAG
-    public static void printAllTopologicalOrders(Graph graph)
-    {
-        // get the total number of nodes in the graph
-        int n = graph.adjList.size();
-
-        // create an auxiliary array to keep track of whether a vertex is discovered
-        boolean[] discovered = new boolean[n];
-
-        // list to store the topological order
-        Stack<Integer> path = new Stack<>();
-
-        // find all topological ordering and print them
-        findAllTopologicalOrderings(graph, path, discovered, n);
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 6), new Edge(1, 2), new Edge(1, 4), new Edge(1, 6),
-                new Edge(3, 0), new Edge(3, 4), new Edge(5, 1), new Edge(7, 0),
-                new Edge(7, 1));
-
-        // total number of nodes in the graph (labelled from 0 to 7)
-        int n = 8;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // print all topological ordering of the graph
-        printAllTopologicalOrders(graph);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # stores in-degree of a vertex
-        # initialize in-degree of each vertex by 0
-        self.indegree = [0] * n
-
-        # add edges to the directed graph
-        for (src, dest) in edges:
-
-            # add an edge from source to destination
-            self.adjList[src].append(dest)
-
-            # increment in-degree of destination vertex by 1
-            self.indegree[dest] = self.indegree[dest] + 1
-
-# Recursive function to find all topological orderings of a given DAG
-def findAllTopologicalOrderings(graph, path, discovered, n):
-
-    # do for every vertex
-    for v in range(n):
-
-        # proceed only if the current node's in-degree is 0 and
-        # the current node is not processed yet
-        if graph.indegree[v] == 0 and not discovered[v]:
-
-            # for every adjacent vertex `u` of `v`, reduce the in-degree of `u` by 1
-            for u in graph.adjList[v]:
-                graph.indegree[u] = graph.indegree[u] - 1
-
-            # include the current node in the path and mark it as discovered
-            path.append(v)
-            discovered[v] = True
-
-            # recur
-            findAllTopologicalOrderings(graph, path, discovered, n)
-
-            # backtrack: reset in-degree information for the current node
-            for u in graph.adjList[v]:
-                graph.indegree[u] = graph.indegree[u] + 1
-
-            # backtrack: remove the current node from the path and
-            # mark it as undiscovered
-            path.pop()
-            discovered[v] = False
-
-    # print the topological order if all vertices are included in the path
-    if len(path) == n:
-        print(path)
-
-# Print all topological orderings of a given DAG
-def printAllTopologicalOrders(graph):
-
-    # get the total number of nodes in the graph
-    n = len(graph.adjList)
-
-    # create an auxiliary space to keep track of whether the vertex is discovered
-    discovered = [False] * n
-
-    # list to store the topological order
-    path = []
-
-    # find all topological ordering and print them
-    findAllTopologicalOrderings(graph, path, discovered, n)
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 6), (1, 2), (1, 4), (1, 6), (3, 0), (3, 4), (5, 1), (7, 0), (7, 1)]
-
-    # total number of nodes in the graph (labelled from 0 to 7)
-    n = 8
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # print all topological ordering of the graph
-    printAllTopologicalOrders(graph)
+// print all topological ordering of the graph
+printAllTopologicalOrders(graph);
 ```
 
 **Output:** [3, 5, 7, 0, 1, 2, 4, 6] [3, 5, 7, 0, 1, 2, 6, 4] [3, 5, 7, 0, 1, 4, 2, 6] [3, 5, 7, 0, 1, 4, 6, 2] [3, 5, 7, 0, 1, 6, 2, 4] [3, 5, 7, 0, 1, 6, 4, 2] [3, 5, 7, 1, 0, 2, 4, 6] [3, 5, 7, 1, 0, 2, 6, 4] …

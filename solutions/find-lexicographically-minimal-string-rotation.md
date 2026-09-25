@@ -10,113 +10,36 @@ For example, the lexicographically minimal rotation of `bbaaccaadd` is `aaccaadd
 
 > 
 
-The idea is to iterate through successive rotations of the given string while keeping track of the most lexicographically minimal rotation encountered. Following is the C++, Java, and Python implementation of the idea:
+The idea is to iterate through successive rotations of the given string while keeping track of the most lexicographically minimal rotation encountered. Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find the lexicographically minimal string rotation
-string findLexicalMinRotation(string str)
-{
-    // to store the lexicographic minimum string
-    string min = str;
+function findLexicalMinRotation(s: string): string {
 
-    for (int i = 0; i < str.length(); i++)
-    {
+    // to store the lexicographic minimum string
+    let min = s;
+
+    for (let i = 0; i < s.length; i++) {
+
         // left-rotate the string by 1 unit
-        rotate(str.begin(), str.begin() + 1, str.end());
+        s = s.slice(1) + s[0];
 
         // update the result if the rotation is minimum so far
-        if (str.compare(min) < 0) {
-            min = str;
+        if (s < min) {
+            min = s;
         }
     }
 
     return min;
 }
 
-int main()
-{
-    string str = "bbaaccaadd";
+const str = 'bbaaccaadd';
 
-    cout << "The lexicographically minimal rotation of " << str
-         << " is " << findLexicalMinRotation(str);
-
-    return 0;
-}
+console.log(`The lexicographically minimal rotation of ${str}` +
+    ` is ${findLexicalMinRotation(str)}`);
 ```
 
 **Output:** The lexicographically minimal rotation of bbaaccaadd is aaccaaddbb
-
-##
-
-```java
-class Main
-{
-    // Function to find the lexicographically minimal string rotation
-    public static String findLexicalMinRotation(String str)
-    {
-        // base case
-        if (str == null) {
-            return null;
-        }
-
-        // to store the lexicographic minimum string
-        String min = str;
-
-        for (int i = 0; i < str.length(); i++)
-        {
-            // left-rotate the string by 1 unit
-            str = str.substring(1) + str.charAt(0);
-
-            // update the result if the rotation is minimum so far
-            if (str.compareTo(min) < 0) {
-                min = str;
-            }
-        }
-
-        return min;
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "bbaaccaadd";
-
-        System.out.println("The lexicographically minimal rotation of " + str
-                        + " is " + findLexicalMinRotation(str));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the lexicographically minimal string rotation
-def findLexicalMinRotation(s):
-
-    # to store the lexicographic minimum string
-    min = s
-
-    for _ in range(len(s)):
-
-        # left-rotate the string by 1 unit
-        s = s[1:] + s[0]
-
-        # update the result if the rotation is minimum so far
-        if s < min:
-            min = s
-
-    return min
-
-if __name__ == '__main__':
-
-    s = 'bbaaccaadd'
-    print("The lexicographically minimal rotation of s is",
-        findLexicalMinRotation(s))
-```
 
 The time complexity of the above solution is O(n2), where `n` is the length of the input string and doesn’t require any extra space.
 

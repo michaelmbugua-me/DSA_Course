@@ -26,326 +26,105 @@ The top of the auxiliary stack always returns the minimum number since we are pu
 
 The following table demonstrates the above operations:
 
-The implementation can be seen below in C++, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <stack>
-using namespace std;
+```ts
+class MinStack {
+  // main stack to store elements
+  private s: number[] = [];
+  // auxiliary stack to store minimum elements
+  private aux: number[] = [];
 
-class MinStack
-{
-    stack<int> s;       // main stack to store elements
-    stack<int> aux;     // auxiliary stack to store minimum elements
+  // Inserts a given element on top of the stack
+  push(val: number): void {
+    // push the given element into the main stack
+    this.s.push(val);
 
-public:
-    // Inserts a given element on top of the stack
-    void push(int val)
-    {
-        // push the given element into the main stack
-        s.push(val);
+    // if the auxiliary stack is empty, push the given element into it
+    if (this.aux.length === 0) {
+      this.aux.push(val);
+    } else {
+      // push the given element into the auxiliary stack
+      // if it is less than or equal to the current minimum
+      if (this.aux[this.aux.length - 1] >= val) {
+        this.aux.push(val);
+      }
+    }
+  }
 
-        // if the auxiliary stack is empty, push the given element into it
-        if (aux.empty()) {
-            aux.push(val);
-        }
-        else {
-            // push the given element into the auxiliary stack
-            // if it is less than or equal to the current minimum
-            if (aux.top() >= val) {
-                aux.push(val);
-            }
-        }
+  // Removes the top element from the stack and returns it
+  pop(): number {
+    if (this.isEmpty()) {
+      console.log("Stack underflow");
+      process.exit(-1);
     }
 
-    // Removes the top element from the stack and returns it
-    int pop()
-    {
-        // remove the top element from the main stack
-        int top = s.top();
-        s.pop();
+    // remove the top element from the main stack
+    const top = this.s.pop()!;
 
-        // remove the top element from the auxiliary stack only if it is minimum
-        if (top == aux.top()) {
-            aux.pop();
-        }
-
-        // return the removed element
-        return top;
+    // remove the top element from the auxiliary stack
+    // only if it is minimum
+    if (top === this.aux[this.aux.length - 1]) {
+      this.aux.pop();
     }
 
-    // Returns the top element of the stack
-    int top() {
-        return s.top();
+    // return the removed element
+    return top;
+  }
+
+  // Returns the top element of the stack
+  top(): number {
+    return this.s[this.s.length - 1];
+  }
+
+  // Returns the total number of elements in the stack
+  size(): number {
+    return this.s.length;
+  }
+
+  // Returns true if the stack is empty; false otherwise
+  isEmpty(): boolean {
+    return this.s.length === 0;
+  }
+
+  // Returns the minimum element from the stack in constant time
+  getMin(): number {
+    if (this.aux.length === 0) {
+      console.log("Stack underflow");
+      process.exit(-1);
     }
-
-    // Returns the total number of elements in the stack
-    int size() {
-        return s.size();
-    }
-
-    // Returns the true if the stack is empty; false otherwise
-    bool isEmpty() {
-        return s.empty();
-    }
-
-    // Returns the minimum element from the stack in constant time
-    int getMin()
-    {
-        return aux.top();
-    }
-};
-
-int main()
-{
-    MinStack s;
-
-    s.push(6);
-    cout << s.getMin() << endl;    // prints 6
-
-    s.push(7);
-    cout << s.getMin() << endl;    // prints 6
-
-    s.push(8);
-    cout << s.getMin() << endl;    // prints 6
-
-    s.push(5);
-    cout << s.getMin() << endl;    // prints 5
-
-    s.push(3);
-    cout << s.getMin() << endl;    // prints 3
-
-    cout << s.pop() << endl;    // prints 3
-    cout << s.getMin() << endl;    // prints 5
-
-    s.push(10);
-    cout << s.getMin() << endl;    // prints 5
-
-    cout << s.pop() << endl;    // prints 10
-    cout << s.getMin() << endl;    // prints 5
-
-    cout << s.pop() << endl;    // prints 5
-    cout << s.getMin() << endl;    // prints 6
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Stack;
-
-class MinStack
-{
-    private Stack<Integer> s;       // main stack to store elements
-    private Stack<Integer> aux;     // auxiliary stack to store minimum elements
-
-    // Constructor
-    public MinStack()
-    {
-        s = new Stack<>();
-        aux = new Stack<>();
-    }
-
-    // Inserts a given element on top of the stack
-    public void push(int val)
-    {
-        // push the given element into the main stack
-        s.push(val);
-
-        // if the auxiliary stack is empty, push the given element into it
-        if (aux.isEmpty()) {
-            aux.push(val);
-        }
-        else {
-            // push the given element into the auxiliary stack
-            // if it is less than or equal to the current minimum
-            if (aux.peek() >= val) {
-                aux.push(val);
-            }
-        }
-    }
-
-    // Removes the top element from the stack and returns it
-    public int pop()
-    {
-        if (isEmpty())
-        {
-            System.out.println("Stack underflow!!");
-            System.exit(-1);
-        }
-
-        // remove the top element from the main stack
-        int top = s.pop();
-
-        // remove the top element from the auxiliary stack
-        // only if it is minimum
-        if (top == aux.peek()) {
-            aux.pop();
-        }
-
-        // return the removed element
-        return top;
-    }
-
-    // Returns the top element of the stack
-    public int top() {
-        return s.peek();
-    }
-
-    // Returns the total number of elements in the stack
-    public int size() {
-        return s.size();
-    }
-
-    // Returns true if the stack is empty; false otherwise
-    public boolean isEmpty() {
-        return s.isEmpty();
-    }
-
-    // Returns the minimum element from the stack in constant time
-    public int getMin()
-    {
-        if (aux.isEmpty())
-        {
-            System.out.println("Stack underflow!!");
-            System.exit(-1);
-        }
-
-        return aux.peek();
-    }
+    return this.aux[this.aux.length - 1];
+  }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        MinStack s = new MinStack();
+const s = new MinStack();
 
-        s.push(6);
-        System.out.println(s.getMin());    // prints 6
+s.push(6);
+console.log(s.getMin());        // prints 6
 
-        s.push(7);
-        System.out.println(s.getMin());    // prints 6
+s.push(7);
+console.log(s.getMin());        // prints 6
 
-        s.push(8);
-        System.out.println(s.getMin());    // prints 6
+s.push(8);
+console.log(s.getMin());        // prints 6
 
-        s.push(5);
-        System.out.println(s.getMin());    // prints 5
+s.push(5);
+console.log(s.getMin());        // prints 5
 
-        s.push(3);
-        System.out.println(s.getMin());    // prints 3
+s.push(3);
+console.log(s.getMin());        // prints 3
 
-        System.out.println(s.pop());    // prints 3
-        System.out.println(s.getMin());    // prints 5
+console.log(s.pop());           // prints 3
+console.log(s.getMin());        // prints 5
 
-        s.push(10);
-        System.out.println(s.getMin());    // prints 5
+s.push(10);
+console.log(s.getMin());        // prints 5
 
-        System.out.println(s.pop());    // prints 10
-        System.out.println(s.getMin());    // prints 5
+console.log(s.pop());           // prints 10
+console.log(s.getMin());        // prints 5
 
-        System.out.println(s.pop());    // prints 5
-        System.out.println(s.getMin());    // prints 6
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-class MinStack:
-    # constructor
-    def __init__(self):
-        # main stack to store elements
-        self.s = deque()
-        # auxiliary stack to store minimum elements
-        self.aux = deque()
-
-    # Inserts a given element on top of the stack
-    def push(self, val):
-        # push the given element into the main stack
-        self.s.append(val)
-
-        # if the auxiliary stack is empty, push the given element into it
-        if not self.aux:
-            self.aux.append(val)
-        else:
-            # push the given element into the auxiliary stack
-            # if it is less than or equal to the current minimum
-            if self.aux[-1] >= val:
-                self.aux.append(val)
-
-    # Removes the top element from the stack and returns it
-    def pop(self):
-        if self.isEmpty():
-            print('Stack underflow')
-            exit(-1)
-
-        # remove the top element from the main stack
-        top = self.s.pop()
-
-        # remove the top element from the auxiliary stack
-        # only if it is minimum
-        if top == self.aux[-1]:
-            self.aux.pop()
-
-        # return the removed element
-        return top
-
-    # Returns the top element of the stack
-    def top(self):
-        return self.s[-1]
-
-    # Returns the total number of elements in the stack
-    def size(self):
-        return len(self.s)
-
-    # Returns true if the stack is empty; false otherwise
-    def isEmpty(self):
-        return not self.s
-
-    # Returns the minimum element from the stack in constant time
-    def getMin(self):
-        if not self.aux:
-            print('Stack underflow')
-            exit(-1)
-        return self.aux[-1]
-
-if __name__ == '__main__':
-
-    s = MinStack()
-
-    s.push(6)
-    print(s.getMin())        # prints 6
-
-    s.push(7)
-    print(s.getMin())        # prints 6
-
-    s.push(8)
-    print(s.getMin())        # prints 6
-
-    s.push(5)
-    print(s.getMin())        # prints 5
-
-    s.push(3)
-    print(s.getMin())        # prints 3
-
-    print(s.pop())          # prints 3
-    print(s.getMin())        # prints 5
-
-    s.push(10)
-    print(s.getMin())        # prints 5
-
-    print(s.pop())          # prints 10
-    print(s.getMin())        # prints 5
-
-    print(s.pop())          # prints 5
-    print(s.getMin())        # prints 6
+console.log(s.pop());           // prints 5
+console.log(s.getMin());        // prints 6
 ```
 
 **Continue Reading:**

@@ -18,221 +18,137 @@ The idea is to maintain a [sliding window](https://techiedelight.com/sliding-win
 
 At each point the window changes, compare the window’s characters with that of the second string. If all characters in the current window match that of the second string, we have found an anagram. After all substrings of the first string are considered, i.e., the window reaches the first string’s last character, the process terminates.
 
-Following is the C++ and Java implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_set>
-using namespace std;
-
+```ts
 // Function to find all substrings of string 'X' that are
 // permutations of string 'Y'
-void findAllAnagrams(string X, string Y)
-{
+const findAllAnagrams = (X: string, Y: string): void => {
     // `m` and `n` store the length of the string 'Y' and 'X', respectively
-    int m, n;
+    const m = Y.length;
+    const n = X.length;
 
     // invalid input
-    if ((m = Y.length()) > (n = X.length())) {
+    if (m > n) {
         return;
     }
 
+    // helper to check whether two multisets are equal
+    const equal = (a: Map<string, number>, b: Map<string, number>): boolean => {
+        if (a.size !== b.size) {
+            return false;
+        }
+        for (const [ch, count] of a) {
+            if (b.get(ch) !== count) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     // maintains the count of characters in the current window
-    unordered_multiset<char> window;
+    const window = new Map<string, number>();
 
     // maintains the count of characters in the second string
-    unordered_multiset<char> set;
+    const set = new Map<string, number>();
 
     // insert all characters of string 'Y' into a set
-    for (int i = 0; i < m; i++) {
-        set.insert(Y[i]);
+    for (let i = 0; i < m; i++) {
+        set.set(Y[i], (set.get(Y[i]) ?? 0) + 1);
     }
-
-    // Note that `std::unordered_multiset` or `std::multiset` can maintain
-    // duplicate elements unlike `std::unordered_set` or `std::set`
 
     // maintain a sliding window of size `m` with adjacent characters
     // of string 'X'
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < n; i++) {
         // add first `m` characters of string 'X' to the current window
         if (i < m) {
-            window.insert(X[i]);
-        }
-        else {
+            window.set(X[i], (window.get(X[i]) ?? 0) + 1);
+        } else {
             // If all characters in the current window match that of the
             // string 'Y', we found an anagram
-            if (window == set)
-            {
-                cout << "Anagram " << X.substr(i - m, m) <<
-                        " present at index " << i - m << endl;
+            if (equal(window, set)) {
+                console.log(`Anagram ${X.slice(i - m, i)} present at index ${i - m}`);
             }
 
-            // consider the next substring of 'X' by removing the leftmost element of
-            // the sliding window and add the next character of string 'X' to it
+            // consider the next substring of 'X' by removing the leftmost
+            // element of the sliding window and add the next character
+            // of string 'X' to it
 
-            // delete only "one" occurrence of the leftmost element of
-            // the current window
-            auto itr = window.find(X[i - m]);
-            if (itr != window.end()) {
-                window.erase(itr);
+            // delete only "one" occurrence of the leftmost element of the
+            // current window
+            const count = window.get(X[i - m]) ?? 0;
+            if (count === 1) {
+                window.delete(X[i - m]);
+            } else if (count > 1) {
+                window.set(X[i - m], count - 1);
             }
 
             // insert the next character of the string 'X' into the current window
-            window.insert(X[i]);
+            window.set(X[i], (window.get(X[i]) ?? 0) + 1);
         }
     }
 
     // if the last `m` characters of string 'X' matches that of string 'Y',
     // we found an anagram
-    if (window == set)
-    {
-        cout << "Anagram " << X.substr(n - m, m) <<
-                " present at index " << n - m << endl;
+    if (equal(window, set)) {
+        console.log(`Anagram ${X.slice(n - m, n)} present at index ${n - m}`);
     }
-}
+};
 
-int main()
-{
-    string X = "XYYZXZYZXXYZ";
-    string Y = "XYZ";
-
-    findAllAnagrams(X, Y);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-
-class Main
-{
-    // Function to find all substrings of string 'X' that are
-    // permutations of string 'Y'
-    public static void findAllAnagrams(String X, String Y)
-    {
-        // `m` and `n` store the length of the string 'Y' and 'X', respectively
-        int m, n;
-
-        // invalid input
-        if ((m = Y.length()) > (n = X.length())) {
-            return;
-        }
-
-        // maintains the count of characters in the current window
-        Multiset<Character> window = HashMultiset.create();
-
-        // maintains the count of characters in the second string
-        Multiset<Character> set = HashMultiset.create();
-
-        // insert all characters of string 'Y' into a set
-        for (int i = 0; i < m; i++) {
-            set.add(Y.charAt(i));
-        }
-
-        // Note that Guava's `HashMultiset` can maintain duplicate
-        // elements, unlike `java.util.HashSet`
-
-        // maintain a sliding window of size `m` with adjacent characters
-        // of string 'X'
-        for (int i = 0; i < n; i++)
-        {
-            // add first `m` characters of string 'X' to the current window
-            if (i < m) {
-                window.add(X.charAt(i));
-            }
-            else {
-                // If all characters in the current window match that of the
-                // string 'Y', we found an anagram
-                if (window.containsAll(set))
-                {
-                    System.out.println("Anagram " + X.substring(i - m, i) +
-                                " present at index " + (i - m));
-                }
-
-                // consider the next substring of 'X' by removing the leftmost
-                // element of the sliding window and add the next character
-                // of string 'X' to it
-
-                // delete only "one" occurrence of the leftmost element of the
-                // current window
-                if (window.contains(X.charAt(i - m))) {
-                    window.remove(X.charAt(i - m));
-                }
-
-                // insert the next character of the string 'X' into the current window
-                window.add(X.charAt(i));
-            }
-        }
-
-        // if the last `m` characters of string 'X' matches that of string 'Y',
-        // we found an anagram
-        if (window.containsAll(set))
-        {
-            System.out.println("Anagram " + X.substring(n - m, n) +
-                                " present at index " + (n - m));
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "XYYZXZYZXXYZ";
-        String Y = "XYZ";
-
-        findAllAnagrams(X, Y);
-    }
-}
+const X = 'XYYZXZYZXXYZ';
+const Y = 'XYZ';
+findAllAnagrams(X, Y);
 ```
 
 **Output:** Anagram YZX present at index 2 Anagram XZY present at index 4 Anagram YZX present at index 6 Anagram XYZ present at index 9
 
 The time complexity of this solution would be O((n – m) × m) as there are `n-m` substrings of size `m`, and it takes O(m) time and O(m) space to check if they are anagrams or not. Here, `n` and `m` are lengths of the first and second strings, respectively.
 
-We can also solve this problem using [std::is_permutation](https://en.cppreference.com/w/cpp/algorithm/is_permutation) in C++, which determines if a sequence is a permutation of another sequence.
+We can also solve this problem using a permutation check helper, which determines if a sequence is a permutation of another sequence:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find all substrings of string 'X' that are
 // permutations of string 'Y'
-void findAllAnagrams(string X, string Y)
-{
+const findAllAnagrams = (X: string, Y: string): void => {
     // `m` and `n` store the length of the string 'Y' and 'X', respectively
-    int m, n;
+    const m = Y.length;
+    const n = X.length;
 
     // invalid input
-    if ((m = Y.length()) > (n = X.length())) {
+    if (m > n) {
         return;
     }
 
-    for (int i = 0; i <= n - m; i++)
-    {
+    // determines if a sequence is a permutation of another sequence
+    const isPermutation = (a: string, b: string): boolean => {
+        if (a.length !== b.length) {
+            return false;
+        }
+        const counts = new Map<string, number>();
+        for (const ch of a) {
+            counts.set(ch, (counts.get(ch) ?? 0) + 1);
+        }
+        for (const ch of b) {
+            const count = counts.get(ch) ?? 0;
+            if (count === 0) {
+                return false;
+            }
+            counts.set(ch, count - 1);
+        }
+        return true;
+    };
+
+    for (let i = 0; i <= n - m; i++) {
         // if a substring `X[i…i+m]` is a permutation of 'Y'
-        if (is_permutation(X.begin() + i, X.begin() + i + m, Y.begin()))
-        {
-            cout << "Anagram " << X.substr(i, m) <<
-                    " present at index " << i << endl;
+        if (isPermutation(X.slice(i, i + m), Y)) {
+            console.log(`Anagram ${X.slice(i, m + i)} present at index ${i}`);
         }
     }
-}
+};
 
-int main()
-{
-    string X = "XYYZXZYZXXYZ";
-    string Y = "XYZ";
-
-    findAllAnagrams(X, Y);
-
-    return 0;
-}
+const X = 'XYYZXZYZXXYZ';
+const Y = 'XYZ';
+findAllAnagrams(X, Y);
 ```
 
 **Output:** Anagram YZX present at index 2 Anagram XZY present at index 4 Anagram YZX present at index 6 Anagram XYZ present at index 9

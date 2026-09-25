@@ -12,237 +12,75 @@ For example, consider the following binary tree having three diagonals. The sum 
 
 We can easily solve this problem with the help of [hashing](https://techiedelight.com/hashing-in-data-structure/). The idea is to create an empty map where each key in the map represents a diagonal in the binary tree, and its value maintains the sum of all nodes present in the diagonal. Then perform a [preorder traversal](https://techiedelight.com/preorder-tree-traversal-iterative-recursive/) on the tree and update the map. For each node, recur for its left subtree by increasing the diagonal by one and recur for the right subtree with the same diagonal.
 
-This approach is demonstrated below in C++, Java, and Python:
+This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+class TreeNode {
+    constructor(public val: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Recursive function to perform preorder traversal on the tree and
 // fill the map with the diagonal sum of elements
-void diagonalSum(Node* root, int diagonal, auto &map)
-{
+function diagonalSum(root: TreeNode | null, diagonal: number, d: Map<number, number>): void {
+
     // base case: empty tree
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // update the current diagonal with the node's value
-    map[diagonal] += root->data;
+    d.set(diagonal, (d.get(diagonal) || 0) + root.val);
 
     // recur for the left subtree by increasing diagonal by 1
-    diagonalSum(root->left, diagonal + 1, map);
+    diagonalSum(root.left, diagonal + 1, d);
 
     // recur for the right subtree with the same diagonal
-    diagonalSum(root->right, diagonal, map);
+    diagonalSum(root.right, diagonal, d);
 }
 
 // Function to print the diagonal sum of a given binary tree
-void diagonalSum(Node* root)
-{
+function printDiagonalSum(root: TreeNode | null): void {
+
     // create an empty map to store the diagonal sum for every slope
-    unordered_map<int, int> map;
+    const d = new Map<number, number>();
 
     // traverse the tree in a preorder fashion and fill the map
-    diagonalSum(root, 0, map);
+    diagonalSum(root, 0, d);
 
-    // traverse the map and print the diagonal sum
-    for (int i = 0; i < map.size(); i++) {
-        cout << map[i] << " ";
-    }
+    // print the diagonal sum
+    console.log([...d.values()]);
 }
 
-int main()
-{
-    /* Construct the following tree
-               1
-             /  \
-            /    \
-           2      3
-          /     /  \
-         /     /    \
-        4     5     6
-             / \
-            /   \
-           7     8
-    */
+/* Construct the following tree
+           1
+         /   \
+        /     \
+       2       3
+      /      /  \
+     /      /    \
+    4      5      6
+          / \
+         /   \
+        7     8
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    diagonalSum(root);
-
-    return 0;
-}
+printDiagonalSum(root);
 ```
 
 **Output:** 10 15 11
 
 ##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to perform preorder traversal on the tree and
-    // fill the map with the diagonal sum of elements
-    public static void diagonalSum(Node root, int diagonal, Map<Integer, Integer> map)
-    {
-        // base case: empty tree
-        if (root == null) {
-            return;
-        }
-
-        // update the current diagonal with the node's value
-        map.put(diagonal, map.getOrDefault(diagonal, 0) + root.data);
-
-        // recur for the left subtree by increasing diagonal by 1
-        diagonalSum(root.left, diagonal + 1, map);
-
-        // recur for the right subtree with the same diagonal
-        diagonalSum(root.right, diagonal, map);
-    }
-
-    // Function to print the diagonal sum of a given binary tree
-    public static void diagonalSum(Node root)
-    {
-        // create an empty map to store the diagonal sum for every slope
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // traverse the tree in a preorder fashion and fill the map
-        diagonalSum(root, 0, map);
-
-        // traverse the map and print the diagonal sum
-        System.out.println(map.values());
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                   1
-                 /   \
-                /     \
-               2       3
-              /      /  \
-             /      /    \
-            4      5      6
-                  / \
-                 /   \
-                7     8
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        diagonalSum(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to perform preorder traversal on the tree and
-# fill the dictionary with the diagonal sum of elements
-def diagonalSum(root, diagonal, d):
-
-    # base case: empty tree
-    if root is None:
-        return
-
-    # update the current diagonal with the node's value
-    d[diagonal] = d.get(diagonal, 0) + root.data
-
-    # recur for the left subtree by increasing diagonal by 1
-    diagonalSum(root.left, diagonal + 1, d)
-
-    # recur for the right subtree with the same diagonal
-    diagonalSum(root.right, diagonal, d)
-
-# Function to print the diagonal sum of a given binary tree
-def printDiagonalSum(root):
-
-    # create an empty dictionary to store the diagonal sum for every slope
-    d = {}
-
-    # traverse the tree in a preorder fashion and fill the dictionary
-    diagonalSum(root, 0, d)
-
-    # print the diagonal sum
-    print(list(d.values()))
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          /      /  \
-         /      /    \
-        4      5      6
-              / \
-             /   \
-            7     8
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    printDiagonalSum(root)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the size of the binary tree.
 

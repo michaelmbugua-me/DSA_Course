@@ -14,179 +14,60 @@ Assume that the postfix expression contains only single-digit numeric operands, 
 
 We can easily compute a postfix expression by using a [stack](https://techiedelight.com/stack-implementation-in-cpp/). The idea is to traverse the given postfix expression from left to right. If the current character of the expression is an operand, push it into the stack; otherwise, if the current character is an operator, pop the top two elements from the stack, evaluate them using the current operator and push the result back into the stack. When all the expression characters are processed, we will be left with only one element in the stack containing the value of a postfix expression.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is the implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <stack>
-using namespace std;
-
+```ts
 // Function to evaluate a given postfix expression
-int evalPostfix(string exp)
-{
+function evalPostfix(exp: string): number {
+
+    // base case
+    if (!exp) {
+        process.exit(-1);
+    }
+
     // create an empty stack
-    stack<int> stack;
+    const stack: number[] = [];
 
     // traverse the given expression
-    for (char c: exp)
-    {
-        // if the current character is an operand, push it into the stack
-        if (c >= '0' && c <= '9') {
-            stack.push(c - '0');
+    for (const ch of exp) {
+
+        // if the current is an operand, push it into the stack
+        if (ch >= '0' && ch <= '9') {
+            stack.push(parseInt(ch, 10));
         }
-        // if the current character is an operator
+        // if the current is an operator
         else {
             // remove the top two elements from the stack
-            int x = stack.top();
-            stack.pop();
-
-            int y = stack.top();
-            stack.pop();
+            const x = stack.pop() as number;
+            const y = stack.pop() as number;
 
             // evaluate the expression 'x op y', and push the
             // result back to the stack
-            if (c == '+') {
+            if (ch === '+') {
                 stack.push(y + x);
             }
-            else if (c == '-') {
+            else if (ch === '-') {
                 stack.push(y - x);
             }
-            else if (c == '*') {
+            else if (ch === '*') {
                 stack.push(y * x);
             }
-            else if (c == '/') {
-                stack.push(y / x);
+            else if (ch === '/') {
+                stack.push(Math.floor(y / x));
             }
         }
     }
 
     // At this point, the stack is left with only one element, i.e.,
     // expression result
-    return stack.top();
+    return stack.pop() as number;
 }
 
-int main()
-{
-    string exp = "138*+";
-
-    cout << evalPostfix(exp);
-
-    return 0;
-}
+const exp = '138*+';
+console.log(evalPostfix(exp));
 ```
 
 **Output:** 25
-
-##
-
-```java
-import java.util.Stack;
-
-class Main
-{
-    // Function to evaluate a given postfix expression
-    public static int evalPostfix(String exp)
-    {
-        // base case
-        if (exp == null || exp.length() == 0) {
-            System.exit(-1);
-        }
-
-        // create an empty stack
-        Stack<Integer> stack = new Stack<>();
-
-        // traverse the given expression
-        for (char c: exp.toCharArray())
-        {
-            // if the current character is an operand, push it into the stack
-            if (Character.isDigit(c)) {
-                stack.push(c - '0');
-            }
-            // if the current character is an operator
-            else {
-                // remove the top two elements from the stack
-                int x = stack.pop();
-                int y = stack.pop();
-
-                // evaluate the expression 'x op y', and push the
-                // result back to the stack
-                if (c == '+') {
-                    stack.push(y + x);
-                }
-                else if (c == '-') {
-                    stack.push(y - x);
-                }
-                else if (c == '*') {
-                    stack.push(y * x);
-                }
-                else if (c == '/') {
-                    stack.push(y / x);
-                }
-            }
-        }
-
-        // At this point, the stack is left with only one element, i.e.,
-        // expression result
-        return stack.pop();
-    }
-
-    public static void main(String[] args)
-    {
-        String exp = "138*+";
-        System.out.println(evalPostfix(exp));
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to evaluate a given postfix expression
-def evalPostfix(exp):
-
-    # base case
-    if not exp:
-        exit(-1)
-
-    # create an empty stack
-    stack = deque()
-
-    # traverse the given expression
-    for ch in exp:
-
-        # if the current is an operand, push it into the stack
-        if ch.isdigit():
-            stack.append(int(ch))
-
-        # if the current is an operator
-        else:
-            # remove the top two elements from the stack
-            x = stack.pop()
-            y = stack.pop()
-
-            # evaluate the expression 'x op y', and push the
-            # result back to the stack
-            if ch == '+':
-                stack.append(y + x)
-            elif ch == '-':
-                stack.append(y - x)
-            elif ch == '*':
-                stack.append(y * x)
-            elif ch == '/':
-                stack.append(y // x)
-
-    # At this point, the stack is left with only one element, i.e.,
-    # expression result
-    return stack.pop()
-
-if __name__ == '__main__':
-
-    exp = '138*+'
-    print(evalPostfix(exp))
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the length of the postfix expression.
 

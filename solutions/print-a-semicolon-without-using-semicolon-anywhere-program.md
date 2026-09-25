@@ -6,64 +6,46 @@
 
 Write a program to print a semicolon without using a semicolon anywhere in the program.
 
-Note this is not a practical problem, but rather a fun and challenging exercise. It can help us to learn more about the syntax and features of C/C++ programming language, and test our creativity and problem-solving skills. We should always use semicolons where appropriate in real-world applications.
+Note this is not a practical problem, but rather a fun and challenging exercise. It can help us to learn more about the syntax and features of TypeScript, and test our creativity and problem-solving skills. We should always use semicolons where appropriate in real-world applications.
 
-## 1\. Using `printf()` or `putchar()` function
+## 1\. Using `console.log()` or `process.stdout.write()`
 
-We can use the ASCII value of the semicolon to print a semicolon, without using a semicolon in the program. The idea is to call the `printf()` function inside an `if` conditional expression with an empty body to avoid using a semicolon. When the conditional expression is evaluated, it will print a semicolon on the console.
+We can use the ASCII value of the semicolon to print a semicolon, without using a semicolon in the program. The idea is to call the `console.log()` function inside an `if` conditional expression with an empty body to avoid using a semicolon. When the conditional expression is evaluated, it will print a semicolon on the console.
 
-```
-#include <stdio.h>
-
+```ts
 // 59 is an ASCII value of the semicolon
-#define SEMICOLON 59
+const SEMICOLON = 59;
 
-int main(void)
-{
-    if (printf("%c", SEMICOLON)) {}
-}
+if (console.log(String.fromCharCode(SEMICOLON))) {}
 ```
 
-The `printf()` function prints the character with the ASCII value `59`, which is the semicolon. We can also use the `putchar()` function instead of the `printf()` function, as shown below:
+The `console.log()` function prints the character with the ASCII value `59`, which is the semicolon. We can also use the `process.stdout.write()` function instead of the `console.log()` function, as shown below:
 
-```
-#include <stdio.h>
-
+```ts
 // 59 is an ASCII value of the semicolon
-#define SEMICOLON 59
+const SEMICOLON = 59;
 
-int main(void)
-{
-    if (putchar(SEMICOLON)) {}
-}
+if (process.stdout.write(String.fromCharCode(SEMICOLON))) {}
 ```
 
 We can also use a while-loop if the conditional statements are not allowed in the program.
 
-```
-#include <stdio.h>
-
+```ts
 // 59 is an ASCII value of the semicolon
-#define SEMICOLON 59
+const SEMICOLON = 59;
 
-int main() {
-    while (!printf("%c", SEMICOLON)) {}
-}
+while (!console.log(String.fromCharCode(SEMICOLON))) {}
 ```
 
-## 2\. Using `std::cout`
+## 2\. Using `process.stdout.write()` with `String.fromCharCode()`
 
-In C++, we can easily replace `printf()` function with `std::cout`. The idea is to use the `static_cast<char>(59)` to convert the integer `59` to a character, which is the semicolon. For example, the following C++ code prints a semicolon without using a semicolon anywhere in the program:
+We can easily replace `console.log()` function with `process.stdout.write()` combined with `String.fromCharCode()`. The idea is to use `String.fromCharCode(59)` to convert the integer `59` to a character, which is the semicolon. For example, the following TypeScript code prints a semicolon without using a semicolon anywhere in the program:
 
-```
-#include <iostream>
-
+```ts
 // 59 is an ASCII value of the semicolon
-#define SEMICOLON 59
+const SEMICOLON = 59;
 
-int main() {
-    if (std::cout << static_cast<char>(SEMICOLON)) {}
-}
+if (process.stdout.write(String.fromCharCode(SEMICOLON))) {}
 ```
 
 Also See:

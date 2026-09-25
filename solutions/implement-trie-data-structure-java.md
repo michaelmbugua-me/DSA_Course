@@ -4,51 +4,43 @@
 
 [Trie](https://www.techiedelight.com/Category/Trees/Trie/)
 
-Trie is a tree-based data structure used for efficient re _trie_ val of a key in a huge word set. In this post, we will implement the Trie data structure in Java.
+Trie is a tree-based data structure used for efficient re _trie_ val of a key in a huge word set. In this post, we will implement the Trie data structure in TypeScript.
 
-In the [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/), we discussed a Trie data structure in detail and covered its C implementation. In this post, the Trie data structure’s Java implementation is discussed, which is way cleaner than the C implementation.
+In the [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/), we discussed a Trie data structure in detail and covered its C implementation. In this post, the Trie data structure’s TypeScript implementation is discussed, which is way cleaner than the C implementation.
 
-Following is the Java implementation of the Trie data structure, which supports insertion and search operations. The implementation currently supports only lowercase English characters `(a – z)`, but we can easily extend the solution to support any set of characters.
+Following is the TypeScript implementation of the Trie data structure, which supports insertion and search operations. The implementation currently supports only lowercase English characters `(a – z)`, but we can easily extend the solution to support any set of characters.
 
-```
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+```ts
 // A class to store a Trie node
-class Trie
-{
+class Trie {
     // Define the alphabet size (26 characters for `a – z`)
-    private static final int CHAR_SIZE = 26;
+    private static readonly CHAR_SIZE = 26;
 
-    private boolean isLeaf;
-    private List<Trie> children = null;
+    private isLeaf: boolean;
+    private children: (Trie | null)[];
 
     // Constructor
-    Trie()
-    {
-        isLeaf = false;
-        children = new ArrayList<>(Collections.nCopies(CHAR_SIZE, null));
+    constructor() {
+        this.isLeaf = false;
+        this.children = new Array(Trie.CHAR_SIZE).fill(null);
     }
 
     // Iterative function to insert a string into a Trie
-    public void insert(String key)
-    {
-        System.out.println("Inserting \"" + key + "\"");
+    insert(key: string): void {
+        console.log(`Inserting "${key}"`);
 
         // start from the root node
-        Trie curr = this;
+        let curr: Trie = this;
 
         // do for each character of the key
-        for (char c: key.toCharArray())
-        {
+        for (const c of key) {
             // create a new Trie node if the path does not exist
-            if (curr.children.get(c - 'a') == null) {
-                curr.children.set(c - 'a', new Trie());
+            if (curr.children[c.charCodeAt(0) - 'a'.charCodeAt(0)] === null) {
+                curr.children[c.charCodeAt(0) - 'a'.charCodeAt(0)] = new Trie();
             }
 
             // go to the next node
-            curr = curr.children.get(c - 'a');
+            curr = curr.children[c.charCodeAt(0) - 'a'.charCodeAt(0)] as Trie;
         }
 
         // mark the current node as a leaf
@@ -57,20 +49,18 @@ class Trie
 
     // Iterative function to search a key in a Trie. It returns true
     // if the key is found in the Trie; otherwise, it returns false
-    public boolean search(String key)
-    {
-        System.out.print("Searching \"" + key + "\" : ");
+    search(key: string): boolean {
+        process.stdout.write(`Searching "${key}" : `);
 
-        Trie curr = this;
+        let curr: Trie = this;
 
         // do for each character of the key
-        for (char c: key.toCharArray())
-        {
+        for (const c of key) {
             // go to the next node
-            curr = curr.children.get(c - 'a');
+            curr = curr.children[c.charCodeAt(0) - 'a'.charCodeAt(0)] as Trie;
 
             // if the string is invalid (reached end of a path in the Trie)
-            if (curr == null) {
+            if (curr === null) {
                 return false;
             }
         }
@@ -81,69 +71,60 @@ class Trie
     }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        // construct a new Trie node
-        Trie head = new Trie();
+(function main() {
+    // construct a new Trie node
+    const head = new Trie();
 
-        head.insert("techie");
-        head.insert("techi");
-        head.insert("tech");
+    head.insert("techie");
+    head.insert("techi");
+    head.insert("tech");
 
-        System.out.println(head.search("tech"));            // true
-        System.out.println(head.search("techi"));           // true
-        System.out.println(head.search("techie"));          // true
-        System.out.println(head.search("techiedelight"));   // false
+    console.log(head.search("tech"));            // true
+    console.log(head.search("techi"));           // true
+    console.log(head.search("techie"));          // true
+    console.log(head.search("techiedelight"));   // false
 
-        head.insert("techiedelight");
+    head.insert("techiedelight");
 
-        System.out.println(head.search("tech"));            // true
-        System.out.println(head.search("techi"));           // true
-        System.out.println(head.search("techie"));          // true
-        System.out.println(head.search("techiedelight"));   // true
-    }
-}
+    console.log(head.search("tech"));            // true
+    console.log(head.search("techi"));           // true
+    console.log(head.search("techie"));          // true
+    console.log(head.search("techiedelight"));   // true
+})();
 ```
 
 The space complexity of a Trie data structure is O(N × M × C), where `N` is the total number of strings, `M` is the maximum length of the string, and `C` is the alphabet’s size.
 
-The storage problem can be alleviated if we only allocate memory for alphabets in use and don’t waste space storing null pointers. Following is a memory-efficient implementation of Trie data structure in Java, which uses `HashMap` to store a node’s children:
+The storage problem can be alleviated if we only allocate memory for alphabets in use and don’t waste space storing null pointers. Following is a memory-efficient implementation of Trie data structure in TypeScript, which uses a `Map` to store a node’s children:
 
-```
-import java.util.HashMap;
-import java.util.Map;
-
+```ts
 // A class to store a Trie node
-class Trie
-{
-    private boolean isLeaf;
-    private Map<Character, Trie> children;
+class Trie {
+    private isLeaf: boolean;
+    private children: Map<string, Trie>;
 
     // Constructor
-    Trie()
-    {
-        isLeaf = false;
-        children = new HashMap<>();
+    constructor() {
+        this.isLeaf = false;
+        this.children = new Map();
     }
 
     // Iterative function to insert a string into a Trie
-    public void insert(String key)
-    {
-        System.out.println("Inserting \"" + key + "\"");
+    insert(key: string): void {
+        console.log(`Inserting "${key}"`);
 
         // start from the root node
-        Trie curr = this;
+        let curr: Trie = this;
 
         // do for each character of the key
-        for (char c: key.toCharArray())
-        {
+        for (const c of key) {
             // create a new node if the path doesn't exist
-            curr.children.putIfAbsent(c, new Trie());
+            if (!curr.children.has(c)) {
+                curr.children.set(c, new Trie());
+            }
 
             // go to the next node
-            curr = curr.children.get(c);
+            curr = curr.children.get(c) as Trie;
         }
 
         // mark the current node as a leaf
@@ -152,20 +133,18 @@ class Trie
 
     // Iterative function to search a key in a Trie. It returns true
     // if the key is found in the Trie; otherwise, it returns false
-    public boolean search(String key)
-    {
-        System.out.print("Searching \"" + key + "\" : ");
+    search(key: string): boolean {
+        process.stdout.write(`Searching "${key}" : `);
 
-        Trie curr = this;
+        let curr: Trie = this;
 
         // do for each character of the key
-        for (char c: key.toCharArray())
-        {
+        for (const c of key) {
             // go to the next node
-            curr = curr.children.get(c);
+            curr = curr.children.get(c) as Trie;
 
             // if the string is invalid (reached end of a path in the Trie)
-            if (curr == null) {
+            if (curr === null) {
                 return false;
             }
         }
@@ -176,30 +155,26 @@ class Trie
     }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        // construct a new Trie node
-        Trie head = new Trie();
+(function main() {
+    // construct a new Trie node
+    const head = new Trie();
 
-        head.insert("techie");
-        head.insert("techi");
-        head.insert("tech");
+    head.insert("techie");
+    head.insert("techi");
+    head.insert("tech");
 
-        System.out.println(head.search("tech"));            // true
-        System.out.println(head.search("techi"));           // true
-        System.out.println(head.search("techie"));          // true
-        System.out.println(head.search("techiedelight"));   // false
+    console.log(head.search("tech"));            // true
+    console.log(head.search("techi"));           // true
+    console.log(head.search("techie"));          // true
+    console.log(head.search("techiedelight"));   // false
 
-        head.insert("techiedelight");
+    head.insert("techiedelight");
 
-        System.out.println(head.search("tech"));            // true
-        System.out.println(head.search("techi"));           // true
-        System.out.println(head.search("techie"));          // true
-        System.out.println(head.search("techiedelight"));   // true
-    }
-}
+    console.log(head.search("tech"));            // true
+    console.log(head.search("techi"));           // true
+    console.log(head.search("techie"));          // true
+    console.log(head.search("techiedelight"));   // true
+})();
 ```
 
 **Also see:**

@@ -10,275 +10,84 @@ The following directed graph has two connected components. The right-hand side s
 
 The idea is to run [Depth–first search (DFS)](https://techiedelight.com/depth-first-search/). Before exploring any adjacent nodes of any vertex in DFS, note the vertex’s arrival time. After exploring all adjacent nodes of the vertex, note its departure time. After the DFS call is over (i.e., all the graph vertices are discovered), print the vertices’ arrival and departure time.
 
-Please note that the arrival and departure time of vertices may vary depending upon the insertion order of edges in the graph and starting node of DFS. Following is the implementation in C++, Java, and Python based on the above idea:
+Please note that the arrival and departure time of vertices may vary depending upon the insertion order of edges in the graph and starting node of DFS. Following is the implementation in TypeScript based on the above idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    // Constructor
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the directed graph
-        for (auto &edge: edges) {
-            adjList[edge.src].push_back(edge.dest);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
         }
     }
-};
+}
 
 // Function to perform DFS traversal on the graph on a graph
-int DFS(Graph const &graph, int v, vector<bool> &discovered,
-    vector<int> &arrival, vector<int> &departure, int &time)
-{
+function DFS(graph: Graph, v: number, discovered: boolean[], arrival: number[],
+    departure: number[], time: number): number {
+
+    time = time + 1;
+
     // set the arrival time of vertex `v`
-    arrival[v] = ++time;
+    arrival[v] = time;
 
     // mark vertex as discovered
     discovered[v] = true;
 
-    for (int i: graph.adjList[v])
-    {
+    for (const i of graph.adjList[v]) {
         if (!discovered[i]) {
-            DFS(graph, i, discovered, arrival, departure, time);
+            time = DFS(graph, i, discovered, arrival, departure, time);
         }
     }
+
+    time = time + 1;
 
     // set departure time of vertex `v`
-    departure[v] = ++time;
+    departure[v] = time;
+
+    return time;
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        {0, 1}, {0, 2}, {2, 3}, {2, 4}, {3, 1}, {3, 5}, {4, 5}, {6, 7}
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 1], [0, 2], [2, 3], [2, 4], [3, 1], [3, 5], [4, 5], [6, 7]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 7)
-    int n = 8;
+// total number of nodes in the graph (labelled from 0 to 7)
+const n = 8;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    // vector to store the arrival time of vertex
-    vector<int> arrival(n);
+// list to store the arrival time of vertex
+const arrival: number[] = new Array(n).fill(0);
 
-    // vector to store the departure time of vertex
-    vector<int> departure(n);
+// list to store the departure time of vertex
+const departure: number[] = new Array(n).fill(0);
 
-    // mark all the vertices as not discovered
-    vector<bool> discovered(n);
-    int time = -1;
+// mark all the vertices as not discovered
+const discovered: boolean[] = new Array(n).fill(false);
+let time = -1;
 
-    // Perform DFS traversal from all undiscovered nodes to
-    // cover all unconnected components of a graph
-    for (int i = 0; i < n; i++)
-    {
-        if (!discovered[i]) {
-            DFS(graph, i, discovered, arrival, departure, time);
-        }
-    }
-
-    // print arrival and departure time of each vertex in DFS
-    for (int i = 0; i < n; i++) {
-        cout << "Vertex " << i << " (" << arrival[i] << ", " << departure[i] << ")\n";
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
+// Perform DFS traversal from all undiscovered nodes to
+// cover all unconnected components of a graph
+for (let i = 0; i < n; i++) {
+    if (!discovered[i]) {
+        time = DFS(graph, i, discovered, arrival, departure, time);
     }
 }
 
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the directed graph
-        for (Edge edge: edges) {
-            adjList.get(edge.source).add(edge.dest);
-        }
-    }
+// print arrival and departure time of each vertex in DFS
+for (let i = 0; i < n; i++) {
+    console.log(`Vertex ${i} (${arrival[i]}, ${departure[i]})`);
 }
-
-class Main
-{
-    // Function to perform DFS traversal on the graph on a graph
-    public static int DFS(Graph graph, int v, boolean[] discovered,
-                    int[] arrival, int[] departure, int time)
-    {
-        // set the arrival time of vertex `v`
-        arrival[v] = ++time;
-
-        // mark vertex as discovered
-        discovered[v] = true;
-
-        for (int i: graph.adjList.get(v))
-        {
-            if (!discovered[i]) {
-                time = DFS(graph, i, discovered, arrival, departure, time);
-            }
-        }
-
-        // set departure time of vertex `v`
-        departure[v] = ++time;
-
-        return time;
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1), new Edge(0, 2), new Edge(2, 3), new Edge(2, 4),
-                new Edge(3, 1), new Edge(3, 5), new Edge(4, 5), new Edge(6, 7)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 7)
-        int n = 8;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // array to store the arrival time of vertex
-        int[] arrival = new int[n];
-
-        // array to store the departure time of vertex
-        int[] departure = new int[n];
-
-        // mark all the vertices as not discovered
-        boolean[] discovered = new boolean[n];
-        int time = -1;
-
-        // Perform DFS traversal from all undiscovered nodes to
-        // cover all unconnected components of a graph
-        for (int i = 0; i < n; i++)
-        {
-            if (!discovered[i]) {
-                time = DFS(graph, i, discovered, arrival, departure, time);
-            }
-        }
-
-        // print arrival and departure time of each vertex in DFS
-        for (int i = 0; i < n; i++)
-        {
-            System.out.println("Vertex " + i + " (" + arrival[i] + ", " +
-                departure[i] + ")");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the directed graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-
-# Function to perform DFS traversal on the graph on a graph
-def DFS(graph, v, discovered, arrival, departure, time):
-
-    time = time + 1
-
-    # set the arrival time of vertex `v`
-    arrival[v] = time
-
-    # mark vertex as discovered
-    discovered[v] = True
-
-    for i in graph.adjList[v]:
-        if not discovered[i]:
-            time = DFS(graph, i, discovered, arrival, departure, time)
-
-    time = time + 1
-
-    # set departure time of vertex `v`
-    departure[v] = time
-
-    return time
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 1), (0, 2), (2, 3), (2, 4), (3, 1), (3, 5), (4, 5), (6, 7)]
-
-    # total number of nodes in the graph (labelled from 0 to 7)
-    n = 8
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # list to store the arrival time of vertex
-    arrival = [None] * n
-
-    # list to store the departure time of vertex
-    departure = [None] * n
-
-    # mark all the vertices as not discovered
-    discovered = [False] * n
-    time = -1
-
-    # Perform DFS traversal from all undiscovered nodes to
-    # cover all unconnected components of a graph
-    for i in range(n):
-        if not discovered[i]:
-            time = DFS(graph, i, discovered, arrival, departure, time)
-
-    # print arrival and departure time of each vertex in DFS
-    for i in range(n):
-        print(f'Vertex {i}', (arrival[i], departure[i]))
 ```
 
 **Output:** Vertex 0 (0, 11) Vertex 1 (1, 2) Vertex 2 (3, 10) Vertex 3 (4, 7) Vertex 4 (8, 9) Vertex 5 (5, 6) Vertex 6 (12, 15) Vertex 7 (13, 14)

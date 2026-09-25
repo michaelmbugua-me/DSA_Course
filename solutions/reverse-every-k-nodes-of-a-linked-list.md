@@ -14,369 +14,155 @@ For example,
 
 The idea is to consider every group of `k` nodes and [recursively reverse](https://techiedelight.com/reverse-linked-list-part-2-recursive-solution/) them one at a time. Special care has to be taken while linking reversed groups with each other.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
+class ListNode {
+    constructor(public val: number, public next: ListNode | null = null) {}
 
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
+    // Helper function to print linked list starting from the current node
+    print(): void {
+        let ptr: ListNode | null = this;
+        while (ptr) {
+            console.log(ptr.val + ' —> ');
+            ptr = ptr.next;
+        }
+        console.log('null');
     }
-
-    printf("NULL\n");
-}
-
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = *head;
-
-    *head = newNode;
-}
-
-// Iterative function to reverse first `k` nodes of a linked list
-struct Node* reverseK(struct Node** current, int k)
-{
-    struct Node* prev = NULL;
-    int count = 0;
-
-    // iterate through the list and move/insert each node
-    // in front of the result list (like a push of the node)
-    while (*current && count++ < k)
-    {
-        // tricky: note the next node
-        struct Node* next = (*current)->next;
-
-        // move the current node onto the result
-        (*current)->next = prev;
-
-        // update the previous pointer to the current node
-        prev = *current;
-
-        // move to the next node in the list
-        *current = next;
-    }
-
-    // return last processed node
-    return prev;
 }
 
 // Function to reverse every group of `k` nodes in a given linked list
-struct Node *reverseInGroups(struct Node *head, int k)
-{
+function reverseInGroups(head: ListNode | null, k: number): ListNode | null {
     // base case
-    if (head == NULL) {
-        return NULL;
+    if (head === null) {
+        return null;
     }
 
     // start with the current node
-    struct Node* current = head;
+    let current: ListNode | null = head;
 
     // reverse next `k` nodes
-    struct Node* prev = reverseK(&current, k);
+    let prev: ListNode | null = null;
+    let count = 0;
+
+    // iterate through the list and move/insert each node
+    // in front of the result list (like a push of the node)
+    while (current && count < k) {
+        count = count + 1;
+
+        // tricky: note the next node
+        const next = current.next;
+
+        // move the current node onto the result
+        current.next = prev;
+
+        // update the previous pointer to the current node
+        prev = current;
+
+        // move to the next node in the list
+        current = next;
+    }
 
     // recur for remaining nodes
-    head->next = reverseInGroups(current, k);
+    head.next = reverseInGroups(current, k);
 
     // it is important to return the previous node (to link every group of `k` nodes)
     return prev;
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-    int n = sizeof(keys)/sizeof(keys[0]);
-
-    struct Node* head = NULL;
-    for (int i = n - 1; i >=0; i--) {
-        push(&head, keys[i]);
-    }
-
-    head = reverseInGroups(head, 3);
-
-    printList(head);
-
-    return 0;
+let head: ListNode | null = null;
+for (let i = 7; i >= 0; i--) {
+    head = new ListNode(i + 1, head);
 }
+
+head = reverseInGroups(head, 3);
+head.print();
 ```
 
 **Output:** 3 —> 2 —> 1 —> 6 —> 5 —> 4 —> 8 —> 7 —> NULL
 
-##
 
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-
-    // Helper function to print linked list starting from the current node
-    public void print()
-    {
-        Node ptr = this;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-        System.out.println("null");
-    }
-}
-
-class Main
-{
-    // Function to reverse every group of `k` nodes in a given linked list
-    public static Node reverseInGroups(Node head, int k)
-    {
-        // base case
-        if (head == null) {
-            return null;
-        }
-
-        // start with the current node
-        Node current = head;
-
-        // reverse next `k` nodes
-        Node prev = null;
-        int count = 0;
-
-        // iterate through the list and move/insert each node
-        // in front of the result list (like a push of the node)
-        while (current != null && count++ < k)
-        {
-            // tricky: note the next node
-            Node next = current.next;
-
-            // move the current node onto the result
-            current.next = prev;
-
-            // update the previous pointer to the current node
-            prev = current;
-
-            // move to the next node in the list
-            current = next;
-        }
-
-        // recur for remaining nodes
-        head.next = reverseInGroups(current, k);
-
-        // it is important to return the previous node
-        // (to link every group of `k` nodes)
-        return prev;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-        Node head = null;
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
-        }
-
-        head = reverseInGroups(head, 3);
-        head.print();
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-    # Helper function to print linked list starting from the current node
-    def print(self):
-
-        ptr = self
-        while ptr:
-            print(ptr.data, end=' —> ')
-            ptr = ptr.next
-
-        print('None')
-
-# Function to reverse every group of `k` nodes in a given linked list
-def reverseInGroups(head, k):
-
-    # base case
-    if head is None:
-        return None
-
-    # start with the current node
-    current = head
-
-    # reverse next `k` nodes
-    prev = None
-    count = 0
-
-    # iterate through the list and move/insert each node
-    # in front of the result list (like a push of the node)
-    while current and count < k:
-
-        count = count + 1
-
-        # tricky: note the next node
-        next = current.next
-
-        # move the current node onto the result
-        current.next = prev
-
-        # update the previous pointer to the current node
-        prev = current
-
-        # move to the next node in the list
-        current = next
-
-    # recur for remaining nodes
-    head.next = reverseInGroups(current, k)
-
-    # it is important to return the previous node (to link every group of `k` nodes)
-    return prev
-
-if __name__ == '__main__':
-
-    head = None
-    for i in reversed(range(8)):
-        head = Node(i + 1, head)
-
-    head = reverseInGroups(head, 3)
-    head.print()
-```
 
 The above solution returns the head pointer from the function. Alternatively, we can pass a pointer (reference) to the head node to the `reverseInGroups()` function and avoid updating the head pointer insider the `main()` function.
 
-Following is the C program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
-    }
-
-    printf("NULL\n");
+class ListNode {
+    constructor(public val: number, public next: ListNode | null = null) {}
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = *head;
-
-    *head = newNode;
+// Helper function to print a given linked list
+function printList(head: ListNode | null): void {
+    let ptr: ListNode | null = head;
+    while (ptr) {
+        console.log(ptr.val + ' —> ');
+        ptr = ptr.next;
+    }
+    console.log('null');
 }
 
 // Iterative function to reverse first `k` nodes of a linked list
-struct Node* reverseK(struct Node** current, int k)
-{
-    struct Node* prev = NULL;
-    int count = 0;
+function reverseK(current: ListNode | null, k: number): [ListNode | null, ListNode | null] {
+    let prev: ListNode | null = null;
+    let count = 0;
 
     // iterate through the list and move/insert each node
     // in front of the result list (like a push of the node)
-    while (*current && count++ < k)
-    {
+    while (current && count++ < k) {
         // tricky: note the next node
-        struct Node* next = (*current)->next;
+        const next = current.next;
 
         // move the current node onto the result
-        (*current)->next = prev;
+        current.next = prev;
 
         // update the previous pointer to the current node
-        prev = *current;
+        prev = current;
 
         // move to the next node in the list
-        *current = next;
+        current = next;
     }
 
     // return last processed node
-    return prev;
+    return [prev, current];
 }
 
 // Function to reverse every group of `k` nodes in a given linked list
-// call function as reverseInGroups(&head, k)
-void reverseInGroups(struct Node **head, int k)
-{
+// call function as head = reverseInGroups(head, k)
+function reverseInGroups(head: ListNode | null, k: number): ListNode | null {
     // base case
-    if (*head == NULL) {
-        return;
+    if (head === null) {
+        return null;
     }
 
     // start with the current node
-    struct Node* current = *head;
+    let current: ListNode | null = head;
 
     // reverse next `k` nodes
-    struct Node* prev = reverseK(&current, k);
+    let prev: ListNode | null;
+    [prev, current] = reverseK(current, k);
 
     // recur for remaining nodes
-    reverseInGroups(&current, k);
+    current = reverseInGroups(current, k);
 
     // fix head node
-    (*head)->next = current;
-    *head = prev;
+    head.next = current;
+    return prev;
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-    int n = sizeof(keys)/sizeof(keys[0]);
+// input keys
+const keys = [1, 2, 3, 4, 5, 6, 7, 8];
 
-    struct Node* head = NULL;
-    for (int i = n - 1; i >=0; i--) {
-        push(&head, keys[i]);
-    }
-
-    reverseInGroups(&head, 3);
-
-    printList(head);
-
-    return 0;
+let head: ListNode | null = null;
+for (let i = keys.length - 1; i >= 0; i--) {
+    head = new ListNode(keys[i], head);
 }
+
+head = reverseInGroups(head, 3);
+
+printList(head);
 ```
 
 The time complexity of the above solution is O(n), where `n` is the length of the linked list. The auxiliary space required by the program for the call stack is proportional to the lists’ length.

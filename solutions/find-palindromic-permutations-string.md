@@ -12,41 +12,66 @@ For example,
 
 We know that the left and right-half of a palindrome contains the same set of characters, so any palindromic permutations of a string are only possible if each character’s frequency in the string is even. Also, for the odd-length palindromic permutations, only a single occurrence of the odd occurring character is allowed. The odd character will form the middle character of all such palindromic permutations.
 
-We can use the above observation to solve the given problem. The idea is to find the characters involved in the left-half of any palindromic permutation and construct a string containing all such characters. All characters involved in the left-half have even frequencies. Half of the characters will go in the left-half of the palindrome for any character with even frequency, and the other half will go in its right-half. After constructing the string, sort it to generate permutations in lexicographical order using [std::next_permutation](https://techiedelight.com/std_next_permutation-overview-implementation/) or [std::prev_permutation](https://techiedelight.com/std_prev_permutation-overview-implementation/) depending upon the string is sorted in ascending or descending order. We can easily construct the right-half by reversing the left-half for each permutation of the string (which will form the left-half of the palindrome). If the string contains one odd occurring element, all palindromic permutations will be of odd length with the middle element as the odd occurring character. As mentioned earlier, no solution is possible if the string contains more than one odd occurring element.
+We can use the above observation to solve the given problem. The idea is to find the characters involved in the left-half of any palindromic permutation and construct a string containing all such characters. All characters involved in the left-half have even frequencies. Half of the characters will go in the left-half of the palindrome for any character with even frequency, and the other half will go in its right-half. After constructing the string, sort it to generate permutations in lexicographical order (similar to [std::next_permutation](https://techiedelight.com/std_next_permutation-overview-implementation/) in C++). We can easily construct the right-half by reversing the left-half for each permutation of the string (which will form the left-half of the palindrome). If the string contains one odd occurring element, all palindromic permutations will be of odd length with the middle element as the odd occurring character. As mentioned earlier, no solution is possible if the string contains more than one odd occurring element.
 
-Following is the C++ implementation of the above idea:
+Following is the TypeScript implementation of the above idea:
 
-```
-#include <iostream>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
+```ts
+// Function to rearrange the string into the next greater lexicographic
+// permutation (like `std::next_permutation` in C++). It returns false if
+// the string is already the highest permutation
+function nextPermutation(curr: string[]): boolean {
+    // find the longest non-increasing suffix
+    let i = curr.length - 1;
+    while (i > 0 && curr[i - 1] >= curr[i]) {
+        i--;
+    }
+
+    // the string is already the highest permutation
+    if (i === 0) {
+        return false;
+    }
+
+    // find the rightmost successor of the pivot `curr[i - 1]`
+    let j = curr.length - 1;
+    while (curr[j] <= curr[i - 1]) {
+        j--;
+    }
+
+    // swap the pivot with the successor
+    [curr[i - 1], curr[j]] = [curr[j], curr[i - 1]];
+
+    // reverse the suffix
+    for (let l = i, r = curr.length - 1; l < r; l++, r--) {
+        [curr[l], curr[r]] = [curr[r], curr[l]];
+    }
+
+    return true;
+}
 
 // Function to find all palindromic permutations of a given string
-void printPalindromicPermutations(string str)
-{
+function printPalindromicPermutations(str: string): void {
     // base case
-    if (str.size() == 0) {
+    if (str.length === 0) {
         return;
     }
 
     // store frequency of each character of a string in a map
-    unordered_map<char, int> freq;
-    for (char ch: str) {
-        freq[ch]++;
+    const freq = new Map<string, number>();
+    for (const ch of str) {
+        freq.set(ch, (freq.get(ch) ?? 0) + 1);
     }
 
-    int odd = 0;                // stores odd character's count
-    string mid;                 // stores odd character
-    string left, right;         // stores left and right-half
+    let odd = 0;                    // stores odd character's count
+    let mid = '';                   // stores odd character
+    let left = '';                  // stores left-half
 
     // iterate through the map
-    for (auto itr: freq)
+    for (const [ch, count] of freq)
     {
-        char ch = itr.first;    // current character
-        int c = itr.second;     // character count
+        let c = count;              // character count
 
-        if ((c & 1))            // if the count of the current character is odd
+        if (c & 1)                  // if the count of the current character is odd
         {
             // if more than one odd character is present in the string,
             // palindromic permutations are not possible
@@ -54,48 +79,41 @@ void printPalindromicPermutations(string str)
                 return;
             }
 
-            c = c - 1;          // make count even or zero
-            mid = itr.first;    // update mid
+            c = c - 1;              // make count even or zero
+            mid = ch;               // update mid
         }
 
         // append `c/2` characters to the left-half
         // (other `c/2` characters will go in the right-half)
-        c = c/2;
+        c = Math.floor(c / 2);
         while (c--) {
-            left = left + ch;   // update left
+            left = left + ch;       // update left
         }
     }
 
     // sort left-half to generate permutations in lexicographical order
-    // no need to sort if we use `std::map` as keys are already sorted
-    sort(left.begin(), left.end());
+    const chars = left.split('').sort();
+    left = chars.join('');
 
-    while (1)
+    while (true)
     {
         // the right-half will be the reverse of the left-half
-        right = left;
-        reverse(right.begin(), right.end());
+        const right = left.split('').reverse().join('');
 
         // print left-half, middle character (if any), and right-half
-        cout << (left + mid + right) << endl;
+        console.log(left + mid + right);
 
         // find the next lexicographically greater permutation
-        if (!next_permutation(left.begin(), left.end())) {
+        if (!nextPermutation(chars)) {
             break;
         }
+        left = chars.join('');
     }
-
-    // Note that we can also sort in reverse order and use `std::prev_permutation`
 }
 
-int main()
-{
-    string str = "xyxzwxxyz";
+const str = "xyxzwxxyz";
 
-    printPalindromicPermutations(str);
-
-    return 0;
-}
+printPalindromicPermutations(str);
 ```
 
 **Output:** xxyzwzyxx xxzywyzxx xyxzwzxyx xyzxwxzyx xzxywyxzx xzyxwxyzx yxxzwzxxy yxzxwxzxy yzxxwxxzy zxxywyxxz zxyxwxyxz zyxxwxxyz

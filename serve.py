@@ -67,25 +67,36 @@ def build_index():
            f'<div class="grid">{pattern_cards()}</div>'
 
 
+FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+           "viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' "
+           "fill='%230c0d10'/%3E%3Cpath d='M10 10v12l12-6z' "
+           "fill='%23d9a253'/%3E%3C/svg%3E")
+
+
+def head(title):
+    return (f'<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+            f'<title>{html.escape(title)}</title>'
+            f'<link rel="icon" href="{FAVICON}">'
+            f'<script>document.documentElement.dataset.theme=localStorage.getItem("theme")||"light";</script>'
+            f'<link rel="stylesheet" href="/assets/style.css">'
+            f'<script src="/assets/marked.min.js"></script>'
+            f'<script src="/assets/prism.js"></script>'
+            f'<script src="/assets/app.js"></script>')
+
+
 def render_page(md_path, rel_path):
     title = os.path.basename(md_path).rsplit('.', 1)[0].replace('-', ' ').title()
     with open(md_path, encoding='utf-8') as f:
         md = f.read()
-    template = '''<!doctype html>
-<html><head><meta charset="utf-8">
-<title>{title}</title>
-<link rel="stylesheet" href="/assets/style.css">
-<script src="/assets/marked.min.js"></script>
-<script src="/assets/app.js"></script>
-</head><body>
-<header><a href="/">home</a><span class="crumb">{crumb}</span></header>
+    template = f'''<!doctype html>
+<html><head>{head(title)}</head><body>
+<header><a class="home" href="/">home</a><span class="crumb">{{crumb}}</span><button id="theme-toggle" type="button" aria-label="toggle dark mode"></button></header>
 <main id="content"></main>
-<script>document.addEventListener('DOMContentLoaded', () => render({md}, {crumb_js}));</script>
+<script>document.addEventListener('DOMContentLoaded', () => render({{md}}, {{crumb_js}}));</script>
 </body></html>'''
     return template.format(
-        title=html.escape(title),
-        crumb=html.escape(rel_path),
         md=json.dumps(md),
+        crumb=html.escape(rel_path),
         crumb_js=json.dumps('/' + rel_path),
     )
 
@@ -93,6 +104,14 @@ def render_page(md_path, rel_path):
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
+
+    def send(self, code, text):
+        body = text.encode('utf-8')
+        self.send_response(code)
+        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.send_header('Content-Length', str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_GET(self):
         path = unquote(urlparse(self.path).path)
@@ -102,14 +121,18 @@ class Handler(BaseHTTPRequestHandler):
         elif path == '/search':
             return self.search()
         elif path == '/q':
-            return self.query_page()
+            body = self.query_page()
+            ctype = 'text/html; charset=utf-8'
         else:
             rel = path.lstrip('/')
             full = os.path.normpath(os.path.join(ROOT, rel))
             if not full.startswith(ROOT):
                 return self.send(403, 'forbidden')
             if not os.path.isfile(full):
-                return self.send(404, f'not found: {rel}')
+                if os.path.isfile(full + '.md'):
+                    full += '.md'
+                else:
+                    return self.send(404, f'not found: {rel}')
             if full.endswith(('.md',)):
                 body = render_page(full, rel)
                 ctype = 'text/html; charset=utf-8'
@@ -118,6 +141,7 @@ class Handler(BaseHTTPRequestHandler):
                     body = f.read()
                 ctype = ('text/css; charset=utf-8' if full.endswith('.css')
                          else 'application/javascript' if full.endswith('.js')
+                         else 'font/woff2' if full.endswith('.woff2')
                          else 'text/plain; charset=utf-8' if full.endswith('.txt')
                          else 'application/octet-stream')
         if isinstance(body, str):
@@ -130,45 +154,39 @@ class Handler(BaseHTTPRequestHandler):
 
     def index_page(self):
         return f'''<!doctype html>
-<html><head><meta charset="utf-8"><title>500+ DSA Questions</title>
-<link rel="stylesheet" href="/assets/style.css">
-<script src="/assets/marked.min.js"></script>
-<script src="/assets/app.js"></script>
-</head>
-<body><header><a href="/">home</a></header>
-<h1>500+ Data Structures &amp; Algorithms Questions</h1>
+<html><head>{head("500+ DSA Questions")}</head>
+<body><header><a class="home" href="/">home</a><button id="theme-toggle" type="button" aria-label="toggle dark mode"></button></header>
+<main><h1>500+ Data Structures &amp; Algorithms Questions</h1>
 <p>Picked from <a href="https://medium.com/techie-delight/500-data-structures-and-algorithms-practice-problems-35afe8a1e222">Techie Delight on Medium</a> &middot; solutions included &middot; works offline</p>
 <p><a class="search-link" href="/q">search questions</a></p>
 {build_index()}
-</body></html>'''
+</main></body></html>'''
 
     def query_page(self):
-        return '''<!doctype html><html><head><meta charset="utf-8">
-<title>Search</title><link rel="stylesheet" href="/assets/style.css">
-</head><body>
-<header><a href="/">home</a><span class="crumb">search</span></header>
-<main>
-<input id="q" placeholder="type to search all 812 questions..." autofocus>
-<div id="out"></div>
-</main>
-<script>
-const inp = document.getElementById('q');
-const out = document.getElementById('out');
-let t;
-inp.addEventListener('input', () => {
-  clearTimeout(t);
-  t = setTimeout(async () => {
-    const term = inp.value.trim();
-    if (term.length < 2) { out.innerHTML = ''; return; }
-    const r = await fetch('/search?q=' + encodeURIComponent(term));
-    const results = await r.json();
-    out.innerHTML = results.map(x =>
-      `<a href="/${x.href}">${x.title}<small>${x.cat}</small></a>`).join('')
-      || '<p style="color:#8b90a0">no matches</p>';
-  }, 150);
-});
-</script>
-</body></html>'''
+        return ('<!doctype html><html><head>' + head("Search") + '</head><body>\n'
+                '<header><a class="home" href="/">home</a><span class="crumb">search</span><button id="theme-toggle" type="button" aria-label="toggle dark mode"></button></header>\n'
+                '<main>\n'
+                '<input id="q" placeholder="type to search all 812 questions..." autofocus>\n'
+                '<div id="out"></div>\n'
+                '</main>\n'
+                '<script>\n'
+                "const inp = document.getElementById('q');\n"
+                "const out = document.getElementById('out');\n"
+                'let t;\n'
+                "inp.addEventListener('input', () => {\n"
+                '  clearTimeout(t);\n'
+                '  t = setTimeout(async () => {\n'
+                '    const term = inp.value.trim();\n'
+                "    if (term.length < 2) { out.innerHTML = ''; return; }\n"
+                "    const r = await fetch('/search?q=' + encodeURIComponent(term));\n"
+                '    const results = await r.json();\n'
+                '    out.innerHTML = results.map(x =>\n'
+                '      `<a href="/${x.href}">${x.title}<small>${x.cat}</small></a>`).join(\'\')\n'
+                '      || \'<p style="color:#8b90a0">no matches</p>\';\n'
+                '  }, 150);\n'
+                '});\n'
+                '</script>\n'
+                '</body></html>')
 
     def search(self):
         # simple JSON search over problems/*.md
@@ -201,7 +219,7 @@ if __name__ == '__main__':
     for candidate in range(port, port + 50):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
-                s.bind(('127.0.0.1', candidate))
+                s.bind(('localhost', candidate))
             except OSError:
                 print(f'Port {candidate} is busy, trying next...')
                 continue
@@ -210,4 +228,4 @@ if __name__ == '__main__':
     else:
         sys.exit('No free port found in range')
     print(f'Serving DSA question bank at http://localhost:{port}')
-    ThreadingHTTPServer(('127.0.0.1', port), Handler).serve_forever()
+    ThreadingHTTPServer(('localhost', port), Handler).serve_forever()

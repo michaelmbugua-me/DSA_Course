@@ -16,365 +16,112 @@ The flattened list would be:
 
 We can use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to flatten a multilevel list. The idea is to recursively flatten the given linked list by recursively flattening the `down` list first, followed by the `next` list. The flattened `down` list for a node is linked to the `next` pointer of that node, while the flattened `next` list for a node is linked to the `next` pointer of the last seen node.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to represent a special linked list node with
-// an additional `down` pointer
-struct Node
-{
-    int data;
-    Node* next;
-    Node* down;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->next = this->down = nullptr;
-    }
-};
+```ts
+// Data structure to represent a special linked list node with an
+// additional `down` pointer
+class ListNode {
+    constructor(public data: number, public down: ListNode | null = null, public next: ListNode | null = null) {}
+}
 
 // Utility function to print a list with `down` and `next` pointers
-void printOriginalList(Node* head)
-{
-    if (head == nullptr) {
+const printOriginalList = (head: ListNode | null): void => {
+    if (head === null) {
         return;
     }
 
-    cout << ' ' << head->data << ' ';
+    console.log(head.data, '');
 
-    if (head->down)
-    {
-        cout << "[";
-        printOriginalList(head->down);
-        cout << "]";
+    if (head.down) {
+        console.log('[', '');
+        printOriginalList(head.down);
+        console.log(']', '');
     }
 
-    printOriginalList(head->next);
-}
+    printOriginalList(head.next);
+};
 
 // Utility function to print a linked list
-void printFlatenedList(Node* head)
-{
-    while (head)
-    {
-        cout << head->data << " -> ";
-        head = head->next;
+const printFlattenedList = (head: ListNode | null): void => {
+    let out = '';
+    while (head) {
+        out += `${head.data} —> `;
+        head = head.next;
     }
-
-    cout << "null" << '\n';
-}
+    console.log(out + 'null');
+};
 
 // Recursive function to flatten a multilevel linked list
-Node* flattenList(Node* head)
-{
+const flattenList = (head: ListNode | null): ListNode | null => {
     // base case
-    if (head == nullptr) {
-        return nullptr;
+    if (head === null) {
+        return null;
     }
 
     // keep track of the next pointer
-    Node* next = head->next;
+    const next = head.next;
 
     // process the down list first
-    head->next = flattenList(head->down);
+    head.next = flattenList(head.down);
 
     // go to the last node
-    Node* tail = head;
-    while (tail->next) {
-        tail = tail->next;
+    let tail = head;
+    while (tail.next) {
+        tail = tail.next;
     }
 
     // process the next list after the down list
-    tail->next = flattenList(next);
+    tail.next = flattenList(next);
 
     // return head node
     return head;
-}
+};
 
-int main()
-{
-    // create individual nodes and link them together later
-    Node* one = new Node(1);
-    Node* two = new Node(2);
-    Node* three = new Node(3);
-    Node* four = new Node(4);
-    Node* five = new Node(5);
-    Node* six = new Node(6);
-    Node* seven = new Node(7);
-    Node* eight = new Node(8);
-    Node* nine = new Node(9);
-    Node* ten = new Node(10);
-    Node* eleven = new Node(11);
-    Node* twelve = new Node(12);
-    Node* thirteen = new Node(13);
-    Node* fourteen = new Node(14);
-    Node* fifteen = new Node(15);
+// create individual nodes and link them together later
+const one = new ListNode(1);
+const two = new ListNode(2);
+const three = new ListNode(3);
+const four = new ListNode(4);
+const five = new ListNode(5);
+const six = new ListNode(6);
+const seven = new ListNode(7);
+const eight = new ListNode(8);
+const nine = new ListNode(9);
+const ten = new ListNode(10);
+const eleven = new ListNode(11);
+const twelve = new ListNode(12);
+const thirteen = new ListNode(13);
+const fourteen = new ListNode(14);
+const fifteen = new ListNode(15);
 
-    // set head node
-    Node* head = one;
+// set head node
+let head: ListNode | null = one;
 
-    // set next pointers
-    one->next = four;
-    four->next = fourteen;
-    fourteen->next = fifteen;
-    five->next = nine;
-    nine->next = ten;
-    seven->next = eight;
-    eleven->next = thirteen;
+// set next pointers
+one.next = four;
+four.next = fourteen;
+fourteen.next = fifteen;
+five.next = nine;
+nine.next = ten;
+seven.next = eight;
+eleven.next = thirteen;
 
-    // set down pointers
-    one->down = two;
-    two->down = three;
-    four->down = five;
-    five->down = six;
-    six->down = seven;
-    ten->down = eleven;
-    eleven->down = twelve;
+// set down pointers
+one.down = two;
+two.down = three;
+four.down = five;
+five.down = six;
+six.down = seven;
+ten.down = eleven;
+eleven.down = twelve;
 
-    cout << "The original list is :" << '\n';
-    printOriginalList(head);
+console.log('The original list is:');
+printOriginalList(head);
 
-    head = flattenList(head);
-    cout << "\n\nThe flattened list is :" << '\n';
-    printFlatenedList(head);
-
-    return 0;
-}
-```
-
-##
-
-```java
-// Data structure to represent a special linked list node with an
-// additional `down` pointer
-class Node
-{
-    int data;
-    Node next;
-    Node down;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Utility function to print a list with `down` and `next` pointers
-    public static void printOriginalList(Node head)
-    {
-        if (head == null) {
-            return;
-        }
-
-        System.out.print(" " + head.data + " ");
-
-        if (head.down != null)
-        {
-            System.out.print("[");
-            printOriginalList(head.down);
-            System.out.print("]");
-        }
-
-        printOriginalList(head.next);
-    }
-
-    // Utility function to print a linked list
-    public static void printFlattenedList(Node head)
-    {
-        while (head != null)
-        {
-            System.out.print(head.data + " -> ");
-            head = head.next;
-        }
-        System.out.println("null");
-    }
-
-    // Recursive function to flatten a multilevel linked list
-    public static Node flattenList(Node head)
-    {
-        // base case
-        if (head == null) {
-            return null;
-        }
-
-        // keep track of the next pointer
-        Node next = head.next;
-
-        // process the down list first
-        head.next = flattenList(head.down);
-
-        // go to the last node
-        Node tail = head;
-        while (tail.next != null) {
-            tail = tail.next;
-        }
-
-        // process the next list after the down list
-        tail.next = flattenList(next);
-
-        // return head node
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // create individual nodes and link them together later
-        Node one = new Node(1);
-        Node two = new Node(2);
-        Node three = new Node(3);
-        Node four = new Node(4);
-        Node five = new Node(5);
-        Node six = new Node(6);
-        Node seven = new Node(7);
-        Node eight = new Node(8);
-        Node nine = new Node(9);
-        Node ten = new Node(10);
-        Node eleven = new Node(11);
-        Node twelve = new Node(12);
-        Node thirteen = new Node(13);
-        Node fourteen = new Node(14);
-        Node fifteen = new Node(15);
-
-        // set head node
-        Node head = one;
-
-        // set next pointers
-        one.next = four;
-        four.next = fourteen;
-        fourteen.next = fifteen;
-        five.next = nine;
-        nine.next = ten;
-        seven.next = eight;
-        eleven.next = thirteen;
-
-        // set down pointers
-        one.down = two;
-        two.down = three;
-        four.down = five;
-        five.down = six;
-        six.down = seven;
-        ten.down = eleven;
-        eleven.down = twelve;
-
-        System.out.println("The original list is :");
-        printOriginalList(head);
-
-        head = flattenList(head);
-        System.out.println("\n\nThe flattened list is :");
-        printFlattenedList(head);
-    }
-}
-```
-
-##
-
-```python3
-# Data structure to represent a special linked list node with an
-# additional `down` pointer
-class Node(object):
-    def __init__(self, data=None, down=None, next=None):
-        self.data = data
-        self.down = down
-        self.next = next
-
-# Utility function to print a list with `down` and `next` pointers
-def printOriginalList(head):
-
-    if head is None:
-        return
-
-    print(head.data, end=' ')
-
-    if head.down:
-        print('[', end=' ')
-        printOriginalList(head.down)
-        print(']', end=' ')
-
-    printOriginalList(head.next)
-
-# Utility function to print a linked list
-def printFlattenedList(head):
-
-    while head:
-        print(head.data, end=' —> ')
-        head = head.next
-    print('null')
-
-# Recursive function to flatten a multilevel linked list
-def flattenList(head):
-
-    # base case
-    if head is None:
-        return None
-
-    # keep track of the next pointer
-    next = head.next
-
-    # process the down list first
-    head.next = flattenList(head.down)
-
-    # go to the last node
-    tail = head
-    while tail.next:
-        tail = tail.next
-
-    # process the next list after the down list
-    tail.next = flattenList(next)
-
-    # return head node
-    return head
-
-if __name__ == '__main__':
-
-    # create individual nodes and link them together later
-    one = Node(1)
-    two = Node(2)
-    three = Node(3)
-    four = Node(4)
-    five = Node(5)
-    six = Node(6)
-    seven = Node(7)
-    eight = Node(8)
-    nine = Node(9)
-    ten = Node(10)
-    eleven = Node(11)
-    twelve = Node(12)
-    thirteen = Node(13)
-    fourteen = Node(14)
-    fifteen = Node(15)
-
-    # set head node
-    head = one
-
-    # set next pointers
-    one.next = four
-    four.next = fourteen
-    fourteen.next = fifteen
-    five.next = nine
-    nine.next = ten
-    seven.next = eight
-    eleven.next = thirteen
-
-    # set down pointers
-    one.down = two
-    two.down = three
-    four.down = five
-    five.down = six
-    six.down = seven
-    ten.down = eleven
-    eleven.down = twelve
-
-    print('The original list is:')
-    printOriginalList(head)
-
-    head = flattenList(head)
-    print('\n\nThe flattened list is:')
-    printFlattenedList(head)
+head = flattenList(head);
+console.log('\n\nThe flattened list is:');
+printFlattenedList(head);
 ```
 
 **Output:** The original list is : 1 [ 2 [ 3 ]] 4 [ 5 [ 6 [ 7 8 ]] 9 10 [ 11 [ 12 ] 13 ]] 14 15 The flattened list is : 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> null

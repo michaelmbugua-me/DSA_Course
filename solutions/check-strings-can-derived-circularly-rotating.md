@@ -24,146 +24,45 @@ How to do this using `O(1)` space?
 
 The idea is to [in-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) rotate the string `X` and check if it becomes equal to the string `Y` or not. We have to consider every possible rotation of a string `X` (i.e., rotation by 1 unit, 2 unit… till `n-1` unit, where `n` is the length of the string `X`). Note that clockwise or anti-clockwise rotation doesn’t matter.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to check if `X` can be derived from `Y` by rotating it
-bool check(string X, string Y)
-{
+const check = (X: string, Y: string): boolean => {
+
     // if string lengths are different, they can't be
     // derived from each other
-    if (X.length() != Y.length()) {
+    if (X.length !== Y.length) {
         return false;
     }
 
     // Invariant: At the i'th iteration of this loop,
     // the string `X` will be rotated by `i` units
-    for (int i = 0; i < X.length(); i++)
-    {
-        // in-place left rotates string `X` by 1 unit
-        rotate(X.begin(), X.begin() + 1, X.end());
+    for (let i = 0; i < X.length; i++) {
 
-        // for right rotation, we can use reverse iterators.
-        // i.e., rotate(X.rbegin(), X.rbegin() + 1, X.rend());
+        // left rotate string `X` by 1 unit
+        X = X.slice(1) + X[0];
 
         // return true if `X` becomes equal to `Y`
-        if (!X.compare(Y)) {
+        if (X === Y) {
             return true;
         }
     }
 
     // return false if no rotation is matched
     return false;
+};
+
+// demo
+
+const X = 'ABCD';
+const Y = 'DABC';
+
+if (check(X, Y)) {
+    console.log('Given strings can be derived from each other');
+} else {
+    console.log('Given strings cannot be derived from each other');
 }
-
-int main()
-{
-    string X = "ABCD";
-    string Y = "DABC";
-
-    if (check(X, Y)) {
-        cout << "Given strings can be derived from each other";
-    }
-    else {
-        cout << "Given strings cannot be derived from each other";
-    }
-
-    return 0;
-}
-```
-
-**Output:** Given strings can be derived from each other
-
-##
-
-```java
-class Main
-{
-    // Function to check if `X` can be derived from `Y` by rotating it
-    public static boolean check(String X, String Y)
-    {
-        // base case
-        if (X == null || Y == null) {
-            return false;
-        }
-
-        // if string lengths are different, they can't be
-        // derived from each other
-        if (X.length() != Y.length()) {
-            return false;
-        }
-
-        // Invariant: At the i'th iteration of this loop,
-        // the string `X` will be rotated by `i` units
-        for (int i = 0; i < X.length(); i++)
-        {
-            // left rotate string `X` by 1 unit
-            X = X.substring(1) + X.charAt(0);
-
-            // return true if `X` becomes equal to `Y`
-            if (X.compareTo(Y) == 0) {
-                return true;
-            }
-        }
-
-        // return false if no rotation is matched
-        return false;
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABCD";
-        String Y = "DABC";
-
-        if (check(X, Y)) {
-            System.out.println("Given strings can be derived from each other");
-        }
-        else {
-            System.out.println("Given strings cannot be derived from each other");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to check if `X` can be derived from `Y` by rotating it
-def check(X, Y):
-
-    # if string lengths are different, they can't be
-    # derived from each other
-    if len(X) != len(Y):
-        return False
-
-    # Invariant: At the i'th iteration of this loop,
-    # the string `X` will be rotated by `i` units
-    for i in range(len(X)):
-
-        # left rotate string `X` by 1 unit
-        X = X[1:] + X[0]
-
-        # return true if `X` becomes equal to `Y`
-        if X == Y:
-            return True
-
-    # return false if no rotation is matched
-    return False
-
-if __name__ == '__main__':
-
-    X = 'ABCD'
-    Y = 'DABC'
-
-    if check(X, Y):
-        print('Given strings can be derived from each other')
-    else:
-        print('Given strings cannot be derived from each other')
 ```
 
 The time complexity of the above solution is O(n2), where `n` is the length of the input strings, and doesn’t require any extra space.

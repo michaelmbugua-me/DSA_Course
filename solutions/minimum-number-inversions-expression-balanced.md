@@ -20,174 +20,57 @@ The idea is to traverse the given expression and maintain a count of open braces
      2. Otherwise, convert the current closing brace `}` to `{` and increment the total inversions needed and the opening brace count by `1`.
   3. After we are done processing each character in the expression, if there are `n` opened braces, we will need exactly `n/2` inversion to close them.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the minimum number of inversions needed
 // to make the given expression balanced
-int findMinInversions(string exp)
-{
+function findMinInversions(exp: string): number {
+
     // if the expression has an odd length, it cannot be balanced
-    if (exp.length() & 1) {
+    if (exp.length % 2) {
         return -1;
     }
 
-    int inversions = 0;     // stores total inversions needed
-    int open = 0;           // stores the total number of opening braces
+    let inversions = 0;         // stores total inversions needed
+    let open = 0;               // stores the total number of opening braces
 
     // traverse the expression
-    for (int i = 0; i < exp.length(); i++)
-    {
+    for (let i = 0; i < exp.length; i++) {
+
         // if the current character is an opening brace
-        if (exp[i] == '{') {
-            open++;
+        if (exp[i] === '{') {
+            open = open + 1;
         }
 
         // if the current character is a closing brace
         else {
             // if an opening brace is found before, close it
             if (open) {
-                open = open - 1;    // decrement opening brace count
-            }
-            // invert the closing brace, i.e., change '}' to '{'
-            else {
-                inversions++;       // increment total inversions needed by 1
-                open = 1;           // increment opening brace count
+                open = open - 1;               // decrement opening brace count
+            } else {
+                // invert the closing brace, i.e., change '}' to '{'
+                inversions = inversions + 1;   // increment total inversions needed by 1
+                open = 1;                      // increment opening brace count
             }
         }
     }
 
     // for `n` opened braces, exactly `n/2` inversions are needed
-    return inversions + open/2;
+    return inversions + Math.floor(open / 2);
 }
 
-int main()
-{
-    string exp = "{{}{{}{{";
+const exp = '{{}{{}{{';
+const inv = findMinInversions(exp);
 
-    int inv = findMinInversions(exp);
-    if (inv != -1) {
-        cout << "The minimum number of inversions needed is " << inv;
-    }
-    else {
-        cout << "Invalid input" << endl;
-    }
-
-    return 0;
+if (inv !== -1) {
+    console.log(`The minimum number of inversions needed is ${inv}`);
+} else {
+    console.log('Invalid input');
 }
 ```
 
 **Output:** The minimum number of inversions needed is 2
-
-##
-
-```java
-class Main
-{
-    // Function to find the minimum number of inversions needed
-    // to make the given expression balanced
-    public static int findMinInversions(String exp)
-    {
-        // if the expression has an odd length, it cannot be balanced
-        if (exp == null || exp.length() % 2 == 1) {
-            return -1;
-        }
-
-        int inversions = 0;         // stores total inversions needed
-        int open = 0;               // stores the total number of opening braces
-
-        // traverse the expression
-        for (char c: exp.toCharArray())
-        {
-            // if the current character is an opening brace
-            if (c == '{') {
-                open++;
-            }
-
-            // if the current character is a closing brace
-            else {
-                // if an opening brace is found before, close it
-                if (open != 0) {
-                    open = open - 1;    // decrement opening brace count
-                }
-                // invert the closing brace, i.e., change '}' to '{'
-                else {
-                    inversions++;       // increment total inversions needed by 1
-                    open = 1;           // increment opening brace count
-                }
-            }
-        }
-
-        // for `n` opened braces, exactly `n/2` inversions are needed
-        return inversions + open / 2;
-    }
-
-    public static void main(String[] args)
-    {
-        String exp = "{{}{{}{{";
-
-        int inversions = findMinInversions(exp);
-
-        if (inversions != -1)
-        {
-            System.out.print("The minimum number of inversions needed is " +
-                        inversions);
-        }
-        else {
-            System.out.print("Invalid input");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the minimum number of inversions needed
-# to make the given expression balanced
-def findMinInversions(exp):
-
-    # if the expression has an odd length, it cannot be balanced
-    if len(exp) % 2:
-        return -1
-
-    inversions = 0          # stores total inversions needed
-    open = 0                # stores the total number of opening braces
-
-    # traverse the expression
-    for i in range(len(exp)):
-
-        # if the current character is an opening brace
-        if exp[i] == '{':
-            open = open + 1
-
-        # if the current character is a closing brace
-        else:
-            # if an opening brace is found before, close it
-            if open:
-                open = open - 1                # decrement opening brace count
-            else:
-                # invert the closing brace, i.e., change '}' to '{'
-                inversions = inversions + 1    # increment total inversions needed by 1
-                open = 1                       # increment opening brace count
-
-    # for `n` opened braces, exactly `n/2` inversions are needed
-    return inversions + open // 2
-
-if __name__ == '__main__':
-
-    exp = '{{}{{}{{'
-    inv = findMinInversions(exp)
-
-    if inv != -1:
-        print('The minimum number of inversions needed is', inv)
-    else:
-        print('Invalid input')
-```
 
 The time complexity of the above solution is O(n), where `n` is the length of the input expression, and doesn’t require any extra space.
 

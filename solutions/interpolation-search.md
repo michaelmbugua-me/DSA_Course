@@ -20,184 +20,60 @@ Interpolation search uses the following formula to calculate the mid-position wh
 
 mid = low + ((target – A[low]) * (high – low) / (A[high] – A[low]));
 
-Following is the C, Java, and Python implementation of interpolation search. It computes a mid-position at each iteration and then, as with the binary search, moves either the upper or lower bound in to define a smaller interval containing the target value. Unlike the binary search, which guarantees half search space size with each iteration, a poor interpolation may reduce/increase the mid-index by only one, resulting in a worst-case efficiency of O(n) for an input containing `n` items.
+Following is the TypeScript implementation of interpolation search. It computes a mid-position at each iteration and then, as with the binary search, moves either the upper or lower bound in to define a smaller interval containing the target value. Unlike the binary search, which guarantees half search space size with each iteration, a poor interpolation may reduce/increase the mid-index by only one, resulting in a worst-case efficiency of O(n) for an input containing `n` items.
 
-```c
-#include <stdio.h>
-
-// Function to determine if target exists in a sorted array `A` or not
+```ts
+// Function to determine if target exists in the sorted array `A` or not
 // using an interpolation search algorithm
-int interpolationSearch(int A[], int n, int target)
-{
+function interpolationSearch(A: number[], target: number): number {
+
     // base case
-    if (n == 0) {
+    if (A === null || A.length === 0) {
         return -1;
     }
 
-    // search space is A[low…high]
-    int low = 0, high = n - 1, mid;
+    // search space is A[left…right]
+    let left = 0;
+    let right = A.length - 1;
 
-    while (A[high] != A[low] && target >= A[low] && target <= A[high])
-    {
+    while (A[right] !== A[left] && target >= A[left] && target <= A[right]) {
+
         // estimate mid
-        mid = low + ((target - A[low]) * (high - low) / (A[high] - A[low]));
+        const mid = left + Math.trunc((target - A[left]) * (right - left) / (A[right] - A[left]));
 
-        // target value is found
-        if (target == A[mid]) {
+        // key is found
+        if (target === A[mid]) {
             return mid;
         }
         // discard all elements in the right search space, including the middle element
         else if (target < A[mid]) {
-            high = mid - 1;
+            right = mid - 1;
         }
         // discard all elements in the left search space, including the middle element
         else {
-            low = mid + 1;
+            left = mid + 1;
         }
     }
 
-    // if a target is found
-    if (target == A[low]) {
-        return low;
+    // if the key is found
+    if (target === A[left]) {
+        return left;
     }
 
-    // target doesn't exist in the array
-    else {
-        return -1;
-    }
+    // target doesn't exist in the list
+    return -1;
 }
 
-int main(void)
-{
-    int A[] = {2, 5, 6, 8, 9, 10};
-    int target = 5;
+const A = [2, 5, 6, 8, 9, 10];
+const key = 5;
 
-    int n = sizeof(A)/sizeof(A[0]);
-    int index = interpolationSearch(A, n, target);
+const index = interpolationSearch(A, key);
 
-    if (index != -1) {
-        printf("Element found at index %d", index);
-    }
-    else {
-        printf("Element not found in the array");
-    }
-
-    return 0;
+if (index !== -1) {
+    console.log('Element found at index', index);
+} else {
+    console.log('Element found not in the list');
 }
-```
-
-**Output:** Element found at index 1
-
-##
-
-```java
-class Main
-{
-    // Function to determine if target exists in a sorted array `A` or not
-    // using an interpolation search algorithm
-    public static int interpolationSearch(int[] A, int target)
-    {
-        // base case
-        if (A == null || A.length == 0) {
-            return -1;
-        }
-
-        // search space is A[left…right]
-        int left = 0;
-        int right = A.length - 1;
-
-        while (A[right] != A[left] && target >= A[left] && target <= A[right])
-        {
-            // estimate mid
-            int mid = left + ((target - A[left])*(right - left)/(A[right] - A[left]));
-
-            // key is found
-            if (target == A[mid]) {
-                return mid;
-            }
-            // discard all elements in the right search space, including middle element
-            else if (target < A[mid]) {
-                right = mid - 1;
-            }
-            // discard all elements in the left search space, including middle element
-            else {
-                left = mid + 1;
-            }
-        }
-
-        // if the key is found
-        if (target == A[left]) {
-            return left;
-        }
-
-        // target doesn't exist in the array
-        return -1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = {2, 5, 6, 8, 9, 10};
-        int key = 5;
-
-        int index = interpolationSearch(A, key);
-
-        if (index != -1) {
-            System.out.println("Element found at index " + index);
-        }
-        else {
-            System.out.println("Element not found in the array");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to determine if target exists in the sorted list `A` or not
-# using an interpolation search algorithm
-def interpolationSearch(A, target):
-
-    # base case
-    if not A:
-        return -1
-
-    # search space is A[left…right]
-    (left, right) = (0, len(A) - 1)
-
-    while A[right] != A[left] and A[left] <= target <= A[right]:
-
-        # estimate mid
-        mid = left + (target - A[left]) * (right - left) // (A[right] - A[left])
-
-        # key is found
-        if target == A[mid]:
-            return mid
-        # discard all elements in the right search space, including the middle element
-        elif target < A[mid]:
-            right = mid - 1
-        # discard all elements in the left search space, including the middle element
-        else:
-            left = mid + 1
-
-    # if the key is found
-    if target == A[left]:
-        return left
-
-    # target doesn't exist in the list
-    return -1
-
-if __name__ == '__main__':
-
-    A = [2, 5, 6, 8, 9, 10]
-    key = 5
-
-    index = interpolationSearch(A, key)
-
-    if index != -1:
-        print('Element found at index', index)
-    else:
-        print('Element found not in the list')
 ```
 
 ## Performance

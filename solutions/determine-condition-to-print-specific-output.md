@@ -6,77 +6,71 @@
 
 What should be the if condition in the following code snippet so that output would be “HelloWorld”.
 
-```
+```ts
 if "condition"
-    printf("Hello");
+    console.log("Hello");
 else
-    printf("World");
+    console.log("World");
 ```
 
 ## 1\. Using `printf()` function
 
-To print “HelloWorld” using the given code snippet, we need to find a condition that is always `false` and prints “Hello”, so that the else branch is executed. One possible condition is `!printf("Hello")`, which is `false` because the `printf()` function returns the number of characters it has printed, which is a positive value. For example:
+To print “HelloWorld” using the given code snippet, we need to find a condition that is always `false` and prints “Hello”, so that the else branch is executed. One possible condition is `!process.stdout.write("Hello")`, which is `false` because the `process.stdout.write()` function returns `true` when the string has been written successfully. For example:
 
-```
-if (!printf("Hello"))
-    printf("Hello");
+```ts
+if (!process.stdout.write("Hello"))
+    console.log("Hello");
 else
-    printf("World");
+    console.log("World");
 ```
 
-We can also use the comma operator instead of depending upon the return value of `printf` to know what the conditional clause does.
+We can also use the comma operator instead of depending upon the return value of `process.stdout.write` to know what the conditional clause does.
 
-```
-if (printf("Hello"), 0)
-    printf("Hello");
+```ts
+if (process.stdout.write("Hello"), 0)
+    console.log("Hello");
 else
-    printf("World");
+    console.log("World");
 ```
 
 ## 2\. Recursive `main()` function
 
 Another option is to use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem. We can print the desired output using a static variable with the recursive `main()` function. The idea is to use a static variable in such a way that the if block is executed in the initial call to the `main()` function and the else block is executed in the second call to the `main()` function. Here is an example:
 
-```
-#include <iostream>
-using namespace std;
+```ts
+let i = 0;
 
-int main()
-{
-    static int i = 0;
-    if (i++ == 0 ? main() : 1) {
-        printf("Hello");
+function main(): number {
+    if (i++ === 0 ? main() : 1) {
+        console.log("Hello");
     }
     else {
-        printf("World");
+        console.log("World");
     }
 
     return 0;
 }
+
+main();
 ```
 
 Note that we can also use a write custom function instead of calling `main()` recursively:
 
-```
-#include <iostream>
-using namespace std;
+```ts
+let i = 0;
 
-int fun()
-{
-    static int i = 0;
-    if (i++ == 0 ? fun() : 1) {
-        printf("Hello");
+function fun(): number {
+    if (i++ === 0 ? fun() : 1) {
+        console.log("Hello");
     }
     else {
-        printf("World");
+        console.log("World");
     }
-}
 
-int main()
-{
-    fun();
     return 0;
 }
+
+fun();
 ```
 
 Rate this post

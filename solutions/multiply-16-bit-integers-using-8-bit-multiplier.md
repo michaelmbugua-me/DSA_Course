@@ -10,32 +10,27 @@ The idea is to divide the given 16–bit numbers (say `m` and `n`) into 8–bit 
 
 [mHigh mLow] × [nHigh nLow] – – – – – – – [mHigh * nLow] [mLow * nLow] [mHigh * nHigh] [mLow * nHigh] – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – [mHigh * nHigh] + [mLow * nHigh + mHigh * nLow] + [mLow * nLow] – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – – –
 
-Following is the C++, Java, and Python implementation of the idea. We have used an `unsigned char` to represent an 8–bit number and `unsigned short` to represent a 16–bit number.
+Following is the TypeScript implementation of the idea. We have used plain numbers masked with `& 0xFF` to represent an 8–bit number and `& 0xFFFF` to represent a 16–bit number.
 
-```
-#include <iostream>
-#include <bitset>
-using namespace std;
-
-// Multiply two 8–bit numbers `m` and `n` (unsigned char)
-// and return a 16–bit number (unsigned short)
-unsigned short multiply8bit(unsigned char m, unsigned char n) {
-    return m*n;
+```ts
+// Multiply two 8–bit numbers `m` and `n`
+// and return a 16–bit number
+function multiply8bit(m: number, n: number): number {
+    return (m * n) & 0xFFFF;
 }
 
 // Multiply 16–bit integers using an 8–bit multiplier
-int multiply16bit(int m, int n)
-{
-    unsigned char mLow = (m & 0x00FF);              // stores first 8–bits of `m`
-    unsigned char mHigh = (m & 0xFF00) >> 8;        // stores last 8–bits of `m`
+function multiply16bit(m: number, n: number): number {
+    const mLow = (m & 0x00FF);              // stores first 8–bits of `m`
+    const mHigh = (m & 0xFF00) >> 8;        // stores last 8–bits of `m`
 
-    unsigned char nLow = (n & 0x00FF);              // stores first 8–bits of `n`
-    unsigned char nHigh = (n & 0xFF00) >> 8;        // stores last 8–bits of `n`
+    const nLow = (n & 0x00FF);              // stores first 8–bits of `n`
+    const nHigh = (n & 0xFF00) >> 8;        // stores last 8–bits of `n`
 
-    unsigned short mLow_nLow = multiply8bit(mLow, nLow);
-    unsigned short mHigh_nLow = multiply8bit(mHigh, nLow);
-    unsigned short mLow_nHigh = multiply8bit(mLow, nHigh);
-    unsigned short mHigh_nHigh = multiply8bit(mHigh, nHigh);
+    const mLow_nLow = multiply8bit(mLow, nLow);
+    const mHigh_nLow = multiply8bit(mHigh, nLow);
+    const mLow_nHigh = multiply8bit(mLow, nHigh);
+    const mHigh_nHigh = multiply8bit(mHigh, nHigh);
 
     // return 32–bit result (don't forget to shift `mHigh_nLow` and `mLow_nHigh`
     // by 1 byte and `mHigh_nHigh` by 2 bytes)
@@ -43,19 +38,16 @@ int multiply16bit(int m, int n)
     return mLow_nLow + ((mHigh_nLow + mLow_nHigh) << 8) + (mHigh_nHigh << 16);
 }
 
-int main()
-{
+(function main() {
     // 16–bit numbers stored in a 32–bit integer
-    int m = 23472, n = 2600;
+    const m = 23472, n = 2600;
 
-    cout << m << " in binary is " << bitset<16>(m) << endl;
-    cout << n << " in binary is " << bitset<16>(n) << endl << endl;
+    console.log(`${m} in binary is ${m.toString(2).padStart(16, '0')}`);
+    console.log(`${n} in binary is ${n.toString(2).padStart(16, '0')}\n`);
 
-    cout << "Normal multiplication m × n = " << m * n << endl;
-    cout << "Using 8–bit multiplier m × n = " << multiply16bit(m, n) << endl;
-
-    return 0;
-}
+    console.log("Normal multiplication m × n = " + m * n);
+    console.log("Using 8–bit multiplier m × n = " + multiply16bit(m, n));
+})();
 ```
 
 **Output:** 23472 in binary is 0101101110110000 2600 in binary is 0000101000101000 Normal multiplication m × n = 61027200 Using 8–bit multiplier m × n = 61027200

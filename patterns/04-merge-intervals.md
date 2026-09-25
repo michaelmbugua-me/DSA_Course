@@ -13,19 +13,25 @@ Efficient technique for dealing with **overlapping intervals** (ranges with a st
 - Asked for the max number of "things happening at once" (CPU load, rooms, platforms)
 - Any question where you insert an interval into an existing set
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def merge_intervals(intervals):
-    intervals.sort(key=lambda x: x[0])
-    merged = []
-    for start, end in intervals:
-        # no overlap with the last merged interval -> append
-        if not merged or merged[-1][1] < start:
-            merged.append([start, end])
-        else:
-            merged[-1][1] = max(merged[-1][1], end)  # overlap -> extend
-    return merged
+```ts
+type Interval = [number, number];
+
+function mergeIntervals(intervals: Interval[]): Interval[] {
+  intervals.sort((a, b) => a[0] - b[0]);
+  const merged: Interval[] = [];
+  for (const [start, end] of intervals) {
+    // no overlap with the last merged interval -> append
+    if (merged.length === 0 || merged[merged.length - 1][1] < start) {
+      merged.push([start, end]);
+    } else {
+      const last = merged[merged.length - 1];
+      last[1] = Math.max(last[1], end); // overlap -> extend
+    }
+  }
+  return merged;
+}
 ```
 
 Sorting by start guarantees each new interval only needs to be compared with the **last** merged one.

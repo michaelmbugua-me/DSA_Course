@@ -27,379 +27,114 @@ The **Lee algorithm** is one possible solution for maze routing problems based o
 
 Note that in BFS, all cells having the shortest path as 1 are visited first, followed by their adjacent cells having the shortest path as `1 + 1 = 2` and so on… So if we reach any node in BFS, its shortest path is one more than the shortest path of the parent. So, the destination cell’s first occurrence gives us the result, and we can stop our search there. It is impossible that the shortest path exists from some other cell for which we haven’t reached the given node yet. If any such path were possible, we would have already explored it.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <queue>
-#include <vector>
-#include <climits>
-#include <cstring>
-using namespace std;
-
-// A Queue Node
-struct Node
-{
-    // (x, y) represents matrix cell coordinates, and
-    // `dist` represents their minimum distance from the source
-    int x, y, dist;
-};
-
-// Below arrays detail all four possible movements from a cell
-int row[] = { -1, 0, 0, 1 };
-int col[] = { 0, -1, 1, 0 };
+```ts
+// Below lists detail all four possible movements from a cell
+const row = [-1, 0, 0, 1];
+const col = [0, -1, 1, 0];
 
 // Function to check if it is possible to go to position (row, col)
-// from the current position. The function returns false if (row, col)
+// from the current position. The function returns false if row, col
 // is not a valid position or has a value 0 or already visited.
-bool isValid(vector<vector<int>> const &mat, vector<vector<bool>> &visited,
-        int row, int col) {
-    return (row >= 0 && row < mat.size()) && (col >= 0 && col < mat[0].size())
-        && mat[row][col] && !visited[row][col];
+function isValid(mat: number[][], visited: boolean[][], row: number, col: number): boolean {
+  return row >= 0 && row < mat.length && col >= 0 && col < mat[0].length &&
+    mat[row][col] === 1 && !visited[row][col];
 }
 
-// Find the shortest possible route in a matrix `mat` from source
-// cell (i, j) to destination cell (x, y)
-int findShortestPathLength(vector<vector<int>> const &mat, pair<int, int> &src,
-                    pair<int, int> &dest)
-{
-    // base case: invalid input
-    if (mat.size() == 0 || mat[src.first][src.second] == 0 ||
-            mat[dest.first][dest.second] == 0) {
-        return -1;
-    }
+// Find the shortest possible route in a matrix `mat` from source `src` to
+// destination `dest`
+function findShortestPathLength(
+  mat: number[][],
+  src: [number, number],
+  dest: [number, number]
+): number {
+  // get source cell (i, j)
+  const [i0, j0] = src;
 
-    // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+  // get destination cell (x, y)
+  const [x, y] = dest;
 
-    // construct a `M × N` matrix to keep track of visited cells
-    vector<vector<bool>> visited;
-    visited.resize(M, vector<bool>(N));
-
-    // create an empty queue
-    queue<Node> q;
-
-    // get source cell (i, j)
-    int i = src.first;
-    int j = src.second;
-
-    // mark the source cell as visited and enqueue the source node
-    visited[i][j] = true;
-    q.push({i, j, 0});
-
-    // stores length of the longest path from source to destination
-    int min_dist = INT_MAX;
-
-    // loop till queue is empty
-    while (!q.empty())
-    {
-        // dequeue front node and process it
-        Node node = q.front();
-        q.pop();
-
-        // (i, j) represents a current cell, and `dist` stores its
-        // minimum distance from the source
-        int i = node.x, j = node.y, dist = node.dist;
-
-        // if the destination is found, update `min_dist` and stop
-        if (i == dest.first && j == dest.second)
-        {
-            min_dist = dist;
-            break;
-        }
-
-        // check for all four possible movements from the current cell
-        // and enqueue each valid movement
-        for (int k = 0; k < 4; k++)
-        {
-            // check if it is possible to go to position
-            // (i + row[k], j + col[k]) from current position
-            if (isValid(mat, visited, i + row[k], j + col[k]))
-            {
-                // mark next cell as visited and enqueue it
-                visited[i + row[k]][j + col[k]] = true;
-                q.push({ i + row[k], j + col[k], dist + 1 });
-            }
-        }
-    }
-
-    if (min_dist != INT_MAX) {
-        return min_dist;
-    }
-
+  // base case: invalid input
+  if (!mat || mat.length === 0 || mat[i0][j0] === 0 || mat[x][y] === 0) {
     return -1;
+  }
+
+  // `M × N` matrix
+  const M = mat.length, N = mat[0].length;
+
+  // construct a matrix to keep track of visited cells
+  const visited: boolean[][] = Array.from({ length: M }, () => Array(N).fill(false));
+
+  // create an empty queue
+  const q: number[][] = [];
+
+  // mark the source cell as visited and enqueue the source node
+  visited[i0][j0] = true;
+
+  // (i, j, dist) represents matrix cell coordinates, and their
+  // minimum distance from the source
+  q.push([i0, j0, 0]);
+
+  // stores length of the longest path from source to destination
+  let minDist = Number.MAX_VALUE;
+
+  // loop till queue is empty
+  while (q.length > 0) {
+    // dequeue front node and process it
+    const [i, j, dist] = q.shift()!;
+
+    // (i, j) represents a current cell, and `dist` stores its
+    // minimum distance from the source
+
+    // if the destination is found, update `min_dist` and stop
+    if (i === x && j === y) {
+      minDist = dist;
+      break;
+    }
+
+    // check for all four possible movements from the current cell
+    // and enqueue each valid movement
+    for (let k = 0; k < 4; k++) {
+      // check if it is possible to go to position
+      // (i + row[k], j + col[k]) from current position
+      if (isValid(mat, visited, i + row[k], j + col[k])) {
+        // mark next cell as visited and enqueue it
+        visited[i + row[k]][j + col[k]] = true;
+        q.push([i + row[k], j + col[k], dist + 1]);
+      }
+    }
+  }
+
+  return minDist !== Number.MAX_VALUE ? minDist : -1;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
-        { 0, 1, 1, 1, 1, 1, 0, 1, 0, 1 },
-        { 0, 0, 1, 0, 1, 1, 1, 0, 0, 1 },
-        { 1, 0, 1, 1, 1, 0, 1, 1, 0, 1 },
-        { 0, 0, 0, 1, 0, 0, 0, 1, 0, 1 },
-        { 1, 0, 1, 1, 1, 0, 0, 1, 1, 0 },
-        { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-        { 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
-        { 0, 0, 1, 0, 0, 1, 1, 0, 0, 1 },
-    };
+const mat = [
+  [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+  [0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+  [0, 0, 1, 0, 1, 1, 1, 0, 0, 1],
+  [1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
+  [0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+  [1, 0, 1, 1, 1, 0, 0, 1, 1, 0],
+  [0, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+  [0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+  [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+  [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]
+];
 
-    pair<int, int> src = make_pair(0, 0);
-    pair<int, int> dest = make_pair(7, 5);
+const src: [number, number] = [0, 0];
+const dest: [number, number] = [7, 5];
 
-    int min_dist = findShortestPathLength(mat, src, dest);
-    if (min_dist != -1)
-    {
-        cout << "The shortest path from source to destination "
-                "has length " << min_dist;
-    }
-    else {
-        cout << "Destination cannot be reached from a given source";
-    }
+const minDist = findShortestPathLength(mat, src, dest);
 
-    return 0;
+if (minDist !== -1) {
+  console.log('The shortest path from source to destination has length', minDist);
+} else {
+  console.log('Destination cannot be reached from source');
 }
 ```
 
 **Output:** The shortest path from source to destination has length 12
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-// A Queue Node
-class Node
-{
-    // (x, y) represents matrix cell coordinates, and
-    // `dist` represents their minimum distance from the source
-    int x, y, dist;
-
-    Node(int x, int y, int dist)
-    {
-        this.x = x;
-        this.y = y;
-        this.dist = dist;
-    }
-}
-
-class Main
-{
-    // Below arrays detail all four possible movements from a cell
-    private static final int[] row = { -1, 0, 0, 1 };
-    private static final int[] col = { 0, -1, 1, 0 };
-
-    // Function to check if it is possible to go to position (row, col)
-    // from the current position. The function returns false if (row, col)
-    // is not a valid position or has a value 0 or already visited.
-    private static boolean isValid(int[][] mat, boolean[][] visited, int row, int col)
-    {
-        return (row >= 0) && (row < mat.length) && (col >= 0) && (col < mat[0].length)
-                && mat[row][col] == 1 && !visited[row][col];
-    }
-
-    // Find the shortest possible route in a matrix `mat` from source
-    // cell (i, j) to destination cell (x, y)
-    private static int findShortestPathLength(int[][] mat, int i, int j, int x, int y)
-    {
-        // base case: invalid input
-        if (mat == null || mat.length == 0 || mat[i][j] == 0 || mat[x][y] == 0) {
-            return -1;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // construct a matrix to keep track of visited cells
-        boolean[][] visited = new boolean[M][N];
-
-        // create an empty queue
-        Queue<Node> q = new ArrayDeque<>();
-
-        // mark the source cell as visited and enqueue the source node
-        visited[i][j] = true;
-        q.add(new Node(i, j, 0));
-
-        // stores length of the longest path from source to destination
-        int min_dist = Integer.MAX_VALUE;
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and process it
-            Node node = q.poll();
-
-            // (i, j) represents a current cell, and `dist` stores its
-            // minimum distance from the source
-            i = node.x;
-            j = node.y;
-            int dist = node.dist;
-
-            // if the destination is found, update `min_dist` and stop
-            if (i == x && j == y)
-            {
-                min_dist = dist;
-                break;
-            }
-
-            // check for all four possible movements from the current cell
-            // and enqueue each valid movement
-            for (int k = 0; k < 4; k++)
-            {
-                // check if it is possible to go to position
-                // (i + row[k], j + col[k]) from current position
-                if (isValid(mat, visited, i + row[k], j + col[k]))
-                {
-                    // mark next cell as visited and enqueue it
-                    visited[i + row[k]][j + col[k]] = true;
-                    q.add(new Node(i + row[k], j + col[k], dist + 1));
-                }
-            }
-        }
-
-        if (min_dist != Integer.MAX_VALUE) {
-            return min_dist;
-        }
-        return -1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
-            { 0, 1, 1, 1, 1, 1, 0, 1, 0, 1 },
-            { 0, 0, 1, 0, 1, 1, 1, 0, 0, 1 },
-            { 1, 0, 1, 1, 1, 0, 1, 1, 0, 1 },
-            { 0, 0, 0, 1, 0, 0, 0, 1, 0, 1 },
-            { 1, 0, 1, 1, 1, 0, 0, 1, 1, 0 },
-            { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-            { 0, 1, 1, 1, 1, 1, 1, 1, 0, 0 },
-            { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1 },
-            { 0, 0, 1, 0, 0, 1, 1, 0, 0, 1 },
-        };
-
-        int min_dist = findShortestPathLength(mat, 0, 0, 7, 5);
-
-        if (min_dist != -1) {
-            System.out.println("The shortest path from source to destination " +
-                    "has length " + min_dist);
-        } else {
-            System.out.println("Destination cannot be reached from source");
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-from collections import deque
-
-# Below lists detail all four possible movements from a cell
-row = [-1, 0, 0, 1]
-col = [0, -1, 1, 0]
-
-# Function to check if it is possible to go to position (row, col)
-# from the current position. The function returns false if row, col
-# is not a valid position or has a value 0 or already visited.
-def isValid(mat, visited, row, col):
-    return (row >= 0) and (row < len(mat)) and (col >= 0) and (col < len(mat[0])) \
-           and mat[row][col] == 1 and not visited[row][col]
-
-# Find the shortest possible route in a matrix `mat` from source `src` to
-# destination `dest`
-def findShortestPathLength(mat, src, dest):
-
-    # get source cell (i, j)
-    i, j = src
-
-    # get destination cell (x, y)
-    x, y = dest
-
-    # base case: invalid input
-    if not mat or len(mat) == 0 or mat[i][j] == 0 or mat[x][y] == 0:
-        return -1
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # construct a matrix to keep track of visited cells
-    visited = [[False for x in range(N)] for y in range(M)]
-
-    # create an empty queue
-    q = deque()
-
-    # mark the source cell as visited and enqueue the source node
-    visited[i][j] = True
-
-    # (i, j, dist) represents matrix cell coordinates, and their
-    # minimum distance from the source
-    q.append((i, j, 0))
-
-    # stores length of the longest path from source to destination
-    min_dist = sys.maxsize
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node and process it
-        (i, j, dist) = q.popleft()
-
-        # (i, j) represents a current cell, and `dist` stores its
-        # minimum distance from the source
-
-        # if the destination is found, update `min_dist` and stop
-        if i == x and j == y:
-            min_dist = dist
-            break
-
-        # check for all four possible movements from the current cell
-        # and enqueue each valid movement
-        for k in range(4):
-            # check if it is possible to go to position
-            # (i + row[k], j + col[k]) from current position
-            if isValid(mat, visited, i + row[k], j + col[k]):
-                # mark next cell as visited and enqueue it
-                visited[i + row[k]][j + col[k]] = True
-                q.append((i + row[k], j + col[k], dist + 1))
-
-    if min_dist != sys.maxsize:
-        return min_dist
-    else:
-        return -1
-
-if __name__ == '__main__':
-
-    mat = [
-        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
-        [0, 0, 1, 0, 1, 1, 1, 0, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
-        [0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 1, 1, 0, 0, 1, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 1, 0, 1],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-        [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]
-    ]
-
-    src = (0, 0)
-    dest = (7, 5)
-
-    min_dist = findShortestPathLength(mat, src, dest)
-
-    if min_dist != -1:
-        print("The shortest path from source to destination has length", min_dist)
-    else:
-        print("Destination cannot be reached from source")
-```
 
 The time complexity of the proposed solution is O(M × N) and requires O(M × N) extra space, where `M` and `N` are dimensions of the matrix.
 

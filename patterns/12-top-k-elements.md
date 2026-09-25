@@ -14,18 +14,20 @@ Rule of thumb: for **K largest** keep a **min-heap** of size K (its root is the 
 - Asked to sort "just enough" to identify a specific element
 - Streaming / large data where you can't hold everything sorted
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-import heapq
-
-def k_largest(nums, k):
-    heap = nums[:k]
-    heapq.heapify(heap)              # min-heap gatekeeper
-    for num in nums[k:]:
-        if num > heap[0]:
-            heapq.heapreplace(heap, num)
-    return heap
+```ts
+// JS has no builtin heap: use min-heap helpers (minHeapify, heapReplace)
+function kLargest(nums: number[], k: number): number[] {
+  const heap = nums.slice(0, k);
+  minHeapify(heap); // min-heap gatekeeper
+  for (const num of nums.slice(k)) {
+    if (num > heap[0]) {
+      heapReplace(heap, num);
+    }
+  }
+  return heap;
+}
 ```
 
 ## Complexity

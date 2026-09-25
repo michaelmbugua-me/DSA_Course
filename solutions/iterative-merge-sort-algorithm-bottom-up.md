@@ -12,253 +12,82 @@ We can also implement merge sort iteratively in a bottom-up manner. We start by 
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-The following code proposes a non-recursive variant of the merge sort in C, Java, and Python, in which a sequence of passes sorts the array in a bottom-up manner:
+The following code proposes a non-recursive variant of the merge sort in TypeScript, in which a sequence of passes sorts the array in a bottom-up manner:
 
-```c
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
+```ts
+// Merge two sorted subarrays `A[frm…mid]` and `A[mid+1…to]`
+function merge(A: number[], temp: number[], frm: number, mid: number, to: number): void {
 
-#define N 10
-
-// Utility function to find a minimum of two numbers
-int min(int x, int y) {
-    return (x < y) ? x : y;
-}
-
-// Merge two sorted subarrays `A[from…mid]` and `A[mid+1…to]`
-void merge(int A[], int temp[], int from, int mid, int to)
-{
-    int k = from, i = from, j = mid + 1;
+    let k = frm;
+    let i = frm;
+    let j = mid + 1;
 
     // loop till no elements are left in the left and right runs
-    while (i <= mid && j <= to)
-    {
+    while (i <= mid && j <= to) {
         if (A[i] < A[j]) {
-            temp[k++] = A[i++];
+            temp[k] = A[i];
+            i = i + 1;
+        } else {
+            temp[k] = A[j];
+            j = j + 1;
         }
-        else {
-            temp[k++] = A[j++];
-        }
+
+        k = k + 1;
     }
 
     // copy remaining elements
-    while (i < N && i <= mid) {
-        temp[k++] = A[i++];
+    while (i < A.length && i <= mid) {
+        temp[k] = A[i];
+        k = k + 1;
+        i = i + 1;
     }
 
     /* no need to copy the second half (since the remaining items
        are already in their correct position in the temporary array) */
 
     // copy back to the original array to reflect sorted order
-    for (int i = from; i <= to; i++) {
+    for (let i = frm; i <= to; i++) {
         A[i] = temp[i];
     }
 }
 
-// Iteratively sort subarray `A[low…high]` using a temporary array
-void mergesort(int A[], int temp[], int low, int high)
-{
+// Iteratively sort sublist `A[low…high]` using a temporary array
+function mergesort(A: number[]): void {
+
+    const low = 0;
+    const high = A.length - 1;
+
+    // sort array `A` using a temporary array `temp`
+    const temp = A.slice();
+
     // divide the array into blocks of size `m`
     // m = [1, 2, 4, 8, 16…]
-    for (int m = 1; m <= high - low; m = 2*m)
-    {
-        // for m = 1, i = 0, 2, 4, 6, 8…
-        // for m = 2, i = 0, 4, 8…
-        // for m = 4, i = 0, 8…
+
+    let m = 1;
+    while (m <= high - low) {
+
+        // for m = 1, i = [0, 2, 4, 6, 8…]
+        // for m = 2, i = [0, 4, 8, 12…]
+        // for m = 4, i = [0, 8, 16…]
         // …
-        for (int i = low; i < high; i += 2*m)
-        {
-            int from = i;
-            int mid = i + m - 1;
-            int to = min(i + 2*m - 1, high);
 
-            merge(A, temp, from, mid, to);
+        for (let i = low; i < high; i += 2 * m) {
+            const frm = i;
+            const mid = i + m - 1;
+            const to = Math.min(i + 2 * m - 1, high);
+            merge(A, temp, frm, mid, to);
         }
-    }
-}
 
-// Utility function to print a given array
-int printArray(int A[])
-{
-    for (int i = 0; i < N; i++) {
-        printf("%d ", A[i]);
+        m = 2 * m;
     }
-
-    printf("\n");
 }
 
 // Iterative implementation of merge sort
-int main()
-{
-    int A[N], temp[N];
-    srand(time(NULL));
+const A = [5, 7, -9, 3, -4, 2, 8];
 
-    // generate random input of integers
-    for (int i = 0; i < N; i++) {
-        temp[i] = A[i] = (rand() % 50);
-    }
-
-    printf("Original array: ");
-    printArray(A);
-
-    // sort array `A[0…N-1]` using a temporary array temp
-    mergesort(A, temp, 0, N - 1);
-
-    printf("Modified array: ");
-    printArray(A);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Merge two sorted subarrays `A[from…mid]` and `A[mid+1…to]`
-    public static void merge(int[] A, int[] temp, int from, int mid, int to)
-    {
-        int k = from, i = from, j = mid + 1;
-
-        // loop till no elements are left in the left and right runs
-        while (i <= mid && j <= to)
-        {
-            if (A[i] < A[j]) {
-                temp[k++] = A[i++];
-            }
-            else {
-                temp[k++] = A[j++];
-            }
-        }
-
-        // copy remaining elements
-        while (i < A.length && i <= mid) {
-            temp[k++] = A[i++];
-        }
-
-        /* no need to copy the second half (since the remaining items
-           are already in their correct position in the temporary array) */
-
-        // copy back to the original array to reflect sorted order
-        for (i = from; i <= to; i++) {
-            A[i] = temp[i];
-        }
-    }
-
-    // Iteratively sort subarray `A[low…high]` using a temporary array
-    public static void mergesort(int[] A)
-    {
-        int low = 0;
-        int high = A.length - 1;
-
-        // sort array `A[]` using a temporary array `temp`
-        int[] temp = Arrays.copyOf(A, A.length);
-
-        // divide the array into blocks of size `m`
-        // m = [1, 2, 4, 8, 16…]
-        for (int m = 1; m <= high - low; m = 2*m)
-        {
-            // for m = 1, i = 0, 2, 4, 6, 8 …
-            // for m = 2, i = 0, 4, 8, 12 …
-            // for m = 4, i = 0, 8, 16 …
-            // …
-            for (int i = low; i < high; i += 2*m)
-            {
-                int from = i;
-                int mid = i + m - 1;
-                int to = Integer.min(i + 2*m - 1, high);
-
-                merge(A, temp, from, mid, to);
-            }
-        }
-    }
-
-    // Iterative implementation of merge sort
-    public static void main(String[] args)
-    {
-        int[] A = { 5, 7, -9, 3, -4, 2, 8 };
-
-        System.out.println("Original array: " + Arrays.toString(A));
-        mergesort(A);
-        System.out.println("Modified array: " + Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# Merge two sorted sublists `A[frm…mid]` and `A[mid+1…to]`
-def merge(A, temp, frm, mid, to):
-
-    k = frm
-    i = frm
-    j = mid + 1
-
-    # loop till no elements are left in the left and right runs
-    while i <= mid and j <= to:
-        if A[i] < A[j]:
-            temp[k] = A[i]
-            i = i + 1
-        else:
-            temp[k] = A[j]
-            j = j + 1
-
-        k = k + 1
-
-    # copy remaining elements
-    while i < len(A) and i <= mid:
-        temp[k] = A[i]
-        k = k + 1
-        i = i + 1
-
-    ''' no need to copy the second half (since the remaining items
-        are already in their correct position in the temporary array) '''
-
-    # copy back to the original list to reflect sorted order
-    for i in range(frm, to + 1):
-        A[i] = temp[i]
-
-# Iteratively sort sublist `A[low…high]` using a temporary list
-def mergesort(A):
-
-    low = 0
-    high = len(A) - 1
-
-    # sort list `A` using a temporary list `temp`
-    temp = A.copy()
-
-    # divide the list into blocks of size `m`
-    # m = [1, 2, 4, 8, 16…]
-
-    m = 1
-    while m <= high - low:
-
-        # for m = 1, i = [0, 2, 4, 6, 8…]
-        # for m = 2, i = [0, 4, 8, 12…]
-        # for m = 4, i = [0, 8, 16…]
-        # …
-
-        for i in range(low, high, 2*m):
-            frm = i
-            mid = i + m - 1
-            to = min(i + 2*m - 1, high)
-            merge(A, temp, frm, mid, to)
-
-        m = 2*m
-
-# Iterative implementation of merge sort
-if __name__ == '__main__':
-
-    A = [5, 7, -9, 3, -4, 2, 8]
-
-    print("Original array:", A)
-    mergesort(A)
-    print("Modified array:", A)
+console.log('Original array:', A);
+mergesort(A);
+console.log('Modified array:', A);
 ```
 
 The worst-case time complexity of iterative merge sort remains the same as the recursive implementation, i.e., O(n.log(n)) for an input containing `n` items. However, it saves the auxiliary space required by the call stack.

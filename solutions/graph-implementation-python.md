@@ -8,42 +8,50 @@ In an adjacency list representation of the graph, each vertex in the graph store
 
 ## 1\. Directed Graph Implementation
 
-Following is the Python implementation of a directed graph using an adjacency list:
+Following is the TypeScript implementation of a directed graph using an adjacency list:
 
-```
-# A class to represent a graph object
-class Graph:
-    # Constructor
-    def __init__(self, edges, n):
-        # allocate memory for the adjacency list
-        self.adjList = [[] for _ in range(n)]
+```ts
+// A class to represent a graph object
+class Graph {
+    // Constructor
+    adjList: number[][];
 
-        # add edges to the directed graph
-        for (src, dest) in edges:
-            # allocate node in adjacency list from src to dest
-            self.adjList[src].append(dest)
+    constructor(edges: [number, number][], n: number) {
+        // allocate memory for the adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
 
-# Function to print adjacency list representation of a graph
-def printGraph(graph):
-    for src in range(len(graph.adjList)):
-        # print current vertex and all its neighboring vertices
-        for dest in graph.adjList[src]:
-            print(f'({src} —> {dest}) ', end='')
-        print()
+        // add edges to the directed graph
+        for (const [src, dest] of edges) {
+            // allocate node in adjacency list from src to dest
+            this.adjList[src].push(dest);
+        }
+    }
+}
 
-if __name__ == '__main__':
+// Function to print adjacency list representation of a graph
+function printGraph(graph: Graph): void {
+    for (let src = 0; src < graph.adjList.length; src++) {
+        // print current vertex and all its neighboring vertices
+        for (const dest of graph.adjList[src]) {
+            process.stdout.write(`(${src} —> ${dest}) `);
+        }
+        console.log();
+    }
+}
 
-    # Input: Edges in a directed graph
-    edges = [(0, 1), (1, 2), (2, 0), (2, 1), (3, 2), (4, 5), (5, 4)]
+(function main() {
+    // Input: Edges in a directed graph
+    const edges: [number, number][] = [[0, 1], [1, 2], [2, 0], [2, 1], [3, 2], [4, 5], [5, 4]];
 
-    # No. of vertices (labelled from 0 to 5)
-    n = 6
+    // No. of vertices (labelled from 0 to 5)
+    const n = 6;
 
-    # construct a graph from a given list of edges
-    graph = Graph(edges, n)
+    // construct a graph from a given list of edges
+    const graph = new Graph(edges, n);
 
-    # print adjacency list representation of the graph
-    printGraph(graph)
+    // print adjacency list representation of the graph
+    printGraph(graph);
+})();
 ```
 
 **Output:** (0 —> 1) (1 —> 2) (2 —> 0) (2 —> 1) (3 —> 2) (4 —> 5) (5 —> 4)
@@ -52,49 +60,54 @@ if __name__ == '__main__':
 
 In a weighted graph, every edge has a weight or cost associated with it.
 
-Following is the Python implementation of a weighted directed graph using an adjacency list. The implementation is similar to the above implementation, except the weight is now stored in the adjacency list with every edge.
+Following is the TypeScript implementation of a weighted directed graph using an adjacency list. The implementation is similar to the above implementation, except the weight is now stored in the adjacency list with every edge.
 
-```
-# A class to represent a graph object
-class Graph:
-    # Constructor to construct a graph
-    def __init__(self, edges, n):
+```ts
+// A class to represent a graph object
+class Graph {
+    // Constructor to construct a graph
+    adjList: [number, number][][];
 
-        # A list of lists to represent an adjacency list
-        self.adjList = [None] * n
+    constructor(edges: [number, number, number][], n: number) {
+        // A list of lists to represent an adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
 
-        # allocate memory for the adjacency list
-        for i in range(n):
-            self.adjList[i] = []
+        // add edges to the directed graph
+        for (const [src, dest, weight] of edges) {
+            // allocate node in adjacency list from src to dest
+            this.adjList[src].push([dest, weight]);
+        }
+    }
+}
 
-        # add edges to the directed graph
-        for (src, dest, weight) in edges:
-            # allocate node in adjacency list from src to dest
-            self.adjList[src].append((dest, weight))
+// Function to print adjacency list representation of a graph
+function printGraph(graph: Graph): void {
+    for (let src = 0; src < graph.adjList.length; src++) {
+        // print current vertex and all its neighboring vertices
+        for (const [dest, weight] of graph.adjList[src]) {
+            process.stdout.write(`(${src} —> ${dest}, ${weight}) `);
+        }
+        console.log();
+    }
+}
 
-# Function to print adjacency list representation of a graph
-def printGraph(graph):
-    for src in range(len(graph.adjList)):
-        # print current vertex and all its neighboring vertices
-        for (dest, weight) in graph.adjList[src]:
-            print(f'({src} —> {dest}, {weight}) ', end='')
-        print()
+(function main() {
+    // Input: Edges in a weighted digraph (as per the above diagram)
+    // Edge (x, y, w) represents an edge from `x` to `y` having weight `w`
+    const edges: [number, number, number][] = [
+        [0, 1, 6], [1, 2, 7], [2, 0, 5], [2, 1, 4],
+        [3, 2, 10], [4, 5, 1], [5, 4, 3]
+    ];
 
-if __name__ == '__main__':
+    // No. of vertices (labelled from 0 to 5)
+    const n = 6;
 
-    # Input: Edges in a weighted digraph (as per the above diagram)
-    # Edge (x, y, w) represents an edge from `x` to `y` having weight `w`
-    edges = [(0, 1, 6), (1, 2, 7), (2, 0, 5), (2, 1, 4), (3, 2, 10),
-            (4, 5, 1), (5, 4, 3)]
+    // construct a graph from a given list of edges
+    const graph = new Graph(edges, n);
 
-    # No. of vertices (labelled from 0 to 5)
-    n = 6
-
-    # construct a graph from a given list of edges
-    graph = Graph(edges, n)
-
-    # print adjacency list representation of the graph
-    printGraph(graph)
+    // print adjacency list representation of the graph
+    printGraph(graph);
+})();
 ```
 
 **Output:** (0 —> 1, 6) (1 —> 2, 7) (2 —> 0, 5) (2 —> 1, 4) (3 —> 2, 10) (4 —> 5, 1) (5 —> 4, 3)

@@ -24,199 +24,49 @@ The naive algorithm finds all occurrences of a pattern by using a loop that chec
 
 ## Implementation
 
-The algorithm can be implemented as follows in C, C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <string.h>
-
+```ts
 // Function to find all occurrences of a pattern of length `m`
-// in the given text of length `n`
-void find(const char* text, const char* pattern, int n, int m)
-{
-    // base case 1: text is NULL or empty
-    if (*pattern == '\0' || m == 0) {
-        printf("The pattern occurs with shift 0");
+// in a given text of length `n`
+function find(text: string, pattern: string): void {
+
+    const n = text.length;
+    const m = pattern.length;
+
+    // base case 1: text is empty
+    if (pattern === '') {
+        console.log('The pattern occurs with shift 0');
+        return;
     }
 
-    // base case 2: text is NULL, or text length is less than that of pattern
-    if (*text == '\0' || m > n) {
-        printf("Pattern not found");
+    // base case 2: text is null, or text length is less than that of pattern
+    if (text === null || pattern.length > text.length) {
+        console.log('Pattern not found');
+        return;
     }
 
-    for (int i = 0; i <= n - m; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            if (text[i + j] != pattern[j]) {
+    let i = 0;
+    while (i <= n - m) {
+        for (let j = 0; j < m; j++) {
+            if (text[i + j] !== pattern[j]) {
                 break;
             }
-
-            if (j == m - 1) {
-                printf("The pattern occurs with shift %d\n", i);
+            if (j === m - 1) {
+                console.log('Pattern occurs with shift', i);
             }
         }
+        i = i + 1;
     }
 }
 
-int main(void)
-{
-    char* text = "ABCABAABCABAC";
-    char* pattern = "CAB";
+const text = 'ABCABAABCABAC';
+const pattern = 'CAB';
 
-    int n = strlen(text);
-    int m = strlen(pattern);
-
-    find(text, pattern, n, m);
-
-    return 0;
-}
+find(text, pattern);
 ```
 
 **Output:** The pattern occurs with shift 2 The pattern occurs with shift 8
-
-##
-
-```cpp
-#include <iostream>
-using namespace std;
-
-// Function to find all occurrences of a pattern of length `m`
-// in the given text of length `n`
-void find(string text, string pattern)
-{
-    int n = text.length();
-    int m = pattern.length();
-
-    // if text is an empty string
-    if (m == 0)
-    {
-        cout << "The pattern occurs with shift 0";
-        return;
-    }
-
-    // if text length is less than that of pattern
-    if (n < m)
-    {
-        cout << "Pattern not found";
-        return;
-    }
-
-    for (int i = 0; i <= n - m; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            if (text[i + j] != pattern[j]) {
-                break;
-            }
-
-            if (j == m - 1) {
-                cout << "The pattern occurs with shift " << i << endl;
-            }
-        }
-    }
-}
-
-int main()
-{
-    string text = "ABCABAABCABAC";
-    string pattern = "CAB";
-
-    find(text, pattern);
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to find all occurrences of a pattern of length `m`
-    // in the given text of length `n`
-    public static void find(String text, String pattern)
-    {
-        int n = text.length();
-        int m = pattern.length();
-
-        // base case 1: text is null or empty
-        if (pattern == null || pattern.length() == 0)
-        {
-            System.out.println("The pattern occurs with shift 0");
-            return;
-        }
-
-        // base case 2: text is null, or text length is less than that of pattern
-        if (text == null || pattern.length() > text.length())
-        {
-            System.out.println("Pattern not found");
-            return;
-        }
-
-        int i = 0;
-        while (i <= n - m)
-        {
-            for (int j = 0; j < m; j++)
-            {
-                if (text.charAt(i + j) != pattern.charAt(j)) {
-                    break;
-                }
-
-                if (j == m - 1) {
-                    System.out.println("The pattern occurs with shift " + i);
-                }
-            }
-            i++;
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        String text = "ABCABAABCABAC";
-        String pattern = "CAB";
-
-        find(text, pattern);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find all occurrences of a pattern of length `m`
-# in a given text of length `n`
-def find(text, pattern):
-
-    n = len(text)
-    m = len(pattern)
-
-    # base case 1: text is empty
-    if not pattern:
-        print('The pattern occurs with shift 0')
-        return
-
-    # base case 2: text is None, or text length is less than that of pattern
-    if not text or len(pattern) > len(text):
-        print('Pattern not found')
-        return
-
-    i = 0
-    while i <= n - m:
-        for j in range(m):
-            if text[i + j] is not pattern[j]:
-                break
-            if j == m - 1:
-                print('Pattern occurs with shift', i)
-        i = i + 1
-
-if __name__ == '__main__':
-
-    text = 'ABCABAABCABAC'
-    pattern = 'CAB'
-
-    find(text, pattern)
-```
 
 ## Performance
 

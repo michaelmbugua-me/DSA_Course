@@ -17,108 +17,93 @@ The stack supports the following operations:
 
 ## Stack Implementation using an array
 
-A stack can easily be implemented as an array. Following is the stack implementation in Java using an array:
+A stack can easily be implemented as an array. Following is the stack implementation in TypeScript using an array:
 
-```
-class Stack
-{
-    private int arr[];
-    private int top;
-    private int capacity;
+```ts
+class Stack {
+    private arr: number[];
+    private top: number;
+    private capacity: number;
 
     // Constructor to initialize the stack
-    Stack(int size)
-    {
-        arr = new int[size];
-        capacity = size;
-        top = -1;
+    constructor(size: number) {
+        this.arr = new Array<number>(size);
+        this.capacity = size;
+        this.top = -1;
     }
 
     // Utility function to add an element `x` to the stack
-    public void push(int x)
-    {
-        if (isFull())
-        {
-            System.out.println("Overflow\nProgram Terminated\n");
-            System.exit(-1);
+    push(x: number): void {
+        if (this.isFull()) {
+            console.log("Overflow\nProgram Terminated\n");
+            process.exit(-1);
         }
 
-        System.out.println("Inserting " + x);
-        arr[++top] = x;
+        console.log("Inserting " + x);
+        this.arr[++this.top] = x;
     }
 
     // Utility function to pop a top element from the stack
-    public int pop()
-    {
+    pop(): number {
         // check for stack underflow
-        if (isEmpty())
-        {
-            System.out.println("Underflow\nProgram Terminated");
-            System.exit(-1);
+        if (this.isEmpty()) {
+            console.log("Underflow\nProgram Terminated");
+            process.exit(-1);
         }
 
-        System.out.println("Removing " + peek());
+        console.log("Removing " + this.peek());
 
         // decrease stack size by 1 and (optionally) return the popped element
-        return arr[top--];
+        return this.arr[this.top--];
     }
 
     // Utility function to return the top element of the stack
-    public int peek()
-    {
-        if (!isEmpty()) {
-            return arr[top];
+    peek(): number {
+        if (!this.isEmpty()) {
+            return this.arr[this.top];
         }
         else {
-            System.exit(-1);
+            process.exit(-1);
         }
-
-        return -1;
     }
 
     // Utility function to return the size of the stack
-    public int size() {
-        return top + 1;
+    size(): number {
+        return this.top + 1;
     }
 
     // Utility function to check if the stack is empty or not
-    public boolean isEmpty() {
-        return top == -1;               // or return size() == 0;
+    isEmpty(): boolean {
+        return this.top === -1;               // or return this.size() === 0;
     }
 
     // Utility function to check if the stack is full or not
-    public boolean isFull() {
-        return top == capacity - 1;     // or return size() == capacity;
+    isFull(): boolean {
+        return this.top === this.capacity - 1;     // or return this.size() === this.capacity;
     }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        Stack stack = new Stack(3);
+const stack = new Stack(3);
 
-        stack.push(1);      // inserting 1 in the stack
-        stack.push(2);      // inserting 2 in the stack
+stack.push(1);      // inserting 1 in the stack
+stack.push(2);      // inserting 2 in the stack
 
-        stack.pop();        // removing the top element (2)
-        stack.pop();        // removing the top element (1)
+stack.pop();        // removing the top element (2)
+stack.pop();        // removing the top element (1)
 
-        stack.push(3);      // inserting 3 in the stack
+stack.push(3);      // inserting 3 in the stack
 
-        System.out.println("The top element is " + stack.peek());
-        System.out.println("The stack size is " + stack.size());
+console.log("The top element is " + stack.peek());
+console.log("The stack size is " + stack.size());
 
-        stack.pop();        // removing the top element (3)
+stack.pop();        // removing the top element (3)
 
-        // check if the stack is empty
-        if (stack.isEmpty()) {
-            System.out.println("The stack is empty");
-        }
-        else {
-            System.out.println("The stack is not empty");
-        }
-    }
+// check if the stack is empty
+if (stack.isEmpty()) {
+    console.log("The stack is empty");
+}
+else {
+    console.log("The stack is not empty");
 }
 ```
 
@@ -126,41 +111,33 @@ class Main
 
 The time complexity of `push()`, `pop()`, `peek()`, `isEmpty()`, `isFull()` and `size()` is constant, i.e., O(1).
 
-## Using Java Collections
+## Using an Array
 
-The stack is also included in [Java’s collection](https://docs.oracle.com/javase/8/docs/api/java/util/Stack.html) framework.
+The stack is also included in the TypeScript standard library’s array operations.
 
-```
-import java.util.Stack;
+```ts
+const stack: string[] = [];
 
-class Main
-{
-    public static void main(String[] args)
-    {
-        Stack<String> stack = new Stack<String>();
+stack.push("A");    // Insert `A` into the stack
+stack.push("B");    // Insert `B` into the stack
+stack.push("C");    // Insert `C` into the stack
+stack.push("D");    // Insert `D` into the stack
 
-        stack.push("A");    // Insert `A` into the stack
-        stack.push("B");    // Insert `B` into the stack
-        stack.push("C");    // Insert `C` into the stack
-        stack.push("D");    // Insert `D` into the stack
+// prints the top of the stack (`D`)
+console.log("The top element is " + stack[stack.length - 1]);
 
-        // prints the top of the stack (`D`)
-        System.out.println("The top element is " + stack.peek());
+stack.pop();        // removing the top element (`D`)
+stack.pop();        // removing the next top (`C)
 
-        stack.pop();        // removing the top element (`D`)
-        stack.pop();        // removing the next top (`C)
+// returns the total number of elements present in the stack
+console.log("The stack size is " + stack.length);
 
-        // returns the total number of elements present in the stack
-        System.out.println("The stack size is " + stack.size());
-
-        // check if the stack is empty
-        if (stack.empty()) {
-            System.out.println("The stack is empty");
-        }
-        else {
-            System.out.println("The stack is not empty");
-        }
-    }
+// check if the stack is empty
+if (stack.length === 0) {
+    console.log("The stack is empty");
+}
+else {
+    console.log("The stack is not empty");
 }
 ```
 

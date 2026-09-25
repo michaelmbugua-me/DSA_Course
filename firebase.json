@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "public": "dist",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": [],
+    "redirects": [
+      {"source": "/:page.md", "destination": "/:page", "type": 301},
+      {"source": "/patterns/:page.md", "destination": "/patterns/:page", "type": 301},
+      {"source": "/problems/:page.md", "destination": "/problems/:page", "type": 301},
+      {"source": "/solutions/:page.md", "destination": "/solutions/:page", "type": 301}
+    ]
+  }
+}

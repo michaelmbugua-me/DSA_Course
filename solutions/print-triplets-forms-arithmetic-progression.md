@@ -16,152 +16,55 @@ For example,
 
 The idea is to consider every element as the middle element of arithmetic progression, starting from the second element and searching the other two arithmetic triplet elements. For an element `A[j]` to be middle of arithmetic progression, there exist two elements `A[i]` and `A[k]` such that `(A[j] - A[i] = A[k] - A[j])` or `(A[i] + A[k] == 2 × A[j])`, where `(0 <= i < j < k <= n-1)`.
 
-Following is the C, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to print all triplets that forms arithmetic progression
-// in a given sorted array
-void findAllTriplets(int A[], int n)
-{
+// in a given sorted list
+function findAllTriplets(A: number[]): void {
+
+    if (A.length < 3) {
+        return;
+    }
+
     // consider `A[j]` as the middle element of AP
-    for (int j = 1; j < n - 1; j++)
-    {
+    for (let j = 1; j < A.length - 1; j++) {
+
         // start with the left and right index of `j`
-        int i = j - 1, k = j + 1;
+        let i = j - 1;
+        let k = j + 1;
 
         // Find all `i` and `k` such that `(i, j, k)` form an AP triplet
-        while (i >= 0 && k < n)
-        {
-            // if `(A[i], A[j], A[k])` forms a triplet
-            if (A[i] + A[k] == 2 * A[j])
-            {
-                // print the triplet
-                printf("%d %d %d\n", A[i], A[j], A[k]);
+        while (i >= 0 && k < A.length) {
 
-                // Since the array is sorted and elements are distinct
-                k++, i--;
+            // if `(A[i], A[j], A[k])` forms a triplet
+            if (A[i] + A[k] === 2 * A[j]) {
+
+                // print the triplet
+                console.log(`(${A[i]}, ${A[j]}, ${A[k]})`);
+
+                // Since the list is sorted and elements are distinct
+                k = k + 1;
+                i = i - 1;
             }
+
             // otherwise, if `(A[i] + A[k])` is less than `2×A[j]` then
             // try next `k`. Else, try the previous `i`.
             else if (A[i] + A[k] < 2 * A[j]) {
-                k++;
+                k = k + 1;
             }
             else {
-                i--;
+                i = i - 1;
             }
         }
     }
 }
 
-int main(void)
-{
-    int A[] = { 1, 3, 5, 6, 8, 9, 15 };
-    int n = sizeof(A) / sizeof(A[0]);
-
-    findAllTriplets(A, n);
-
-    return 0;
-}
+const A = [1, 3, 5, 6, 8, 9, 15];
+findAllTriplets(A);
 ```
 
 **Output:** 1 3 5 1 5 9 3 6 9 1 8 15 3 9 15
-
-##
-
-```java
-class Main
-{
-    // Function to print all triplets that forms arithmetic progression
-    // in a given sorted array
-    public static void findAllTriplets(int[] A)
-    {
-        if (A.length < 3) {
-            return;
-        }
-
-        // consider `A[j]` as the middle element of AP
-        for (int j = 1; j < A.length - 1; j++)
-        {
-            // start with the left and right index of `j`
-            int i = j - 1, k = j + 1;
-
-            // Find all `i` and `k` such that `(i, j, k)` form an AP triplet
-            while (i >= 0 && k < A.length)
-            {
-                // if `(A[i], A[j], A[k])` forms a triplet
-                if (A[i] + A[k] == 2 * A[j])
-                {
-                    // print the triplet
-                    System.out.println(A[i] + " " + A[j] + " " + A[k]);
-
-                    // Since the array is sorted and elements are distinct
-                    k++; i--;
-                }
-                // otherwise, if `(A[i] + A[k])` is less than `2×A[j]` then
-                // try next `k`. Else, try the previous `i`.
-                else if (A[i] + A[k] < 2 * A[j]) {
-                    k++;
-                }
-                else {
-                    i--;
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 1, 3, 5, 6, 8, 9, 15 };
-
-        findAllTriplets(A);
-    }
-}
-```
-
-##
-
-```python3
-# Function to print all triplets that forms arithmetic progression
-# in a given sorted list
-def findAllTriplets(A):
-
-    if len(A) < 3:
-        return
-
-    # consider `A[j]` as the middle element of AP
-    for j in range(1, len(A) - 1):
-
-        # start with the left and right index of `j`
-        i = j - 1
-        k = j + 1
-
-        # Find all `i` and `k` such that `(i, j, k)` form an AP triplet
-        while i >= 0 and k < len(A):
-
-            # if `(A[i], A[j], A[k])` forms a triplet
-            if A[i] + A[k] == 2 * A[j]:
-
-                # print the triplet
-                print((A[i], A[j], A[k]))
-
-                # Since the list is sorted and elements are distinct
-                k = k + 1
-                i = i - 1
-
-            # otherwise, if `(A[i] + A[k])` is less than `2×A[j]` then
-            # try next `k`. Else, try the previous `i`.
-            elif A[i] + A[k] < 2 * A[j]:
-                k = k + 1
-            else:
-                i = i - 1
-
-if __name__ == '__main__':
-
-    A = [1, 3, 5, 6, 8, 9, 15]
-    findAllTriplets(A)
-```
 
 The time complexity of the above solution is O(n2) as for every `j` in an input array of size `n`, finding `i` and `k` takes in linear time. The auxiliary space required by the program is O(1).
 

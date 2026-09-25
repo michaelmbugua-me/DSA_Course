@@ -62,474 +62,150 @@ The path from the root to any leaf node stores the optimal prefix code (also cal
 
 ## Implementation
 
-Following is the C++, Java, and Python implementation of the Huffman coding compression algorithm:
+Following is the TypeScript implementation of the Huffman coding compression algorithm:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <queue>
-#include <unordered_map>
-using namespace std;
-
-#define EMPTY_STRING ""
+```ts
+// Utility function to check if Huffman Tree contains only a single node
+function isLeaf(root: Node): boolean {
+    return root.left === null && root.right === null;
+}
 
 // A Tree node
-struct Node
-{
-    char ch;
-    int freq;
-    Node *left, *right;
-};
-
-// Function to allocate a new tree node
-Node* getNode(char ch, int freq, Node* left, Node* right)
-{
-    Node* node = new Node();
-
-    node->ch = ch;
-    node->freq = freq;
-    node->left = left;
-    node->right = right;
-
-    return node;
+class Node {
+    constructor(public ch: string | null, public freq: number,
+                public left: Node | null = null, public right: Node | null = null) {}
 }
 
-// Comparison object to be used to order the heap
-struct comp
-{
-    bool operator()(const Node* l, const Node* r) const
-    {
-        // the highest priority item has the lowest frequency
-        return l->freq > r->freq;
-    }
-};
+// Traverse the Huffman Tree and store Huffman Codes in a map
+function encode(root: Node | null, s: string, huffmanCode: Map<string, string>): void {
 
-// Utility function to check if Huffman Tree contains only a single node
-bool isLeaf(Node* root) {
-    return root->left == nullptr && root->right == nullptr;
-}
-
-// Traverse the Huffman Tree and store Huffman Codes in a map.
-void encode(Node* root, string str, unordered_map<char, string> &huffmanCode)
-{
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // found a leaf node
     if (isLeaf(root)) {
-        huffmanCode[root->ch] = (str != EMPTY_STRING) ? str : "1";
+        huffmanCode.set(root.ch!, s.length > 0 ? s : '1');
     }
 
-    encode(root->left, str + "0", huffmanCode);
-    encode(root->right, str + "1", huffmanCode);
+    encode(root.left, s + '0', huffmanCode);
+    encode(root.right, s + '1', huffmanCode);
 }
 
 // Traverse the Huffman Tree and decode the encoded string
-void decode(Node* root, int &index, string str)
-{
-    if (root == nullptr) {
-        return;
+function decode(root: Node | null, index: number, s: string, decoded: string[]): number {
+
+    if (root === null) {
+        return index;
     }
 
     // found a leaf node
-    if (isLeaf(root))
-    {
-        cout << root->ch;
-        return;
+    if (isLeaf(root)) {
+        decoded.push(root.ch!);
+        return index;
     }
 
-    index++;
-
-    if (str[index] == '0') {
-        decode(root->left, index, str);
-    }
-    else {
-        decode(root->right, index, str);
-    }
+    index = index + 1;
+    root = s[index] === '0' ? root.left : root.right;
+    return decode(root, index, s, decoded);
 }
 
 // Builds Huffman Tree and decodes the given input text
-void buildHuffmanTree(string text)
-{
+function buildHuffmanTree(text: string): void {
+
     // base case: empty string
-    if (text == EMPTY_STRING) {
+    if (text.length === 0) {
         return;
     }
 
     // count the frequency of appearance of each character
     // and store it in a map
-    unordered_map<char, int> freq;
-    for (char ch: text) {
-        freq[ch]++;
+    const freq = new Map<string, number>();
+    for (const c of text) {
+        freq.set(c, (freq.get(c) ?? 0) + 1);
     }
 
-    // Create a priority queue to store live nodes of the Huffman tree
-    priority_queue<Node*, vector<Node*>, comp> pq;
-
-    // Create a leaf node for each character and add it
-    // to the priority queue.
-    for (auto pair: freq) {
-        pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
+    // Create a priority queue to store live nodes of the Huffman tree.
+    // min-heap assumed (JS has no builtin heap)
+    const pq: Node[] = [];
+    for (const [ch, f] of freq) {
+        pq.push(new Node(ch, f));
     }
+
+    // remove and return the node with the lowest frequency
+    const popMin = (pq: Node[]): Node => {
+        let minIdx = 0;
+        for (let i = 1; i < pq.length; i++) {
+            if (pq[i].freq < pq[minIdx].freq) {
+                minIdx = i;
+            }
+        }
+        return pq.splice(minIdx, 1)[0];
+    };
 
     // do till there is more than one node in the queue
-    while (pq.size() != 1)
-    {
+    while (pq.length !== 1) {
+
         // Remove the two nodes of the highest priority
         // (the lowest frequency) from the queue
 
-        Node* left = pq.top(); pq.pop();
-        Node* right = pq.top();    pq.pop();
+        const left = popMin(pq);
+        const right = popMin(pq);
 
         // create a new internal node with these two nodes as children and
         // with a frequency equal to the sum of the two nodes' frequencies.
         // Add the new node to the priority queue.
 
-        int sum = left->freq + right->freq;
-        pq.push(getNode('\0', sum, left, right));
+        const total = left.freq + right.freq;
+        pq.push(new Node(null, total, left, right));
     }
 
     // `root` stores pointer to the root of Huffman Tree
-    Node* root = pq.top();
+    const root = pq[0];
 
-    // Traverse the Huffman Tree and store Huffman Codes
-    // in a map. Also, print them
-    unordered_map<char, string> huffmanCode;
-    encode(root, EMPTY_STRING, huffmanCode);
+    // traverse the Huffman tree and store the Huffman codes in a map
+    const huffmanCode = new Map<string, string>();
+    encode(root, '', huffmanCode);
 
-    cout << "Huffman Codes are:\n" << endl;
-    for (auto pair: huffmanCode) {
-        cout << pair.first << " " << pair.second << endl;
+    // print the Huffman codes
+    console.log('Huffman Codes are:', huffmanCode);
+    console.log('The original string is:', text);
+
+    // print the encoded string
+    let s = '';
+    for (const c of text) {
+        s += huffmanCode.get(c);
     }
 
-    cout << "\nThe original string is:\n" << text << endl;
+    console.log('The encoded string is:', s);
+    console.log('The decoded string is:');
 
-    // Print encoded string
-    string str;
-    for (char ch: text) {
-        str += huffmanCode[ch];
-    }
-
-    cout << "\nThe encoded string is:\n" << str << endl;
-    cout << "\nThe decoded string is:\n";
-
-    if (isLeaf(root))
-    {
+    if (isLeaf(root)) {
         // Special case: For input like a, aa, aaa, etc.
-        while (root->freq--) {
-            cout << root->ch;
+        while (root.freq > 0) {
+            console.log(root.ch);
+            root.freq = root.freq - 1;
         }
-    }
-    else {
-        // Traverse the Huffman Tree again and this time,
+    } else {
+        // traverse the Huffman Tree again and this time,
         // decode the encoded string
-        int index = -1;
-        while (index < (int)str.size() - 1) {
-            decode(root, index, str);
+        const decoded: string[] = [];
+        let index = -1;
+        while (index < s.length - 1) {
+            index = decode(root, index, s, decoded);
         }
+        console.log(decoded.join(''));
     }
 }
 
-// Huffman coding algorithm implementation in C++
-int main()
-{
-    string text = "Huffman coding is a data compression algorithm.";
-    buildHuffmanTree(text);
-
-    return 0;
-}
+// Huffman coding algorithm implementation in TypeScript
+const text = 'Huffman coding is a data compression algorithm.';
+buildHuffmanTree(text);
 ```
 
 **Output:** **Huffman Codes are:** c 11111 h 111100 f 11101 r 11100 t 11011 p 110101 i 1100 g 0011 l 00101 a 010 o 000 d 10011 H 00100 . 111101 s 0110 m 0111 e 110100 101 n 1000 u 10010 **The original string is:** Huffman coding is a data compression algorithm. **The encoded string is:** 00100100101110111101011101010001011111100010011110010000011101110001101010101011001101011011010101111110000111110101111001101000110011011000001000101010001010011000111001100110111111000111111101 **The decoded string is:** Huffman coding is a data compression algorithm.
 
-##
-
-```java
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-
-// A Tree node
-class Node
-{
-    Character ch;
-    Integer freq;
-    Node left = null, right = null;
-
-    Node(Character ch, Integer freq)
-    {
-        this.ch = ch;
-        this.freq = freq;
-    }
-
-    public Node(Character ch, Integer freq, Node left, Node right)
-    {
-        this.ch = ch;
-        this.freq = freq;
-        this.left = left;
-        this.right = right;
-    }
-}
-
-class Main
-{
-    // Traverse the Huffman Tree and store Huffman Codes in a map.
-    public static void encode(Node root, String str,
-                        Map<Character, String> huffmanCode)
-    {
-        if (root == null) {
-            return;
-        }
-
-        // Found a leaf node
-        if (isLeaf(root)) {
-            huffmanCode.put(root.ch, str.length() > 0 ? str : "1");
-        }
-
-        encode(root.left, str + '0', huffmanCode);
-        encode(root.right, str + '1', huffmanCode);
-    }
-
-    // Traverse the Huffman Tree and decode the encoded string
-    public static int decode(Node root, int index, StringBuilder sb)
-    {
-        if (root == null) {
-            return index;
-        }
-
-        // Found a leaf node
-        if (isLeaf(root))
-        {
-            System.out.print(root.ch);
-            return index;
-        }
-
-        index++;
-
-        root = (sb.charAt(index) == '0') ? root.left : root.right;
-        index = decode(root, index, sb);
-        return index;
-    }
-
-    // Utility function to check if Huffman Tree contains only a single node
-    public static boolean isLeaf(Node root) {
-        return root.left == null && root.right == null;
-    }
-
-    // Builds Huffman Tree and decodes the given input text
-    public static void buildHuffmanTree(String text)
-    {
-        // Base case: empty string
-        if (text == null || text.length() == 0) {
-            return;
-        }
-
-        // Count the frequency of appearance of each character
-        // and store it in a map
-
-        Map<Character, Integer> freq = new HashMap<>();
-        for (char c: text.toCharArray()) {
-            freq.put(c, freq.getOrDefault(c, 0) + 1);
-        }
-
-        // create a priority queue to store live nodes of the Huffman tree.
-        // Notice that the highest priority item has the lowest frequency
-
-        PriorityQueue<Node> pq;
-        pq = new PriorityQueue<>(Comparator.comparingInt(l -> l.freq));
-
-        // create a leaf node for each character and add it
-        // to the priority queue.
-
-        for (var entry: freq.entrySet()) {
-            pq.add(new Node(entry.getKey(), entry.getValue()));
-        }
-
-        // do till there is more than one node in the queue
-        while (pq.size() != 1)
-        {
-            // Remove the two nodes of the highest priority
-            // (the lowest frequency) from the queue
-
-            Node left = pq.poll();
-            Node right = pq.poll();
-
-            // create a new internal node with these two nodes as children
-            // and with a frequency equal to the sum of both nodes'
-            // frequencies. Add the new node to the priority queue.
-
-            int sum = left.freq + right.freq;
-            pq.add(new Node(null, sum, left, right));
-        }
-
-        // `root` stores pointer to the root of Huffman Tree
-        Node root = pq.peek();
-
-        // Traverse the Huffman tree and store the Huffman codes in a map
-        Map<Character, String> huffmanCode = new HashMap<>();
-        encode(root, "", huffmanCode);
-
-        // Print the Huffman codes
-        System.out.println("Huffman Codes are: " + huffmanCode);
-        System.out.println("The original string is: " + text);
-
-        // Print encoded string
-        StringBuilder sb = new StringBuilder();
-        for (char c: text.toCharArray()) {
-            sb.append(huffmanCode.get(c));
-        }
-
-        System.out.println("The encoded string is: " + sb);
-        System.out.print("The decoded string is: ");
-
-        if (isLeaf(root))
-        {
-            // Special case: For input like a, aa, aaa, etc.
-            while (root.freq-- > 0) {
-                System.out.print(root.ch);
-            }
-        }
-        else {
-            // Traverse the Huffman Tree again and this time,
-            // decode the encoded string
-            int index = -1;
-            while (index < sb.length() - 1) {
-                index = decode(root, index, sb);
-            }
-        }
-    }
-
-    // Huffman coding algorithm implementation in Java
-    public static void main(String[] args)
-    {
-        String text = "Huffman coding is a data compression algorithm.";
-        buildHuffmanTree(text);
-    }
-}
-```
-
-##
-
-```python3
-import heapq
-from heapq import heappop, heappush
-
-def isLeaf(root):
-    return root.left is None and root.right is None
-
-# A Tree node
-class Node:
-    def __init__(self, ch, freq, left=None, right=None):
-        self.ch = ch
-        self.freq = freq
-        self.left = left
-        self.right = right
-
-    # Override the `__lt__()` function to make `Node` class work with priority queue
-    # such that the highest priority item has the lowest frequency
-    def __lt__(self, other):
-        return self.freq < other.freq
-
-# Traverse the Huffman Tree and store Huffman Codes in a dictionary
-def encode(root, s, huffman_code):
-
-    if root is None:
-        return
-
-    # found a leaf node
-    if isLeaf(root):
-        huffman_code[root.ch] = s if len(s) > 0 else '1'
-
-    encode(root.left, s + '0', huffman_code)
-    encode(root.right, s + '1', huffman_code)
-
-# Traverse the Huffman Tree and decode the encoded string
-def decode(root, index, s):
-
-    if root is None:
-        return index
-
-    # found a leaf node
-    if isLeaf(root):
-        print(root.ch, end='')
-        return index
-
-    index = index + 1
-    root = root.left if s[index] == '0' else root.right
-    return decode(root, index, s)
-
-# Builds Huffman Tree and decodes the given input text
-def buildHuffmanTree(text):
-
-    # base case: empty string
-    if len(text) == 0:
-        return
-
-    # count the frequency of appearance of each character
-    # and store it in a dictionary
-    freq = {i: text.count(i) for i in set(text)}
-
-    # Create a priority queue to store live nodes of the Huffman tree.
-    pq = [Node(k, v) for k, v in freq.items()]
-    heapq.heapify(pq)
-
-    # do till there is more than one node in the queue
-    while len(pq) != 1:
-
-        # Remove the two nodes of the highest priority
-        # (the lowest frequency) from the queue
-
-        left = heappop(pq)
-        right = heappop(pq)
-
-        # create a new internal node with these two nodes as children and
-        # with a frequency equal to the sum of the two nodes' frequencies.
-        # Add the new node to the priority queue.
-
-        total = left.freq + right.freq
-        heappush(pq, Node(None, total, left, right))
-
-    # `root` stores pointer to the root of Huffman Tree
-    root = pq[0]
-
-    # traverse the Huffman tree and store the Huffman codes in a dictionary
-    huffmanCode = {}
-    encode(root, '', huffmanCode)
-
-    # print the Huffman codes
-    print('Huffman Codes are:', huffmanCode)
-    print('The original string is:', text)
-
-    # print the encoded string
-    s = ''
-    for c in text:
-        s += huffmanCode.get(c)
-
-    print('The encoded string is:', s)
-    print('The decoded string is:', end=' ')
-
-    if isLeaf(root):
-        # Special case: For input like a, aa, aaa, etc.
-        while root.freq > 0:
-            print(root.ch, end='')
-            root.freq = root.freq - 1
-    else:
-        # traverse the Huffman Tree again and this time,
-        # decode the encoded string
-        index = -1
-        while index < len(s) - 1:
-            index = decode(root, index, s)
-
-# Huffman coding algorithm implementation in Python
-if __name__ == '__main__':
-
-    text = 'Huffman coding is a data compression algorithm.'
-    buildHuffmanTree(text)
-```
-
-Note that the input string’s storage is 47×8 = 376 bits, but our encoded string only takes 194 bits, i.e., about 48% of data compression. To make the program readable, we have used string class to store the above program’s encoded string.
+Note that the input string’s storage is 47×8 = 376 bits, but our encoded string only takes 194 bits, i.e., about 48% of data compression. To make the program readable, we have used a string to store the above program’s encoded string.
 
 Since efficient priority queue data structures require O(log(n)) time per insertion, and a complete binary tree with `n` leaves has `2n-1` nodes, and Huffman coding tree is a complete binary tree, this algorithm operates in O(n.log(n)) time, where `n` is the total number of characters.
 

@@ -28,92 +28,78 @@ We can use [Depth–first search (DFS)](https://techiedelight.com/depth-first-se
 
 Note that for tree edge, forward edge and cross edge, `departure[u] > departure[v]`. But only for the back edge, the relationship `departure[u] < departure[v]` holds true. So, it is guaranteed that an edge `(u, v)` is a back-edge, not some other edge if `departure[u] < departure[v]`.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    // Constructor
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the directed graph
-        for (auto &edge: edges) {
-            adjList[edge.src].push_back(edge.dest);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
         }
     }
-};
+}
 
 // Perform DFS on the graph and set the departure time of all vertices of the graph
-int DFS(Graph const &graph, int v, vector<bool>
-    &discovered, vector<int> &departure, int &time)
-{
+const DFS = (graph: Graph, v: number, discovered: boolean[], departure: (number | null)[], time: number): number => {
+
     // mark the current node as discovered
     discovered[v] = true;
 
     // do for every edge (v, u)
-    for (int u: graph.adjList[v])
-    {
+    for (const u of graph.adjList[v]) {
         // if `u` is not yet discovered
         if (!discovered[u]) {
-            DFS(graph, u, discovered, departure, time);
+            time = DFS(graph, u, discovered, departure, time);
         }
     }
 
     // ready to backtrack
     // set departure time of vertex `v`
-    departure[v] = time++;
-}
+    departure[v] = time;
+    time = time + 1;
 
-// Returns true if given directed graph is DAG
-bool isDAG(Graph const &graph, int n)
-{
+    return time;
+};
+
+// Returns true if the given directed graph is DAG
+const isDAG = (graph: Graph, n: number): boolean => {
+
     // keep track of whether a vertex is discovered or not
-    vector<bool> discovered(n);
+    const discovered: boolean[] = new Array(n).fill(false);
 
     // keep track of the departure time of a vertex in DFS
-    vector<int> departure(n);
+    const departure: (number | null)[] = new Array(n).fill(null);
 
-    int time = 0;
+    let time = 0;
 
     // Perform DFS traversal from all undiscovered vertices
     // to visit all connected components of a graph
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < n; i++) {
         if (!discovered[i]) {
-            DFS(graph, i, discovered, departure, time);
+            time = DFS(graph, i, discovered, departure, time);
         }
     }
 
     // check if the given directed graph is DAG or not
-    for (int u = 0; u < n; u++)
-    {
+    for (let u = 0; u < n; u++) {
+
         // check if (u, v) forms a back-edge.
-        for (int v: graph.adjList[u])
-        {
+        for (const v of graph.adjList[u]) {
+
             // If the departure time of vertex `v` is greater than equal
             // to the departure time of `u`, they form a back edge.
 
-            // Note that departure[u] will be equal to
-            // departure[v] only if `u = v`, i.e., vertex
-            // contain an edge to itself
-            if (departure[u] <= departure[v]) {
+            // Note that `departure[u]` will be equal to `departure[v]`
+            // only if `u = v`, i.e., vertex contain an edge to itself
+            if (departure[u]! <= departure[v]!) {
                 return false;
             }
         }
@@ -121,255 +107,29 @@ bool isDAG(Graph const &graph, int n)
 
     // no back edges
     return true;
+};
+
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 1], [0, 3], [1, 2], [1, 3], [3, 2], [3, 4], [3, 0], [5, 6], [6, 3]
+];
+
+// total number of nodes in the graph (labelled from 0 to 6)
+const n = 7;
+
+// build a graph from the given edges
+const graph = new Graph(edges, n);
+
+// check if the given directed graph is DAG or not
+if (isDAG(graph, n)) {
+    console.log('The graph is a DAG');
 }
-
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        {0, 1}, {0, 3}, {1, 2}, {1, 3}, {3, 2}, {3, 4}, {3, 0}, {5, 6}, {6, 3}
-    };
-
-    // total number of nodes in the graph (labelled from 0 to 6)
-    int n = 7;
-
-    // build a graph from the given edges
-    Graph graph(edges, n);
-
-    // check if the given directed graph is DAG or not
-    if (isDAG(graph, n)) {
-        cout << "The graph is a DAG";
-    }
-    else {
-        cout << "The graph is not a DAG";
-    }
-
-    return 0;
+else {
+    console.log('The graph is not a DAG');
 }
 ```
 
 **Output:** The graph is not a DAG
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the directed graph
-        for (Edge edge: edges) {
-            adjList.get(edge.source).add(edge.dest);
-        }
-    }
-}
-
-class Main
-{
-    // Perform DFS on the graph and set the departure time of all
-    // vertices of the graph
-    private static int DFS(Graph graph, int v, boolean[] discovered,
-                           int[] departure, int time)
-    {
-        // mark the current node as discovered
-        discovered[v] = true;
-
-        // do for every edge (v, u)
-        for (int u: graph.adjList.get(v))
-        {
-            // if `u` is not yet discovered
-            if (!discovered[u]) {
-                time = DFS(graph, u, discovered, departure, time);
-            }
-        }
-
-        // ready to backtrack
-        // set departure time of vertex `v`
-        departure[v] = time++;
-
-        return time;
-    }
-
-    // Returns true if given directed graph is DAG
-    public static boolean isDAG(Graph graph, int n)
-    {
-        // keep track of whether a vertex is discovered or not
-        boolean[] discovered = new boolean[n];
-
-        // keep track of the departure time of a vertex in DFS
-        int[] departure = new int[n];
-
-        int time = 0;
-
-        // Perform DFS traversal from all undiscovered vertices
-        // to visit all connected components of a graph
-        for (int i = 0; i < n; i++)
-        {
-            if (!discovered[i]) {
-                time = DFS(graph, i, discovered, departure, time);
-            }
-        }
-
-        // check if the given directed graph is DAG or not
-        for (int u = 0; u < n; u++)
-        {
-            // check if (u, v) forms a back-edge.
-            for (int v: graph.adjList.get(u))
-            {
-                // If the departure time of vertex `v` is greater than equal
-                // to the departure time of `u`, they form a back edge.
-
-                // Note that departure[u] will be equal to
-                // departure[v] only if `u = v`, i.e., vertex
-                // contain an edge to itself
-                if (departure[u] <= departure[v]) {
-                    return false;
-                }
-            }
-        }
-
-        // no back edges
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1), new Edge(0, 3), new Edge(1, 2),
-                new Edge(1, 3), new Edge(3, 2), new Edge(3, 4),
-                new Edge(3, 0), new Edge(5, 6), new Edge(6, 3)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 6)
-        int n = 7;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // check if the given directed graph is DAG or not
-        if (isDAG(graph, n)) {
-            System.out.println("The graph is a DAG");
-        }
-        else {
-            System.out.println("The graph is not a DAG");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the directed graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-
-# Perform DFS on the graph and set the departure time of all vertices of the graph
-def DFS(graph, v, discovered, departure, time):
-
-    # mark the current node as discovered
-    discovered[v] = True
-
-    # do for every edge (v, u)
-    for u in graph.adjList[v]:
-        # if `u` is not yet discovered
-        if not discovered[u]:
-            time = DFS(graph, u, discovered, departure, time)
-
-    # ready to backtrack
-    # set departure time of vertex `v`
-    departure[v] = time
-    time = time + 1
-
-    return time
-
-# Returns true if the given directed graph is DAG
-def isDAG(graph, n):
-
-    # keep track of whether a vertex is discovered or not
-    discovered = [False] * n
-
-    # keep track of the departure time of a vertex in DFS
-    departure = [None] * n
-
-    time = 0
-
-    # Perform DFS traversal from all undiscovered vertices
-    # to visit all connected components of a graph
-    for i in range(n):
-        if not discovered[i]:
-            time = DFS(graph, i, discovered, departure, time)
-
-    # check if the given directed graph is DAG or not
-    for u in range(n):
-
-        # check if (u, v) forms a back-edge.
-        for v in graph.adjList[u]:
-
-            # If the departure time of vertex `v` is greater than equal
-            # to the departure time of `u`, they form a back edge.
-
-            # Note that `departure[u]` will be equal to `departure[v]`
-            # only if `u = v`, i.e., vertex contain an edge to itself
-            if departure[u] <= departure[v]:
-                return False
-
-    # no back edges
-    return True
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 1), (0, 3), (1, 2), (1, 3), (3, 2), (3, 4), (3, 0), (5, 6), (6, 3)]
-
-    # total number of nodes in the graph (labelled from 0 to 6)
-    n = 7
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # check if the given directed graph is DAG or not
-    if isDAG(graph, n):
-        print('The graph is a DAG')
-    else:
-        print('The graph is not a DAG')
-```
 
 The time complexity of the above solutions is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively.
 

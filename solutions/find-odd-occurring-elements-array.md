@@ -18,96 +18,31 @@ To illustrate, consider the input array `nums[] = { 5, 8, 2, 5, 8, 2, 8, 5, 1, 8
 
 Each 1 at the `i'th` index from the right represents the odd occurrence of element `i` in the array. Each 0 at the `i'th` index from the right illustrates even or non-occurrence of element `i` in the array. The odd occurring elements are 1, 2, and 5 since 1 holds 1st, 2nd, and 5th position.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
+```ts
 // Find odd occurring elements in a given array
-void findRepeating(int nums[], int n)
-{
-    int xor = 0;
-    for (int i = 0; i < n; i++) {
-        xor ^= (1 << nums[i]);
+const findRepeating = (nums: number[]): void => {
+
+    let xor = 0;
+    for (const i of nums) {
+        xor ^= (1 << i);
     }
 
-    printf("The odd occurring elements are ");
-    for (int i = 0; i < n; i++)
-    {
-        if (xor & (1 << nums[i]))
-        {
-            printf("%d ", nums[i]);
-            xor ^= (1 << nums[i]);     // to avoid printing duplicates
+    process.stdout.write('The odd occurring elements are ');
+    for (const i of nums) {
+        if ((xor & (1 << i)) !== 0) {
+            process.stdout.write(i + ' ');
+            xor ^= (1 << i);    // to avoid printing duplicates
         }
     }
-}
+};
 
-int main(void)
-{
-    int nums[] = { 5, 8, 2, 5, 8, 2, 8, 5, 1, 8, 2 };
-    int n = sizeof(nums) / sizeof(nums[0]);
-
-    findRepeating(nums, n);
-
-    return 0;
-}
+const nums = [5, 8, 2, 5, 8, 2, 8, 5, 1, 8, 2];
+findRepeating(nums);
 ```
 
 **Output:** The odd occurring elements are 5 2 1
-
-##
-
-```java
-class Main
-{
-    // Find odd occurring elements in a given array
-    public static void findRepeating(int[] nums)
-    {
-        int xor = 0;
-        for (int i: nums) {
-            xor ^= (1 << i);
-        }
-
-        System.out.print("The odd occurring elements are ");
-        for (int i: nums)
-        {
-            if ((xor & (1 << i)) != 0)
-            {
-                System.out.print(i + " ");
-                xor ^= (1 << i);    // to avoid printing duplicates
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 5, 8, 2, 5, 8, 2, 8, 5, 1, 8, 2 };
-        findRepeating(nums);
-    }
-}
-```
-
-##
-
-```python3
-# Find odd occurring elements in a given list
-def findRepeating(nums):
-
-    xor = 0
-    for i in nums:
-        xor ^= (1 << i)
-
-    print('The odd occurring elements are ', end='')
-    for i in nums:
-        if xor & (1 << i):
-            print(i, end=' ')
-            xor ^= (1 << i)        # to avoid printing duplicates
-
-if __name__ == '__main__':
-
-    nums = [5, 8, 2, 5, 8, 2, 8, 5, 1, 8, 2]
-    findRepeating(nums)
-```
 
 **Exercise:**
 

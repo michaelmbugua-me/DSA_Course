@@ -12,166 +12,53 @@ For example,
 
 The idea is to start from the second array element and compare every element with its previous element. We take two pointers, `x` and `y`, to store the conflict’s location. If the previous element is greater than the current element, update `x` to the previous element index and `y` to the current element index. If we find that the previous element is greater than the current element, update `y` to the current element index. Finally, after we are done processing each adjacent pair of elements, swap the elements at index `x` and `y`.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-using namespace std;
+```ts
+// Function to sort an array where only two elements are swapped
+function sortArray(A: number[]): void {
 
-void sortArray(int arr[], int n)
-{
     // base case
-    if (n <= 1) {
+    if (A.length <= 1) {
         return;
     }
 
-    int x = -1, y = -1;
-    int prev = arr[0];
+    let x = -1, y = -1;
+    let prev = A[0];
 
     // process each pair of adjacent elements
-    for (int i = 1; i < n; i++)
-    {
+    for (let i = 1; i < A.length; i++) {
+
         // if the previous element is greater than the current element
-        if (prev > arr[i])
-        {
+        if (prev > A[i]) {
             // first occurrence of conflict
-            if (x == -1) {
-                x = i - 1, y = i;
+            if (x === -1) {
+                x = i - 1;
+                y = i;
             }
             else {
                 // second occurrence of conflict
                 y = i;
             }
         }
-        prev = arr[i];
+
+        prev = A[i];
     }
 
     // swap the elements at index `x` and `y`
-    swap(arr[x], arr[y]);
+    [A[x], A[y]] = [A[y], A[x]];
 }
 
-int main()
-{
-    // int arr[] = { 3, 8, 6, 7, 5, 9 };
-    int arr[] = { 3, 5, 6, 9, 8, 7 };
+// const A = [3, 8, 6, 7, 5, 9];
+const A = [3, 5, 6, 9, 8, 7];
 
-    int n = sizeof(arr) / sizeof(arr[0]);
+sortArray(A);
 
-    sortArray(arr, n);
-
-    for (int i = 0; i < n; i++) {
-        cout << arr[i] << " ";
-    }
-
-    return 0;
-}
+// print the sorted array
+console.log(A);
 ```
 
-**Output:** 3 5 6 7 8 9
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    private static void sortArray(int[] arr)
-    {
-        // base case
-        if (arr.length <= 1) {
-            return;
-        }
-
-        int x = -1, y = -1;
-        int prev = arr[0];
-
-        // process each pair of adjacent elements
-        for (int i = 1; i < arr.length; i++)
-        {
-            // if the previous element is greater than the current element
-            if (prev > arr[i])
-            {
-                // first occurrence of conflict
-                if (x == -1)
-                {
-                    x = i - 1;
-                    y = i;
-                }
-                else {
-                    // second occurrence of conflict
-                    y = i;
-                }
-            }
-            prev = arr[i];
-        }
-
-        // swap the elements at index `x` and `y`
-        swap(arr, x, y);
-    }
-
-    private static void swap(int[] a, int i, int j)
-    {
-        int temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] a = { 3, 5, 6, 9, 8, 7 };
-
-        sortArray(a);
-        System.out.println(Arrays.toString(a));
-    }
-}
-```
-
-##
-
-```python3
-def sortArray(A):
-
-    # base case
-    if len(A) <= 1:
-        return
-
-    x = -1
-    y = -1
-    prev = A[0]
-
-    # process each pair of adjacent elements
-    for i in range(1, len(A)):
-
-        # if the previous element is greater than the current element
-        if prev > A[i]:
-            # first occurrence of conflict
-            if x == -1:
-                x = i - 1
-                y = i
-            else:
-                # second occurrence of conflict
-                y = i
-
-        prev = A[i]
-
-    # swap the elements at index `x` and `y`
-    swap(A, x, y)
-
-def swap(a, i, j):
-
-    temp = a[i]
-    a[i] = a[j]
-    a[j] = temp
-
-if __name__ == '__main__':
-
-    a = [3, 5, 6, 9, 8, 7]
-
-    sortArray(a)
-    print(a)
-```
+**Output:** [3, 5, 6, 7, 8, 9]
 
 The time complexity of the above solution is O(n) since it does only a single scan of the input array of size `n`. The solution doesn’t require any extra space.
 

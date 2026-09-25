@@ -10,346 +10,98 @@ We can easily implement a stack through a [linked list](https://techiedelight.co
 
 The advantage of using a linked list over arrays is that it is possible to implement a stack that can grow or shrink as much as needed. Using an array will restrict the maximum capacity of the array, which can lead to stack overflow. Here each new node will be dynamically allocated, so overflow is not possible unless memory is exhausted.
 
-The implementation can be seen below in C, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;               // integer data
-    struct Node* next;      // pointer to the next node
-};
-
-int nodesCount;
-
-// Utility function to add an element `x` to the stack
-void push(struct Node **top, int x)        // insert at the beginning
-{
-    // allocate a new node in a heap
-    struct Node* node = NULL;
-    node = (struct Node*)malloc(sizeof(struct Node));
-
-    // check if stack (heap) is full. Then inserting an element would
-    // lead to stack overflow
-    if (!node)
-    {
-        printf("Heap Overflow\n");
-        exit(-1);
-    }
-
-    printf("Inserting %d\n", x);
-
-    // set data in the allocated node
-    node->data = x;
-
-    // set the .next pointer of the new node to point to the current
-    // top node of the list
-    node->next = *top;
-
-    // update top pointer
-    *top = node;
-
-    // increase stack's size by 1
-    nodesCount += 1;
+class Node {
+    constructor(public key: number, public next: Node | null = null) {}
 }
 
-// Utility function to check if the stack is empty or not
-int isEmpty(struct Node* top) {
-    return top == NULL;
-}
-
-// Utility function to return the top element of the stack
-int peek(struct Node *top)
-{
-    // check for an empty stack
-    if (!isEmpty(top)) {
-        return top->data;
-    }
-    else {
-        printf("The stack is empty\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Utility function to pop a top element from the stack
-int pop(struct Node** top)        // remove at the beginning
-{
-    struct Node *node;
-
-    // check for stack underflow
-    if (*top == NULL)
-    {
-        printf("Stack Underflow\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // take note of the top node's data
-    int x = peek(*top);
-
-    printf("Removing %d\n", x);
-
-    node = *top;
-
-    // update the top pointer to point to the next node
-    *top = (*top)->next;
-
-    // decrease stack's size by 1
-    nodesCount -= 1;
-
-    // free allocated memory
-    free(node);
-
-    return x;
-}
-
-// Utility function to return the nodesCount of the stack
-int size() {
-    return nodesCount;
-}
-
-int main(void)
-{
-    struct Node* top = NULL;
-
-    push(&top, 1);
-    push(&top, 2);
-    push(&top, 3);
-
-    printf("The top element is %d\n", peek(top));
-
-    pop(&top);
-    pop(&top);
-    pop(&top);
-
-    if (isEmpty(top)) {
-        printf("The stack is empty\n");
-    }
-    else {
-        printf("The stack is not empty\n");
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;       // integer data
-    Node next;      // pointer to the next node
-}
-
-class Stack
-{
-    private Node top;
-    private int nodesCount;
-
-    public Stack() {
-        this.top = null;
-        this.nodesCount = 0;
-    }
+class Stack {
+    top: Node | null = null;
+    nodesCount = 0;
 
     // Utility function to add an element `x` to the stack
-    public void push(int x)        // insert at the beginning
-    {
+    push(x: number): void {     // insert at the beginning
+
         // allocate a new node in a heap
-        Node node = new Node();
-
-        // check if stack (heap) is full. Then inserting an element would
-        // lead to stack overflow
-        if (node == null)
-        {
-            System.out.println("Heap Overflow");
-            return;
-        }
-
-        System.out.println("Inserting " + x);
+        const node = new Node(x);
 
         // set data in the allocated node
-        node.data = x;
+        node.key = x;
 
         // set the .next pointer of the new node to point to the current
         // top node of the list
-        node.next = top;
+        node.next = this.top;
 
         // update top pointer
-        top = node;
+        this.top = node;
 
         // increase stack's size by 1
         this.nodesCount += 1;
     }
 
     // Utility function to check if the stack is empty or not
-    public boolean isEmpty() {
-        return top == null;
+    isEmpty(): boolean {
+        return this.top === null;
     }
 
     // Utility function to return the top element of the stack
-    public int peek()
-    {
+    peek(): number {
         // check for an empty stack
-        if (isEmpty()) {
-            System.out.println("The stack is empty");
-            System.exit(-1);
+        if (this.isEmpty()) {
+            console.log('The stack is empty');
+            process.exit(-1);
         }
-        return top.data;
+        return this.top!.key;
     }
 
     // Utility function to pop a top element from the stack
-    public int pop()        // remove at the beginning
-    {
+    pop(): number {             // remove at the beginning
+
         // check for stack underflow
-        if (isEmpty())
-        {
-            System.out.println("Stack Underflow");
-            System.exit(-1);
+        if (this.top === null) {
+            console.log('Stack Underflow');
+            process.exit(-1);
         }
 
         // take note of the top node's data
-        int top = peek();
+        const top = this.top!.key;
 
-        System.out.println("Removing " + top);
+        // update the top pointer to point to the next node
+        this.top = this.top!.next;
 
         // decrease stack's size by 1
         this.nodesCount -= 1;
 
-        // update the top pointer to point to the next node
-        this.top = (this.top).next;
-
         return top;
     }
 
-    // Utility function to return the size of the stack
-    public int size() {
+    // Function to return the size of the stack
+    size(): number {
         return this.nodesCount;
     }
 }
 
-class Main
-{
-    public static void main(String[] args)
-    {
-        Stack stack = new Stack();
+const stack = new Stack();
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
+stack.push(1);
+stack.push(2);
+stack.push(3);
 
-        System.out.println("The top element is " + stack.peek());
+console.log('The top element is', stack.peek());
 
-        stack.pop();
-        stack.pop();
-        stack.pop();
+stack.pop();
+stack.pop();
+stack.pop();
 
-        if (stack.isEmpty()) {
-            System.out.println("The stack is empty");
-        }
-        else {
-            System.out.println("The stack is not empty");
-        }
-    }
+if (stack.isEmpty()) {
+    console.log('The stack is empty');
 }
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, key, next=None):
-        self.key = key
-        self.next = next
-
-class Stack:
-    def __init__(self):
-        self.top = None
-        self.nodesCount = 0
-
-    # Utility function to add an element `x` to the stack
-    def push(self, x):        # insert at the beginning
-
-        # allocate a new node in a heap
-        node = Node(x)
-
-        # check if stack (heap) is full. Then inserting an element would
-        # lead to stack overflow
-        if node is None:
-            print('Heap Overflow')
-            return
-
-        # set data in the allocated node
-        node.data = x
-
-        # set the .next pointer of the new node to point to the current
-        # top node of the list
-        node.next = self.top
-
-        # update top pointer
-        self.top = node
-
-        # increase stack's size by 1
-        self.nodesCount += 1
-
-    # Utility function to check if the stack is empty or not
-    def isEmpty(self):
-        return self.top is None
-
-    # Utility function to return the top element of the stack
-    def peek(self):
-        # check for an empty stack
-        if not self.isEmpty():
-            return self.top.data
-        else:
-            print('The stack is empty')
-            exit(-1)
-
-    # Utility function to pop a top element from the stack
-    def pop(self):            # remove at the beginning
-
-        # check for stack underflow
-        if self.top is None:
-            print('Stack Underflow')
-            exit(-1)
-
-        # take note of the top node's data
-        top = self.top.data
-
-        # update the top pointer to point to the next node
-        self.top = self.top.next
-
-        # decrease stack's size by 1
-        self.nodesCount -= 1
-
-        return top
-
-    # Function to return the size of the stack
-    def size(self):
-        return self.nodesCount
-
-if __name__ == '__main__':
-
-    stack = Stack()
-
-    stack.push(1)
-    stack.push(2)
-    stack.push(3)
-
-    print('Top element is', stack.peek())
-
-    stack.pop()
-    stack.pop()
-    stack.pop()
-
-    if stack.isEmpty():
-        print('The stack is empty')
-    else:
-        print('The stack is not empty')
+else {
+    console.log('The stack is not empty');
+}
 ```
 
 **Output:** Inserting 1 Inserting 2 Inserting 3 The top element is 3 Removing 3 Removing 2 Removing 1 The stack is empty

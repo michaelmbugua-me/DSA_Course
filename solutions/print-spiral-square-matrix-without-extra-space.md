@@ -33,125 +33,39 @@ If we divide the matrix into two parts – upper right triangle (marked by red) 
   * For upper right half, `M[i][j] = (N-2x) × (N-2x)-(i-x)-(j-x)`.
   * For lower left half, `M[i][j] = (N-2x-2) × (N-2x-2) + (i-x) + (j-x)`.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Function to prints an `N × N` spiral matrix without using any extra space.
 // The matrix contains numbers from 1 to `N × N`.
-void printSpiralMatrix(int N)
-{
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            // `x` stores the layer in which (i, j)'th element lies
-            int x;
+function printSpiralMatrix(N: number): void {
 
+    for (let i = 0; i < N; i++) {
+        for (let j = 0; j < N; j++) {
+
+            // `x` stores the layer in which (i, j)'th element lies
             // find a minimum of four inputs
-            x = min(min(i, j), min(N - 1 - i, N - 1 - j));
+            const x = Math.min(Math.min(i, j), Math.min(N - 1 - i, N - 1 - j));
 
             // print upper right half
             if (i <= j) {
-                cout << (N - 2*x) * (N - 2*x) - (i - x) - (j - x);
+                process.stdout.write(String((N - 2 * x) * (N - 2 * x) - (i - x) - (j - x)));
             }
+
             // print lower left half
             else {
-                cout << (N - 2*x - 2) * (N - 2*x - 2) + (i - x) + (j - x);
+                process.stdout.write(String((N - 2 * x - 2) * (N - 2 * x - 2) + (i - x) + (j - x)));
             }
 
-            cout << '\t';
+            process.stdout.write('\t');
         }
 
-        cout << endl;
+        console.log();
     }
 }
 
-int main()
-{
-    int N = 5;
-
-    printSpiralMatrix(N);
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to prints an `N × N` spiral matrix without using any extra space.
-    // The matrix contains numbers from 1 to `N × N`.
-    public static void printSpiralMatrix(int N)
-    {
-        for (int i = 0; i < N; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                // `x` stores the layer in which (i, j)'th element lies
-                int x;
-
-                // find a minimum of four inputs
-                x = Math.min(Math.min(i, j), Math.min(N - 1 - i, N - 1 - j));
-
-                // print upper right half
-                if (i <= j) {
-                    System.out.print((N - 2*x)*(N - 2*x) - (i - x) - (j - x));
-                }
-                // print lower left half
-                else {
-                    System.out.print((N - 2*x - 2)*(N - 2*x - 2) + (i - x) + (j - x));
-                }
-
-                System.out.print('\t');
-            }
-
-            System.out.println();
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int N = 5;
-        printSpiralMatrix(N);
-    }
-}
-```
-
-##
-
-```python3
-# Function to prints an `N × N` spiral matrix without using any extra space.
-# The matrix contains numbers from 1 to `N × N`.
-def printSpiralMatrix(N):
-
-    for i in range(N):
-        for j in range(N):
-
-            # `x` stores the layer in which (i, j)'th element lies
-            # find a minimum of four inputs
-            x = min(min(i, j), min(N - 1 - i, N - 1 - j))
-
-            # print upper right half
-            if i <= j:
-                print((N - 2*x) * (N - 2*x) - (i - x) - (j - x), end='')
-
-            # print lower left half
-            else:
-                print((N - 2*x - 2) * (N - 2*x - 2) + (i - x) + (j - x), end='')
-
-            print('\t', end='')
-
-        print()
-
-if __name__ == '__main__':
-
-    N = 5
-    printSpiralMatrix(N)
+const N = 5;
+printSpiralMatrix(N);
 ```
 
 **Output:** 25 24 23 22 21 10 9 8 7 20 11 2 1 6 19 12 3 4 5 18 13 14 15 16 17

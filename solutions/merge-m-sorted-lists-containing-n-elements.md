@@ -12,247 +12,70 @@ A simple solution would be to create an auxiliary array containing all lists’ 
 
 We can easily solve this problem in O(m.n.log(m)) time by using a [min-heap](https://techiedelight.com/introduction-priority-queues-using-binary-heaps/#Heap). The idea is to construct a min-heap of size `m` and insert the first element of each list in it. Then, pop the root element (minimum element) from the heap and insert the next element from the “same” list as the popped element. Repeat this process till the heap is exhausted. Depending upon the requirement, either print the popped element or store it in an auxiliary array.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-using namespace std;
-
-// Data structure to store a heap node
-struct Node
-{
-    // `val` stores the element,
-    // `i` stores the list number of the element
-    // `index` stores the column number of the i'th list from which element was taken
-    int val, i, index;
-};
-
-// Comparison object to be used to order the min-heap
-struct comp
-{
-    bool operator()(const Node &lhs, const Node &rhs) const {
-        return lhs.val > rhs.val;
-    }
-};
+```ts
+// A class to store a heap node
+class Node {
+    // `value` stores the element
+    // `listNum` stores the list number of the element
+    // `index` stores column number of the list from which element was taken
+    constructor(public value: number, public listNum: number, public index: number) {}
+}
 
 // Function to merge `M` sorted lists each of size `N` and
 // print them in ascending order
-void printSorted(vector<vector<int>> lists)
-{
-    // create an empty min-heap
-    priority_queue<Node, vector<Node>, comp> pq;
+function printSorted(lists: number[][]): void {
+
+    // min-heap assumed (JS has no builtin heap); heap ops are done as plain
+    // array ops on `pq`, always extracting the node with the smallest value
+    const pq: Node[] = [];
 
     // push the first element of each list into the min-heap
     // along with the list number and their index in the list
-    for (int i = 0; i < lists.size(); i++) {
-        pq.push({lists[i][0], i, 0});
+    for (let i = 0; i < lists.length; i++) {
+        pq.push(new Node(lists[i][0], i, 0));
     }
 
     // run till min-heap is empty
-    while (!pq.empty())
-    {
+    while (pq.length > 0) {
+
         // extract the minimum node from the min-heap
-        Node min = pq.top();
-        pq.pop();
+        let minIdx = 0;
+        for (let i = 1; i < pq.length; i++) {
+            if (pq[i].value < pq[minIdx].value) {
+                minIdx = i;
+            }
+        }
+        const min = pq.splice(minIdx, 1)[0];
 
         // print the minimum element
-        cout << min.val << " ";
+        process.stdout.write(`${min.value} `);
 
         // take the next element from the "same" list and
         // insert it into the min-heap
-        if (min.index + 1 < lists[min.i].size())
-        {
-            min.index += 1;
-            min.val = lists[min.i][min.index];
+        if (min.index + 1 < lists[min.listNum].length) {
+            min.index = min.index + 1;
+            min.value = lists[min.listNum][min.index];
             pq.push(min);
         }
     }
 }
 
-int main()
-{
-    // `M` lists of size `N`, each in the form of a 2D-matrix
-    vector<vector<int>> lists =
-    {
-        { 10, 20, 30, 40 },
-        { 15, 25, 35, 45 },
-        { 27, 29, 37, 48 },
-        { 32, 33, 39, 50 },
-        { 16, 18, 22, 28 }
-    };
+// `M` lists of size `N`, each in the form of a 2D-matrix
+const lists = [
+    [10, 20, 30, 40],
+    [15, 25, 35, 45],
+    [27, 29, 37, 48],
+    [32, 33, 39, 50],
+    [16, 18, 22, 28]
+];
 
-    printSorted(lists);
-
-    return 0;
-}
+printSorted(lists);
+console.log();
 ```
 
 **Output:** 10 15 16 18 20 22 25 27 28 29 30 32 33 35 37 39 40 45 48 50
-
-##
-
-```java
-import java.util.PriorityQueue;
-
-// A class to store a heap node
-class Node implements Comparable
-{
-    // `value` stores the element
-    private int value;
-
-    // `listNum` stores the list number of the element
-    private int listNum;
-
-    // `index` stores the column number of the list from which element was taken
-    private int index;
-
-    Node(int value, int listNum, int index)
-    {
-        this.value = value;
-        this.listNum = listNum;
-        this.index = index;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public int getListNum() {
-        return listNum;
-    }
-
-    @Override
-    public int compareTo(Object o)
-    {
-        Node node = (Node)o;
-        return value - node.value;
-    }
-}
-
-class Main
-{
-    // Function to merge `M` sorted lists each of size `N` and
-    // print them in ascending order
-    public static void printSorted(int[][] lists)
-    {
-        // create an empty min-heap
-        PriorityQueue<Node> pq = new PriorityQueue();
-
-        // push the first element of each list into the min-heap
-        // along with the list number and their index in the list
-        for (int i = 0; i < lists.length; i++) {
-            pq.add(new Node(lists[i][0], i, 0));
-        }
-
-        // run till min-heap is empty
-        while (!pq.isEmpty())
-        {
-            // extract the minimum node from the min-heap
-            Node min = pq.poll();
-
-            // print the minimum element
-            System.out.print(min.getValue() + " ");
-
-            // take the next element from the "same" list and
-            // insert it into the min-heap
-            if (min.getIndex() + 1 < lists[min.getListNum()].length)
-            {
-                min.setIndex(min.getIndex() + 1);
-                min.setValue(lists[min.getListNum()][min.getIndex()]);
-                pq.add(min);
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] lists =
-        {
-            { 10, 20, 30, 40 },
-            { 15, 25, 35, 45 },
-            { 27, 29, 37, 48 },
-            { 32, 33, 39, 50 },
-            { 16, 18, 22, 28 }
-        };
-
-        printSorted(lists);
-    }
-}
-```
-
-##
-
-```python3
-import heapq
-from heapq import heappop, heappush
-
-# A class to store a heap node
-class Node:
-    def __init__(self, value, list_num, index):
-        # `value` stores the element
-        self.value = value
-
-        # `list_num` stores the list number of the element
-        self.list_num = list_num
-
-        # `index` stores column number of the list from which element was taken
-        self.index = index
-
-    # Override the `__lt__()` function to make `Node` class work with min-heap
-    def __lt__(self, other):
-        return self.value < other.value
-
-# Function to merge `M` sorted lists each of size `N` and
-# print them in ascending order
-def printSorted(lists):
-
-    # push the first element of each list into the min-heap
-    # along with the list number and their index in the list
-    pq = [Node(lists[i][0], i, 0) for i in range(len(lists))]
-    heapq.heapify(pq)
-
-    # run till min-heap is empty
-    while pq:
-
-        # extract the minimum node from the min-heap
-        min = heappop(pq)
-
-        # print the minimum element
-        print(min.value, end=' ')
-
-        # take the next element from the "same" list and
-        # insert it into the min-heap
-        if min.index + 1 < len(lists[min.list_num]):
-            min.index = min.index + 1
-            min.value = lists[min.list_num][min.index]
-            heappush(pq, min)
-
-if __name__ == '__main__':
-
-    lists = [
-        [10, 20, 30, 40],
-        [15, 25, 35, 45],
-        [27, 29, 37, 48],
-        [32, 33, 39, 50],
-        [16, 18, 22, 28]
-    ]
-
-    printSorted(lists)
-```
 
 The time complexity of the proposed solution is O(M × N × log(M)) as the heap has the size `M`, and we pop and push exactly `M×N` times. Note that each pop/push operation takes O(log(M)) time.
 

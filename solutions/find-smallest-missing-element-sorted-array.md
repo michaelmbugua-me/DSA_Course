@@ -14,118 +14,38 @@ A simple analysis of the problem shows us that the smallest missing number would
 
 A naive solution would be to run a **linear search** on the array and return the first index, which doesn’t match its value. If no mismatch happens, then return the array size. The problem with this approach is that its worst-case time complexity is O(n), where `n` is the size of the input. This solution also does not take advantage of the fact that the input is sorted.
 
-We can easily solve this problem in O(log(n)) time by modifying the [binary search algorithm](https://techiedelight.com/binary-search/). The idea is to compare the mid-index with the middle element. If both are the same, then the mismatch is in the right subarray; otherwise, it lies in the left subarray. So, we discard one half accordingly and recur for the other. Following is the C, Java, and Python implementation based on the idea:
+We can easily solve this problem in O(log(n)) time by modifying the [binary search algorithm](https://techiedelight.com/binary-search/). The idea is to compare the mid-index with the middle element. If both are the same, then the mismatch is in the right subarray; otherwise, it lies in the left subarray. So, we discard one half accordingly and recur for the other. Following is the TypeScript implementation based on the idea:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to find the smallest missing element in a sorted
 // array of distinct non-negative integers
-int findSmallestMissing(int nums[], int low, int high)
-{
+function findSmallestMissing(nums: number[], left = 0, right = nums.length - 1): number {
+
     // base condition
-    if (low > high) {
-        return low;
+    if (left > right) {
+        return left;
     }
 
-    int mid = low + (high - low) / 2;
+    const mid = left + Math.floor((right - left) / 2);
 
     // if the mid-index matches with its value, then the mismatch
     // lies on the right half
-    if (nums[mid] == mid) {
-        return findSmallestMissing(nums, mid + 1, high);
+    if (nums[mid] === mid) {
+        return findSmallestMissing(nums, mid + 1, right);
     }
+
+    // mismatch lies on the left half
     else {
-        // mismatch lies on the left half
-        return findSmallestMissing(nums, low, mid - 1);
+        return findSmallestMissing(nums, left, mid - 1);
     }
 }
 
-int main(void)
-{
-    int nums[] = { 0, 1, 2, 3, 4, 5, 6 };
-    int n = sizeof(nums) / sizeof(nums[0]);
+const nums = [0, 1, 2, 3, 4, 5, 6];
 
-    int low = 0, high = n - 1;
-
-    printf("The smallest missing element is %d", findSmallestMissing(nums, low, high));
-
-    return 0;
-}
+console.log('The smallest missing element is', findSmallestMissing(nums));
 ```
 
 **Output:** The smallest missing element is 7
-
-##
-
-```java
-class Main
-{
-    // Function to find the smallest missing element in a sorted
-    // array of distinct non-negative integers
-    public static int findSmallestMissing(int[] nums, int left, int right)
-    {
-        // base condition
-        if (left > right) {
-            return left;
-        }
-
-        int mid = left + (right - left) / 2;
-
-        // if the mid-index matches with its value, then the mismatch
-        // lies on the right half
-        if (nums[mid] == mid) {
-            return findSmallestMissing(nums, mid + 1, right);
-        }
-        else {
-            // mismatch lies on the left half
-            return findSmallestMissing(nums, left, mid - 1);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 0, 1, 2, 3, 4, 5, 6 };
-
-        int left = 0, right = nums.length - 1;
-        System.out.println("The smallest missing element is "
-                            + findSmallestMissing(nums, left, right));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the smallest missing element in a sorted
-# list of distinct non-negative integers
-def findSmallestMissing(nums, left=None, right=None):
-
-    # initialize left and right
-    if left is None and right is None:
-        (left, right) = (0, len(nums) - 1)
-
-    # base condition
-    if left > right:
-        return left
-
-    mid = left + (right - left) // 2
-
-    # if the mid-index matches with its value, then the mismatch
-    # lies on the right half
-    if nums[mid] == mid:
-        return findSmallestMissing(nums, mid + 1, right)
-
-    # mismatch lies on the left half
-    else:
-        return findSmallestMissing(nums, left, mid - 1)
-
-if __name__ == '__main__':
-
-    nums = [0, 1, 2, 3, 4, 5, 6]
-
-    print('The smallest missing element is', findSmallestMissing(nums))
-```
 
 The time complexity of the above solution is O(log(n)) and requires O(log(n)) implicit space for the call stack.
 

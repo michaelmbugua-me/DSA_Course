@@ -13,18 +13,21 @@ A clever O(n) time / O(1) space approach for arrays containing **numbers in a kn
 - Constraint: O(1) space, no sorting allowed
 - If numbers were arbitrary values, this wouldn't apply — there must be a fixed range
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def cyclic_sort(nums):               # nums contains 1..n
-    i = 0
-    while i < len(nums):
-        correct = nums[i] - 1        # index where nums[i] belongs
-        if nums[i] != nums[correct]:
-            nums[i], nums[correct] = nums[correct], nums[i]
-        else:
-            i += 1
-    # scan for anomalies: nums[i] != i+1  -> missing/duplicate found
+```ts
+function cyclicSort(nums: number[]): void { // nums contains 1..n
+  let i = 0;
+  while (i < nums.length) {
+    const correct = nums[i] - 1; // index where nums[i] belongs
+    if (nums[i] !== nums[correct]) {
+      [nums[i], nums[correct]] = [nums[correct], nums[i]];
+    } else {
+      i++;
+    }
+  }
+  // scan for anomalies: nums[i] != i+1  -> missing/duplicate found
+}
 ```
 
 Do **not** advance `i` after a swap — the new value at `i` may also be misplaced.

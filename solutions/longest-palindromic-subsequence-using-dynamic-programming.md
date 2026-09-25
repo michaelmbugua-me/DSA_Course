@@ -23,30 +23,24 @@ This yields the following recursive relation to finding the length of the longes
 
 | 1 (if i = j) LPS[i…j] = | LPS[i+1…j-1] + 2 (if X[i] = X[j]) | max (LPS[i+1…j], LPS[i…j-1]) (if X[i] != X[j])
 
-The algorithm can be implemented as follows in C++, Java, and Python. The solution finds the length of the longest repeated subsequence of sequence `X` recursively using the above relations.
+The algorithm can be implemented as follows in TypeScript. The solution finds the length of the longest repeated subsequence of sequence `X` recursively using the above relations.
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find the length of the longest palindromic subsequence
 // of substring `X[i…j]`
-int findLongestPalindrome(string X, int i, int j)
-{
+function findLongestPalindrome(X: string, i: number, j: number): number {
     // Base condition
     if (i > j) {
         return 0;
     }
 
     // If the string `X` has only one character, it is a palindrome
-    if (i == j) {
+    if (i === j) {
         return 1;
     }
 
     // If the last character of the string is the same as the first character,
-    if (X[i] == X[j])
+    if (X[i] === X[j])
     {
         // include the first and last characters in palindrome
         // and recur for the remaining substring `X[i+1, j-1]`
@@ -62,153 +56,48 @@ int findLongestPalindrome(string X, int i, int j)
     */
 
     // Return the maximum of the two values
-    return max(findLongestPalindrome(X, i, j - 1), findLongestPalindrome(X, i + 1, j));
+    return Math.max(findLongestPalindrome(X, i, j - 1), findLongestPalindrome(X, i + 1, j));
 }
 
-int main()
-{
-    string X = "ABBDCACB";
-    int n = X.length();
+const X = 'ABBDCACB';
+const n = X.length;
 
-    cout << "The length of the longest palindromic subsequence is "
-         << findLongestPalindrome(X, 0, n - 1);
-
-    return 0;
-}
-```
-
-**Output:** The length of the longest palindromic subsequence is 5
-
-##
-
-```java
-class Main
-{
-    // Function to find the length of the longest palindromic subsequence
-    // of substring `X[i…j]`
-    public static int findLongestPalindrome(String X, int i, int j)
-    {
-        // Base condition
-        if (i > j) {
-            return 0;
-        }
-
-        // If the string `X` has only one character, it is a palindrome
-        if (i == j) {
-            return 1;
-        }
-
-        // If the last character of the string is the same as the first character,
-        if (X.charAt(i) == X.charAt(j))
-        {
-            // include the first and last characters in palindrome
-            // and recur for the remaining substring `X[i+1, j-1]`
-            return findLongestPalindrome(X, i + 1, j - 1) + 2;
-        }
-
-        /*
-          If the last character of the string is different from the first character
-            1. Remove the last character and recur for the remaining substring
-               `X[i, j-1]`
-            2. Remove the first character and recur for the remaining substring
-               `X[i+1, j]`
-        */
-
-        return Integer.max(findLongestPalindrome(X, i, j - 1),
-                    findLongestPalindrome(X, i + 1, j));
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABBDCACB";
-        int n = X.length();
-
-        System.out.print("The length of the longest palindromic subsequence is "
-                + findLongestPalindrome(X, 0, n - 1));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the longest palindromic subsequence
-# of substring `X[i…j]`
-def findLongestPalindrome(X, i, j):
-
-    # Base condition
-    if i > j:
-        return 0
-
-    # If the string `X` has only one character, it is a palindrome
-    if i == j:
-        return 1
-
-    # If the last character of the string is the same as the first character
-    if X[i] == X[j]:
-        # include the first and last characters in palindrome
-        # and recur for the remaining substring `X[i+1, j-1]`
-        return findLongestPalindrome(X, i + 1, j - 1) + 2
-
-    '''
-      If the last character of the string is different from the first character
-        1. Remove the last character and recur for the remaining substring
-           `X[i, j-1]`
-        2. Remove the first character and recur for the remaining substring
-           `X[i+1, j]`
-    '''
-
-    # Return the maximum of the two values
-    return max(findLongestPalindrome(X, i, j - 1), findLongestPalindrome(X, i + 1, j))
-
-if __name__ == '__main__':
-
-    X = 'ABBDCACB'
-    n = len(X)
-
-    print('The length of the longest palindromic subsequence is',
-        findLongestPalindrome(X, 0, n - 1))
+console.log(`The length of the longest palindromic subsequence is ${findLongestPalindrome(X, 0, n - 1)}`);
 ```
 
 The worst-case time complexity of the above solution is exponential O(2n), where `n` is the length of the input string. The worst case happens when there is no repeated character present in `X` (i.e., LPS length is 1), and each recursive call will end up in two recursive calls. This also requires additional space for the call stack.
 
 The LPS problem has an [optimal substructure](https://techiedelight.com/introduction-dynamic-programming/#optimal-substructure) and also exhibits [overlapping subproblems](https://techiedelight.com/introduction-dynamic-programming/#overlapping-subproblems). Let’s consider the recursion tree for a sequence of length 6 having all distinct characters, say `ABCDEF`, whose LPS length is 1.
 
-As we can see, the same subproblems (highlighted in the same color) are getting computed repeatedly. We know that problems with optimal substructure and overlapping subproblems can be solved by dynamic programming, where subproblem solutions are _memo_ ized rather than computed and again. This method is demonstrated below in C++, Java, and Python:
+As we can see, the same subproblems (highlighted in the same color) are getting computed repeatedly. We know that problems with optimal substructure and overlapping subproblems can be solved by dynamic programming, where subproblem solutions are _memo_ ized rather than computed and again. This method is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to find the length of the longest palindromic subsequence
 // of substring `X[i…j]`
-int findLongestPalindrome(string X, int i, int j, auto &lookup)
-{
+function findLongestPalindrome(X: string, i: number, j: number, lookup: Map<string, number>): number {
     // Base condition
     if (i > j) {
         return 0;
     }
 
     // If the string `X` has only one character, it is a palindrome
-    if (i == j) {
+    if (i === j) {
         return 1;
     }
 
     // Construct a unique map key from dynamic elements of the input
-    string key = to_string(i) + "|" + to_string(j);
+    const key = `${i}|${j}`;
 
     // If the subproblem is seen for the first time, solve it and
     // store its result in a map
-    if (lookup.find(key) == lookup.end())
+    if (!lookup.has(key))
     {
         /* If the last character of the string is the same as the first character,
            include the first and last characters in palindrome and recur
            for the remaining substring `X[i+1, j-1]` */
 
-        if (X[i] == X[j]) {
-            lookup[key] = findLongestPalindrome(X, i + 1, j - 1, lookup) + 2;
+        if (X[i] === X[j]) {
+            lookup.set(key, findLongestPalindrome(X, i + 1, j - 1, lookup) + 2);
         }
         else {
 
@@ -220,157 +109,24 @@ int findLongestPalindrome(string X, int i, int j, auto &lookup)
                    `X[i+1, j]`
                 3. Return the maximum of the two values */
 
-            lookup[key] = max (findLongestPalindrome(X, i, j - 1, lookup),
-                        findLongestPalindrome(X, i + 1, j, lookup));
+            lookup.set(key, Math.max(findLongestPalindrome(X, i, j - 1, lookup),
+                        findLongestPalindrome(X, i + 1, j, lookup)));
         }
     }
 
     // Return the subproblem solution from the map
-    return lookup[key];
+    return lookup.get(key)!;
 }
 
-int main()
-{
-    string X = "ABBDCACB";
-    int n = X.length();
+const X = 'ABBDCACB';
 
-    // Create a map to store solutions to subproblems
-    unordered_map<string, int> lookup;
+// Create a map to store solutions to subproblems
+const lookup = new Map<string, number>();
 
-    cout << "The length of the longest palindromic subsequence is " <<
-        findLongestPalindrome(X, 0, n - 1, lookup);
-
-    return 0;
-}
+console.log(`The length of the longest palindromic subsequence is ${findLongestPalindrome(X, 0, X.length - 1, lookup)}`);
 ```
 
 **Output:** The length of the longest palindromic subsequence is 5
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to find the length of the longest palindromic subsequence
-    // of substring `X[i…j]`
-    public static int findLongestPalindrome(String X, int i, int j,
-                                        Map<String, Integer> lookup)
-    {
-        // Base condition
-        if (i > j) {
-            return 0;
-        }
-
-        // If the string `X` has only one character, it is a palindrome
-        if (i == j) {
-            return 1;
-        }
-
-        // Construct a unique map key from dynamic elements of the input
-        String key = i + "|" + j;
-
-        // If the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (!lookup.containsKey(key))
-        {
-            /* If the last character of the string is the same as the first character,
-               include the first and last characters in palindrome and recur
-               for the remaining substring `X[i+1, j-1]` */
-
-            if (X.charAt(i) == X.charAt(j)) {
-                lookup.put(key, findLongestPalindrome(X, i + 1, j - 1, lookup) + 2);
-            }
-            else {
-
-                /* If the last character of the string is different from the first
-                    character
-
-                    1. Remove the last character and recur for the remaining substring
-                       `X[i, j-1]`
-                    2. Remove the first character and recur for the remaining substring
-                       `X[i+1, j]`
-                    3. Return the maximum of the two values */
-
-                lookup.put(key, Integer.max(findLongestPalindrome(X, i, j - 1, lookup),
-                                            findLongestPalindrome(X, i + 1, j, lookup)));
-            }
-        }
-
-        // Return the subproblem solution from the map
-        return lookup.get(key);
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABBDCACB";
-        int n = X.length();
-
-        // Create a map to store solutions to subproblems
-        Map<String, Integer> lookup = new HashMap<>();
-
-        System.out.print("The length of the longest palindromic subsequence is " +
-                                findLongestPalindrome(X, 0, n - 1, lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the longest palindromic subsequence
-# of substring `X[i…j]`
-def findLongestPalindrome(X, i, j, lookup):
-
-    # Base condition
-    if i > j:
-        return 0
-
-    # If the string `X` has only one character, it is a palindrome
-    if i == j:
-        return 1
-
-    # construct a unique key from dynamic elements of the input
-    key = (i, j)
-
-    # If the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        ''' If the last character of the string is the same as the first character,
-            include the first and last characters in palindrome and recur
-            for the remaining substring X[i+1, j-1] '''
-
-        if X[i] == X[j]:
-            lookup[key] = findLongestPalindrome(X, i + 1, j - 1, lookup) + 2
-        else:
-            ''' If the last character of the string is different from the
-                first character
-
-                1. Remove the last character recur for the remaining substring
-                   `X[i, j-1]`
-                2. Remove the first character recur for the remaining substring
-                   `X[i+1, j]`
-                3. Return the maximum of the two values '''
-
-            lookup[key] = max(findLongestPalindrome(X, i, j - 1, lookup),
-                            findLongestPalindrome(X, i + 1, j, lookup))
-
-    # Return the subproblem solution from the dictionary
-    return lookup[key]
-
-if __name__ == '__main__':
-
-    X = 'ABBDCACB'
-
-    # create a dictionary to store solutions to subproblems
-    lookup = {}
-
-    print('The length of the longest palindromic subsequence is',
-        findLongestPalindrome(X, 0, len(X) - 1, lookup))
-```
 
 The time complexity of the above solution is O(n2) and requires O(n2) extra space, where `n` is the length of the input string.
 
@@ -380,24 +136,18 @@ How can we print Longest Palindromic subsequence?
 
 The longest palindromic subsequence problem is a classic variation of the [Longest Common Subsequence (LCS)](https://techiedelight.com/longest-common-subsequence-finding-lcs/) problem. The idea is to find LCS of the given string with its reverse, i.e., call `LCS(X, reverse(X))` and the longest common subsequence will be the longest palindromic subsequence.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find LCS of string `X[0…m-1]` and `Y[0…n-1]`
-string findLongestPalindrome(string X, string Y, int m, int n, auto &lookup)
-{
+function findLongestPalindrome(X: string, Y: string, m: number, n: number, lookup: number[][]): string {
     // return an empty string if the end of either sequence is reached
-    if (m == 0 || n == 0) {
-        return string("");
+    if (m === 0 || n === 0) {
+        return '';
     }
 
     // If the last character of `X` and `Y` matches
-    if (X[m - 1] == Y[n - 1])
+    if (X[m - 1] === Y[n - 1])
     {
         // append current character (`X[m-1]` or `Y[n-1]`) to LCS of
         // substring `X[0…m-2]` and `Y[0…n-2]`
@@ -422,22 +172,21 @@ string findLongestPalindrome(string X, string Y, int m, int n, auto &lookup)
 }
 
 // Function to find the length of LCS of substring `X[0…n-1]` and `Y[0…n-1]`
-int LCSLength(string X, string Y, int n, auto &lookup)
-{
+function LCSLength(X: string, Y: string, n: number, lookup: number[][]): number {
     // first row and first column of the lookup table are already 0
 
     // fill the lookup table in a bottom-up manner
-    for (int i = 1; i <= n; i++)
+    for (let i = 1; i <= n; i++)
     {
-        for (int j = 1; j <= n; j++)
+        for (let j = 1; j <= n; j++)
         {
             // if current character of `X` and `Y` matches
-            if (X[i - 1] == Y[j - 1]) {
+            if (X[i - 1] === Y[j - 1]) {
                 lookup[i][j] = lookup[i - 1][j - 1] + 1;
             }
             // otherwise, if the current character of `X` and `Y` don't match
             else {
-                lookup[i][j] = max(lookup[i - 1][j], lookup[i][j - 1]);
+                lookup[i][j] = Math.max(lookup[i - 1][j], lookup[i][j - 1]);
             }
         }
     }
@@ -445,27 +194,19 @@ int LCSLength(string X, string Y, int n, auto &lookup)
     return lookup[n][n];
 }
 
-int main()
-{
-    string X = "ABBDCACB";
+const X = 'ABBDCACB';
 
-    int m = X.length();
+const m = X.length;
 
-    // lookup[i][j] stores the length of LCS of substring `X[0…i-1]` and `Y[0…j-1]`
-    vector<vector<int>> lookup(m + 1, vector<int>(m + 1));
+// lookup[i][j] stores the length of LCS of substring `X[0…i-1]` and `Y[0…j-1]`
+const lookup: number[][] = Array.from({ length: m + 1 }, () => Array(m + 1).fill(0));
 
-    // string `Y` is a reverse of `X`
-    string Y = X;
-    reverse(Y.begin(), Y.end());
+// string `Y` is a reverse of `X`
+const Y = X.split('').reverse().join('');
 
-    // find the length of the LPS using LCS
-    cout << "The length of the longest palindromic subsequence is "
-         << LCSLength(X, Y, m, lookup) << endl;
+// find the length of the LPS using LCS
+console.log(`The length of the longest palindromic subsequence is ${LCSLength(X, Y, m, lookup)}`);
 
-    // print the LPS using a lookup table
-    cout << "The longest palindromic subsequence is "
-         << findLongestPalindrome(X, Y, m, m, lookup);
-
-    return 0;
-}
+// print the LPS using a lookup table
+console.log(`The longest palindromic subsequence is ${findLongestPalindrome(X, Y, m, m, lookup)}`);
 ```

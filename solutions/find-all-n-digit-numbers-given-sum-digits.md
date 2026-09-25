@@ -16,186 +16,44 @@ A simple solution would be to generate all n–digit numbers and print only thos
 
 A better solution is to generate only those n–digit numbers that satisfy the given constraints. The idea is to use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/). We append digits from `0` to `9` to the partially formed number and recur with one less digit at each point in the recursion. One particular case we need to handle that the number should not start with `0`. We also maintain the sum of digits so far in the partially formed number. The code can be optimized to return if the sum of digits so far is more than the given sum at any point in the recursion.
 
-The algorithm can be implemented as follows in C, C++, Java, and Python in a bottom-up manner, i.e., start from the first index and recursively fill the digits from left to right.
+The algorithm can be implemented as follows in TypeScript in a bottom-up manner, i.e., start from the first index and recursively fill the digits from left to right.
 
-```c
-#include <stdio.h>
+```ts
+// Function to find all n–digit numbers with a sum of digits equal to `target`
+// in a bottom-up manner
+function findNdigitNums(n: number, target: number, result = ''): void {
 
-// Function to find all n–digit numbers with a sum of digits equal
-// to `target` in a bottom-up manner
-void findNdigitNums(char result[], int index, int n, int target)
-{
     // if the number is less than n–digit and its sum of digits is
     // less than the given sum
-    if (index < n && target >= 0)
-    {
-        char d = '0';
+    if (n > 0 && target >= 0) {
 
-        // special case: number cannot start from 0
-        if (index == 0) {
-            d = '1';
-        }
-
-        // consider every valid digit and put it in the current
-        // index and recur for the next index
-        while (d <= '9')
-        {
-            result[index] = d;
-            int digit = (d - '0');
-            findNdigitNums(result, index + 1, n, target - digit);
-            d++;
-        }
-    }
-
-    // if the number becomes n–digit and its sum of digits is
-    // equal to the given sum, print it
-    else if (index == n && target == 0) {
-        printf("%s ", result);
-    }
-}
-
-int main()
-{
-    int n = 3;          // n–digit
-    int target = 6;        // given sum
-
-    // character array to store the result
-    char result[n + 1];
-    result[n] = '\0';      // null terminate the array
-
-    findNdigitNums(result, 0, n, target);
-
-    return 0;
-}
-```
-
-**Output:** 105 114 123 132 141 150 204 213 222 231 240 303 312 321 330 402 411 420 501 510 600
-
-##
-
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
-// Function to find all n–digit numbers with a sum of digits equal to
-// `target` in a bottom-up manner
-void findNdigitNums(string result, int n, int target)
-{
-    // if the number is less than n–digit and its sum of digits is
-    // less than the given sum
-    if (n && target >= 0)
-    {
-        char d = '0';
-        if (result == "") {    // special case: number cannot start from 0
-            d = '1';
+        let d = 0;
+        if (result === '') {        // special case: number cannot start from 0
+            d = 1;
         }
 
         // consider every valid digit and put it in the current index,
         // and recur for the next index
-        while (d <= '9') {
-            findNdigitNums(result + d, n - 1, target - (d - '0'));
-            d++;
+        while (d <= 9) {
+            findNdigitNums(n - 1, target - d, result + d.toString());
+            d = d + 1;
         }
     }
 
     // if the number becomes n–digit and its sum of digits is
     // equal to the given sum, print it
-    else if (n == 0 && target == 0) {
-        cout << result << " ";
+    else if (n === 0 && target === 0) {
+        process.stdout.write(result + ' ');
     }
 }
 
-int main()
-{
-    int n = 3;          // n–digit
-    int target = 6;        // given sum
+const n = 3;          // n–digit
+const target = 6;     // given sum
 
-    string result;
-    findNdigitNums(result, n, target);
-
-    return 0;
-}
+findNdigitNums(n, target);
 ```
 
-##
-
-```java
-class Main
-{
-    // Function to find all n–digit numbers with a sum of digits equal to `target`
-    // in a bottom-up manner
-    public static void findNdigitNums(String result, int n, int target)
-    {
-        // if the number is less than n–digit and its sum of digits is
-        // less than the given sum
-        if (n > 0 && target >= 0)
-        {
-            char d = '0';
-            if (result.equals("")) {    // special case: number cannot start from 0
-                d = '1';
-            }
-
-            // consider every valid digit and put it in the current index,
-            // and recur for the next index
-            while (d <= '9')
-            {
-                findNdigitNums(result + d, n - 1, target - (d - '0'));
-                d++;
-            }
-        }
-
-        // if the number becomes n–digit and its sum of digits is
-        // equal to the given sum, print it
-        else if (n == 0 && target == 0) {
-            System.out.print(result + " ");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 3;      // n–digit
-        int target = 6;    // given sum
-
-        String result = "";
-        findNdigitNums(result, n, target);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find all n–digit numbers with a sum of digits equal to `target`
-# in a bottom-up manner
-def findNdigitNums(n, target, result=''):
-
-    # if the number is less than n–digit and its sum of digits is
-    # less than the given sum
-    if n > 0 and target >= 0:
-
-        d = ord('0')
-        if result == "":        # special case: number cannot start from 0
-            d = ord('1')
-
-        # consider every valid digit and put it in the current index,
-        # and recur for the next index
-        while d <= ord('9'):
-            findNdigitNums(n - 1, target - (d - ord('0')), result + chr(d))
-            d = d + 1
-
-    # if the number becomes n–digit and its sum of digits is
-    # equal to the given sum, print it
-    elif n == 0 and target == 0:
-        print(result, end=' ')
-
-if __name__ == '__main__':
-
-    n = 3       # n–digit
-    target = 6     # given sum
-
-    findNdigitNums(n, target)
-```
+**Output:** 105 114 123 132 141 150 204 213 222 231 240 303 312 321 330 402 411 420 501 510 600
 
 Also See:
 

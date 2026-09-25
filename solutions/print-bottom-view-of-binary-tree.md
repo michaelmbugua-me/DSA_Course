@@ -16,261 +16,72 @@ The following figure shows the horizontal distance and level of each node in the
 
 (horizontal distance —> (node’s value, node’s level)) -1 —> (7, 4) 0 —> (5, 3) 1 —> (8, 4) 2 —> (6, 3)
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public val: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Recursive function to perform preorder traversal on the tree and fill the map.
 // Here, the node has `dist` horizontal distance from the tree's root,
 // and the `level` represents the node's level.
+function printBottom(root: TreeNode | null, dist: number, level: number, d: Map<number, [number, number]>): void {
 
-void printBottom(Node* node, int dist, int level, auto &map)
-{
     // base case: empty tree
-    if (node == nullptr) {
+    if (root === null) {
         return;
     }
 
     // if the current level is more than or equal to the maximum level seen so far
     // for the same horizontal distance or horizontal distance is seen for
-    // the first time, update the map
-
-    if (level >= map[dist].second)
-    {
+    // the first time, update the dictionary
+    if (!d.has(dist) || level >= d.get(dist)![1]) {
         // update value and level for the current distance
-        map[dist] = { node->key, level };
+        d.set(dist, [root.val, level]);
     }
 
     // recur for the left subtree by decreasing horizontal distance and
     // increasing level by 1
-    printBottom(node->left, dist - 1, level + 1, map);
+    printBottom(root.left, dist - 1, level + 1, d);
 
     // recur for the right subtree by increasing both level and
     // horizontal distance by 1
-    printBottom(node->right, dist + 1, level + 1, map);
+    printBottom(root.right, dist + 1, level + 1, d);
 }
 
 // Function to print the bottom view of a given binary tree
-void printBottom(Node* root)
-{
-    // create an empty map where
+function printBottomView(root: TreeNode | null): void {
+
+    // create a dictionary where
     // key —> relative horizontal distance of the node from the root node, and
     // value —> pair containing the node's value and its level
+    const d = new Map<number, [number, number]>();
 
-    map<int, pair<int, int>> map;
+    // perform preorder traversal on the tree and fill the dictionary
+    printBottom(root, 0, 0, d);
 
-    // perform preorder traversal on the tree and fill the map
-    printBottom(root, 0, 0, map);
-
-    // traverse the map and print the bottom view
-    for (auto it: map) {
-        cout << it.second.first << " ";
+    // traverse the dictionary in sorted order of their keys and
+    // print the bottom view
+    for (const key of [...d.keys()].sort((a, b) => a - b)) {
+        process.stdout.write(d.get(key)![0] + ' ');
     }
 }
 
-int main()
-{
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    printBottom(root);
-
-    return 0;
-}
+printBottomView(root);
 ```
 
 **Output:** 7 5 8 6
-
-##
-
-```java
-import java.util.Map;
-import java.util.TreeMap;
-
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-// A Pair class
-class Pair<U, V>
-{
-    public final U first;       // first field of a pair
-    public final V second;      // second field of a pair
-
-    // Constructs a new Pair with specified values
-    private Pair(U first, V second)
-    {
-        this.first = first;
-        this.second = second;
-    }
-
-    // Factory method for creating a Typed Pair immutable instance
-    public static <U, V> Pair <U, V> of(U a, V b)
-    {
-        // calls private constructor
-        return new Pair<>(a, b);
-    }
-}
-
-class Main
-{
-    // Recursive function to perform preorder traversal on the tree and fill the map.
-    // Here, the node has `dist` horizontal distance from the tree's root,
-    // and the `level` represents the node's level.
-
-    public static void printBottom(Node root, int dist, int level,
-                                Map<Integer, Pair<Integer, Integer>> map)
-    {
-        // base case: empty tree
-        if (root == null) {
-            return;
-        }
-
-        // if the current level is more than or equal to the maximum level seen so far
-        // for the same horizontal distance or horizontal distance is seen for
-        // the first time, update the map
-
-        if (!map.containsKey(dist) || level >= map.get(dist).second)
-        {
-            // update value and level for the current distance
-            map.put(dist, Pair.of(root.key, level));
-        }
-
-        // recur for the left subtree by decreasing horizontal distance and
-        // increasing level by 1
-        printBottom(root.left, dist - 1, level + 1, map);
-
-        // recur for the right subtree by increasing both level and
-        // horizontal distance by 1
-        printBottom(root.right, dist + 1, level + 1, map);
-    }
-
-    // Function to print the bottom view of a given binary tree
-    public static void printBottom(Node root)
-    {
-        /* Create a `TreeMap` where
-        key —> relative horizontal distance of the node from the root node, and
-        value —> pair containing the node's value and its level */
-
-        Map<Integer, Pair<Integer, Integer>> map = new TreeMap<>();
-
-        // perform preorder traversal on the tree and fill the map
-        printBottom(root, 0, 0, map);
-
-        // traverse the `TreeMap` and print the bottom view
-        for (Pair<Integer, Integer> it: map.values()) {
-            System.out.print(it.first + " ");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        printBottom(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Recursive function to perform preorder traversal on the tree and fill the map.
-# Here, the node has `dist` horizontal distance from the tree's root,
-# and the `level` represents the node's level.
-def printBottom(root, dist, level, d):
-
-    # base case: empty tree
-    if root is None:
-        return
-
-    # if the current level is more than or equal to the maximum level seen so far
-    # for the same horizontal distance or horizontal distance is seen for
-    # the first time, update the dictionary
-    if dist not in d or level >= d[dist][1]:
-        # update value and level for the current distance
-        d[dist] = (root.key, level)
-
-    # recur for the left subtree by decreasing horizontal distance and
-    # increasing level by 1
-    printBottom(root.left, dist - 1, level + 1, d)
-
-    # recur for the right subtree by increasing both level and
-    # horizontal distance by 1
-    printBottom(root.right, dist + 1, level + 1, d)
-
-# Function to print the bottom view of a given binary tree
-def printBottomView(root):
-
-    # create a dictionary where
-    # key —> relative horizontal distance of the node from the root node, and
-    # value —> pair containing the node's value and its level
-    d = {}
-
-    # perform preorder traversal on the tree and fill the dictionary
-    printBottom(root, 0, 0, d)
-
-    # traverse the dictionary in sorted order of their keys and
-    # print the bottom view
-    for key in sorted(d.keys()):
-        print(d.get(key)[0], end=' ')
-
-if __name__ == '__main__':
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    printBottomView(root)
-```
 
 The time complexity of the above solution is O(n.log(n)) and requires O(n) extra space, where `n` is the size of the binary tree.
 

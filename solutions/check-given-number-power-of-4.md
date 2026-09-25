@@ -12,92 +12,30 @@ Given a positive number, check if it is a power of four or not.
 
 A simple solution is to calculate `log4n` for a given number `n`. If it returns an integral value, then we can say that the number is a power of four.
 
-This approach is demonstrated below in C++, Java, and Python:
+This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <cmath>
-using namespace std;
-
+```ts
 // Returns true if `n` is a power of four
-bool checkPowerOf4(unsigned n)
-{
+const checkPowerOf4 = (n: number): boolean => {
+
     // find `log4(n)`
-    double i = log(n) / log(4);
+    const i = Math.log(n) / Math.log(4);
 
     // return true if `log4(n)` is an integer
-    return i == trunc(i);
-}
+    return i === Math.floor(i);
+};
 
-int main()
-{
-    unsigned n = 256;
+// demo
+const n = 256;
 
-    if (checkPowerOf4(n)) {
-        cout << n << " is a power of 4";
-    }
-    else {
-        cout << n << " is not a power of 4";
-    }
-
-    return 0;
+if (checkPowerOf4(n)) {
+    console.log(`${n} is a power of 4`);
+} else {
+    console.log(`${n} is not a power of 4`);
 }
 ```
 
 **Output:** 256 is a power of 4
-
-##
-
-```java
-class Main
-{
-    // Returns true if `n` is a power of four
-    public static boolean checkPowerOf4(int n)
-    {
-        // find `log4(n)`
-        double i = Math.log(n) / Math.log(4);
-
-        // return true if `log4(n)` is an integer
-        return i == Math.floor(i);
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 256;
-
-        if (checkPowerOf4(n)) {
-            System.out.println(n + " is a power of 4");
-        }
-        else {
-            System.out.println(n + " is not a power of 4");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from math import log, floor
-
-# Returns true if `n` is a power of four
-def checkPowerOf4(n):
-
-    # find `log4(n)`
-    i = log(n) / log(4)
-
-    # return true if `log4(n)` is an integer
-    return i == floor(i)
-
-if __name__ == '__main__':
-
-    n = 256
-
-    if checkPowerOf4(n):
-        print(n, 'is a power of 4')
-    else:
-        print(n, 'is not a power of 4')
-```
 
 ## Approach 2
 
@@ -115,112 +53,49 @@ To check the position of its set bit, we can use `0xAAAAAAAA` as a mask. The mas
 
 (0xAAAAAAAA)16 = (10101010101010101010101010101010)2
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Returns true if `n` is a power of four
-bool checkPowerOf4(unsigned n)
-{
+const checkPowerOf4 = (n: number): boolean => {
+
     // return true if `n` is a power of 2, and its only
     // set bit is present at even position
-    return n && !(n & (n - 1)) && !(n & 0xAAAAAAAA);
-}
+    return n !== 0 && (n & (n - 1)) === 0 && (n & 0xAAAAAAAA) === 0;
+};
 
-int main()
-{
-    unsigned n = 256;
+// demo
+const n = 256;
 
-    if (checkPowerOf4(n)) {
-        cout << n << " is a power of 4";
-    }
-    else {
-        cout << n << " is not a power of 4";
-    }
-
-    return 0;
+if (checkPowerOf4(n)) {
+    console.log(`${n} is a power of 4`);
+} else {
+    console.log(`${n} is not a power of 4`);
 }
 ```
 
 **Output:** 256 is a power of 4
 
-##
-
-```java
-class Main
-{
-    // Returns true if `n` is a power of four
-    public static boolean checkPowerOf4(int n)
-    {
-        // return true if `n` is a power of 2, and its only
-        // set bit is present at even position
-        return n != 0 && (n & (n - 1)) == 0 && (n & 0xAAAAAAAA) == 0;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 256;
-
-        if (checkPowerOf4(n)) {
-            System.out.println(n + " is a power of 4");
-        }
-        else {
-            System.out.println(n + " is not a power of 4");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Returns true if `n` is a power of four
-def checkPowerOf4(n):
-
-    # return true if `n` is a power of 2, and its only
-    # set bit is present at even position
-    return n and not (n & (n - 1)) and not (n & 0xAAAAAAAA)
-
-if __name__ == '__main__':
-
-    n = 256
-
-    if checkPowerOf4(n):
-        print(n, 'is a power of 4')
-    else:
-        print(n, 'is not a power of 4')
-```
-
 ## Approach 3
 
-The given number `n` is a power of 4 if it is a power of 2 and its remainder is 1 when it is divided by 3. This approach is demonstrated below in C++, Java, and Python:
+The given number `n` is a power of 4 if it is a power of 2 and its remainder is 1 when it is divided by 3. This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Returns true if `n` is a power of four
-bool checkPowerOf4(unsigned n)
-{
+const checkPowerOf4 = (n: number): boolean => {
+
     // return true if `n` is a power of 2, and
     // the remainder is 1 when divided by 3
-    return !(n & (n - 1))&& (n % 3 == 1);
-}
+    return (n & (n - 1)) === 0 && n % 3 === 1;
+};
 
-int main()
-{
-    unsigned n = 256;
+// demo
+const n = 256;
 
-    if (checkPowerOf4(n)) {
-        cout << n << " is a power of 4";
-    }
-    else {
-        cout << n << " is not a power of 4";
-    }
-
-    return 0;
+if (checkPowerOf4(n)) {
+    console.log(`${n} is a power of 4`);
+} else {
+    console.log(`${n} is not a power of 4`);
 }
 ```
 

@@ -26,79 +26,64 @@ The idea is to use [dynamic programming](https://techiedelight.com/introduction-
 
 L(i) = height(i) + max(L(j) | j < i and block i can be put on top of block j)
 
-Finally, the maximum height is the maximum value in `L[]`. The algorithm can be implemented as follows in C++, Java, and Python:
+Finally, the maximum height is the maximum value in `L[]`. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-// Data structure to store a box (L × W × H)
-struct Box
-{
-    // enforce constraint: width is never more than length
-    int length, width, height;
-};
+```ts
+// A class to store a box (L × W × H)
+class Box {
+    // constraint: width is never more than length
+    constructor(public length: number, public width: number, public height: number) {}
+}
 
 // Function to generate rotations of all the boxes
-vector<Box> createAllRotations(vector<Box> const &boxes)
-{
+function createAllRotations(boxes: Box[]): Box[] {
+
     // stores all rotations of each box
-    vector<Box> rotations;
+    const rotations: Box[] = [];
 
     // do for each box
-    for (const Box &box: boxes)
-    {
+    for (const box of boxes) {
+
         // push the original box: L × W × H
-        rotations.push_back(box);
+        rotations.push(box);
 
         // push the first rotation: max(L, H) × min(L, H) × W
-        rotations.push_back({ max(box.length, box.height),
-                        min(box.length, box.height),
-                        box.width });
+        rotations.push(new Box(Math.max(box.length, box.height),
+                    Math.min(box.length, box.height), box.width));
 
         // push the second rotation: max(W, H) × min(W, H) × L
-        rotations.push_back({ max(box.width, box.height),
-                        min(box.width, box.height),
-                        box.length });
+        rotations.push(new Box(Math.max(box.width, box.height),
+                    Math.min(box.width, box.height), box.length));
     }
 
     return rotations;
 }
 
 // Create a stack of boxes that is as tall as possible
-int findMaxHeight(vector<Box> const &boxes)
-{
+function findMaxHeight(boxes: Box[]): number {
+
     // base case
-    if (boxes.size() == 0) {
+    if (!boxes.length) {
         return 0;
     }
 
     // generate rotations of each box
-    vector<Box> rotations = createAllRotations(boxes);
+    const rotations = createAllRotations(boxes);
 
     // sort the boxes in descending order of base area (L × W)
-    sort(rotations.begin(),
-        rotations.end(),
-        [](const Box &x, const Box &y) {
-            return x.length * x.width > y.length * y.width;
-        });
+    rotations.sort((x, y) => y.length * y.width - x.length * x.width);
 
-    // max_height[i] stores the maximum possible height when the i'th box
-    // is on the top
-    vector<int> max_height(rotations.size());
+    // max_height[i] store the maximum possible height when the i'th box is on the top
+    const max_height: number[] = new Array(rotations.length).fill(0);
 
-    // fill `max_height[]` in a bottom-up manner
-    for (int i = 0; i < rotations.size(); i++)
-    {
-        for (int j = 0; j < i; j++)
-        {
+    // fill `max_height` in a bottom-up manner
+    for (let i = 0; i < rotations.length; i++) {
+        for (let j = 0; j < i; j++) {
             // dimensions of the lower box are each strictly larger than those
             // of the higher box
             if (rotations[i].length < rotations[j].length &&
                     rotations[i].width < rotations[j].width) {
-                max_height[i] = max(max_height[i], max_height[j]);
+                max_height[i] = Math.max(max_height[i], max_height[j]);
             }
         }
 
@@ -106,201 +91,16 @@ int findMaxHeight(vector<Box> const &boxes)
     }
 
     // return the maximum value in max_height[]
-    return *max_element(max_height.begin(), max_height.end());
+    return Math.max(...max_height);
 }
 
-int main()
-{
-    // input boxes
-    vector<Box> boxes {
-        { 4, 2, 5 },
-        { 3, 1, 6 },
-        { 3, 2, 1 },
-        { 6, 3, 8 }
-    };
+// input boxes
+const boxes = [new Box(4, 2, 5), new Box(3, 1, 6), new Box(3, 2, 1), new Box(6, 3, 8)];
 
-    cout << "The maximum height is " << findMaxHeight(boxes) << endl;
-
-    return 0;
-}
+console.log(`The maximum height is ${findMaxHeight(boxes)}`);
 ```
 
 **Output:** The maximum height is 22
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-// A class to store a box (L × W × H)
-class Box
-{
-    // constraint: width is never more than length
-    int length, width, height;
-
-    private Box(int length, int width, int height) {
-        this.length = length;
-        this.width = width;
-        this.height = height;
-    }
-
-    public static Box of(int a, int b, int c) {
-        return new Box(a, b, c);
-    }
-}
-
-class Main
-{
-    // Function to generate rotations of all the boxes
-    public static List<Box> createAllRotations(List<Box> boxes)
-    {
-        // stores all rotations of each box
-        List<Box> rotations = new ArrayList<>();
-
-        // do for each box
-        for (Box box: boxes)
-        {
-            // push the original box: L × W × H
-            rotations.add(box);
-
-            // push the first rotation: max(L, H) × min(L, H) × W
-            rotations.add(Box.of(Math.max(box.length, box.height),
-                                Math.min(box.length, box.height),
-                                box.width));
-
-            // push the second rotation: max(W, H) × Math.min(W, H) × L
-            rotations.add(Box.of(Math.max(box.width, box.height),
-                                Math.min(box.width, box.height),
-                                box.length));
-        }
-
-        return rotations;
-    }
-
-    // Create a stack of boxes that is as tall as possible
-    public static int findMaxHeight(List<Box> boxes)
-    {
-        // base case
-        if (boxes == null || boxes.size() == 0) {
-            return 0;
-        }
-
-        // generate rotations of each box
-        List<Box> rotations = createAllRotations(boxes);
-
-        // sort the boxes in descending order of base area (L × W)
-        Collections.sort(rotations, (x, y) -> (y.length * y.width -
-                                x.length * x.width));
-
-        // max_height[i] store the maximum possible height when the i'th box
-        // is on the top
-        int[] max_height = new int[rotations.size()];
-
-        // fill `max_height[]` in a bottom-up manner
-        for (int i = 0; i < rotations.size(); i++)
-        {
-            for (int j = 0; j < i; j++)
-            {
-                // dimensions of the lower box are each strictly larger than those
-                // of the higher box
-                if (rotations.get(i).length < rotations.get(j).length &&
-                            rotations.get(i).width < rotations.get(j).width) {
-                    max_height[i] = Math.max(max_height[i], max_height[j]);
-                }
-            }
-
-            max_height[i] += rotations.get(i).height;
-        }
-
-        // return the maximum value in max_height[]
-        return Arrays.stream(max_height).max().getAsInt();
-    }
-
-    public static void main(String[] args)
-    {
-        // input boxes
-        List<Box> boxes = Arrays.asList(Box.of(4, 2, 5), Box.of(3, 1, 6),
-                                        Box.of(3, 2, 1), Box.of(6, 3, 8));
-
-        System.out.println("The maximum height is " + findMaxHeight(boxes));
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a box (L × W × H)
-class Box:
-    def __init__(self, length, width, height):
-
-        # constraint: width is never more than length
-        self.length = length
-        self.width = width
-        self.height = height
-
-# Function to generate rotations of all the boxes
-def createAllRotations(boxes):
-
-    # stores all rotations of each box
-    rotations = []
-
-    # do for each box
-    for box in boxes:
-
-        # push the original box: L × W × H
-        rotations.append(box)
-
-        # push the first rotation: max(L, H) × min(L, H) × W
-        rotations.append(Box(max(box.length, box.height),
-                    min(box.length, box.height), box.width))
-
-        # push the second rotation: max(W, H) × min(W, H) × L
-        rotations.append(Box(max(box.width, box.height),
-                    min(box.width, box.height), box.length))
-
-    return rotations
-
-# Create a stack of boxes that is as tall as possible
-def findMaxHeight(boxes):
-
-    # base case
-    if not boxes:
-        return 0
-
-    # generate rotations of each box
-    rotations = createAllRotations(boxes)
-
-    # sort the boxes in descending order of base area (L × W)
-    rotations.sort(key=lambda x: x.length * x.width, reverse=True)
-
-    # max_height[i] store the maximum possible height when the i'th box is on the top
-    max_height = [0] * len(rotations)
-
-    # fill `max_height` in a bottom-up manner
-    for i in range(len(rotations)):
-        for j in range(i):
-            # dimensions of the lower box are each strictly larger than those
-            # of the higher box
-            if (rotations[i].length < rotations[j].length and
-                    rotations[i].width < rotations[j].width):
-                max_height[i] = max(max_height[i], max_height[j])
-
-        max_height[i] += rotations[i].height
-
-    # return the maximum value in max_height[]
-    return max(max_height)
-
-if __name__ == '__main__':
-
-    # input boxes
-    boxes = [Box(4, 2, 5), Box(3, 1, 6), Box(3, 2, 1), Box(6, 3, 8)]
-
-    print('The maximum height is', findMaxHeight(boxes))
-```
 
 The time complexity of the above solution is O(n2) and requires O(n) extra space, where `n` is the total number of boxes.
 

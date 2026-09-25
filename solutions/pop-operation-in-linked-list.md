@@ -10,211 +10,57 @@ Write a `pop()` function that is the inverse of [push()](https://techiedelight.c
 
 The `pop()` operation is a bit tricky as it needs to unlink the front node from the list and deallocate it with a call to `free()`. The `pop()` function needs to use a reference parameter like `push()` so that it can change the caller’s head pointer. So, we extract the data from the head node, delete the node, advance the head pointer to point at the next node in line.
 
-Following is the C, Java, and Python program that demonstrates it. The C code uses a reference parameter since it changes the head pointer.
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
-    }
-
-    printf("NULL");
+class ListNode {
+    constructor(public data: number, public next: ListNode | null = null) {}
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    // allocate a new node in a heap and set its data
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
+// Helper function to print a given linked list
+function printList(head: ListNode | null): void {
 
-    // set the `.next` pointer of the new node to point to the current
-    // first node of the list.
-    newNode->next = *head;
-
-    // change the head pointer to point to the new node, so it is
-    // now the first node in the list.
-    *head = newNode;
+    let ptr = head;
+    while (ptr) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
+    }
+    console.log('null');
 }
 
 // The opposite of `push()`. Takes a non-empty list, removes the front
-// node, and returns the data in that node.
-int pop(struct Node** headRef)
-{
+// node, and prints the data in that node.
+function pop(headRef: ListNode | null): ListNode | null {
+
     // underflow condition
-    if (*headRef == NULL) {
-        return -1;
+    if (headRef === null) {
+        return null;
     }
 
-    struct Node* head = *headRef;
-    int result = head->data;        // pull out data before the node is deleted
+    const result = headRef.data;    // pull out data before the node is deleted
+    headRef = headRef.next;         // unlink the head node for the caller
 
-    (*headRef) = (*headRef)->next;  // unlink the head node for the caller
-                                    // Note the `*` — uses a reference-pointer
-                                    // just like `push()` and `deleteList()`.
+    console.log(`The popped node is ${result}`);
 
-    free(head);             // free the head node
-
-    return result;          // don't forget to return the data from the link
+    return headRef;
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = {1, 2, 3, 4};
-    int n = sizeof(keys)/sizeof(keys[0]);
+// points to the head node of the linked list
+let head: ListNode | null = null;
 
-    // points to the head node of the linked list
-    struct Node* head = NULL;
-
-    // construct a linked list
-    for (int i = n-1; i >= 0; i--) {
-        push(&head, keys[i]);
-    }
-
-    int i = pop(&head);
-    printf("The popped node is %d\n", i);
-
-    // print remaining linked list
-    printList(head);
-
-    return 0;
+// construct a linked list
+for (let i = 4; i >= 1; i--) {
+    head = new ListNode(i, head);
 }
+
+head = pop(head);
+
+// print remaining linked list
+printList(head);
 ```
 
 **Output:** The popped node is 1 2 —> 3 —> 4 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // The opposite of `push()`. Takes a non-empty list, removes the front
-    // node, and prints the data in that node.
-    public static Node pop(Node headRef)
-    {
-        // underflow condition
-        if (headRef == null) {
-            return null;
-        }
-
-        int result = headRef.data;  // pull out data before the node is deleted
-        headRef = headRef.next;     // unlink the head node for the caller
-
-        System.out.println("The popped node is " + result);
-
-        return headRef;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = {1, 2, 3, 4};
-
-        // points to the head node of the linked list
-        Node head = null;
-
-        // construct a linked list
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
-        }
-
-        head = pop(head);
-
-        // print remaining linked list
-        printList(head);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
-
-# The opposite of `push()`. Takes a non-empty list, removes the front
-# node, and prints the data in that node.
-def pop(headRef):
-
-    # underflow condition
-    if headRef is None:
-        return None
-
-    result = headRef.data       # pull out data before the node is deleted
-    headRef = headRef.next      # unlink the head node for the caller
-
-    print('The popped node is', result)
-
-    return headRef
-
-if __name__ == '__main__':
-
-    # points to the head node of the linked list
-    head = None
-
-    # construct a linked list
-    for i in reversed(range(1, 5)):
-        head = Node(i, head)
-
-    head = pop(head)
-
-    # print remaining linked list
-    printList(head)
-```
 
 The time complexity of the pop operation is O(1).
 

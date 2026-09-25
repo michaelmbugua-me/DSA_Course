@@ -17,10 +17,10 @@ The following tricks are covered in this post:
 
 We can easily convert an uppercase character to a corresponding lowercase character by taking its bitwise `OR` with a space.
 
-```
+```ts
 // Convert uppercase character to lowercase
-for (char ch = 'A'; ch <= 'Z'; ch++) {
-    cout << char(ch | ' '));        // prints abcdefghijklmnopqrstuvwxyz
+for (let ch = 'A'.charCodeAt(0); ch <= 'Z'.charCodeAt(0); ch++) {
+    console.log(String.fromCharCode(ch | ' '.charCodeAt(0)));   // prints abcdefghijklmnopqrstuvwxyz
 }
 ```
 
@@ -28,10 +28,10 @@ for (char ch = 'A'; ch <= 'Z'; ch++) {
 
 Similarly, we can easily convert a lowercase character to a corresponding uppercase character by taking its bitwise `AND` with an underscore character.
 
-```
+```ts
 // Convert lowercase character to uppercase
-for (char ch = 'a'; ch <= 'z'; ch++) {
-    cout << char(ch & '_'));    // prints ABCDEFGHIJKLMNOPQRSTUVWXYZ
+for (let ch = 'a'.charCodeAt(0); ch <= 'z'.charCodeAt(0); ch++) {
+    console.log(String.fromCharCode(ch & '_'.charCodeAt(0)));   // prints ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
 ```
 
@@ -43,15 +43,15 @@ The above-discussed methods will not work the other way, i.e., `(ch | ' ')` cann
 
 We can easily convert an alphabet’s case by taking its bitwise `XOR` with a space.
 
-```
+```ts
 // Convert lowercase alphabet to uppercase
-for (char ch = 'a'; ch <= 'z'; ch++) {
-    cout << char(ch ^ ' '));        // prints ABCDEFGHIJKLMNOPQRSTUVWXYZ
+for (let ch = 'a'.charCodeAt(0); ch <= 'z'.charCodeAt(0); ch++) {
+    console.log(String.fromCharCode(ch ^ ' '.charCodeAt(0)));   // prints ABCDEFGHIJKLMNOPQRSTUVWXYZ
 }
 
 // Convert uppercase alphabet to lowercase
-for (char ch = 'A'; ch <= 'Z'; ch++) {
-    cout << char(ch ^ ' '));        // prints abcdefghijklmnopqrstuvwxyz
+for (let ch = 'A'.charCodeAt(0); ch <= 'Z'.charCodeAt(0); ch++) {
+    console.log(String.fromCharCode(ch ^ ' '.charCodeAt(0)));   // prints abcdefghijklmnopqrstuvwxyz
 }
 ```
 

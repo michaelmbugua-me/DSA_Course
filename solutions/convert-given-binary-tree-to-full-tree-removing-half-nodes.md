@@ -15,256 +15,85 @@ The idea is to traverse the tree in a [bottom-up fashion](https://techiedelight.
   * If it has two children or a leaf node, nothing needs to be done.
   * If it has exactly one child, delete it and replace the node with the child node.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Function to perform inorder traversal on the tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+function inorder(root: Node | null, output: number[] = []): void {
+
+    if (root === null) {
         return;
     }
 
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
+    inorder(root.left, output);
+    output.push(root.data);
+    inorder(root.right, output);
 }
 
 // Function to check if a given node is a leaf node or not
-bool isLeaf(Node* node) {
-    return (node->left == nullptr && node->right == nullptr);
+function isLeaf(node: Node): boolean {
+    return node.left === null && node.right === null;
 }
 
 // Function to convert a binary tree into a full tree by removing half nodes
-Node* truncate(Node* root)
-{
+function truncate(root: Node | null): Node | null {
+
     // base case: empty tree
-    if (root == nullptr) {
-        return nullptr;
+    if (root === null) {
+        return null;
     }
 
     // recursively truncate the left subtree and subtree first
-    root->left = truncate(root->left);
-    root->right = truncate(root->right);
+    root.left = truncate(root.left);
+    root.right = truncate(root.right);
 
     // do nothing if the current node is a leaf node or has two children
-    if ((root->left && root->right) || isLeaf(root)) {
+    if ((root.left && root.right) || isLeaf(root)) {
         return root;
     }
 
     // if the current node has exactly one child, delete it and replace
     // it with the child node
-    Node* child = (root->left) ? root->left: root->right;
-    delete root;
+    const child = root.left ? root.left : root.right;
     return child;
 }
 
-int main()
-{
-    /* Construct the following tree
-                 0
-               /   \
-              /     \
-             1       2
-            /       /
-           /       /
-          3       4
-         /       / \
-        /       /   \
-       5       6     7
-    */
+/* Construct the following tree
+             0
+           /   \
+          /     \
+         1       2
+        /       /
+       /       /
+      3       4
+     /       / \
+    /       /   \
+   5       6     7
+*/
 
-    Node* root = new Node(0);
-    root->left = new Node(1);
-    root->right = new Node(2);
-    root->left->left = new Node(3);
-    root->right->left = new Node(4);
-    root->left->left->left = new Node(5);
-    root->right->left->left = new Node(6);
-    root->right->left->right = new Node(7);
+let root: Node | null = new Node(0);
+root.left = new Node(1);
+root.right = new Node(2);
+root.left!.left = new Node(3);
+root.right!.left = new Node(4);
+root.left!.left!.left = new Node(5);
+root.right!.left!.left = new Node(6);
+root.right!.left!.right = new Node(7);
 
-    root = truncate(root);
-    inorder(root);
-
-    return 0;
-}
+root = truncate(root);
+const output: number[] = [];
+inorder(root, output);
+console.log(output.join(' '));
 ```
 
 **Output:** 5 0 6 4 7
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform inorder traversal on the tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // Function to check if a given node is a leaf node or not
-    public static boolean isLeaf(Node node) {
-        return (node.left == null && node.right == null);
-    }
-
-    // Function to convert a binary tree into a full tree by removing half nodes
-    public static Node truncate(Node root)
-    {
-        // base case: empty tree
-        if (root == null) {
-            return null;
-        }
-
-        // recursively truncate the left subtree and subtree first
-        root.left = truncate(root.left);
-        root.right = truncate(root.right);
-
-        // do nothing if the current node is a leaf node or has two children
-        if ((root.left != null && root.right != null) || isLeaf(root)) {
-            return root;
-        }
-
-        // if the current node has exactly one child, delete it and
-        // replace it with the child node
-        Node child = (root.left != null) ? root.left: root.right;
-        return child;
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                     0
-                   /   \
-                  /     \
-                 1       2
-                /        /
-               /        /
-              3        4
-             /        / \
-            /        /   \
-           5        6     7
-        */
-
-        Node root = new Node(0);
-        root.left = new Node(1);
-        root.right = new Node(2);
-        root.left.left = new Node(3);
-        root.right.left = new Node(4);
-        root.left.left.left = new Node(5);
-        root.right.left.left = new Node(6);
-        root.right.left.right = new Node(7);
-
-        root = truncate(root);
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform inorder traversal on the tree
-def inorder(root):
-
-    if root is None:
-        return
-
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# Function to check if a given node is a leaf node or not
-def isLeaf(node):
-    return node.left is None and node.right is None
-
-# Function to convert a binary tree into a full tree by removing half nodes
-def truncate(root):
-
-    # base case: empty tree
-    if root is None:
-        return None
-
-    # recursively truncate the left subtree and subtree first
-    root.left = truncate(root.left)
-    root.right = truncate(root.right)
-
-    # do nothing if the current node is a leaf node or has two children
-    if (root.left and root.right) or isLeaf(root):
-        return root
-
-    # if the current node has exactly one child, delete it and replace
-    # it with the child node
-    child = root.left if root.left else root.right
-    return child
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-                 0
-               /   \
-              /     \
-             1       2
-            /        /
-           /        /
-          3        4
-         /        / \
-        /        /   \
-       5        6     7
-    '''
-
-    root = Node(0)
-    root.left = Node(1)
-    root.right = Node(2)
-    root.left.left = Node(3)
-    root.right.left = Node(4)
-    root.left.left.left = Node(5)
-    root.right.left.left = Node(6)
-    root.right.left.right = Node(7)
-
-    root = truncate(root)
-    inorder(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

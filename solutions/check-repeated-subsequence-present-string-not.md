@@ -14,203 +14,63 @@ String XYBAXB has XB(XBXB) as a repeated subsequence String XBXAXB has XX(XXX) a
 
 The idea is simple. If we discard all non-repeating elements from the string (having frequency of `1`), and the resulting string is non-palindrome, then the string contains a repeated subsequence. If the resulting string is a palindrome and doesn’t have any character with frequency three or more, the string cannot have a repeated subsequence.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_map>
-using namespace std;
+```ts
+// Recursive function to check if `s[low…high]` is a palindrome or not
+const isPalindrome = (s: string): boolean => {
 
-// Recursive function to check if `str[low…high]` is a palindrome or not
-bool isPalindrome(string str, int low, int high)
-{
-    // base case
-    if (low >= high) {
-        return true;
+    let [low, high] = [0, s.length - 1];
+
+    while (low < high) {
+        if (s[low] !== s[high]) {
+            return false;
+        }
+        low = low + 1;
+        high = high - 1;
     }
 
-    return (str[low] == str[high]) &&
-        isPalindrome(str, low + 1, high - 1);
-}
+    return true;
+};
 
-// Function to checks if repeated subsequence is present
-// in the string
-bool hasRepeatedSubsequence(string str)
-{
+// Function to checks if repeated subsequence is present in a string
+const hasRepeatedSubsequence = (s: string): boolean => {
+
     // base case
-    if (str.length() == 0) {
+    if (s.length === 0) {
         return false;
     }
 
-    // map to store the frequency of each distinct character
-    // of a given string
-    unordered_map<char, int> freq;
+    // map to store the frequency of each distinct character of a given string
+    const freq = new Map<string, number>();
 
     // update map with frequency
-    for (int i = 0; i < str.length(); i++)
-    {
-        // if the frequency of any character becomes 3,
-        // we have found the repeated subsequence
-        if (++freq[str[i]] >= 3) {
+    for (const c of s) {
+        // if the frequency of any character becomes 3, we have found a
+        // repeated subsequence
+        freq.set(c, (freq.get(c) ?? 0) + 1);
+        if (freq.get(c)! >= 3) {
             return true;
         }
     }
-
-    string temp;
 
     // consider all repeated elements (frequency 2 or more)
     // and discard all non-repeating elements (frequency 1)
-    for (int i = 0; i < str.length(); i++)
-    {
-        if (freq[str[i]] >= 2) {
-            temp += str[i];
-        }
-    }
+    const repeated = s.split('').filter(c => freq.get(c)! >= 2).join('');
 
-    // return false if `temp` is a palindrome
-    return !isPalindrome(temp, 0, temp.length() - 1);
+    // return false if it is a palindrome
+    return !isPalindrome(repeated);
+};
+
+// demo
+
+const s = 'XYBYAXB';        // 'XB' and 'YB' are repeated subsequences
+
+if (hasRepeatedSubsequence(s)) {
+    console.log('Repeated subsequence is present');
+} else {
+    console.log('No repeated subsequence is present');
 }
-
-int main()
-{
-    string str = "XYBYAXB";        // 'XB' and 'YB' are repeated subsequences
-
-    if (hasRepeatedSubsequence(str)) {
-        cout << "Repeated subsequence is present";
-    }
-    else {
-        cout << "No repeated subsequence is present";
-    }
-
-    return 0;
-}
-```
-
-**Output:** Repeated subsequence is present
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Recursive function to check if `str[low…high]` is a palindrome or not
-    public static boolean isPalindrome(String str, int low, int high)
-    {
-        // base case
-        if (low >= high) {
-            return true;
-        }
-
-        return (str.charAt(low) == str.charAt(high)) &&
-                isPalindrome(str, low + 1, high - 1);
-    }
-
-    // Function to checks if repeated subsequence is present in the string
-    public static boolean hasRepeatedSubsequence(String str)
-    {
-        // base case
-        if (str == null || str.length() == 0) {
-            return false;
-        }
-
-        // map to store the frequency of each distinct character
-        // of a given string
-        Map<Character, Integer> freq = new HashMap<>();
-
-        // update map with frequency
-        for (char c: str.toCharArray())
-        {
-            freq.put(c, freq.getOrDefault(c, 0) + 1);
-
-            // if the frequency of any character becomes 3,
-            // we have found the repeated subsequence
-            if (freq.get(c) >= 3) {
-                return true;
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        // consider all repeated elements (frequency 2 or more)
-        // and discard all non-repeating elements (frequency 1)
-        for (char c: str.toCharArray())
-        {
-            if (freq.get(c) >= 2) {
-                sb.append(c);
-            }
-        }
-
-        // return false if `sb` is a palindrome
-        return !isPalindrome(sb.toString(), 0, sb.length() - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "XYBYAXB";        // 'XB' and 'YB' are repeated subsequences
-
-        if (hasRepeatedSubsequence(str)) {
-            System.out.println("Repeated subsequence is present");
-        }
-        else {
-            System.out.println("No repeated subsequence is present");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to check if `s[low…high]` is a palindrome or not
-def isPalindrome(s):
-
-    (low, high) = (0, len(s) - 1)
-
-    while low < high:
-        if s[low] != s[high]:
-            return False
-        low = low + 1
-        high = high - 1
-
-    return True
-
-# Function to checks if repeated subsequence is present in a string
-def hasRepeatedSubsequence(s):
-
-    # base case
-    if not s:
-        return False
-
-    # dictionary to store the frequency of each distinct character of a given string
-    freq = {}
-
-    # update dictionary with frequency
-    for c in s:
-        # if the frequency of any character becomes 3, we have found a
-        # repeated subsequence
-        freq[c] = freq.get(c, 0) + 1
-        if freq.get(c) >= 3:
-            return True
-
-    # consider all repeated elements (frequency 2 or more)
-    # and discard all non-repeating elements (frequency 1)
-    repeated = [c for c in s if freq.get(c) >= 2]
-
-    # return false if it is a palindrome
-    return not isPalindrome(repeated)
-
-if __name__ == '__main__':
-
-    s = 'XYBYAXB'        # 'XB' and 'YB' are repeated subsequences
-
-    if hasRepeatedSubsequence(s):
-        print('Repeated subsequence is present')
-    else:
-        print('No repeated subsequence is present')
 ```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the length of the input string.

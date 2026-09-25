@@ -20,80 +20,66 @@ If a graph contains an odd [cycle](https://techiedelight.com/check-undirected-gr
 
 Please note that if the graph has many connected components and each component is bipartite, then the graph is bipartite. The following code assumes that the given graph is connected and checks if the graph contains an odd cycle or not:
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // A vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
 
     // Total number of nodes in the graph
-    int n;
+    n: number;
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        this->n = n;
-        adjList.resize(n);
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
+
+    // Constructor
+    constructor(edges: [number, number][], n: number) {
+        this.n = n;
+
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph
-        for (auto &edge: edges)
-        {
-            adjList[edge.src].push_back(edge.dest);
-            adjList[edge.dest].push_back(edge.src);
+        for (const [src, dest] of edges) {
+
+            // add an edge from source to destination
+            this.adjList[src].push(dest);
+
+            // add an edge from destination to source
+            this.adjList[dest].push(src);
         }
     }
-};
+}
 
-// Perform BFS on the graph starting from vertex `v`
-bool isBipartite(Graph const &graph)
-{
-    // get total number of nodes in the graph
-    int n = graph.n;
+// Perform BFS on a graph starting from vertex `v`
+function isBipartite(graph: Graph): boolean {
 
     // start from any node as the graph is connected and undirected
-    int v = 0;
+    let v = 0;
 
     // to keep track of whether a vertex is discovered or not
-    vector<bool> discovered(n);
+    const discovered: boolean[] = new Array(graph.n).fill(false);
 
     // stores the level of each vertex in BFS
-    vector<int> level(n);
+    const level: number[] = new Array(graph.n).fill(0);
 
     // mark the source vertex as discovered and set its level to 0
-    discovered[v] = true, level[v] = 0;
+    discovered[v] = true;
+    level[v] = 0;
 
-    // create a queue to do BFS and enqueue source vertex in it
-    queue<int> q;
+    // create a queue to do BFS and enqueue source vertex
+    const q: number[] = [];
     q.push(v);
 
     // loop till queue is empty
-    while (!q.empty())
-    {
-        // dequeue front node
-        v = q.front();
-        q.pop();
+    while (q.length) {
+
+        // dequeue front node and print it
+        v = q.shift()!;
 
         // do for every edge (v, u)
-        for (int u: graph.adjList[v])
-        {
+        for (const u of graph.adjList[v]) {
             // if vertex `u` is explored for the first time
-            if (!discovered[u])
-            {
+            if (!discovered[u]) {
                 // mark it as discovered
                 discovered[u] = true;
 
@@ -103,10 +89,11 @@ bool isBipartite(Graph const &graph)
                 // enqueue vertex
                 q.push(u);
             }
+
             // if the vertex has already been discovered and the
             // level of vertex `u` and `v` are the same, then the
             // graph contains an odd-cycle and is not bipartite
-            else if (level[v] == level[u]) {
+            else if (level[v] === level[u]) {
                 return false;
             }
         }
@@ -115,259 +102,24 @@ bool isBipartite(Graph const &graph)
     return true;
 }
 
-int main()
-{
-    // vector of graph edges
-    vector<Edge> edges = {
-        {0, 1}, {1, 2}, {1, 7}, {2, 3}, {3, 5}, {4, 6}, {4, 8}, {7, 8}
-        // if we add edge (1, 3), the graph becomes non-bipartite
-    };
+// List of graph edges
+// Note that if we add edge (1, 3), the graph becomes non-bipartite
+const edges: [number, number][] = [[0, 1], [1, 2], [1, 7], [2, 3], [3, 5], [4, 6], [4, 8], [7, 8]];
 
-    // total number of nodes in the graph (0 to 8)
-    int n = 9;
+// total number of nodes in the graph (0 to 8)
+const n = 9;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    if (isBipartite(graph)) {
-        cout << "Graph is bipartite";
-    }
-    else {
-        cout << "Graph is not bipartite";
-    }
-
-    return 0;
+if (isBipartite(graph)) {
+    console.log('Graph is bipartite');
+} else {
+    console.log('Graph is not bipartite');
 }
 ```
 
 **Output:** Graph is bipartite
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Total number of nodes in the graph
-    int n;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        this.adjList = new ArrayList<>();
-        this.n = n;
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            // add an edge from source to destination
-            adjList.get(src).add(dest);
-
-            // add an edge from destination to source
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // Perform BFS on the graph starting from vertex `v`
-    public static boolean isBipartite(Graph graph)
-    {
-        // get total number of nodes in the graph
-        int n = graph.n;
-
-        // start from any node as the graph is connected and undirected
-        int v = 0;
-
-        // to keep track of whether a vertex is discovered or not
-        boolean[] discovered = new boolean[n];
-
-        // stores the level of each vertex in BFS
-        int[] level = new int[n];
-
-        // mark the source vertex as discovered and
-        // set its level to 0
-        discovered[v] = true;
-        level[v] = 0;
-
-        // create a queue to do BFS and enqueue
-        // source vertex in it
-        Queue<Integer> q = new ArrayDeque<>();
-        q.add(v);
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and print it
-            v = q.poll();
-
-            // do for every edge (v, u)
-            for (int u: graph.adjList.get(v))
-            {
-                // if vertex `u` is explored for the first time
-                if (!discovered[u])
-                {
-                    // mark it as discovered
-                    discovered[u] = true;
-
-                    // set level one more than the level of the parent node
-                    level[u] = level[v] + 1;
-
-                    // enqueue vertex
-                    q.add(u);
-                }
-                // if the vertex has already been discovered and the
-                // level of vertex `u` and `v` are the same, then the
-                // graph contains an odd-cycle and is not bipartite
-                else if (level[v] == level[u]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges
-        List<Edge> edges = Arrays.asList(
-                    new Edge(0, 1), new Edge(1, 2), new Edge(1, 7), new Edge(2, 3),
-                    new Edge(3, 5), new Edge(4, 6), new Edge(4, 8), new Edge(7, 8)
-                    // if we add edge (1, 3), the graph becomes non-bipartite
-                );
-
-        // total number of nodes in the graph (0 to 8)
-        int n = 9;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        if (isBipartite(graph)) {
-            System.out.println("Graph is bipartite");
-        }
-        else {
-            System.out.println("Graph is not bipartite");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges=None, n=0):
-
-        # Total number of nodes in the graph
-        self.n = n
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-
-            # add an edge from source to destination
-            self.adjList[src].append(dest)
-
-            # add an edge from destination to source
-            self.adjList[dest].append(src)
-
-# Perform BFS on a graph starting from vertex `v`
-def isBipartite(graph):
-
-    # start from any node as the graph is connected and undirected
-    v = 0
-
-    # to keep track of whether a vertex is discovered or not
-    discovered = [False] * graph.n
-
-    # stores the level of each vertex in BFS
-    level = [None] * graph.n
-
-    # mark the source vertex as discovered and set its level to 0
-    discovered[v] = True
-    level[v] = 0
-
-    # create a queue to do BFS and enqueue source vertex
-    q = deque()
-    q.append(v)
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node and print it
-        v = q.popleft()
-
-        # do for every edge (v, u)
-        for u in graph.adjList[v]:
-            # if vertex `u` is explored for the first time
-            if not discovered[u]:
-                # mark it as discovered
-                discovered[u] = True
-
-                # set level one more than the level of the parent node
-                level[u] = level[v] + 1
-
-                # enqueue vertex
-                q.append(u)
-
-            # if the vertex has already been discovered and the
-            # level of vertex `u` and `v` are the same, then the
-            # graph contains an odd-cycle and is not bipartite
-            elif level[v] == level[u]:
-                return False
-
-    return True
-
-if __name__ == '__main__':
-
-    # List of graph edges
-    # Note that if we add edge (1, 3), the graph becomes non-bipartite
-    edges = [(0, 1), (1, 2), (1, 7), (2, 3), (3, 5), (4, 6), (4, 8), (7, 8)]
-
-    # total number of nodes in the graph (0 to 8)
-    n = 9
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    if isBipartite(graph):
-        print('Graph is bipartite')
-    else:
-        print('Graph is not bipartite')
-```
 
 The time complexity of the above solution is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively. Please note that O(E) may vary between O(1) and O(V2), depending on how dense the graph is.
 

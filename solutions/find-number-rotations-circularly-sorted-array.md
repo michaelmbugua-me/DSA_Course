@@ -21,32 +21,29 @@ We can easily solve this problem in O(log(n)) time by modifying the [binary sear
 
 We know that the middle element always divides the array into two subarrays, and the pivot element can lie only in one of these halves. It is worth noticing that at least one of these subarrays will always be sorted. If middle element happens to be the point of rotation (minimum element), then both left and right subarrays are sorted. Still, in any case, one half (subarray) must be sorted, and we will use this property to discard the left half or the right half at each iteration of the binary search.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to find the total number of times the array is rotated
-int findRotationCount(int nums[], int n)
-{
-    // search space is nums[low…high]
-    int low = 0, high = n - 1;
+const findRotationCount = (nums: number[]): number => {
+
+    // search space is nums[left…right]
+    let [left, right] = [0, nums.length - 1];
 
     // loop till the search space is exhausted
-    while (low <= high)
-    {
+    while (left <= right) {
+
         // if the search space is already sorted, we have
-        // found the minimum element (at index `low`)
-        if (nums[low] <= nums[high]) {
-            return low;
+        // found the minimum element (at index `left`)
+        if (nums[left] <= nums[right]) {
+            return left;
         }
 
-        int mid = (low + high) / 2;
+        const mid = (left + right) / 2;
 
-        // find the next and previous element of the `mid` element
-        // (in a circular manner)
-        int next = (mid + 1) % n;
-        int prev = (mid - 1 + n) % n;
+        // find the next and previous element of the `mid` element (in circular manner)
+        const next = (mid + 1) % nums.length;
+        const prev = (mid - 1 + nums.length) % nums.length;
 
         // if the `mid` element is less than both its next and previous
         // neighbor, it is the array's minimum element
@@ -55,154 +52,31 @@ int findRotationCount(int nums[], int n)
             return mid;
         }
 
-        // if nums[mid…high] is sorted, and `mid` is not the minimum element,
-        // then the pivot element cannot be present in nums[mid…high],
-        // discard nums[mid…high] and search in the left half
+        // if nums[mid…right] is sorted, and `mid` is not the minimum element,
+        // then the pivot element cannot be present in nums[mid…right],
+        // discard nums[mid…right] and search in the left half
 
-        else if (nums[mid] <= nums[high]) {
-            high = mid - 1;
+        else if (nums[mid] <= nums[right]) {
+            right = mid - 1;
         }
 
-        // if nums[low…mid] is sorted, then the pivot element cannot be present in it;
-        // discard nums[low…mid] and search in the right half
+        // if nums[left…mid] is sorted, then the pivot element cannot be present in it;
+        // discard nums[left…mid] and search in the right half
 
-        else if (nums[mid] >= nums[low]) {
-            low = mid + 1;
+        else if (nums[mid] >= nums[left]) {
+            left = mid + 1;
         }
     }
 
     // invalid input
     return -1;
-}
+};
 
-int main(void)
-{
-    int nums[] = { 8, 9, 10, 2, 5, 6 };
-    int n = sizeof(nums) / sizeof(nums[0]);
-
-    int count = findRotationCount(nums, n);
-    printf("Array is rotated %d times", count);
-
-    return 0;
-}
+const nums = [8, 9, 10, 1, 2, 3, 4, 5, 6, 7];
+console.log(`The array is rotated ${findRotationCount(nums)} times`);
 ```
 
 **Output:** Array is rotated 3 times
-
-##
-
-```java
-class Main
-{
-    // Function to find the total number of times the array is rotated
-    public static int findRotationCount(int[] nums)
-    {
-        // search space is nums[left…right]
-        int left = 0;
-        int right = nums.length - 1;
-
-        // loop till the search space is exhausted
-        while (left <= right)
-        {
-            // if the search space is already sorted, we have
-            // found the minimum element (at index `left`)
-            if (nums[left] <= nums[right]) {
-                return left;
-            }
-
-            int mid = (left + right) / 2;
-
-            // find the next and previous element of the `mid` element
-            // (in a circular manner)
-            int next = (mid + 1) % nums.length;
-            int prev = (mid - 1 + nums.length) % nums.length;
-
-            // if the `mid` element is less than both its next and previous
-            // neighbor, it is the array's minimum element
-
-            if (nums[mid] <= nums[next] && nums[mid] <= nums[prev]) {
-                return mid;
-            }
-
-            // if nums[mid…right] is sorted, and `mid` is not the minimum element,
-            // then the pivot element cannot be present in nums[mid…right],
-            // discard nums[mid…right] and search in the left half
-
-            else if (nums[mid] <= nums[right]) {
-                right = mid - 1;
-            }
-
-            // if nums[left…mid] is sorted, then the pivot element cannot be present
-            // in it; discard nums[left…mid] and search in the right half
-
-            else if (nums[mid] >= nums[left]) {
-                left = mid + 1;
-            }
-        }
-
-        // invalid input
-        return -1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 8, 9, 10, 1, 2, 3, 4, 5, 6, 7 };
-
-        System.out.println("Array is rotated " + findRotationCount(nums) + " times");
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the total number of times the list is rotated
-def findRotationCount(nums):
-
-    # search space is nums[left…right]
-    (left, right) = (0, len(nums) - 1)
-
-    # loop till the search space is exhausted
-    while left <= right:
-
-        # if the search space is already sorted, we have
-        # found the minimum element (at index `left`)
-        if nums[left] <= nums[right]:
-            return left
-
-        mid = (left + right) // 2
-
-        # find the next and previous element of the `mid` element (in circular manner)
-        next = (mid + 1) % len(nums)
-        prev = (mid - 1 + len(nums)) % len(nums)
-
-        # if the `mid` element is less than both its next and previous
-        # neighbor, it is the list's minimum element
-
-        if nums[mid] <= nums[next] and nums[mid] <= nums[prev]:
-            return mid
-
-        # if nums[mid…right] is sorted, and `mid` is not the minimum element,
-        # then the pivot element cannot be present in nums[mid…right],
-        # discard nums[mid…right] and search in the left half
-
-        elif nums[mid] <= nums[right]:
-            right = mid - 1
-
-        # if nums[left…mid] is sorted, then the pivot element cannot be present in it;
-        # discard nums[left…mid] and search in the right half
-
-        elif nums[mid] >= nums[left]:
-            left = mid + 1
-
-    # invalid input
-    return -1
-
-if __name__ == '__main__':
-
-    nums = [8, 9, 10, 1, 2, 3, 4, 5, 6, 7]
-    print(f'The list is rotated {findRotationCount(nums)} times')
-```
 
 The time complexity of the above solution is O(log(n)) and doesn’t require any extra space.
 

@@ -10,93 +10,32 @@ The idea is based on the fact that the square root of any number `n` can be calc
 
 12 = 1 22 = (1 + 3) = 4 32 = (1 + 3 + 5 = 9) 42 = (1 + 3 + 5 + 7) = 16
 
-The implementation can be seen below in C++, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+function findSquare(num: number): number {
 
-int findSquare(int num)
-{
-    int odd = 1;
-    int sq = 0;
+    let odd = 1;
+    let sq = 0;
 
     // convert the number to positive if it is negative
-    num = abs(num);
+    num = Math.abs(num);
 
     // add odd numbers num times to result
-    while (num--)
-    {
+    while (num > 0) {
         sq = sq + odd;
         odd = odd + 2;
+        num = num - 1;
     }
 
     return sq;
 }
 
-int main()
-{
-    cout << findSquare(8) << " " << findSquare(-4);
-
-    return 0;
-}
+console.log(findSquare(8));
+console.log(findSquare(-4));
 ```
 
 **Output:** 64 16
-
-##
-
-```java
-class Main
-{
-    public static int findSquare(int num)
-    {
-        int odd = 1;
-        int sq = 0;
-
-        // convert the number to positive if it is negative
-        num = Math.abs(num);
-
-        while (num-- > 0)
-        {
-            sq = sq + odd;
-            odd = odd + 2;
-        }
-
-        return sq;
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println(findSquare(8));
-        System.out.println(findSquare(-4));
-    }
-}
-```
-
-##
-
-```python3
-def findSquare(num):
-
-    odd = 1
-    sq = 0
-
-    # convert the number to positive if it is negative
-    num = abs(num)
-
-    while num > 0:
-        sq = sq + odd
-        odd = odd + 2
-        num = num - 1
-
-    return sq
-
-if __name__ == '__main__':
-
-    print(findSquare(8))
-    print(findSquare(-4))
-```
 
 ## Method 2: Repeatedly adding a given number to the result
 
@@ -104,87 +43,30 @@ The idea is to repeatedly add a given number `n` to the result `n` times. For ex
 
 For n = 5, 52 = (5 + 5 + 5 + 5 + 5) = 25
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+function findSquare(num: number): number {
 
-int findSquare(int num)
-{
     // convert the number to positive if it is negative
-    num = abs(num);
+    num = Math.abs(num);
 
     // stores square of the number
-    int sq = num;
+    let sq = num;
 
     // repeatedly add `num` to the result
-    for (int i = 1; i < num; i++) {
+    for (let i = 1; i < num; i++) {
         sq = sq + num;
     }
 
     return sq;
 }
 
-int main()
-{
-    cout << findSquare(8) << " " << findSquare(-4);
-
-    return 0;
-}
+console.log(findSquare(8));
+console.log(findSquare(-4));
 ```
 
 **Output:** 64 16
-
-##
-
-```java
-class Main
-{
-    public static int findSquare(int num)
-    {
-        // convert the number to positive if it is negative
-        num = Math.abs(num);
-
-        // stores square of the number
-        int sq = num;
-
-        // repeatedly add `num` to the result
-        for (int i = 1; i < num; i++) {
-            sq = sq + num;
-        }
-
-        return sq;
-    }
-
-    public static void main(String[] args) {
-        System.out.print(findSquare(8) + " " + findSquare(-4));
-    }
-}
-```
-
-##
-
-```python3
-def findSquare(num):
-
-    # convert the number to positive if it is negative
-    num = abs(num)
-
-    # stores square of the number
-    sq = num
-
-    # repeatedly add `num` to the result
-    for i in range(1, num):
-        sq = sq + num
-
-    return sq
-
-if __name__ == '__main__':
-
-    print(findSquare(8))
-    print(findSquare(-4))
-```
 
 ## Method 3: Using [Divide and Conquer](https://techiedelight.com/divide-and-conquer-interview-questions/) with bitwise operators
 
@@ -192,24 +74,20 @@ If `n` is even, the square of `n` can be expressed as `n2 = ((n/2) × 2)2 = (n/2
 
 If `n` is odd, the square of `n` can be expressed as `n2 = ((n - 1) + 1)2 = (n - 1)2 + 1 + 2 × (n - 1) × 1 = ((n/2)2 × 4) + 1 + (n/2) × 4`.
 
-This is demonstrated below in C++, Java, and Python:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-int findSquare(int num)
-{
+```ts
+function findSquare(num: number): number {
     // base case
     if (num < 2) {
         return num;
     }
 
     // convert the number to positive if it is negative
-    num = abs(num);
+    num = Math.abs(num);
 
     // drop last bit from num (divide it by 2)
-    int i = num >> 1;
+    const i = num >> 1;
 
     // if num is odd
     if (num & 1) {
@@ -222,12 +100,7 @@ int findSquare(int num)
     }
 }
 
-int main()
-{
-    cout << findSquare(8);
-
-    return 0;
-}
+console.log(findSquare(8));
 ```
 
 **Output:** 64

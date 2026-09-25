@@ -24,356 +24,104 @@ submatrixSum = sum[i][j] – sum[i – k][j] – sum[i][j – k] + sum[i – k][
 
 Here, `(i, j)` represents the bottom-right corner coordinates of the `k × k` submatrix. Finally, print the submatrix that has the maximum sum.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-using namespace std;
+```ts
+function preprocess(mat: number[][], M: number, N: number): number[][] {
 
-// to store matrix coordinates
-typedef pair<int, int> Point;
-
-void printVector(vector<int> const &input)
-{
-    cout << "[";
-    for (int i = 0; i < input.size(); i++) {
-        cout << input[i];
-        if (i < input.size() - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
-vector<vector<int>> preprocess(vector<vector<int>> const &mat, int M, int N)
-{
-    // preprocess the matrix `mat` such that `sum[i][j]` stores
+    // preprocess the matrix `mat` such that `s[i][j]` stores
     // sum of elements in the matrix from (0, 0) to (i, j)
-    vector<vector<int>> sum(M, vector<int>(N));
-
-    sum[0][0] = mat[0][0];
+    const s: number[][] = Array.from({ length: M }, () => Array(N).fill(0));
+    s[0][0] = mat[0][0];
 
     // preprocess the first row
-    for (int j = 1; j < N; j++) {
-        sum[0][j] = mat[0][j] + sum[0][j - 1];
+    for (let j = 1; j < N; j++) {
+        s[0][j] = mat[0][j] + s[0][j - 1];
     }
 
     // preprocess the first column
-    for (int i = 1; i < M; i++) {
-        sum[i][0] = mat[i][0] + sum[i - 1][0];
+    for (let i = 1; i < M; i++) {
+        s[i][0] = mat[i][0] + s[i - 1][0];
     }
 
     // preprocess the rest of the matrix
-    for (int i = 1; i < M; i++)
-    {
-        for (int j = 1; j < N; j++) {
-            sum[i][j] = mat[i][j] + sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1];
+    for (let i = 1; i < M; i++) {
+        for (let j = 1; j < N; j++) {
+            s[i][j] = mat[i][j] + s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1];
         }
     }
 
-    return sum;
+    return s;
 }
 
-void findMaxSumSubMatrix(vector<vector<int>> const &mat, int k)
-{
+function findMaxSumSubMatrix(mat: number[][], k: number): number[][] {
+
     // base case
-    if (mat.size() == 0) {
-        return;
+    if (!mat || !mat.length) {
+        return [];
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const [M, N] = [mat.length, mat[0].length];
 
     // preprocess the matrix
-    vector<vector<int>> sum = preprocess(mat, M, N);
+    const s = preprocess(mat, M, N);
 
-    int max = INT_MIN;
-
-    // `p` stores bottom-right corner coordinates of the submatrix
-    Point p;
+    let maximum = -Infinity;
 
     // find the maximum sum submatrix
 
     // start from cell (k-1, k-1) and consider each submatrix of size `k × k`
-    for (int i = k - 1; i < M; i++)
-    {
-        for (int j = k - 1; j < N; j++)
-        {
+    for (let i = k - 1; i < M; i++) {
+        for (let j = k - 1; j < N; j++) {
+
             // Note that (i, j) is the bottom-right corner coordinates of the
             // square submatrix of size `k`
 
-            int total = sum[i][j];
+            let total = s[i][j];
             if (i - k >= 0) {
-                total = total - sum[i - k][j];
+                total = total - s[i - k][j];
             }
 
             if (j - k >= 0) {
-                total = total - sum[i][j - k];
+                total = total - s[i][j - k];
             }
 
             if (i - k >= 0 && j - k >= 0) {
-                total = total + sum[i - k][j - k];
+                total = total + s[i - k][j - k];
             }
 
-            if (total > max) {
-                max = total, p = make_pair(i, j);
+            if (total > maximum) {
+                maximum = total;
+                p = [i, j];
             }
         }
     }
 
-    // print maximum sum submatrix
-    for (int i = 0; i < k; i++)
-    {
-        vector<int> row;
-        for (int j = 0; j < k; j++) {
-            row.push_back(mat[i + p.first - k + 1][j + p.second - k + 1]);
-        }
-        printVector(row);
-    }
+    // `p` stores bottom-right corner coordinates of the submatrix
+    const [x, y] = p;
+
+    // return maximum sum submatrix
+    return Array.from({ length: k }, (_, i) =>
+        Array.from({ length: k }, (_, j) => mat[i + x - k + 1][j + y - k + 1]));
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 3, -4, 6, -5, 1 },
-        { 1, -2, 8, -4, -2 },
-        { 3, -8, 9, 3, 1 },
-        { -7, 3, 4, 2, 7 },
-        { -3, 7, -5, 7, -6 }
-    };
+// 5 × 5 matrix
+const mat = [
+    [3, -4, 6, -5, 1],
+    [1, -2, 8, -4, -2],
+    [3, -8, 9, 3, 1],
+    [-7, 3, 4, 2, 7],
+    [-3, 7, -5, 7, -6]
+];
 
-    // submatrix size
-    int k = 3;
+// submatrix size
+const k = 3;
 
-    findMaxSumSubMatrix(mat, k);
-
-    return 0;
+const submatrix = findMaxSumSubMatrix(mat, k);
+for (const row of submatrix) {
+    console.log(row);
 }
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-class Point
-{
-    int first, second;
-
-    public Point(int first, int second)
-    {
-        this.first = first;
-        this.second = second;
-    }
-}
-
-class Main
-{
-    public static int[][] preprocess(int[][] mat, int M, int N)
-    {
-        // preprocess the matrix `mat` such that `sum[i][j]` stores
-        // sum of elements in the matrix from (0, 0) to (i, j)
-        int[][] sum = new int[mat.length][mat[0].length];
-        sum[0][0] = mat[0][0];
-
-        // preprocess the first row
-        for (int j = 1; j < mat[0].length; j++) {
-            sum[0][j] = mat[0][j] + sum[0][j - 1];
-        }
-
-        // preprocess the first column
-        for (int i = 1; i < mat.length; i++) {
-            sum[i][0] = mat[i][0] + sum[i - 1][0];
-        }
-
-        // preprocess the rest of the matrix
-        for (int i = 1; i < mat.length; i++)
-        {
-            for (int j = 1; j < mat[0].length; j++)
-            {
-                sum[i][j] = mat[i][j] + sum[i - 1][j] + sum[i][j - 1]
-                        - sum[i - 1][j - 1];
-            }
-        }
-
-        return sum;
-    }
-
-    public static void findMaxSumSubMatrix(int[][] mat, int k)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // preprocess the matrix
-        int[][] sum = preprocess(mat, M, N);
-
-        int total, max = Integer.MIN_VALUE;
-
-        // `p` stores bottom-right corner coordinates of the submatrix
-        Point p = null;
-
-        // find the maximum sum submatrix
-
-        // start from cell (k-1, k-1) and consider each submatrix of size `k × k`
-        for (int i = k - 1; i < M; i++)
-        {
-            for (int j = k - 1; j < N; j++)
-            {
-                // Note that (i, j) is the bottom-right corner coordinates of the
-                // square submatrix of size `k`
-
-                total = sum[i][j];
-                if (i - k >= 0) {
-                    total = total - sum[i - k][j];
-                }
-
-                if (j - k >= 0) {
-                    total = total - sum[i][j - k];
-                }
-
-                if (i - k >= 0 && j - k >= 0) {
-                    total = total + sum[i - k][j - k];
-                }
-
-                if (total > max)
-                {
-                    max = total;
-                    p = new Point(i, j);
-                }
-            }
-        }
-
-        // get maximum sum submatrix
-        for (int i = 0; i < k; i++)
-        {
-            List<Integer> row = new ArrayList<>();
-            for (int j = 0; j < k; j++) {
-                int r = i + p.first - k + 1;
-                int c = j + p.second - k + 1;
-                row.add(mat[r][c]);
-            }
-            System.out.println(row);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // 5 × 5 matrix
-        int[][] mat =
-        {
-            { 3, -4, 6, -5, 1 },
-            { 1, -2, 8, -4, -2 },
-            { 3, -8, 9, 3, 1 },
-            { -7, 3, 4, 2, 7 },
-            { -3, 7, -5, 7, -6 }
-        };
-
-        // submatrix size
-        int k = 3;
-
-        findMaxSumSubMatrix(mat, k);
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-def preprocess(mat, M, N):
-
-    # preprocess the matrix `mat` such that `s[i][j]` stores
-    # sum of elements in the matrix from (0, 0) to (i, j)
-    s = [[0 for x in range(len(mat[0]))] for y in range(len(mat))]
-    s[0][0] = mat[0][0]
-
-    # preprocess the first row
-    for j in range(1, len(mat[0])):
-        s[0][j] = mat[0][j] + s[0][j - 1]
-
-    # preprocess the first column
-    for i in range(1, len(mat)):
-        s[i][0] = mat[i][0] + s[i - 1][0]
-
-    # preprocess the rest of the matrix
-    for i in range(1, len(mat)):
-        for j in range(1, len(mat[0])):
-            s[i][j] = mat[i][j] + s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1]
-
-    return s
-
-def findMaxSumSubMatrix(mat, k: int):
-
-    # base case
-    if not mat or not len(mat):
-        return []
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # preprocess the matrix
-    s = preprocess(mat, M, N)
-
-    maximum = -sys.maxsize
-
-    # find the maximum sum submatrix
-
-    # start from cell (k-1, k-1) and consider each submatrix of size `k × k`
-    for i in range(k - 1, M):
-        for j in range(k - 1, N):
-
-            # Note that (i, j) is the bottom-right corner coordinates of the
-            # square submatrix of size `k`
-
-            total = s[i][j]
-            if i - k >= 0:
-                total = total - s[i - k][j]
-
-            if j - k >= 0:
-                total = total - s[i][j - k]
-
-            if i - k >= 0 and j - k >= 0:
-                total = total + s[i - k][j - k]
-
-            if total > maximum:
-                maximum = total
-                p = (i, j)
-
-    # `p` stores bottom-right corner coordinates of the submatrix
-    (x, y) = p
-
-    # return maximum sum submatrix
-    return [[mat[i + x - k + 1][j + y - k + 1] for j in range(k)] for i in range(k)]
-
-if __name__ == '__main__':
-
-    # 5 × 5 matrix
-    mat = [
-        [3, -4, 6, -5, 1],
-        [1, -2, 8, -4, -2],
-        [3, -8, 9, 3, 1],
-        [-7, 3, 4, 2, 7],
-        [-3, 7, -5, 7, -6]
-    ]
-
-    # submatrix size
-    k = 3
-
-    submatrix = findMaxSumSubMatrix(mat, k)
-    for row in submatrix:
-        print(row)
 ```
 
 **Output:** [8, -4, -2] [9, 3, 1] [4, 2, 7]

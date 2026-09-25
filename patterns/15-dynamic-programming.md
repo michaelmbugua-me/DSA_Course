@@ -14,19 +14,21 @@ Break a problem into overlapping subproblems, solve each once, and cache the ans
 - Strings: subsequences, edit distance, palindromes
 - Sequences: LIS, knapsack, coin change, house robber, grid paths
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def dp(items):
-    # 1. define state: dp[i] = answer for first i items (or dp[i][capacity])
-    # 2. recurrence: dp[i] = combine(dp[i-1], dp[i-2], choices...)
-    # 3. base case, 4. fill order, 5. answer
-    n = len(items)
-    table = [0] * (n + 1)
-    table[0] = base
-    for i in range(1, n + 1):
-        table[i] = max(table[i - 1], table[i - 2] + items[i - 1])
-    return table[n]
+```ts
+function dp(items: number[]): number {
+  // 1. define state: dp[i] = answer for first i items (or dp[i][capacity])
+  // 2. recurrence: dp[i] = combine(dp[i-1], dp[i-2], choices...)
+  // 3. base case, 4. fill order, 5. answer
+  const n = items.length;
+  const table = new Array(n + 1).fill(0);
+  table[0] = base; // TODO
+  for (let i = 1; i <= n; i++) {
+    table[i] = Math.max(table[i - 1], table[i - 2] + items[i - 1]);
+  }
+  return table[n];
+}
 ```
 
 Knapsack shape (0/1): iterate items outer, capacity inner, take `max(skip, take)`. Unbounded (coin change): capacity outer, items inner.

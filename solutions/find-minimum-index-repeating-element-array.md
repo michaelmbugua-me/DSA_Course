@@ -16,36 +16,34 @@ A naive solution would be to consider each element `arr[i]` present in the array
 
 We can use [hashing](https://techiedelight.com/hashing-in-data-structure/) to solve this problem in linear time. The idea is to traverse the array from right to left. If the element is seen for the first time, insert it into the set; otherwise, update the minimum index to the element’s index. Finally, return the minimum index after all elements are processed.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_set>
-using namespace std;
+**Output:** The minimum index of the repeating element is 1
 
+```ts
 // Function to find the minimum index of the repeating element
-int findMinIndex(int arr[], int n)
-{
-    int minIndex = n;
+function findMinIndex(A: number[]): number {
+
+    let minIndex = A.length;
 
     // create an empty set to store array elements
-    unordered_set<int> set;
+    const s = new Set<number>();
 
     // traverse the array from right to left
-    for (int i = n - 1; i >= 0; i--)
-    {
+    for (let i = A.length - 1; i >= 0; i--) {
+
         // if the element is seen before, update the minimum index
-        if (set.find(arr[i]) != set.end()) {
+        if (s.has(A[i])) {
             minIndex = i;
         }
         // if the element is seen for the first time, insert it into the set
         else {
-            set.insert(arr[i]);
+            s.add(A[i]);
         }
     }
 
     // invalid input
-    if (minIndex == n) {
+    if (minIndex === A.length) {
         return -1;
     }
 
@@ -53,122 +51,16 @@ int findMinIndex(int arr[], int n)
     return minIndex;
 }
 
-int main()
-{
-    int arr[] = { 5, 6, 3, 4, 3, 6, 4 };
-    // int arr[] = { 1, 2, 3, 4, 5, 6 };
+const A = [5, 6, 3, 4, 3, 6, 4];
+// const A = [1, 2, 3, 4, 5, 6];
 
-    int n = sizeof(arr) / sizeof(arr[0]);
+const minIndex = findMinIndex(A);
 
-    int minIndex = findMinIndex(arr, n);
-
-    if (minIndex != n) {
-        cout << "The minimum index of the repeating element is " << minIndex;
-    }
-    else {
-        cout << "Invalid Input";
-    }
-
-    return 0;
+if (minIndex !== -1) {
+    console.log(`The minimum index of the repeating element is ${minIndex}`);
+} else {
+    console.log("Invalid Input");
 }
-```
-
-**Output:** The minimum index of the repeating element is 1
-
-##
-
-```java
-import java.util.HashSet;
-import java.util.Set;
-
-class Main
-{
-    // Function to find the minimum index of the repeating element
-    public static int findMinIndex(int[] A)
-    {
-        int minIndex = A.length;
-
-        // create an empty set to store array elements
-        Set<Integer> set = new HashSet<>();
-
-        // traverse the array from right to left
-        for (int i = A.length - 1; i >= 0; i--)
-        {
-            // if the element is seen before, update the minimum index
-            if (set.contains(A[i])) {
-                minIndex = i;
-            }
-            // if the element is seen for the first time, insert it into the set
-            else {
-                set.add(A[i]);
-            }
-        }
-
-        // invalid input
-        if (minIndex == A.length) {
-            return -1;
-        }
-
-        // return minimum index
-        return minIndex;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 5, 6, 3, 4, 3, 6, 4 };
-
-        int minIndex = findMinIndex(A);
-
-        if (minIndex != A.length) {
-            System.out.print("The minimum index of the repeating element is " +
-                    minIndex);
-        }
-        else {
-            System.out.print("Invalid Input");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the minimum index of the repeating element
-def findMinIndex(A):
-
-    minIndex = len(A)
-
-    # create an empty set to store list elements
-    s = set()
-
-    # traverse the list from right to left
-    for i in reversed(range(len(A))):
-
-        # if the element is seen before, update the minimum index
-        if A[i] in s:
-            minIndex = i
-        # if the element is seen for the first time, insert it into the set
-        else:
-            s.add(A[i])
-
-    # invalid input
-    if minIndex == len(A):
-        return -1
-
-    # return minimum index
-    return minIndex
-
-if __name__ == '__main__':
-
-    A = [5, 6, 3, 4, 3, 6, 4]
-    # A = [1, 2, 3, 4, 5, 6]
-
-    minIndex = findMinIndex(A)
-
-    if minIndex != len(A):
-        print("The minimum index of the repeating element is", minIndex)
-    else:
-        print("Invalid Input")
 ```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space.

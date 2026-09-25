@@ -12,229 +12,68 @@ For example, the left view of the following binary tree is `1, 2, 4, 7`:
 
 In the iterative version, perform a [level order traversal](https://techiedelight.com/level-order-traversal-binary-tree/) on the tree. We can modify level order traversal to maintain nodes at the current level. Then if the current node is the first node of the current level, print it.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <list>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Iterative function to print the left view of a given binary tree
-void leftView(Node* root)
-{
+function leftView(root: TreeNode | null): void {
+
     // return if the tree is empty
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // create an empty queue and enqueue the root node
-    list<Node*> queue;
-    queue.push_back(root);
-
-    // pointer to store the current node
-    Node* curr = nullptr;
+    const queue: TreeNode[] = [root];
 
     // loop till queue is empty
-    while (!queue.empty())
-    {
+    while (queue.length > 0) {
+
         // calculate the total number of nodes at the current level
-        int size = queue.size();
-        int i = 0;
+        const size = queue.length;
+        let i = 0;
 
         // process every node of the current level and enqueue their
         // non-empty left and right child
-        while (i++ < size)
-        {
-            curr = queue.front();
-            queue.pop_front();
+        while (i < size) {
+            // pointer to store the current node
+            const curr = queue.shift()!;
+            i = i + 1;
 
             // if this is the first node of the current level, print it
-            if (i == 1) {
-                cout << curr->key << " ";
+            if (i === 1) {
+                process.stdout.write(curr.key + ' ');
             }
 
-            if (curr->left) {
-                queue.push_back(curr->left);
+            if (curr.left) {
+                queue.push(curr.left);
             }
 
-            if (curr->right) {
-                queue.push_back(curr->right);
+            if (curr.right) {
+                queue.push(curr.right);
             }
         }
     }
 }
 
-int main()
-{
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    leftView(root);
-
-    return 0;
-}
+leftView(root);
 ```
 
 **Output:** 1 2 4 7
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-class Main
-{
-    // Iterative function to print the left view of a given binary tree
-    public static void leftView(Node root)
-    {
-        // return if the tree is empty
-        if (root == null) {
-            return;
-        }
-
-        // create an empty queue and enqueue the root node
-        Queue<Node> queue = new ArrayDeque<>();
-        queue.add(root);
-
-        // to store the current node
-        Node curr;
-
-        // loop till queue is empty
-        while (!queue.isEmpty())
-        {
-            // calculate the total number of nodes at the current level
-            int size = queue.size();
-            int i = 0;
-
-            // process every node of the current level and enqueue their
-            // non-empty left and right child
-            while (i++ < size)
-            {
-                curr = queue.poll();
-
-                // if this is the first node of the current level, print it
-                if (i == 1) {
-                    System.out.print(curr.key + " ");
-                }
-
-                if (curr.left != null) {
-                    queue.add(curr.left);
-                }
-
-                if (curr.right != null) {
-                    queue.add(curr.right);
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        leftView(root);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Iterative function to print the left view of a given binary tree
-def leftView(root):
-
-    # return if the tree is empty
-    if root is None:
-        return
-
-    # create an empty queue and enqueue the root node
-    queue = deque()
-    queue.append(root)
-
-    # loop till queue is empty
-    while queue:
-
-        # calculate the total number of nodes at the current level
-        size = len(queue)
-        i = 0
-
-        # process every node of the current level and enqueue their
-        # non-empty left and right child
-        while i < size:
-            # pointer to store the current node
-            curr = queue.popleft()
-            i = i + 1
-
-            # if this is the first node of the current level, print it
-            if i == 1:
-                print(curr.key, end=' ')
-
-            if curr.left:
-                queue.append(curr.left)
-
-            if curr.right:
-                queue.append(curr.right)
-
-if __name__ == '__main__':
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    leftView(root)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the size of the binary tree.
 
@@ -242,211 +81,80 @@ The time complexity of the above solution is O(n) and requires O(n) extra space,
 
 We can also solve this problem by using [hashing](https://techiedelight.com/hashing-in-data-structure/). The idea is to traverse the tree in a [preorder fashion](https://techiedelight.com/preorder-tree-traversal-iterative-recursive/) and pass level information in [function arguments](https://techiedelight.com/difference-between-argument-parameter/#Argument). If the level is visited for the first time, insert the current node and level information into the map. Finally, when all nodes are processed, traverse the map and print the left view.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Recursive function to traverse the nodes in a preorder fashion
-void leftView(Node* root, int level, auto &map)
-{
-    if (root == nullptr) {
+function leftView(root: TreeNode | null, level: number, d: Map<number, number>): void {
+
+    // base case
+    if (root === null) {
         return;
     }
 
     // if the level is visited for the first time, insert the current node
-    // and level information into the map
-    if (map.find(level) == map.end()) {
-        map[level] = root->key;
+    // and level information into the dictionary
+    if (!d.has(level)) {
+        d.set(level, root.key);
     }
 
-    leftView(root->left, level + 1, map);
-    leftView(root->right, level + 1, map);
+    leftView(root.left, level + 1, d);
+    leftView(root.right, level + 1, d);
 }
 
 // Function to print the left view of a given binary tree
-int leftView(Node* root)
-{
-    // create an empty map to store the first node for each level
-    unordered_map<int, int> map;
+function printLeftView(root: TreeNode | null): void {
 
-    // traverse the tree and fill the map
-    leftView(root, 1, map);
+    // create an empty dictionary to store the first node for each level
+    const d = new Map<number, number>();
 
-    // iterate through the map and print left view
-    for (int i = 1; i <= map.size(); i++) {
-        cout << map[i] << " ";
+    // traverse the tree and fill the dictionary
+    leftView(root, 1, d);
+
+    // iterate through the dictionary in sorted order of its keys
+    // and print the left view
+    for (let i = 1; i <= d.size; i++) {
+        process.stdout.write(d.get(i) + ' ');
     }
 }
 
-int main()
-{
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    leftView(root);
-
-    return 0;
-}
+printLeftView(root);
 ```
 
 **Output:** 1 2 4 7
 
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-class Main
-{
-    // Recursive function to traverse the nodes in a preorder fashion
-    public static void leftView(Node root, int level, Map<Integer, Integer> map)
-    {
-        // base case
-        if (root == null) {
-            return;
-        }
-
-        // if the level is visited for the first time, insert the current node
-        // and level information into the map
-        map.putIfAbsent(level, root.key);
-
-        leftView(root.left, level + 1, map);
-        leftView(root.right, level + 1, map);
-    }
-
-    // Function to print the left view of a given binary tree
-    public static void leftView(Node root)
-    {
-        // create an empty HashMap to store the first node for each level
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // traverse the tree and fill the map
-        leftView(root, 1, map);
-
-        // iterate through the HashMap in sorted order of its keys
-        // and print the left view
-        for (int i = 1; i <= map.size(); i++) {
-            System.out.print(map.get(i) + " ");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        leftView(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Recursive function to traverse the nodes in a preorder fashion
-def leftView(root, level, d):
-
-    # base case
-    if root is None:
-        return
-
-    # if the level is visited for the first time, insert the current node
-    # and level information into the dictionary
-    if level not in d:
-        d[level] = root.key
-
-    leftView(root.left, level + 1, d)
-    leftView(root.right, level + 1, d)
-
-# Function to print the left view of a given binary tree
-def printLeftView(root):
-
-    # create an empty dictionary to store the first node for each level
-    d = {}
-
-    # traverse the tree and fill the dictionary
-    leftView(root, 1, d)
-
-    # iterate through the dictionary in sorted order of its keys
-    # and print the left view
-    for i in range(1, len(d) + 1):
-        print(d[i], end=' ')
-
-if __name__ == '__main__':
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    printLeftView(root)
-```
-
 We can also traverse nodes in reverse preorder fashion, as shown below:
 
-```cpp
-void leftView(Node* root, int level, auto &map)
-{
-    if (root == nullptr) {
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
+
+function leftView(root: TreeNode | null, level: number, d: Map<number, number>): void {
+    if (root === null) {
         return;
     }
 
     // insert the current node and level information into the map
-    map[level] = root->key;
+    d.set(level, root.key);
 
     // recur for the right subtree before the left subtree
-    leftView(root->right, level + 1, map);
-    leftView(root->left, level + 1, map);
+    leftView(root.right, level + 1, d);
+    leftView(root.left, level + 1, d);
 }
 ```

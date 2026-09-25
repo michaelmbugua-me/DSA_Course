@@ -6,27 +6,23 @@ Write an algorithm to get 0 and 1 with equal probability using a function that g
 
 > 
 
-The algorithm can be implemented as follows in C (self-explanatory):
+The algorithm can be implemented as follows in TypeScript (self-explanatory):
 
-```
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
+```ts
 // Function to generate a random number from 1 to 5 with equal probability
-int random() {
-    return (rand() % 5) + 1;
+function random(): number {
+    return Math.floor(Math.random() * 5) + 1;
 }
 
 // Returns 0 or 1 with equal probability using `random()` function
-int generate()
+function generate(): number
 {
-    int r;
+    let r;
 
     do {
         // `r` could be any one of 1, 2, 3, 4, and 5
         r = random();
-    } while (r == 5);
+    } while (r === 5);
 
     // `r` could any of 1, 2, 3, 4 now
 
@@ -35,33 +31,26 @@ int generate()
     return r & 1;
 }
 
-int main(void)
-{
-    srand(time(NULL));
+let x = 0, y = 0;
 
-    int x = 0, y = 0;
-
-    // make 10000 calls to `generate()`
-    for (int i = 1; i <= 10000; i++) {
-        generate()? x++: y++;
-    }
-
-    // print the results
-    printf("0 ~ %0.2f%\n", x/100.0);
-    printf("1 ~ %0.2f%\n", y/100.0);
-
-    return 0;
+// make 10000 calls to `generate()`
+for (let i = 1; i <= 10000; i++) {
+    generate() ? x++ : y++;
 }
+
+// print the results
+console.log(`0 ~ ${(x / 100).toFixed(2)}%`);
+console.log(`1 ~ ${(y / 100).toFixed(2)}%`);
 ```
 
 **`Output (will vary):`** 0 ~ 50.23% 1 ~ 49.77%
 
 We can also do something like below, but this will increase the number of calls made to the `random()` function:
 
-```
-int generate()
+```ts
+function generate(): number
 {
-    int r;
+    let r;
 
     do {
         // `r` could be any one of 1, 2, 3, 4, and 5

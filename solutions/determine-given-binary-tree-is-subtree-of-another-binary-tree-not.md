@@ -16,350 +16,109 @@ Also, we know that [inorder](https://techiedelight.com/inorder-tree-traversal-it
 
 inorder(X) = {4, 2, 5, 1, 6, 3, 7} inorder(Y) = {6, 3, 7} postorder(X) = {4, 5, 2, 6, 7, 3, 1} postorder(Y) = {6, 7, 3}
 
-Since `inorder(Y)` is a subset of `inorder(X)`, and `postorder(Y)` is a subset of `postorder(X)`, we can say that `Y` is a subtree of `X`. The algorithm can be implemented as follows in C++, Java, and Python:
+Since `inorder(Y)` is a subset of `inorder(X)`, and `postorder(Y)` is a subset of `postorder(X)`, we can say that `Y` is a subtree of `X`. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
-
-// Function to store inorder traversal on the tree in a vector
-void inorder(Node* node, vector<int> &vc)
-{
-    if (node == nullptr) {
-        return;
-    }
-
-    inorder(node->left, vc);
-    vc.push_back(node->data);
-    inorder(node->right, vc);
+```ts
+// A class to store a binary tree node
+class TreeNode {
+  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
 }
 
-// Function to store postorder traversal on the tree in a vector
-void postorder(Node* node, vector<int> &vc)
-{
-    if (node == nullptr) {
-        return;
-    }
+// Function to store inorder traversal on the tree in a list
+function inorder(node: TreeNode | null, list: number[]): void {
+  if (node === null) {
+    return;
+  }
 
-    postorder(node->left, vc);
-    postorder(node->right, vc);
-    vc.push_back(node->data);
+  inorder(node.left, list);
+  list.push(node.data);
+  inorder(node.right, list);
+}
+
+// Function to store postorder traversal on the tree in a list
+function postorder(node: TreeNode | null, list: number[]): void {
+  if (node === null) {
+    return;
+  }
+
+  postorder(node.left, list);
+  postorder(node.right, list);
+  list.push(node.data);
+}
+
+// Utility function to check if y is sublist of x or not
+function isSublist(x: number[], y: number[]): boolean {
+  for (let i = 0; i <= x.length - y.length; i++) {
+    if (JSON.stringify(x.slice(i, i + y.length)) === JSON.stringify(y)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Function to check if a given binary tree is a subtree of another
 // binary tree or not
-bool checkSubtree(Node* tree, Node* subtree)
-{
-    // base case: both trees are the same
-    if (tree == subtree) {
-        return true;
-    }
-
-    // base case: if the first tree is empty but the second tree is non-empty
-    if (tree == nullptr) {
-        return false;
-    }
-
-    // store inorder traversal of both trees in `first` and `second`, respectively
-    vector<int> first, second;
-    inorder(tree, first);
-    inorder(subtree, second);
-
-    // return false if `second` is not a subarray of `first`
-    auto it = search(first.begin(), first.end(), second.begin(), second.end());
-    if (it == first.end()) {
-        return false;
-    }
-
-    // reset both vectors
-    first.erase(first.begin(), first.end());
-    second.erase(second.begin(), second.end());
-
-    // Now store postorder traversal of both trees in `first` and `second`,
-    // respectively
-    postorder(tree, first);
-    postorder(subtree, second);
-
-    // return false if `second` is not a subarray of `first`
-    it = search(first.begin(), first.end(), second.begin(), second.end());
-    if (it == first.end()) {
-        return false;
-    }
-
+function checkSubtree(tree: TreeNode | null, subtree: TreeNode | null): boolean {
+  // base case: both trees are the same
+  if (tree === subtree) {
     return true;
+  }
+
+  // base case: if the first tree is empty but the second tree is non-empty
+  if (tree === null) {
+    return false;
+  }
+
+  // store the inorder traversal of both trees in `first` and `second`, respectively
+  let first: number[] = [];
+  let second: number[] = [];
+
+  inorder(tree, first);
+  inorder(subtree, second);
+
+  // return false if the second list is not a sublist of the first list
+  if (!isSublist(first, second)) {
+    return false;
+  }
+
+  // reset both lists
+  first = [];
+  second = [];
+
+  // Now store postorder traversal of both trees in `first` and `second`, respectively
+  postorder(tree, first);
+  postorder(subtree, second);
+
+  // return false if the second list is not a sublist of the first list
+  if (!isSublist(first, second)) {
+    return false;
+  }
+
+  return true;
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    */
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     / \     / \
+    4   5   6   7
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
 
-    checkSubtree(root, root->right)? cout << "Yes": cout << "No";
-
-    return 0;
+if (checkSubtree(root, root.right)) {
+  console.log("Yes");
+} else {
+  console.log("No");
 }
-```
-
-**Output:** Yes
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(data);
-    }
-}
-
-class Main
-{
-    // Function to store inorder traversal on the tree in a list
-    public static void inorder(Node node, List<Integer> list)
-    {
-        if (node == null) {
-            return;
-        }
-
-        inorder(node.left, list);
-        list.add(node.data);
-        inorder(node.right, list);
-    }
-
-    // Function to store postorder traversal on the tree in a list
-    public static void postorder(Node node, List<Integer> list)
-    {
-        if (node == null) {
-            return;
-        }
-
-        postorder(node.left, list);
-        postorder(node.right, list);
-        list.add(node.data);
-    }
-
-    // Utility function to check if y is sublist of x or not
-    public static boolean isSublist(List<Integer> x, List<Integer> y) {
-
-        for (int i = 0; i < x.size() - y.size() + 1; i++)
-        {
-            if (x.subList(i, i + y.size()).equals(y)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Function to check if a given binary tree is a subtree of another
-    // binary tree or not
-    public static boolean checkSubtree(Node tree, Node subtree)
-    {
-        // base case: both trees are the same
-        if (tree == subtree) {
-            return true;
-        }
-
-        // base case: if the first tree is empty but the second tree is non-empty
-        if (tree == null) {
-            return false;
-        }
-
-        // store the inorder traversal of both trees in `first` and `second`,
-        // respectively
-        List<Integer> first = new ArrayList<>(), second = new ArrayList<>();
-        inorder(tree, first);
-        inorder(subtree, second);
-
-        // return false if the second list is not a sublist of the first list
-        if (!isSublist(first, second)) {
-            return false;
-        }
-
-        // reset both lists
-        first.clear();
-        second.clear();
-
-        // Now store postorder traversal of both trees in `first` and `second`,
-        // respectively
-        postorder(tree, first);
-        postorder(subtree, second);
-
-        // return false if the second list is not a sublist of the first list
-        if (!isSublist(first, second)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             / \     / \
-            4   5   6   7
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-
-        if (checkSubtree(root, root.right)) {
-            System.out.print("Yes");
-        }
-        else {
-            System.out.print("No");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-    def __repr__(self):
-        return str(self.data)
-
-# Function to store inorder traversal on the tree in a list
-def inorder(node, list):
-    if node is None:
-        return
-
-    inorder(node.left, list)
-    list.append(node.data)
-    inorder(node.right, list)
-
-# Function to store postorder traversal on the tree in a list
-def postorder(node, list):
-    if node is None:
-        return
-
-    postorder(node.left, list)
-    postorder(node.right, list)
-    list.append(node.data)
-
-# Utility function to check if y is sublist of x or not
-def is_sublist(x, y):
-    for i in range(len(x) - len(y) + 1):
-        if x[i: i + len(y)] == y:
-            return True
-    return False
-
-# Function to check if a given binary tree is a subtree of another
-# binary tree or not
-def checkSubtree(tree, subtree):
-
-    # base case: both trees are the same
-    if tree == subtree:
-        return True
-
-    # base case: if the first tree is empty but the second tree is non-empty
-    if tree is None:
-        return False
-
-    # store the inorder traversal of both trees in `first` and `second`, respectively
-    first = []
-    second = []
-
-    inorder(tree, first)
-    inorder(subtree, second)
-
-    # return false if the second list is not a sublist of the first list
-    if not is_sublist(first, second):
-        return False
-
-    # reset both lists
-    first.clear()
-    second.clear()
-
-    # Now store postorder traversal of both trees in `first` and `second`, respectively
-    postorder(tree, first)
-    postorder(subtree, second)
-
-    # return false if the second list is not a sublist of the first list
-    if not is_sublist(first, second):
-        return False
-
-    return True
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-
-    if checkSubtree(root, root.right):
-        print('Yes')
-    else:
-        print('No')
 ```
 
 The time complexity of the above solution is O(n2), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(n).

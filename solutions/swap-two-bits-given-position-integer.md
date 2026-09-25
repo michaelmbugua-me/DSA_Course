@@ -16,97 +16,28 @@ We can solve this problem by checking if the two bits at given positions are the
 
 XOR with 1 will toggle the bits 0 ^ 1 = 1 1 ^ 1 = 0 XOR with 0 will have no impact 0 ^ 0 = 0 1 ^ 0 = 1
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
+```ts
 // Function to swap bits at position `p` and `q` in integer `n`
-int swap(int n, int p, int q)
-{
+function swap(n: number, p: number, q: number): number {
     // if bits are different at position `p` and `q`
-    if (((n & (1 << p)) >> p) ^ ((n & (1 << q)) >> q))
-    {
-        n ^= (1 << p);
-        n ^= (1 << q);
+    if ((((n & (1 << p)) >> p) ^ ((n & (1 << q)) >> q)) === 1) {
+        n ^= 1 << p;
+        n ^= 1 << q;
     }
     return n;
 }
 
-int main()
-{
-    int n = 31;
-    int p = 2, q = 6;    // swap 3rd and 7th bit from the right
+let n = 31;
 
-    cout << n << " in binary is " << bitset<8>(n) << endl;
-    n = swap (n, p, q);
-    cout << n << " in binary is " << bitset<8>(n) << endl;
+// swap 3rd and 7th bit from the right
+const p = 2;
+const q = 6;
 
-    return 0;
-}
-```
-
-**Output:** 31 in binary is 00011111 91 in binary is 01011011
-
-##
-
-```java
-class Main
-{
-    // Function to swap bits at position `p` and `q` in integer `n`
-    public static int swap(int n, int p, int q)
-    {
-        // if bits are different at position `p` and `q`
-        if ((((n & (1 << p)) >> p) ^ ((n & (1 << q)) >> q)) == 1)
-        {
-            n ^= (1 << p);
-            n ^= (1 << q);
-        }
-        return n;
-    }
-
-    public static void main (String[] args)
-    {
-        int n = 31;
-        int p = 2, q = 6;    // swap 3rd and 7th bit from the right
-
-        System.out.println(n + " in binary is " +
-                String.format("%08d", Integer.parseInt(Integer.toBinaryString(n))));
-
-        n = swap (n, p, q);
-
-        System.out.println(n + " in binary is " +
-                String.format("%08d", Integer.parseInt(Integer.toBinaryString(n))));
-    }
-}
-```
-
-##
-
-```python3
-# Function to swap bits at position `p` and `q` in integer `n`
-def swap(n, p, q):
-
-    # if bits are different at position `p` and `q`
-    if (((n & (1 << p)) >> p) ^ ((n & (1 << q)) >> q)) == 1:
-        n ^= (1 << p)
-        n ^= (1 << q)
-
-    return n
-
-if __name__ == '__main__':
-
-    n = 31
-
-    # swap 3rd and 7th bit from the right
-    p = 2
-    q = 6
-
-    print(f'{n} in binary is', bin(n)[2:].zfill(8))
-    n = swap(n, p, q)
-    print(f'{n} in binary is', bin(n)[2:].zfill(8))
+console.log(`${n} in binary is`, n.toString(2).padStart(8, '0'));
+n = swap(n, p, q);
+console.log(`${n} in binary is`, n.toString(2).padStart(8, '0'));
 ```
 
 Also See:

@@ -18,312 +18,105 @@ We can reduce the time complexity of the problem to O(M2 × N) by using O(M × N
 
 After filling both auxiliary matrices, process each cell `(i, j)` starting from the last cell in the last row. For every cell `(i, j)`, take the minimum of `X[i][j]` and `Y[i][j]` which could be the maximum length of the right vertical line and bottom horizontal line of the square matrix ending at cell `(i, j)`. The cell ending at the current cell `(i, j)` would form a square submatrix if there exist a left vertical line and a top horizontal line of at least the same length. Keep track of the largest square submatrix’s dimensions so far and return it when every cell is processed.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // Function to find the largest square submatrix, which is surrounded by all 1's
-int findLargestSquareSubMatrix(vector<vector<int>> const &mat)
-{
+function findLargestSquareSubMatrix(mat: number[][]): number {
+
     // base case
-    if (mat.size() == 0) {
-        return;
+    if (mat === null || mat.length === 0) {
+        return 0;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length;
+    const N = mat[0].length;
 
     // create two auxiliary matrices filled with all 0's of size `M × N`
-    int X[M][N] = {};
-    int Y[M][N] = {};
+    const X: number[][] = Array.from({ length: M }, () => new Array(N).fill(0));
+    const Y: number[][] = Array.from({ length: M }, () => new Array(N).fill(0));
 
-    // update the auxiliary matrix `X[][]` and `Y[][]` with the total number of
-    // continuous 1's ending at the cell
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            if (mat[i][j])
-            {
-                if (i == 0) {
-                    Y[i][j] = 1;
-                }
-                else {
-                    Y[i][j] = Y[i - 1][j] + 1;
-                }
-
-                if (j == 0) {
-                    X[i][j] = 1;
-                }
-                else {
-                    X[i][j] = X[i][j - 1] + 1;
-                }
+    // update the auxiliary matrix `X` and `Y` with the
+    // total number of continuous 1's ending at the cell
+    for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
+            if (mat[i][j]) {
+                Y[i][j] = (i === 0 ? 0 : Y[i - 1][j]) + 1;
+                X[i][j] = (j === 0 ? 0 : X[i][j - 1]) + 1;
             }
         }
     }
 
+    /* 
+        // print `X` matrix
+        for (let i = 0; i < M; i++) {
+            console.log(X[i].join(' '));
+        }
+
+        console.log();
+
+        // print `Y` matrix
+        for (let i = 0; i < M; i++) {
+            console.log(Y[i].join(' '));
+        }
+
+        console.log();
+    */
+
     // to keep track of the largest square submatrix
-    int max_length = 0;
+    let maxLen = 0;
 
     // process each cell `(i, j)` of the auxiliary matrix starting from the
     // last cell in the last row
 
-    for (int i = M - 1; i >= 0; i--)
-    {
-        for (int j = N - 1; j >= 0; j--)
-        {
+    for (let i = M - 1; i >= 0; i--) {
+        for (let j = N - 1; j >= 0; j--) {
+
             // The minimum of `X[i][j]` and `Y[i][j]` would be the length of the
             // right vertical line and bottom horizontal line of the
             // square matrix ending at cell `(i, j)`
 
-            int len = min(X[i][j], Y[i][j]);
-            while (len)
-            {
+            let length = Math.min(X[i][j], Y[i][j]);
+            while (length) {
+
                 // the cell ending at the current cell `(i, j)` forms a square
                 // submatrix if there exists a left vertical line and a
-                // top horizontal line of at least length `len`
+                // top horizontal line of at least length `length`
 
-                bool isSquare = Y[i][j - len + 1] >= len &&
-                                X[i - len + 1][j] >= len;
+                const isSquare = Y[i][j - length + 1] >= length &&
+                        X[i - length + 1][j] >= length;
 
                 // check if the square ending at the current cell is the largest so far
-                if (isSquare && max_length < len) {
-                    max_length = len;
+                if (isSquare && maxLen < length) {
+                    maxLen = length;
                 }
 
                 // reduce the length by 1 to check for smaller squares ending at
                 // the current cell
-                len--;
+                length = length - 1;
             }
         }
     }
 
-    return max_length;
+    return maxLen;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 0, 1 },
-        { 0, 1, 1, 0, 0, 1 },
-        { 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 0, 1, 0, 1 },
-        { 1, 0, 1, 1, 0, 0 },
-        { 1, 0, 1, 0, 1, 1 },
-        { 1, 1, 1, 0, 1, 1 }
-    };
+const mat = [
+    [1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 0, 1],
+    [0, 1, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 1, 0, 1],
+    [1, 0, 1, 1, 0, 0],
+    [1, 0, 1, 0, 1, 1],
+    [1, 1, 1, 0, 1, 1]
+];
 
-    cout << "The size of the largest square submatrix is "
-         << findLargestSquareSubMatrix(mat);
-
-    return 0;
-}
+console.log('The size of largest square submatrix is', findLargestSquareSubMatrix(mat));
 ```
 
 **Output:** The largest square submatrix has a length of 4
-
-##
-
-```java
-class Main
-{
-    // Function to find the largest square submatrix, which is surrounded by all 1's
-    public static int findLargestSquareSubMatrix(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // create two auxiliary matrices filled with all 0's of size `M × N`
-        int[][] X = new int[M][N];
-        int[][] Y = new int[M][N];
-
-        // update the auxiliary matrix `X[][]` and `Y[][]` with the
-        // total number of continuous 1's ending at the cell
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                if (mat[i][j] != 0)
-                {
-                    if (i == 0) {
-                        Y[i][j] = 1;
-                    }
-                    else {
-                        Y[i][j] = Y[i - 1][j] + 1;
-                    }
-
-                    if (j == 0) {
-                        X[i][j] = 1;
-                    }
-                    else {
-                        X[i][j] = X[i][j - 1] + 1;
-                    }
-                }
-            }
-        }
-
-        /*
-            // print `X` matrix
-            for (int i = 0; i < M; i++) {
-                System.out.println(Arrays.toString(X[i]));
-            }
-
-            System.out.println();
-
-            // print `Y` matrix
-            for (int i = 0; i < M; i++) {
-                System.out.println(Arrays.toString(Y[i]));
-            }
-
-            System.out.println();
-
-        */
-
-        // to keep track of the largest square submatrix
-        int max_length = 0;
-
-        // process each cell `(i, j)` of the auxiliary matrix starting from the
-        // last cell in the last row
-
-        for (int i = M - 1; i >= 0; i--)
-        {
-            for (int j = N - 1; j >= 0; j--)
-            {
-                // The minimum of `X[i][j]` and `Y[i][j]` would be the length of the
-                // right vertical line and bottom horizontal line of the
-                // square matrix ending at cell `(i, j)`
-
-                int len = Math.min(X[i][j], Y[i][j]);
-                while (len > 0)
-                {
-                    // the cell ending at the current cell `(i, j)` forms a square
-                    // submatrix if there exists a left vertical line and a
-                    // top horizontal line of at least length `len`
-
-                    boolean isSquare = Y[i][j - len + 1] >= len &&
-                                            X[i - len + 1][j] >= len;
-
-                    // check if the square ending at the current cell is the largest
-                    // so far
-                    if (isSquare && max_length < len) {
-                        max_length = len;
-                    }
-
-                    // reduce the length by 1 to check for smaller squares ending at
-                    // the current cell
-                    len--;
-                }
-            }
-        }
-
-        return max_length;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-                { 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 1, 1, 0, 1 },
-                { 0, 1, 1, 0, 0, 1 },
-                { 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 0, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 0 },
-                { 1, 0, 1, 0, 1, 1 },
-                { 1, 1, 1, 0, 1, 1 }
-        };
-
-        System.out.println("The size of largest square submatrix is "
-                                + findLargestSquareSubMatrix(mat));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the largest square submatrix, which is surrounded by all 1's
-def findLargestSquareSubMatrix(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # create two auxiliary matrices filled with all 0's of size `M × N`
-    X = [[0 for x in range(N)] for y in range(M)]
-    Y = [[0 for x in range(N)] for y in range(M)]
-
-    # update the auxiliary matrix `X` and `Y` with the
-    # total number of continuous 1's ending at the cell
-    for i in range(M):
-        for j in range(N):
-            if mat[i][j]:
-                Y[i][j] = (0 if i == 0 else Y[i - 1][j]) + 1
-                X[i][j] = (0 if j == 0 else X[i][j - 1]) + 1
-
-    # to keep track of the largest square submatrix
-    max_len = 0
-
-    # process each cell `(i, j)` of the auxiliary matrix starting from the
-    # last cell in the last row
-
-    for i in reversed(range(M)):
-        for j in reversed(range(N)):
-
-            # The minimum of `X[i][j]` and `Y[i][j]` would be the length of the
-            # right vertical line and bottom horizontal line of the
-            # square matrix ending at cell `(i, j)`
-
-            length = min(X[i][j], Y[i][j])
-            while length:
-
-                # the cell ending at the current cell `(i, j)` forms a square
-                # submatrix if there exists a left vertical line and a
-                # top horizontal line of at least length `length`
-
-                isSquare = Y[i][j - length + 1] >= length and \
-                        X[i - length + 1][j] >= length
-
-                # check if the square ending at the current cell is the largest so far
-                if isSquare and max_len < length:
-                    max_len = length
-
-                # reduce the length by 1 to check for smaller squares ending at
-                # the current cell
-                length = length - 1
-
-    return max_len
-
-if __name__ == '__main__':
-
-    mat = [
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 1, 0, 1],
-        [0, 1, 1, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 0, 1],
-        [1, 0, 1, 1, 0, 0],
-        [1, 0, 1, 0, 1, 1],
-        [1, 1, 1, 0, 1, 1]
-    ]
-
-    print("The size of largest square submatrix is", findLargestSquareSubMatrix(mat))
-```
 
 Also See:
 

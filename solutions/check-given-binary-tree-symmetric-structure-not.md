@@ -16,30 +16,21 @@ The tree has a symmetric structure if the left and right subtree mirror each oth
   * The left subtree is the mirror of the right subtree.
   * The right subtree is the mirror of the left subtree.
 
-We can quickly check this using recursion. Following is the implementation of the idea in C++, Java, and Python:
+We can quickly check this using recursion. Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Function to check if subtree rooted at `X` and `Y` mirror each other
-bool isSymmetric(Node* X, Node* Y)
-{
+const isMirror = (X: TreeNode | null, Y: TreeNode | null): boolean => {
+
     // base case: if both trees are empty
-    if (X == nullptr && Y == nullptr) {
+    if (X === null && Y === null) {
         return true;
     }
 
@@ -47,182 +38,47 @@ bool isSymmetric(Node* X, Node* Y)
     // 1. Both trees are non-empty, and
     // 2. The left subtree is the mirror of the right subtree, and
     // 3. The right subtree is the mirror of the left subtree
-    return (X != nullptr && Y != nullptr) &&
-        isSymmetric(X->left, Y->right) &&
-        isSymmetric(X->right, Y->left);
-}
+    return (X !== null && Y !== null) &&
+        isMirror(X.left, Y.right) &&
+        isMirror(X.right, Y.left);
+};
 
 // Function to check if a given binary tree has a symmetric structure or not
-bool isSymmetric(Node* root)
-{
+const isSymmetricTree = (root: TreeNode | null): boolean => {
+
     // base case
-    if (root == nullptr) {
+    if (root === null) {
         return true;
     }
 
     // return true if left and right subtree mirror each other
-    return isSymmetric(root->left, root->right);
+    return isMirror(root.left, root.right);
+};
+
+/* Construct the following tree
+      1
+    /   \
+   /     \
+  2       3
+   \     /
+    5   6
+*/
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+
+if (isSymmetricTree(root)) {
+    console.log('The binary tree is symmetric');
 }
-
-int main()
-{
-    /* Construct the following tree
-         1
-       /  \
-      /    \
-     2      3
-      \    /
-       5  6
-    */
-
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-
-    if (isSymmetric(root)) {
-        cout << "The binary tree is symmetric";
-    }
-    else {
-        cout << "The binary tree is not symmetric";
-    }
-
-    return 0;
+else {
+    console.log('The binary tree is not symmetric');
 }
 ```
 
 **Output:** The binary tree is symmetric
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to check if subtree rooted at `X` and `Y` mirror each other
-    public static boolean isSymmetric(Node X, Node Y)
-    {
-        // base case: if both trees are empty
-        if (X == null && Y == null) {
-            return true;
-        }
-
-        // return true if
-        // 1. Both trees are non-empty, and
-        // 2. The left subtree is the mirror of the right subtree, and
-        // 3. The right subtree is the mirror of the left subtree
-        return (X != null && Y != null) &&
-                    isSymmetric(X.left, Y.right) &&
-                    isSymmetric(X.right, Y.left);
-    }
-
-    // Function to check if a given binary tree has a symmetric structure or not
-    public static boolean isSymmetric(Node root)
-    {
-        // base case
-        if (root == null) {
-            return true;
-        }
-
-        // return true if left and right subtree mirror each other
-        return isSymmetric(root.left, root.right);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-           \     /
-            5   6
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-
-        if (isSymmetric(root)) {
-            System.out.print("The binary tree is symmetric");
-        }
-        else {
-            System.out.print("The binary tree is not symmetric");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to check if subtree rooted at `X` and `Y` mirror each other
-def isSymmetric(X, Y):
-
-    # base case: if both trees are empty
-    if X is None and Y is None:
-        return True
-
-    # return true if
-    # 1. Both trees are non-empty, and
-    # 2. The left subtree is the mirror of the right subtree, and
-    # 3. The right subtree is the mirror of the left subtree
-    return (X is not None and Y is not None) and \
-        isSymmetric(X.left, Y.right) and \
-        isSymmetric(X.right, Y.left)
-
-# Function to check if a given binary tree has a symmetric structure or not
-def isSymmetricTree(root):
-
-    # base case
-    if not root:
-        return True
-
-    # return true if left and right subtree mirror each other
-    return isSymmetric(root.left, root.right)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-          1
-        /   \
-       /     \
-      2       3
-       \     /
-        5   6
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-
-    if isSymmetricTree(root):
-        print('The binary tree is symmetric')
-    else:
-        print('The binary tree is not symmetric')
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

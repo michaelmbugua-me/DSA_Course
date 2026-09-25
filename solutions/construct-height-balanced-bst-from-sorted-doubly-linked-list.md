@@ -10,739 +10,227 @@ For example,
 
 > 
 
-A simple solution would be to traverse the doubly linked list, store every node in an array, and then construct a height-balanced BST from nodes in the array. The idea is to make the middle node in the _sorted array_ as the BST’s root node. All nodes before the middle node will go in the left subtree, and all nodes after the middle node will go in the right subtree. If we follow this recursively for the left and right subtree, we will get a height-balanced BST. Following is the pictorial representation of this approach, followed by the C++, Java, and Python implementation:
+A simple solution would be to traverse the doubly linked list, store every node in an array, and then construct a height-balanced BST from nodes in the array. The idea is to make the middle node in the _sorted array_ as the BST’s root node. All nodes before the middle node will go in the left subtree, and all nodes after the middle node will go in the right subtree. If we follow this recursively for the left and right subtree, we will get a height-balanced BST. Following is the pictorial representation of this approach, followed by a TypeScript implementation:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a Doubly Linked List / BST node
-struct Node
-{
-    // value of node
-    int data;
-
+```ts
+// A class to store a Doubly Linked List / BST node
+class Node {
     // The `prev` and `next` pointer of the doubly linked list can act as
-    // left and right child pointer for the BST, respectively
-    Node *prev, *next;
+    // left and right child for the BST, respectively
+    constructor(public data: number,
+                public prev: Node | null = null,
+                public next: Node | null = null) {}
+}
 
-    // Constructor
-    Node(int data)
-    {
-        this->data = data;
-        this->prev = this->next = nullptr;
-    }
-};
+// Function to insert a new node at the beginning of the doubly linked list
+function push(head: Node | null, data: number): Node {
 
-// Function to insert a new node at the beginning of the doubly linked list.
-// It takes a reference to the head node of the doubly linked list.
-void push(Node* &headRef, int data)
-{
     // allocate a new node and link it at the beginning
-    Node* node = new Node(data);
-    node->next = headRef;
+    const node = new Node(data);
+    node.next = head;
 
     // change `prev` of the existing head node to point to the new node
-    if (headRef) {
-        headRef->prev = node;
+    if (head) {
+        head.prev = node;
     }
 
     // update head pointer
-    headRef = node;
+    return node;
 }
 
 // Function to print nodes of a doubly linked list
-void printListNodes(Node* node)
-{
-    while (node)
-    {
-        cout << node->data << " ";
-        node = node->next;
+function printListNodes(node: Node | null): string {
+
+    let output = '';
+    while (node) {
+        output += node.data + ' ';
+        node = node.next;
     }
-    cout << endl;
+    return output;
 }
 
 // Function to print preorder traversal of the BST
-void preorder(Node* root)
-{
-    if (root == nullptr) {
+function preorder(root: Node | null, output: number[] = []): void {
+
+    if (root === null) {
         return;
     }
 
-    cout << root->data << " ";
-    preorder(root->prev);
-    preorder(root->next);
+    output.push(root.data);
+    preorder(root.prev, output);
+    preorder(root.next, output);
 }
 
-// Function to push nodes of a given doubly linked list in a vector
-void pushDDLNodes(Node* node, vector<Node*> &nodes)
-{
-    while (node)
-    {
-        nodes.push_back(node);
-        node = node->next;
+// Function to push nodes of a given BST in a list
+function pushDDLNodes(node: Node | null, nodes: Node[]): void {
+
+    while (node) {
+        nodes.push(node);
+        node = node.next;
     }
 }
 
 // Recursive function to construct a height-balanced BST from
 // given nodes in sorted order
-Node* buildBalancedBST(vector<Node*> &nodes, int start, int end)
-{
+function buildBalancedBST(nodes: Node[], start: number, end: number): Node | null {
+
     // base case
     if (start > end) {
-        return nullptr;
+        return null;
     }
 
     // find the middle index
-    int mid = (start + end) / 2;
+    const mid = (start + end) / 2;
 
     // The root node will be a node present at the mid-index
-    Node* root = nodes[mid];
+    const root = nodes[mid];
 
     // recursively construct left and right subtree
-    root->prev = buildBalancedBST(nodes, start, mid - 1);
-    root->next = buildBalancedBST(nodes, mid + 1, end);
+    root.prev = buildBalancedBST(nodes, start, mid - 1);
+    root.next = buildBalancedBST(nodes, mid + 1, end);
 
     // return root node
     return root;
 }
 
 // Function to construct a height-balanced BST from a sorted doubly linked list.
-// It takes a reference to the head node of the doubly linked list.
-Node* convertSortedDLLToBalancedBST(Node*& headRef)
-{
-    // Push nodes of a given doubly linked list into a vector in the original order
-    vector<Node*> nodes;
-    pushDDLNodes(headRef, nodes);
+function convertSortedDLLToBalancedBST(head: Node | null): Node | null {
+
+    // Push nodes of a given BST into a list in the original order
+    const nodes: Node[] = [];
+    pushDDLNodes(head, nodes);
 
     // Construct a height-balanced BST from sorted BST nodes
-    return buildBalancedBST(nodes, 0, nodes.size() - 1);
+    return buildBalancedBST(nodes, 0, nodes.length - 1);
 }
 
-int main()
-{
-    // points to the head of a doubly linked list
-    Node* head = nullptr;
+// points to the head of a doubly linked list
+let head: Node | null = null;
 
-    // construct a doubly linked list from sorted keys
-    int keys[] = { 25, 20, 18, 15, 12, 10, 8 };
-    for (int key: keys) {
-        push(head, key);
-    }
-
-    cout << "Doubly Linked List: ";
-    printListNodes(head);
-
-    // construct a height-balanced BST from a sorted doubly linked list
-    Node* root = convertSortedDLLToBalancedBST(head);
-
-    cout << "Preorder traversal of the constructed BST: ";
-    preorder(root);
-
-    return 0;
+// construct a doubly linked list from sorted keys
+const keys = [25, 20, 18, 15, 12, 10, 8];
+for (const key of keys) {
+    head = push(head, key);
 }
+
+console.log(`Doubly Linked List: ${printListNodes(head)}`);
+
+// construct a height-balanced BST from a sorted doubly linked list
+const root = convertSortedDLLToBalancedBST(head);
+
+const output: number[] = [];
+preorder(root, output);
+console.log(`Preorder traversal of the constructed BST: ${output.join(' ')}`);
 ```
 
 **Output:** Doubly Linked List: 8 10 12 15 18 20 25 Preorder traversal of the constructed BST: 15 10 8 12 20 18 25
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-// A class to store a Doubly Linked List / BST node
-class Node
-{
-    // value of node
-    int data;
-
-    // The `prev` and `next` pointer of the doubly linked list can act as
-    // left and right child for the BST, respectively
-    Node prev, next;
-
-    // Constructor
-    Node(int data)
-    {
-        this.data = data;
-        this.prev = this.next = null;
-    }
-}
-
-class Main
-{
-    // Function to insert a new node at the beginning of the doubly linked list.
-    public static Node push(Node head, int data)
-    {
-        // allocate a new node and link it at the beginning
-        Node node = new Node(data);
-        node.next = head;
-
-        // change `prev` of the existing head node to point to the new node
-        if (head != null) {
-            head.prev = node;
-        }
-
-        // update head pointer
-        head = node;
-        return head;
-    }
-
-    // Function to print nodes of a doubly linked list
-    public static void printListNodes(Node node)
-    {
-        while (node != null)
-        {
-            System.out.print(node.data + " ");
-            node = node.next;
-        }
-
-        System.out.println();
-    }
-
-    // Function to print preorder traversal of the BST
-    public static void preorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.data + " ");
-        preorder(root.prev);
-        preorder(root.next);
-    }
-
-    // Function to push nodes of a given BST in a list
-    public static void pushDDLNodes(Node node, List<Node> nodes)
-    {
-        while (node != null)
-        {
-            nodes.add(node);
-            node = node.next;
-        }
-    }
-
-    // Recursive function to construct a height-balanced BST from
-    // given nodes in sorted order
-    public static Node buildBalancedBST(List<Node> nodes, int start, int end)
-    {
-        // base case
-        if (start > end) {
-            return null;
-        }
-
-        // find the middle index
-        int mid = (start + end) / 2;
-
-        // The root node will be a node present at the mid-index
-        Node root = nodes.get(mid);
-
-        // recursively construct left and right subtree
-        root.prev = buildBalancedBST(nodes, start, mid - 1);
-        root.next = buildBalancedBST(nodes, mid + 1, end);
-
-        // return root node
-        return root;
-    }
-
-    // Function to construct a height-balanced BST from a sorted doubly linked list.
-    public static Node convertSortedDLLToBalancedBST(Node head)
-    {
-        // Push nodes of a given BST into a list in the original order
-        List<Node> nodes = new ArrayList<>();
-        pushDDLNodes(head, nodes);
-
-        // Construct a height-balanced BST from sorted BST nodes
-        return buildBalancedBST(nodes, 0, nodes.size() - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        // points to the head of a doubly linked list
-        Node head = null;
-
-        // construct a doubly linked list from sorted keys
-        int[] keys = { 25, 20, 18, 15, 12, 10, 8 };
-        for (int key: keys) {
-            head = push(head, key);
-        }
-
-        System.out.print("Doubly Linked List: ");
-        printListNodes(head);
-
-        // construct a height-balanced BST from a sorted doubly linked list
-        Node root = convertSortedDLLToBalancedBST(head);
-
-        System.out.print("Preorder traversal of the constructed BST: ");
-        preorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a Doubly Linked List / BST node
-class Node:
-    # The `prev` and `next` pointer of the doubly linked list can act as
-    # left and right child for the BST, respectively
-    def __init__(self, data, prev=None, next=None):
-        self.data = data
-        self.prev = prev
-        self.next = next
-
-# Function to insert a new node at the beginning of the doubly linked list
-def push(head, data):
-
-    # allocate a new node and link it at the beginning
-    node = Node(data)
-    node.next = head
-
-    # change `prev` of the existing head node to point to the new node
-    if head:
-        head.prev = node
-
-    # update head pointer
-    head = node
-    return head
-
-# Function to print nodes of a doubly linked list
-def printListNodes(node):
-
-    while node:
-        print(node.data, end=' ')
-        node = node.next
-    print()
-
-# Function to print preorder traversal of the BST
-def preorder(root):
-
-    if root is None:
-        return
-
-    print(root.data, end=' ')
-    preorder(root.prev)
-    preorder(root.next)
-
-# Function to push nodes of a given BST in a list
-def pushDDLNodes(node, nodes):
-
-    while node:
-        nodes.append(node)
-        node = node.next
-
-# Recursive function to construct a height-balanced BST from
-# given nodes in sorted order
-def buildBalancedBST(nodes, start, end):
-
-    # base case
-    if start > end:
-        return None
-
-    # find the middle index
-    mid = (start + end) // 2
-
-    # The root node will be a node present at the mid-index
-    root = nodes[mid]
-
-    # recursively construct left and right subtree
-    root.prev = buildBalancedBST(nodes, start, mid - 1)
-    root.next = buildBalancedBST(nodes, mid + 1, end)
-
-    # return root node
-    return root
-
-# Function to construct a height-balanced BST from a sorted doubly linked list.
-def convertSortedDLLToBalancedBST(head):
-
-    # Push nodes of a given BST into a list in the original order
-    nodes = []
-    pushDDLNodes(head, nodes)
-
-    # Construct a height-balanced BST from sorted BST nodes
-    return buildBalancedBST(nodes, 0, len(nodes) - 1)
-
-if __name__ == '__main__':
-
-    # points to the head of a doubly linked list
-    head = None
-
-    # construct a doubly linked list from sorted keys
-    keys = [25, 20, 18, 15, 12, 10, 8]
-    for key in keys:
-        head = push(head, key)
-
-    print('Doubly Linked List: ', end='')
-    printListNodes(head)
-
-    # construct a height-balanced BST from a sorted doubly linked list
-    root = convertSortedDLLToBalancedBST(head)
-
-    print('Preorder traversal of the constructed BST: ', end='')
-    preorder(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the size of the BST. However, it requires O(n) extra space for storing the BST nodes. We can do the conversion in-place without any auxiliary data structure.
 
 The idea is to build the BST in an [inorder fashion](https://techiedelight.com/inorder-tree-traversal-iterative-recursive/), i.e., the same order as nodes appear in the doubly linked list. We start by counting the total number of nodes in the doubly linked list. Then recursively construct the left subtree with the first half of nodes in a doubly-linked list, assign the middle node of the doubly linked list to the BST’s root node, and set the constructed left subtree as the left child of the root node. To get the middle node in constant time, move the head pointer of the doubly linked list to the next node after setting the BST’s root node. Finally, recursively construct the right subtree with remaining nodes in the doubly linked list and set it as the root node’s right child.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a Doubly Linked List / BST node
-struct Node
-{
-    // value of node
-    int data;
-
+```ts
+// A class to store a Doubly Linked List / BST node
+class Node {
     // The `prev` and `next` pointer of the doubly linked list can act as
-    // left and right child pointer for the BST, respectively
-    Node *prev, *next;
+    // left and right child for the BST, respectively
+    constructor(public data: number,
+                public prev: Node | null = null,
+                public next: Node | null = null) {}
+}
 
-    // Constructor
-    Node(int data)
-    {
-        this->data = data;
-        this->prev = this->next = nullptr;
-    }
-};
+// Function to insert a new node at the beginning of the doubly linked list
+function push(head: Node | null, data: number): Node {
 
-// Function to insert a new node at the beginning of the doubly linked list.
-// It takes a reference to the head node of the doubly linked list.
-void push(Node* &headRef, int data)
-{
     // allocate a new node and link it at the beginning
-    Node* node = new Node(data);
-    node->next = headRef;
+    const node = new Node(data);
+    node.next = head;
 
     // change `prev` of the existing head node to point to the new node
-    if (headRef) {
-        headRef->prev = node;
+    if (head) {
+        head.prev = node;
     }
 
     // update head pointer
-    headRef = node;
+    return node;
 }
 
 // Function to print and count the total number of nodes in a doubly-linked list
-int printAndCountNodes(Node* node)
-{
-    int counter = 0;
-
-    while (node)
-    {
-        cout << node->data << " ";
-        node = node->next;
-        counter++;
+function printAndCountNodes(node: Node | null): [number, string] {
+    let counter = 0;
+    let output = '';
+    while (node) {
+        output += node.data + ' ';
+        node = node.next;
+        counter = counter + 1;
     }
-
-    cout << endl;
-    return counter;
+    return [counter, output];
 }
 
 // Function to print preorder traversal of the BST
-void preorder(Node* root)
-{
-    if (root == nullptr) {
+function preorder(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
-
-    cout << root->data << " ";
-    preorder(root->prev);
-    preorder(root->next);
+    output.push(root.data);
+    preorder(root.prev, output);
+    preorder(root.next, output);
 }
 
 // Recursive function to construct a height-balanced BST from a sorted doubly
-// linked list. It takes a reference to the head node of the doubly linked
-// list and the total number of nodes in it as an argument
-Node* convertSortedDLLToBalancedBST(Node* &headRef, int n)
-{
+// linked list. It takes the head node of the doubly linked list. and the
+// total number of nodes in it as an argument
+function convertSortedDLLToBalancedBST(head: Node | null, n: number): [Node | null, Node | null] {
+
     // base case
     if (n <= 0) {
-        return nullptr;
+        return [null, head];
     }
 
-    // recursively convert the left subtree
-    Node* leftSubTree = convertSortedDLLToBalancedBST(headRef, n/2);
+    // recursively construct the left subtree
+    let leftSubTree: Node | null = null;
+    [leftSubTree, head] = convertSortedDLLToBalancedBST(head, Math.floor(n / 2));
 
-    // `headRef` now points to the middle node of the sorted list
+    // `head` now points to the middle node of the sorted DDL
 
-    // make the middle node of the sorted list as the root node of the BST
-    Node* root = headRef;
+    // make the middle node of the sorted DDL as the root node of the BST
+    const root = head!;
 
     // update left child of the root node
-    root->prev = leftSubTree;
+    root.prev = leftSubTree;
 
-    // update the head reference of the doubly linked List
-    headRef = headRef->next;
+    // update the head reference of the doubly linked list
+    head = root.next;
 
-    // recursively convert the right subtree with the remaining nodes
-    root->next = convertSortedDLLToBalancedBST(headRef, n - (n/2 + 1));
-                                            /* +1 for the root node */
+    // recursively construct the right subtree with the remaining nodes
+    [root.next, head] = convertSortedDLLToBalancedBST(head, n - (Math.floor(n / 2) + 1));
+    // +1 for the root
 
     // return the root node
-    return root;
+    return [root, head];
 }
 
-int main()
-{
-    // points to the head of a doubly linked list
-    Node* head = nullptr;
+// points to the head of a doubly linked list
+let head: Node | null = null;
 
-    // construct a doubly linked list from sorted keys
-    int keys[] = { 25, 20, 18, 15, 12, 10, 8 };
-    for (int key: keys) {
-        push(head, key);
-    }
-
-    // print the list and count the total number of nodes
-    cout << "Doubly Linked List: ";
-    int n = printAndCountNodes(head);
-
-    // construct a height-balanced BST from a sorted doubly linked list
-    Node* root = convertSortedDLLToBalancedBST(head, n);
-
-    cout << "Preorder traversal of the constructed BST: ";
-    preorder(root);
-
-    return 0;
+// construct a doubly linked list from sorted keys
+const keys = [25, 20, 18, 15, 12, 10, 8];
+for (const key of keys) {
+    head = push(head, key);
 }
+
+// print the list and count the total number of nodes
+const [n, listOutput] = printAndCountNodes(head);
+console.log(`Doubly Linked List: ${listOutput}`);
+
+// construct a height-balanced BST from a sorted doubly linked list
+const [root] = convertSortedDLLToBalancedBST(head, n);
+
+const output: number[] = [];
+preorder(root, output);
+console.log(`Preorder traversal of the constructed BST: ${output.join(' ')}`);
 ```
 
 **Output:** Doubly Linked List: 8 10 12 15 18 20 25 Preorder traversal of the constructed BST: 15 10 8 12 20 18 25
-
-##
-
-```java
-// A class to store a Doubly Linked List / BST node
-class Node
-{
-    // value of node
-    int data;
-
-    // The `prev` and `next` pointer of the doubly linked list can act as
-    // left and right child for the BST, respectively
-    Node prev, next;
-
-    // Constructor
-    Node(int data)
-    {
-        this.data = data;
-        this.prev = this.next = null;
-    }
-}
-
-// Wrapper over `Node` class
-class NodeWrapper
-{
-    public Node node;
-
-    NodeWrapper(Node node) {
-        this.node = node;
-    }
-}
-
-class Main
-{
-    // Function to insert a new node at the beginning of the doubly linked list.
-    public static Node push(Node head, int data)
-    {
-        // allocate a new node and link it at the beginning
-        Node node = new Node(data);
-        node.next = head;
-
-        // change `prev` of the existing head node to point to the new node
-        if (head != null) {
-            head.prev = node;
-        }
-
-        // update head pointer
-        head = node;
-        return head;
-    }
-
-    // Function to print and count the total number of nodes in a doubly-linked list
-    public static int printAndCountNodes(Node node)
-    {
-        int counter = 0;
-
-        while (node != null)
-        {
-            System.out.print(node.data + " ");
-            node = node.next;
-            counter++;
-        }
-
-        System.out.println();
-        return counter;
-    }
-
-    // Function to print preorder traversal of the BST
-    public static void preorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.data + " ");
-        preorder(root.prev);
-        preorder(root.next);
-    }
-
-    // Recursive function to construct a height-balanced BST from a sorted doubly
-    // linked list. It takes a reference to the head node of the doubly linked
-    // list and the total number of nodes in it as an argument
-    public static Node convertSortedDLLToBalancedBST(NodeWrapper head, int n)
-    {
-        // base case
-        if (n <= 0) {
-            return null;
-        }
-
-        // recursively construct the left subtree
-        Node leftSubTree = convertSortedDLLToBalancedBST(head, n/2);
-
-        // `head` now points to the middle node of the sorted DDL
-
-        // make the middle node of the sorted DDL as the root node of the BST
-        Node root = head.node;
-
-        // update left child of the root node
-        root.prev = leftSubTree;
-
-        // update the head reference of the doubly linked list
-        head.node = head.node.next;
-
-        // recursively construct the right subtree with the remaining nodes
-        root.next = convertSortedDLLToBalancedBST(head, n - (n/2 + 1));
-                                                /* +1 for the root node */
-
-        // return the root node
-        return root;
-    }
-
-    public static void main(String[] args)
-    {
-        // points to the head of a doubly linked list
-        Node head = null;
-
-        // construct a doubly linked list from sorted keys
-        int[] keys = { 25, 20, 18, 15, 12, 10, 8 };
-        for (int key: keys) {
-            head = push(head, key);
-        }
-
-        // print the list and count the total number of nodes
-        System.out.print("Doubly Linked List: ");
-        int n = printAndCountNodes(head);
-
-        // construct a height-balanced BST from a sorted doubly linked list
-
-        // wrap the `head` node, so its reference can be changed
-        Node root = convertSortedDLLToBalancedBST(new NodeWrapper(head), n);
-
-        System.out.print("Preorder traversal of the constructed BST: ");
-        preorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a Doubly Linked List / BST node
-class Node:
-    # The `prev` and `next` pointer of the doubly linked list can act as
-    # left and right child for the BST, respectively
-    def __init__(self, data, prev=None, next=None):
-        self.data = data
-        self.prev = prev
-        self.next = next
-
-# Function to insert a new node at the beginning of the doubly linked list
-def push(head, data):
-
-    # allocate a new node and link it at the beginning
-    node = Node(data)
-    node.next = head
-
-    # change `prev` of the existing head node to point to the new node
-    if head:
-        head.prev = node
-
-    # update head pointer
-    head = node
-    return head
-
-# Function to print and count the total number of nodes in a doubly-linked list
-def printAndCountNodes(node):
-    counter = 0
-    while node:
-        print(node.data, end=' ')
-        node = node.next
-        counter = counter + 1
-    print()
-    return counter
-
-# Function to print preorder traversal of the BST
-def preorder(root):
-    if root is None:
-        return
-    print(root.data, end=' ')
-    preorder(root.prev)
-    preorder(root.next)
-
-# Recursive function to construct a height-balanced BST from a sorted doubly
-# linked list. It takes the head node of the doubly linked list. and the
-# total number of nodes in it as an argument
-def convertSortedDLLToBalancedBST(head, n):
-
-    # base case
-    if n <= 0:
-        return None, head
-
-    # recursively construct the left subtree
-    leftSubTree, head = convertSortedDLLToBalancedBST(head, n // 2)
-
-    # `head` now points to the middle node of the sorted DDL
-
-    # make the middle node of the sorted DDL as the root node of the BST
-    root = head
-
-    # update left child of the root node
-    root.prev = leftSubTree
-
-    # update the head reference of the doubly linked list
-    head = head.next
-
-    # recursively construct the right subtree with the remaining nodes
-    root.next, head = convertSortedDLLToBalancedBST(head, n - (n // 2 + 1))
-                                                        # +1 for the root
-
-    # return the root node
-    return root, head
-
-if __name__ == '__main__':
-
-    # points to the head of a doubly linked list
-    head = None
-
-    # construct a doubly linked list from sorted keys
-    keys = [25, 20, 18, 15, 12, 10, 8]
-    for key in keys:
-        head = push(head, key)
-
-    # print the list and count the total number of nodes
-    print('Doubly Linked List: ', end='')
-    n = printAndCountNodes(head)
-
-    # construct a height-balanced BST from a sorted doubly linked list
-    root, head = convertSortedDLLToBalancedBST(head, n)
-
-    print('Preorder traversal of the constructed BST: ', end='')
-    preorder(root)
-```

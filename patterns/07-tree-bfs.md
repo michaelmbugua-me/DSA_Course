@@ -12,26 +12,27 @@ Use a **queue** to traverse a tree (or graph) level by level: push the root, the
 - Asked for the minimum number of steps/levels to reach something (BFS = shortest path in unweighted graphs)
 - "At each level/depth, do X"
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-from collections import deque
-
-def bfs(root):
-    if not root:
-        return []
-    result, queue = [], deque([root])
-    while queue:
-        level_size = len(queue)          # snapshot = one level
-        level = []
-        for _ in range(level_size):
-            node = queue.popleft()
-            level.append(node.val)
-            for child in (node.left, node.right):
-                if child:
-                    queue.append(child)
-        result.append(level)             # per-level processing
-    return result
+```ts
+function bfs(root: TreeNode | null): number[][] {
+    if (!root) return [];
+    const result: number[][] = [];
+    const queue: TreeNode[] = [root]; // deque: shift() = popleft, push() = append
+    while (queue.length > 0) {
+        const levelSize = queue.length; // snapshot = one level
+        const level: number[] = [];
+        for (let i = 0; i < levelSize; i++) {
+            const node = queue.shift()!;
+            level.push(node.val);
+            for (const child of [node.left, node.right]) {
+                if (child) queue.push(child);
+            }
+        }
+        result.push(level); // per-level processing
+    }
+    return result;
+}
 ```
 
 ## Complexity

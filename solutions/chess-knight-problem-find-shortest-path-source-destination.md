@@ -32,328 +32,83 @@ So, from position `(x, y)` knight’s can move to:
 
 Note that in BFS, all cells having the shortest path as 1 are visited first, followed by their adjacent cells having the shortest path as 1 + 1 = 2 and so on… so if we reach any node in BFS, its shortest path = shortest path of parent + 1. So, the destination cell’s first occurrence gives us the result, and we can stop our search there.**The shortest path cannot exist from some other cell for which we haven’t reached the given node yet. If any such path were possible, we would have already explored it.**
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <set>
-#include <queue>
-#include <climits>
-using namespace std;
+```ts
+// A queue node used in BFS
+class Node {
+    // (x, y) represents chessboard coordinates
+    // `dist` represents its minimum distance from the source
+    constructor(public x: number, public y: number, public dist: number = 0) {}
+}
 
-// Below arrays detail all eight possible movements
-// for a knight
-int row[] = { 2, 2, -2, -2, 1, 1, -1, -1 };
-int col[] = { -1, 1, 1, -1, 2, -2, 2, -2 };
+// Below arrays detail all eight possible movements for a knight
+const row = [2, 2, -2, -2, 1, 1, -1, -1];
+const col = [-1, 1, 1, -1, 2, -2, 2, -2];
 
 // Check if (x, y) is valid chessboard coordinates.
 // Note that a knight cannot go out of the chessboard
-bool isValid(int x, int y, int N) {
-    return (x >= 0 && x < N) && (y >= 0 && y < N);
-}
-
-// A queue node used in BFS
-struct Node
-{
-    // (x, y) represents chessboard coordinates
-    // `dist` represents its minimum distance from the source
-    int x, y, dist;
-
-    // Node constructor
-    Node(int x, int y, int dist = 0): x(x), y(y), dist(dist) {}
-
-    // As we are using struct as a key in a `std::set`,
-    // we need to overload `<` operator.
-    // Alternatively, we can use `std::pair<int, int>` as a key
-    // to store the matrix coordinates in the set.
-
-    bool operator<(const Node& o) const {
-        return x < o.x || (x == o.x && y < o.y);
-    }
-};
+const isValid = (x: number, y: number, N: number): boolean =>
+    !(x < 0 || y < 0 || x >= N || y >= N);
 
 // Find the minimum number of steps taken by the knight
 // from the source to reach the destination using BFS
-int findShortestDistance(int N, Node src, Node dest)
-{
+const findShortestDistance = (src: Node, dest: Node, N: number): number => {
+
     // set to check if the matrix cell is visited before or not
-    set<Node> visited;
+    const visited = new Set<string>();
 
     // create a queue and enqueue the first node
-    queue<Node> q;
+    const q: Node[] = [];
     q.push(src);
 
     // loop till queue is empty
-    while (!q.empty())
-    {
-        // dequeue front node and process it
-        Node node = q.front();
-        q.pop();
+    while (q.length > 0) {
 
-        int x = node.x;
-        int y = node.y;
-        int dist = node.dist;
+        // dequeue front node and process it
+        const node = q.shift()!;
+
+        const x = node.x;
+        const y = node.y;
+        const dist = node.dist;
 
         // if the destination is reached, return distance
-        if (x == dest.x && y == dest.y) {
+        if (x === dest.x && y === dest.y) {
             return dist;
         }
 
         // skip if the location is visited before
-        if (!visited.count(node))
-        {
+        if (!visited.has(`${x}|${y}|${dist}`)) {
             // mark the current node as visited
-            visited.insert(node);
+            visited.add(`${x}|${y}|${dist}`);
 
             // check for all eight possible movements for a knight
             // and enqueue each valid movement
-            for (int i = 0; i < 8; i++)
-            {
+            for (let i = 0; i < row.length; i++) {
                 // get the knight's valid position from the current position on
                 // the chessboard and enqueue it with +1 distance
-                int x1 = x + row[i];
-                int y1 = y + col[i];
+                const x1 = x + row[i];
+                const y1 = y + col[i];
 
                 if (isValid(x1, y1, N)) {
-                    q.push({x1, y1, dist + 1});
+                    q.push(new Node(x1, y1, dist + 1));
                 }
             }
         }
     }
 
     // return infinity if the path is not possible
-    return INT_MAX;
-}
+    return Number.MAX_SAFE_INTEGER;
+};
 
-int main()
-{
-    // N x N matrix
-    int N = 8;
+// demo
 
-    // source coordinates
-    Node src = {0, 7};
+const N = 8;                // N x N matrix
+const src = new Node(0, 7); // source coordinates
+const dest = new Node(7, 0);// destination coordinates
 
-    // destination coordinates
-    Node dest = {7, 0};
-
-    cout << "The minimum number of steps required is " <<
-            findShortestDistance(N, src, dest);
-
-    return 0;
-}
-```
-
-**Output:** The minimum number of steps required is 6
-
-##
-
-```java
-import java.util.*;
-
-// A queue node used in BFS
-class Node
-{
-    // (x, y) represents chessboard coordinates
-    // `dist` represents its minimum distance from the source
-    int x, y, dist;
-
-    public Node(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public Node(int x, int y, int dist)
-    {
-        this.x = x;
-        this.y = y;
-        this.dist = dist;
-    }
-
-    // As we are using the class object as a key in a `HashMap`,
-    // we need to implement `hashCode()` and `equals()`
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Node node = (Node) o;
-        return x == node.x &&
-                y == node.y &&
-                dist == node.dist;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y, dist);
-    }
-}
-
-class Main
-{
-    // Below arrays detail all eight possible movements for a knight
-    private static int[] row = { 2, 2, -2, -2, 1, 1, -1, -1 };
-    private static int[] col = { -1, 1, 1, -1, 2, -2, 2, -2 };
-
-    // Check if (x, y) is valid chessboard coordinates.
-    // Note that a knight cannot go out of the chessboard
-    private static boolean isValid(int x, int y, int N) {
-        return (x >= 0 && x < N) && (y >= 0 && y < N);
-    }
-
-    // Find the minimum number of steps taken by the knight
-    // from the source to reach the destination using BFS
-    public static int findShortestDistance(Node src, Node dest, int N)
-    {
-        // set to check if the matrix cell is visited before or not
-        Set<Node> visited = new HashSet<>();
-
-        // create a queue and enqueue the first node
-        Queue<Node> q = new ArrayDeque<>();
-        q.add(src);
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and process it
-            Node node = q.poll();
-
-            int x = node.x;
-            int y = node.y;
-            int dist = node.dist;
-
-            // if the destination is reached, return distance
-            if (x == dest.x && y == dest.y) {
-                return dist;
-            }
-
-            // skip if the location is visited before
-            if (!visited.contains(node))
-            {
-                // mark the current node as visited
-                visited.add(node);
-
-                // check for all eight possible movements for a knight
-                // and enqueue each valid movement
-                for (int i = 0; i < row.length; i++)
-                {
-                    // get the knight's valid position from the current position on
-                    // the chessboard and enqueue it with +1 distance
-                    int x1 = x + row[i];
-                    int y1 = y + col[i];
-
-                    if (isValid(x1, y1, N)) {
-                        q.add(new Node(x1, y1, dist + 1));
-                    }
-                }
-            }
-        }
-
-        // return infinity if the path is not possible
-        return Integer.MAX_VALUE;
-    }
-
-    public static void main(String[] args)
-    {
-        // N x N matrix
-        int N = 8;
-
-        // source coordinates
-        Node src = new Node(0, 7);
-
-        // destination coordinates
-        Node dest = new Node(7, 0);
-
-        System.out.println("The minimum number of steps required is " +
-                findShortestDistance(src, dest, N));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-from collections import deque
-
-# A queue node used in BFS
-class Node:
-    # (x, y) represents chessboard coordinates
-    # `dist` represents its minimum distance from the source
-    def __init__(self, x, y, dist=0):
-        self.x = x
-        self.y = y
-        self.dist = dist
-
-    # As we are using `Node` as a key in a dictionary,
-    # we need to override the `__hash__()` and `__eq__()` function
-    def __hash__(self):
-        return hash((self.x, self.y, self.dist))
-
-    def __eq__(self, other):
-        return (self.x, self.y, self.dist) == (other.x, other.y, other.dist)
-
-# Below lists detail all eight possible movements for a knight
-row = [2, 2, -2, -2, 1, 1, -1, -1]
-col = [-1, 1, 1, -1, 2, -2, 2, -2]
-
-# Check if (x, y) is valid chessboard coordinates.
-# Note that a knight cannot go out of the chessboard
-def isValid(x, y, N):
-    return not (x < 0 or y < 0 or x >= N or y >= N)
-
-# Find the minimum number of steps taken by the knight
-# from the source to reach the destination using BFS
-def findShortestDistance(src, dest, N):
-
-    # set to check if the matrix cell is visited before or not
-    visited = set()
-
-    # create a queue and enqueue the first node
-    q = deque()
-    q.append(src)
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node and process it
-        node = q.popleft()
-
-        x = node.x
-        y = node.y
-        dist = node.dist
-
-        # if the destination is reached, return distance
-        if x == dest.x and y == dest.y:
-            return dist
-
-        # skip if the location is visited before
-        if node not in visited:
-            # mark the current node as visited
-            visited.add(node)
-
-            # check for all eight possible movements for a knight
-            # and enqueue each valid movement
-            for i in range(len(row)):
-                # get the knight's valid position from the current position on
-                # the chessboard and enqueue it with +1 distance
-                x1 = x + row[i]
-                y1 = y + col[i]
-
-                if isValid(x1, y1, N):
-                    q.append(Node(x1, y1, dist + 1))
-
-    # return infinity if the path is not possible
-    return sys.maxsize
-
-if __name__ == '__main__':
-
-    N = 8                # N x N matrix
-    src = Node(0, 7)    # source coordinates
-    dest = Node(7, 0)   # destination coordinates
-
-    print("The minimum number of steps required is",
-          findShortestDistance(src, dest, N))
+console.log('The minimum number of steps required is',
+    findShortestDistance(src, dest, N));
 ```
 
 The time complexity of the proposed solution is O(M × N) and requires O(M × N) extra space, where `M` and `N` are dimensions of the matrix.

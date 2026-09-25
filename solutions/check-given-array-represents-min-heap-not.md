@@ -26,252 +26,83 @@ We can efficiently solve this problem by using [recursion](https://techiedelight
     * Recursively check if the right child is min-heap or not (if it exists).
     * Return true if both left and right child are min-heap; otherwise, return false.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+```ts
+// Function to check if the given list represents min-heap or not
+const checkMinHeap = (A: number[], i: number): boolean => {
 
-// Function to check if a given array represents min-heap or not
-bool checkMinHeap(vector<int> const A, int i)
-{
     // if `i` is a leaf node, return true as every leaf node is a heap
-    if (2*i + 2 > A.size()) {
+    if (2 * i + 2 > A.length) {
         return true;
     }
 
     // if `i` is an internal node
 
     // recursively check if the left child is a heap
-    bool left = (A[i] <= A[2*i + 1]) && checkMinHeap(A, 2*i + 1);
+    const left = (A[i] <= A[2 * i + 1]) && checkMinHeap(A, 2 * i + 1);
 
-    // recursively check if the right child is a heap (to avoid the array index out
+    // recursively check if the right child is a heap (to avoid the list index out
     // of bounds, first check if the right child exists or not)
-    bool right = (2*i + 2 == A.size()) ||
-            (A[i] <= A[2*i + 2] && checkMinHeap(A, 2*i + 2));
+    const right = (2 * i + 2 === A.length) ||
+            (A[i] <= A[2 * i + 2] && checkMinHeap(A, 2 * i + 2));
 
     // return true if both left and right child are heaps
     return left && right;
+};
+
+const A = [1, 2, 3, 4, 5, 6];
+
+// start with index 0 (the root of the heap)
+const index = 0;
+
+if (checkMinHeap(A, index)) {
+    console.log('The given list is a min-heap');
 }
-
-int main()
-{
-    vector<int> A = {1, 2, 3, 4, 5, 6};
-
-    // start with index 0 (the root of the heap)
-    int index = 0;
-
-    if (checkMinHeap(A, index)) {
-        cout << "The given array is a min-heap";
-    }
-    else {
-        cout << "The given array is not a min-heap";
-    }
-
-    return 0;
+else {
+    console.log('The given list is not a min-heap');
 }
 ```
 
 **Output:** The given array is a min-heap
 
-##
-
-```java
-class Main
-{
-    // Function to check if a given array represents min-heap or not
-    public static boolean checkMinHeap(int[] A, int i)
-    {
-        // if `i` is a leaf node, return true as every leaf node is a heap
-        if (2*i + 2 > A.length) {
-            return true;
-        }
-
-        // if `i` is an internal node
-
-        // recursively check if the left child is a heap
-        boolean left = (A[i] <= A[2*i + 1]) && checkMinHeap(A, 2*i + 1);
-
-        // recursively check if the right child is a heap (to avoid the array index out
-        // of bounds, first check if the right child exists or not)
-        boolean right = (2*i + 2 == A.length) ||
-                        (A[i] <= A[2*i + 2] && checkMinHeap(A, 2*i + 2));
-
-        // return true if both left and right child are heaps
-        return left && right;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = {1, 2, 3, 4, 5, 6};
-
-        // start with index 0 (the root of the heap)
-        int index = 0;
-
-        if (checkMinHeap(A, index)) {
-            System.out.println("The given array is a min-heap");
-        }
-        else {
-            System.out.println("The given array is not a min-heap");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to check if the given list represents min-heap or not
-def checkMinHeap(A, i):
-
-    # if `i` is a leaf node, return true as every leaf node is a heap
-    if 2*i + 2 > len(A):
-        return True
-
-    # if `i` is an internal node
-
-    # recursively check if the left child is a heap
-    left = (A[i] <= A[2*i + 1]) and checkMinHeap(A, 2*i + 1)
-
-    # recursively check if the right child is a heap (to avoid the list index out
-    # of bounds, first check if the right child exists or not)
-    right = (2*i + 2 == len(A)) or (A[i] <= A[2*i + 2]
-                                    and checkMinHeap(A, 2*i + 2))
-
-    # return true if both left and right child are heaps
-    return left and right
-
-if __name__ == '__main__':
-
-    A = [1, 2, 3, 4, 5, 6]
-
-    # start with index 0 (the root of the heap)
-    index = 0
-
-    if checkMinHeap(A, index):
-        print('The given list is a min-heap')
-    else:
-        print('The given list is not a min-heap')
-```
-
 ## Iterative Solution
 
-As recursion is costly, we can easily convert the above recursive function into an iterative one. The implementation can be seen below in C++, Java, and Python:
+As recursion is costly, we can easily convert the above recursive function into an iterative one. The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Iterative function to check if a given array represents min-heap or not
-bool checkMinHeap(vector<int> const &A)
-{
-    int n = A.size();
+```ts
+// Iterative function to check if a given list represents a min-heap or not
+const checkMinHeap = (A: number[]): boolean => {
 
     // base case
-    if (n <= 1) {
+    if (A.length <= 1) {
         return true;
     }
 
     // check for all internal nodes that their left child and
     // right child (if present) holds min-heap property or not
-    for (int i = 0; i <= (n - 2) / 2; i++)
-    {
-        if (A[i] > A[2*i + 1] || ((2*i + 2 != n) && A[i] > A[2*i + 2])) {
+
+    // start with index 0 (the root of the heap)
+    for (let i = 0; i <= Math.floor((A.length - 2) / 2); i++) {
+        if (A[i] > A[2 * i + 1] || (2 * i + 2 !== A.length && A[i] > A[2 * i + 2])) {
             return false;
         }
     }
+
     return true;
+};
+
+const A = [1, 2, 3, 4, 5, 6];
+
+if (checkMinHeap(A)) {
+    console.log('The given list is a min-heap');
 }
-
-int main()
-{
-    vector<int> A = { 2, 3, 5, 8, 10 };
-
-    if (checkMinHeap(A)) {
-        cout << "The given array is a min-heap";
-    }
-    else {
-        cout << "The given array is not a min-heap";
-    }
-
-    return 0;
+else {
+    console.log('The given list is not a min-heap');
 }
 ```
 
 **Output:** The given array is a min-heap
-
-##
-
-```java
-class Main
-{
-    // Iterative function to check if a given array represents min-heap or not
-    public static boolean checkMinHeap(int[] A)
-    {
-        // base case
-        if (A.length <= 1) {
-            return true;
-        }
-
-        // check for all internal nodes that their left child and
-        // right child (if present) holds min-heap property or not
-
-        // start with index 0 (the root of the heap)
-        for (int i = 0; i <= (A.length - 2) / 2; i++)
-        {
-            if (A[i] > A[2*i + 1] || (2*i + 2 != A.length && A[i] > A[2*i + 2])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = {1, 2, 3, 4, 5, 6};
-
-        if (checkMinHeap(A)) {
-            System.out.println("The given array is a min-heap");
-        }
-        else {
-            System.out.println("The given array is not a min-heap");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Iterative function to check if a given list represents a min-heap or not
-def checkMinHeap(A):
-
-    # base case
-    if len(A) <= 1:
-        return True
-
-    # check for all internal nodes that their left child and
-    # right child (if present) holds min-heap property or not
-
-    # start with index 0 (the root of the heap)
-    for i in range((len(A) - 2) // 2 + 1):
-        if A[i] > A[2*i + 1] or (2*i + 2 != len(A) and A[i] > A[2*i + 2]):
-            return False
-
-    return True
-
-if __name__ == '__main__':
-
-    A = [1, 2, 3, 4, 5, 6]
-
-    if checkMinHeap(A):
-        print('The given list is a min-heap')
-    else:
-        print('The given list is not a min-heap')
-```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.
 

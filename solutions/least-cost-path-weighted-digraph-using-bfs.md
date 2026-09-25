@@ -22,426 +22,121 @@ Split edge (v, u) having weight `3x` into three edges `(v, v+n)`, `(v+n, v+2N)`,
 
 Split edge (v, u) having weight `2x` into two edges `(v, v+n)` and `(v+n, u)` each having weight `x`.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <queue>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int source, dest, weight;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+  adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int x, int n)
-    {
-        // resize the vector to `3×n` elements of type `vector<int>`
-        adjList.resize(3*n);
+  // Constructor
+  constructor(edges: number[][], x: number, n: number) {
+    this.adjList = Array.from({ length: 3 * n }, () => []);
 
-        // add edges to the directed graph
-        for (auto &edge: edges)
-        {
-            int v = edge.source;
-            int u = edge.dest;
-            int weight = edge.weight;
+    // add edges to the directed graph
+    for (const [v, u, weight] of edges) {
+      // Create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`.
+      // Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
+      // each having weight `x`.
+      if (weight === 3 * x) {
+        this.adjList[v].push(v + n);
+        this.adjList[v + n].push(v + 2 * n);
+        this.adjList[v + 2 * n].push(u);
+      }
 
-            // create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`
-            // Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
-            // each having weight `x`.
-            if (weight == 3*x)
-            {
-                adjList[v].push_back(v + n);
-                adjList[v + n].push_back(v + 2*n);
-                adjList[v + 2*n].push_back(u);
-            }
+      // create one new vertex `v+n` if the weight of the edge is `2x`.
+      // Also, split edge (v, u) into (v, v+n), (v+n, u) each having weight `x`
+      else if (weight === 2 * x) {
+        this.adjList[v].push(v + n);
+        this.adjList[v + n].push(u);
+      }
 
-            // create one new vertex `v+n` if the weight of the edge is `2x`.
-            // Also, split edge (v, u) into (v, v+n), (v+n, u) each having weight `x`
-            else if (weight == 2*x)
-            {
-                adjList[v].push_back(v + n);
-                adjList[v + n].push_back(u);
-            }
-
-            // no splitting is needed if the edge weight is `1x`
-            else {
-                adjList[v].push_back(u);
-            }
-        }
+      // no splitting is needed if the edge weight is `1x`
+      else {
+        this.adjList[v].push(u);
+      }
     }
-};
+  }
+}
 
 // Recursive function to print the path of a given vertex `v` from the source vertex
-void printPath(vector<int> const &predecessor, int v, int &cost, int n)
-{
-    if (v < 0) {
-        return;
-    }
-
-    printPath(predecessor, predecessor[v], cost, n);
-    cost++;
+function printPath(predecessor: number[], v: number, cost: number, n: number): number {
+  if (v >= 0) {
+    cost = printPath(predecessor, predecessor[v], cost, n);
+    cost = cost + 1;
 
     // only consider the original nodes present in the graph
     if (v < n) {
-        cout << v << " ";
+      process.stdout.write(`${v} `);
     }
+  }
+
+  return cost;
 }
 
 // Perform BFS on the graph starting from vertex source
-void findLeastPathCost(Graph const &graph, int source, int dest, int n)
-{
-    // stores vertex is discovered in BFS traversal or not
-    vector<bool> discovered(3*n, false);
+function findLeastPathCost(graph: Graph, source: number, dest: number, n: number): void {
+  // stores vertex is discovered in BFS traversal or not
+  const discovered: boolean[] = Array(3 * n).fill(false);
 
-    // mark the source vertex as discovered
-    discovered[source] = true;
+  // mark the source vertex as discovered
+  discovered[source] = true;
 
-    // `predecessor[]` stores predecessor information. It is used
-    // to trace a least-cost path from the destination back to the source.
-    vector<int> predecessor(3*n, -1);
+  // `predecessor` stores predecessor information. It is used to trace
+  // the least-cost path from the destination back to the source.
+  const predecessor: number[] = Array(3 * n).fill(-1);
 
-    // create a queue for doing BFS and enqueue source vertex
-    queue<int> q;
-    q.push(source);
+  // create a queue for doing BFS and enqueue source vertex
+  const q: number[] = [];
+  q.push(source);
 
-    // loop till queue is empty
-    while (!q.empty())
-    {
-        // dequeue front node and print it
-        int curr = q.front();
-        q.pop();
+  // loop till queue is empty
+  while (q.length > 0) {
+    // dequeue front node and print it
+    const curr = q.shift()!;
 
-        // if destination vertex is reached
-        if (curr == dest)
-        {
-            int cost = -1;
-            cout << "The least-cost path between " << source << " and " <<
-                dest << " is "; printPath(predecessor, dest, cost, n);
-            cout << "having cost " << cost;
-        }
-
-        // do for every adjacent edge of the current vertex
-        for (int v: graph.adjList[curr])
-        {
-            if (!discovered[v])
-            {
-                // mark it as discovered and enqueue it
-                discovered[v] = true;
-                q.push(v);
-
-                // set `curr` as the predecessor of vertex `v`
-                predecessor[v] = curr;
-            }
-        }
+    // if destination vertex is reached
+    if (curr === dest) {
+      process.stdout.write(`The least-cost path between ${source} and ${dest} is `);
+      console.log('having cost', printPath(predecessor, dest, -1, n));
     }
+
+    // do for every adjacent edge of the current vertex
+    for (const v of graph.adjList[curr]) {
+      if (!discovered[v]) {
+        // mark it as discovered and enqueue it
+        discovered[v] = true;
+        q.push(v);
+
+        // set `curr` as the predecessor of vertex `v`
+        predecessor[v] = curr;
+      }
+    }
+  }
 }
 
-int main()
-{
-    int x = 1;
+const x = 1;
 
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        {0, 1, 3*x}, {0, 4, 1*x}, {1, 2, 1*x}, {1, 3, 3*x},
-        {1, 4, 1*x}, {4, 2, 2*x}, {4, 3, 1*x}
-    };
+// List of graph edges as per the above diagram
+const edges = [
+  [0, 1, 3 * x], [0, 4, 1 * x], [1, 2, 1 * x], [1, 3, 3 * x],
+  [1, 4, 1 * x], [4, 2, 2 * x], [4, 3, 1 * x]
+];
 
-    // total number of nodes in the graph
-    int n = 5;
+// total number of nodes in the graph
+const n = 5;
 
-    // given the source and destination vertex
-    int source = 0, dest = 2;
+// given the source and destination vertex
+const source = 0, dest = 2;
 
-    // build a graph from the given edges
-    Graph graph(edges, x, n);
+// build a graph from the given edges
+const graph = new Graph(edges, x, n);
 
-    // Perform BFS traversal from the given source
-    findLeastPathCost(graph, source, dest, n);
-
-    return 0;
-}
+// Perform BFS traversal from the given source
+findLeastPathCost(graph, source, dest, n);
 ```
 
 **Output:** The least-cost path between 0 and 2 is 0 4 2 having cost 3
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest, weight;
-
-    public Edge(int source, int dest, int weight)
-    {
-        this.source = source;
-        this.dest = dest;
-        this.weight = weight;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int x, int n)
-    {
-        adjList = new ArrayList<>(3*n);
-
-        for (int i = 0; i < 3*n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the directed graph
-        for (Edge edge: edges)
-        {
-            int v = edge.source;
-            int u = edge.dest;
-            int weight = edge.weight;
-
-            // create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`
-            // Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
-            // each having weight `x`.
-            if (weight == 3*x)
-            {
-                adjList.get(v).add(v + n);
-                adjList.get(v + n).add(v + 2*n);
-                adjList.get(v + 2*n).add(u);
-            }
-
-            // create one new vertex `v+n` if the weight of the edge is `2x`.
-            // Also, split edge (v, u) into (v, v+n), (v+n, u) each having weight `x`
-            else if (weight == 2*x)
-            {
-                adjList.get(v).add(v + n);
-                adjList.get(v + n).add(u);
-            }
-
-            // no splitting is needed if the edge weight is `1x`
-            else {
-                adjList.get(v).add(u);
-            }
-        }
-    }
-}
-
-class Main
-{
-    // Recursive function to print the path of a given vertex `v` from
-    // the source vertex
-    private static int printPath(int[] predecessor, int vertex, int cost, int n)
-    {
-        if (vertex >= 0)
-        {
-            cost = printPath(predecessor, predecessor[vertex], cost, n);
-            cost++;
-
-            // only consider the original nodes present in the graph
-            if (vertex < n) {
-                System.out.print(vertex + " ");
-            }
-        }
-        return cost;
-    }
-
-    // Perform BFS on the graph starting from vertex source
-    public static void findLeastPathCost(Graph graph, int source, int dest, int n)
-    {
-        // stores vertex is discovered in BFS traversal or not
-        boolean[] discovered = new boolean[3*n];
-
-        // mark the source vertex as discovered
-        discovered[source] = true;
-
-        // `predecessor[]` stores predecessor information. It is used
-        // to trace a least-cost path from the destination back to the source.
-        int[] predecessor = new int[3*n];
-        Arrays.fill(predecessor, -1);
-
-        // create a queue for doing BFS and enqueue source vertex
-        Queue<Integer> q = new ArrayDeque<>();
-        q.add(source);
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and print it
-            int curr = q.poll();
-
-            // if destination vertex is reached
-            if (curr == dest)
-            {
-                System.out.print("The least-cost path between " + source
-                        + " and " + dest + " is ");
-                System.out.println("having cost " +
-                        printPath(predecessor, dest, -1, n));
-            }
-
-            // do for every adjacent edge of the current vertex
-            for (int v: graph.adjList.get(curr))
-            {
-                if (!discovered[v])
-                {
-                    // mark it as discovered and enqueue it
-                    discovered[v] = true;
-                    q.add(v);
-
-                    // set `curr` as the predecessor of vertex `v`
-                    predecessor[v] = curr;
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 1;
-
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1, 3*x), new Edge(0, 4, 1*x), new Edge(1, 2, 1*x),
-                new Edge(1, 3, 3*x), new Edge(1, 4, 1*x), new Edge(4, 2, 2*x),
-                new Edge(4, 3, 1*x)
-        );
-
-        // total number of nodes in the graph
-        int n = 5;
-
-        // given the source and destination vertex
-        int source = 0, dest = 2;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, x, n);
-
-        // Perform BFS traversal from the given source
-        findLeastPathCost(graph, source, dest, n);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges, x, n):
-        self.adjList = [[] for _ in range(3*n)]
-
-        # add edges to the directed graph
-        for (v, u, weight) in edges:
-
-            # Create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`.
-            # Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
-            # each having weight `x`.
-            if weight == 3*x:
-                self.adjList[v].append(v + n)
-                self.adjList[v + n].append(v + 2*n)
-                self.adjList[v + 2*n].append(u)
-
-            # create one new vertex `v+n` if the weight of the edge is `2x`.
-            # Also, split edge (v, u) into (v, v+n), (v+n, u) each having weight `x`
-            elif weight == 2*x:
-                self.adjList[v].append(v + n)
-                self.adjList[v + n].append(u)
-
-            # no splitting is needed if the edge weight is `1x`
-            else:
-                self.adjList[v].append(u)
-
-# Recursive function to print the path of a given vertex `v` from the source vertex
-def printPath(predecessor, v, cost, n):
-
-    if v >= 0:
-        cost = printPath(predecessor, predecessor[v], cost, n)
-        cost = cost + 1
-
-        # only consider the original nodes present in the graph
-        if v < n:
-            print(v, end=' ')
-
-    return cost
-
-# Perform BFS on the graph starting from vertex source
-def findLeastPathCost(graph, source, dest, n):
-
-    # stores vertex is discovered in BFS traversal or not
-    discovered = [False] * 3 * n
-
-    # mark the source vertex as discovered
-    discovered[source] = True
-
-    # `predecessor` stores predecessor information. It is used to trace
-    # the least-cost path from the destination back to the source.
-    predecessor = [-1] * 3 * n
-
-    # create a queue for doing BFS and enqueue source vertex
-    q = deque()
-    q.append(source)
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node and print it
-        curr = q.popleft()
-
-        # if destination vertex is reached
-        if curr == dest:
-            print(f'The least-cost path between {source} and {dest} is ', end='')
-            print('having cost', printPath(predecessor, dest, -1, n))
-
-        # do for every adjacent edge of the current vertex
-        for v in graph.adjList[curr]:
-            if not discovered[v]:
-                # mark it as discovered and enqueue it
-                discovered[v] = True
-                q.append(v)
-
-                # set `curr` as the predecessor of vertex `v`
-                predecessor[v] = curr
-
-if __name__ == '__main__':
-
-    x = 1
-
-    # List of graph edges as per the above diagram
-    edges = [
-        (0, 1, 3*x), (0, 4, 1*x), (1, 2, 1*x), (1, 3, 3*x),
-        (1, 4, 1*x), (4, 2, 2*x), (4, 3, 1*x)
-    ]
-
-    # total number of nodes in the graph
-    n = 5
-
-    # given the source and destination vertex
-    source = 0
-    dest = 2
-
-    # build a graph from the given edges
-    graph = Graph(edges, x, n)
-
-    # Perform BFS traversal from the given source
-    findLeastPathCost(graph, source, dest, n)
-```
 
 Also See:
 

@@ -16,130 +16,104 @@ The adjacency list representation of graphs also allows additional data storage 
 
 ## 1\. Directed Graph implementation in C++
 
-```
-#include <iostream>
-using namespace std;
-
+```ts
 // Data structure to store adjacency list nodes
-struct Node
+class Node
 {
-    int val;
-    Node* next;
-};
+    constructor(public val: number, public next: Node | null = null) {}
+}
 
 // Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
+class Edge {
+    constructor(public src: number, public dest: number) {}
+}
 
 class Graph
 {
-    // Function to allocate a new node for the adjacency list
-    Node* getAdjListNode(int dest, Node* head)
-    {
-        Node* newNode = new Node;
-        newNode->val = dest;
-
-        // point new node to the current head
-        newNode->next = head;
-
-        return newNode;
-    }
-
-    int N;    // total number of nodes in the graph
-
-public:
-
     // An array of pointers to Node to represent the
     // adjacency list
-    Node **head;
+    head: (Node | null)[];
+
+    N: number;    // total number of nodes in the graph
+
+    // Function to allocate a new node for the adjacency list
+    private getAdjListNode(dest: number, head: Node | null): Node
+    {
+        // point new node to the current head
+        return new Node(dest, head);
+    }
 
     // Constructor
-    Graph(Edge edges[], int n, int N)
+    constructor(edges: Edge[], n: number, N: number)
     {
         // allocate memory
-        head = new Node*[N]();
-        this->N = N;
-
-        // initialize head pointer for all vertices
-        for (int i = 0; i < N; i++) {
-            head[i] = nullptr;
-        }
+        this.head = new Array<Node | null>(N).fill(null);
+        this.N = N;
 
         // add edges to the directed graph
-        for (unsigned i = 0; i < n; i++)
+        for (let i = 0; i < n; i++)
         {
-            int src = edges[i].src;
-            int dest = edges[i].dest;
+            const src = edges[i].src;
+            const dest = edges[i].dest;
 
             // insert at the beginning
-            Node* newNode = getAdjListNode(dest, head[src]);
+            const newNode = this.getAdjListNode(dest, this.head[src]);
 
             // point head pointer to the new node
-            head[src] = newNode;
+            this.head[src] = newNode;
 
             // uncomment the following code for undirected graph
 
             /*
-            newNode = getAdjListNode(src, head[dest]);
+            const newNode2 = this.getAdjListNode(src, this.head[dest]);
 
             // change head pointer to point to the new node
-            head[dest] = newNode;
+            this.head[dest] = newNode2;
             */
         }
     }
-
-    // Destructor
-    ~Graph() {
-        for (int i = 0; i < N; i++) {
-            delete[] head[i];
-        }
-
-        delete[] head;
-    }
-};
-
-// Function to print all neighboring vertices of a given vertex
-void printList(Node* ptr)
-{
-    while (ptr != nullptr)
-    {
-        cout << " —> " << ptr->val;
-        ptr = ptr->next;
-    }
-    cout << endl;
 }
 
-// Graph implementation in C++ without using STL
-int main()
+// Function to print all neighboring vertices of a given vertex
+function printList(ptr: Node | null): string
 {
-    // an array of graph edges as per the above diagram
-    Edge edges[] =
+    let line = '';
+    while (ptr !== null)
     {
-        // pair {x, y} represents an edge from `x` to `y`
-        {0, 1}, {1, 2}, {2, 0}, {2, 1}, {3, 2}, {4, 5}, {5, 4}
-    };
-
-    // total number of nodes in the graph (labelled from 0 to 5)
-    int N = 6;
-
-    // calculate the total number of edges
-    int n = sizeof(edges)/sizeof(edges[0]);
-
-    // construct graph
-    Graph graph(edges, n, N);
-
-    // print adjacency list representation of a graph
-    for (int i = 0; i < N; i++)
-    {
-        // print given vertex
-        cout << i;
-
-        // print all its neighboring vertices
-        printList(graph.head[i]);
+        line += ` —> ${ptr.val}`;
+        ptr = ptr.next;
     }
+    return line;
+}
 
-    return 0;
+// Graph implementation in TypeScript without using built-in containers
+
+// an array of graph edges as per the above diagram
+const edges: Edge[] = [
+    // pair {x, y} represents an edge from `x` to `y`
+    new Edge(0, 1), new Edge(1, 2), new Edge(2, 0), new Edge(2, 1),
+    new Edge(3, 2), new Edge(4, 5), new Edge(5, 4)
+];
+
+// total number of nodes in the graph (labelled from 0 to 5)
+const N = 6;
+
+// calculate the total number of edges
+const n = edges.length;
+
+// construct graph
+const graph = new Graph(edges, n, N);
+
+// print adjacency list representation of a graph
+for (let i = 0; i < N; i++)
+{
+    // print given vertex
+    let line = String(i);
+
+    // print all its neighboring vertices
+    line += printList(graph.head[i]);
+
+    console.log(line);
 }
 ```
 
@@ -149,131 +123,102 @@ int main()
 
 We know that in a weighted graph, every edge will have a weight or cost associated with it, as shown below:
 
-Following is the C++ implementation of a directed weighted graph. The implementation is similar to the above implementation of unweighted graphs, except we will also store every edge’s weight in the adjacency list.
+Following is the TypeScript implementation of a directed weighted graph. The implementation is similar to the above implementation of unweighted graphs, except we will also store every edge’s weight in the adjacency list.
 
-```
-#include <iostream>
-using namespace std;
-
+```ts
 // Data structure to store adjacency list nodes
-struct Node
+class Node
 {
-    int val, cost;
-    Node* next;
-};
+    constructor(public val: number, public cost: number, public next: Node | null = null) {}
+}
 
 // Data structure to store a graph edge
-struct Edge {
-    int src, dest, weight;
-};
+class Edge {
+    constructor(public src: number, public dest: number, public weight: number) {}
+}
 
 class Graph
 {
-    // Function to allocate a new node for the adjacency list
-    Node* getAdjListNode(int value, int weight, Node* head)
-    {
-        Node* newNode = new Node;
-        newNode->val = value;
-        newNode->cost = weight;
-
-        // point new node to the current head
-        newNode->next = head;
-
-        return newNode;
-    }
-
-    int N;    // total number of nodes in the graph
-
-public:
-
     // An array of pointers to Node to represent the
     // adjacency list
-    Node **head;
+    head: (Node | null)[];
+
+    N: number;    // total number of nodes in the graph
+
+    // Function to allocate a new node for the adjacency list
+    private getAdjListNode(value: number, weight: number, head: Node | null): Node
+    {
+        // point new node to the current head
+        return new Node(value, weight, head);
+    }
 
     // Constructor
-    Graph(Edge edges[], int n, int N)
+    constructor(edges: Edge[], n: number, N: number)
     {
         // allocate memory
-        head = new Node*[N]();
-        this->N = N;
-
-        // initialize head pointer for all vertices
-        for (int i = 0; i < N; i++) {
-            head[i] = nullptr;
-        }
+        this.head = new Array<Node | null>(N).fill(null);
+        this.N = N;
 
         // add edges to the directed graph
-        for (unsigned i = 0; i < n; i++)
+        for (let i = 0; i < n; i++)
         {
-            int src = edges[i].src;
-            int dest = edges[i].dest;
-            int weight = edges[i].weight;
+            const src = edges[i].src;
+            const dest = edges[i].dest;
+            const weight = edges[i].weight;
 
             // insert at the beginning
-            Node* newNode = getAdjListNode(dest, weight, head[src]);
+            const newNode = this.getAdjListNode(dest, weight, this.head[src]);
 
             // point head pointer to the new node
-            head[src] = newNode;
+            this.head[src] = newNode;
 
             // uncomment the following code for undirected graph
 
             /*
-            newNode = getAdjListNode(src, weight, head[dest]);
+            const newNode2 = this.getAdjListNode(src, weight, this.head[dest]);
 
             // change head pointer to point to the new node
-            head[dest] = newNode;
+            this.head[dest] = newNode2;
             */
         }
     }
-
-    // Destructor
-    ~Graph() {
-        for (int i = 0; i < N; i++) {
-            delete[] head[i];
-        }
-
-        delete[] head;
-    }
-};
-
-// Function to print all neighboring vertices of a given vertex
-void printList(Node* ptr, int i)
-{
-    while (ptr != nullptr)
-    {
-        cout << "(" << i << ", " << ptr->val << ", " << ptr->cost << ") ";
-        ptr = ptr->next;
-    }
-    cout << endl;
 }
 
-// Graph implementation in C++ without using STL
-int main()
+// Function to print all neighboring vertices of a given vertex
+function printList(ptr: Node | null, i: number): string
 {
-    // an array of graph edges as per the above diagram
-    Edge edges[] =
+    let line = '';
+    while (ptr !== null)
     {
-        // (x, y, w) —> edge from `x` to `y` having weight `w`
-        {0, 1, 6}, {1, 2, 7}, {2, 0, 5}, {2, 1, 4}, {3, 2, 10}, {4, 5, 1}, {5, 4, 3}
-    };
-
-    // total number of nodes in the graph (labelled from 0 to 5)
-    int N = 6;
-
-    // calculate the total number of edges
-    int n = sizeof(edges)/sizeof(edges[0]);
-
-    // construct graph
-    Graph graph(edges, n, N);
-
-    // print adjacency list representation of a graph
-    for (int i = 0; i < N; i++)
-    {
-        // print all neighboring vertices of a vertex `i`
-        printList(graph.head[i], i);
+        line += `(${i}, ${ptr.val}, ${ptr.cost}) `;
+        ptr = ptr.next;
     }
+    return line;
+}
 
-    return 0;
+// Graph implementation in TypeScript without using built-in containers
+
+// an array of graph edges as per the above diagram
+const edges: Edge[] = [
+    // (x, y, w) —> edge from `x` to `y` having weight `w`
+    new Edge(0, 1, 6), new Edge(1, 2, 7), new Edge(2, 0, 5), new Edge(2, 1, 4),
+    new Edge(3, 2, 10), new Edge(4, 5, 1), new Edge(5, 4, 3)
+];
+
+// total number of nodes in the graph (labelled from 0 to 5)
+const N = 6;
+
+// calculate the total number of edges
+const n = edges.length;
+
+// construct graph
+const graph = new Graph(edges, n, N);
+
+// print adjacency list representation of a graph
+for (let i = 0; i < N; i++)
+{
+    // print all neighboring vertices of a vertex `i`
+    console.log(printList(graph.head[i], i).trimEnd());
 }
 ```
 

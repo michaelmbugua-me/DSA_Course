@@ -30,276 +30,93 @@ Initialize floor to -1 and iterate till our search space is exhausted.
   * If `x` is less than the middle element, the floor exists in the left subarray `nums[low…mid-1]`.
   * If `x` is more than the middle element, the floor exists in subarray `nums[mid…high]`; update floor to the middle element and reduce our search space to the right subarray `nums[mid+1…high]`.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
-// Function to find the ceil of `x` in a sorted array nums[0…n-1]
+```ts
+// Function to find the ceil of `x` in a sorted array `nums`,
 // i.e., the smallest integer greater than or equal to `x`
-int getCeil(int nums[], int n, int x)
-{
-    // search space is nums[low…high]
-    int low = 0, high = n - 1, mid;
+function getCeil(nums: number[], x: number): number {
+
+    // search space is nums[left…right]
+    let left = 0;
+    let right = nums.length - 1;
 
     // initialize ceil to -1
-    int ceil = -1;
+    let ceil = -1;
 
     // loop till the search space is exhausted
-    while (low <= high)
-    {
+    while (left <= right) {
+
         // find the mid-value in the search space
-        mid = (low + high) / 2;
+        const mid = (left + right) / 2 | 0;
 
         // if `x` is equal to the middle element, it is the ceil
-        if (nums[mid] == x) {
+        if (nums[mid] === x) {
             return nums[mid];
         }
 
         // if `x` is less than the middle element, the ceil exists in the
-        // subarray nums[low…mid]; update ceil to the middle element
-        // and reduce our search space to the left subarray nums[low…mid-1]
-        else if (x < nums[mid])
-        {
+        // subarray nums[left…mid]; update ceil to the middle element
+        // and reduce our search space to the left subarray nums[left…mid-1]
+        else if (x < nums[mid]) {
             ceil = nums[mid];
-            high = mid - 1;
+            right = mid - 1;
         }
 
         // if `x` is more than the middle element, the ceil exists in the
-        // right subarray nums[mid+1…high]
+        // right subarray nums[mid+1…right]
         else {
-            low = mid + 1;
+            left = mid + 1;
         }
     }
 
     return ceil;
 }
 
-// Function to find the floor of `x` in a sorted array nums[0…n-1],
+// Function to find the floor of `x` in a sorted array `nums`,
 // i.e., the largest integer less than or equal to `x`
-int getFloor(int nums[], int n, int x)
-{
-    int low = 0, high = n - 1, mid;
+function getFloor(nums: number[], x: number): number {
+
+    let left = 0;
+    let right = nums.length - 1;
 
     // initialize floor to -1
-    int floor = -1;
+    let floor = -1;
 
     // loop till the search space is exhausted
-    while (low <= high)
-    {
+    while (left <= right) {
+
         // find the mid-value in the search space
-        mid = (low + high) / 2;
+        const mid = (left + right) / 2 | 0;
 
         // if `x` is equal to the middle element, it is the floor
-        if (nums[mid] == x) {
+        if (nums[mid] === x) {
             return nums[mid];
         }
 
         // if `x` is less than the middle element, the floor exists in the left
-        // subarray nums[low…mid-1]
+        // subarray nums[left…mid-1]
         else if (x < nums[mid]) {
-            high = mid - 1;
+            right = mid - 1;
         }
 
         // if `x` is more than the middle element, the floor exists in the
-        // subarray nums[mid…high]; update floor to the middle element
-        // and reduce our search space to the right subarray nums[mid+1…high]
+        // subarray nums[mid…right]; update floor to the middle element
+        // and reduce our search space to the right subarray nums[mid+1…right]
         else {
             floor = nums[mid];
-            low = mid + 1;
+            left = mid + 1;
         }
     }
 
     return floor;
 }
 
-int main(void)
-{
-    int nums[] = { 1, 4, 6, 8, 9 };
-    int n = sizeof(nums) / sizeof(nums[0]);
+const nums = [1, 4, 6, 8, 9];
 
-    for (int i = 0; i <= 10; i++)
-    {
-        printf("Number %d —> ", i);
-        printf("ceil is %d, ", getCeil(nums, n, i));
-        printf("floor is %d\n", getFloor(nums, n, i));
-    }
-
-    return 0;
+for (let i = 0; i <= Math.max(...nums) + 1; i++) {
+    console.log(`Number ${i} —> ceil is ${getCeil(nums, i)}, floor is ${getFloor(nums, i)}`);
 }
-```
-
-##
-
-```java
-class Main
-{
-    // Function to find the ceil of `x` in a sorted array nums[],
-    // i.e., the smallest integer greater than or equal to `x`
-    public static int getCeil(int[] nums, int x)
-    {
-        // search space is nums[left…right]
-        int left = 0, right = nums.length - 1;
-
-        // initialize ceil to -1
-        int ceil = -1;
-
-        // loop till the search space is exhausted
-        while (left <= right)
-        {
-            // find the mid-value in the search space
-            int mid = (left + right) / 2;
-
-            // if `x` is equal to the middle element, it is the ceil
-            if (nums[mid] == x) {
-                return nums[mid];
-            }
-
-            // if `x` is less than the middle element, the ceil exists in the
-            // subarray nums[left…mid]; update ceil to the middle element
-            // and reduce our search space to the left subarray nums[left…mid-1]
-            else if (x < nums[mid])
-            {
-                ceil = nums[mid];
-                right = mid - 1;
-            }
-
-            // if `x` is more than the middle element, the ceil exists in the
-            // right subarray nums[mid+1…right]
-            else {
-                left = mid + 1;
-            }
-        }
-
-        return ceil;
-    }
-
-    // Function to find the floor of `x` in a sorted array nums[],
-    // i.e., the largest integer less than or equal to `x`
-    public static int getFloor(int[] nums, int x)
-    {
-        int left = 0, right = nums.length - 1;
-
-        // initialize floor to -1
-        int floor = -1;
-
-        // loop till the search space is exhausted
-        while (left <= right)
-        {
-            // find the mid-value in the search space
-            int mid = (left + right) / 2;
-
-            // if `x` is equal to the middle element, it is the floor
-            if (nums[mid] == x) {
-                return nums[mid];
-            }
-
-            // if `x` is less than the middle element, the floor exists in the left
-            // subarray nums[left…mid-1]
-            else if (x < nums[mid]) {
-                right = mid - 1;
-            }
-
-            // if `x` is more than the middle element, the floor exists in the
-            // subarray nums[mid…right]; update floor to the middle element
-            // and reduce our search space to the right subarray nums[mid+1…right]
-            else {
-                floor = nums[mid];
-                left = mid + 1;
-            }
-        }
-
-        return floor;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] nums = { 1, 4, 6, 8, 9 };
-
-        for (int i = 0; i <= 10; i++) {
-            System.out.println("Number " + i + " —> ceil is " + getCeil(nums, i)
-                    + ", floor is " + getFloor(nums, i));
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the ceil of `x` in a sorted list `nums`,
-# i.e., the smallest integer greater than or equal to `x`
-def getCeil(nums, x):
-
-    # search space is nums[left…right]
-    (left, right) = (0, len(nums) - 1)
-
-    # initialize ceil to -1
-    ceil = -1
-
-    # loop till the search space is exhausted
-    while left <= right:
-
-        # find the mid-value in the search space
-        mid = (left + right) // 2
-
-        # if `x` is equal to the middle element, it is the ceil
-        if nums[mid] == x:
-            return nums[mid]
-
-        # if `x` is less than the middle element, the ceil exists in the
-        # sublist nums[left…mid]; update ceil to the middle element
-        # and reduce our search space to the left sublist nums[left…mid-1]
-        elif x < nums[mid]:
-            ceil = nums[mid]
-            right = mid - 1
-
-        # if `x` is more than the middle element, the ceil exists in the
-        # right sublist nums[mid+1…right]
-        else:
-            left = mid + 1
-
-    return ceil
-
-# Function to find the floor of `x` in a sorted list `nums`,
-# i.e., the largest integer less than or equal to `x`
-def getFloor(nums, x):
-
-    (left, right) = (0, len(nums) - 1)
-
-    # initialize floor to -1
-    floor = -1
-
-    # loop till the search space is exhausted
-    while left <= right:
-
-        # find the mid-value in the search space
-        mid = (left + right) // 2
-
-        # if `x` is equal to the middle element, it is the floor
-        if nums[mid] == x:
-            return nums[mid]
-
-        # if `x` is less than the middle element, the floor exists in the left
-        # sublist nums[left…mid-1]
-        elif x < nums[mid]:
-            right = mid - 1
-
-        # if `x` is more than the middle element, the floor exists in the
-        # sublist nums[mid…right]; update floor to the middle element
-        # and reduce our search space to the right sublist nums[mid+1…right]
-        else:
-            floor = nums[mid]
-            left = mid + 1
-
-    return floor
-
-if __name__ == '__main__':
-
-    nums = [1, 4, 6, 8, 9]
-
-    for i in range(max(nums) + 2):
-        print(f'Number {i} —> ceil is {getCeil(nums, i)},floor is {getFloor(nums, i)}')
 ```
 
 **Output:** Number 0 —> ceil is 1, floor is -1 Number 1 —> ceil is 1, floor is 1 Number 2 —> ceil is 4, floor is 1 Number 3 —> ceil is 4, floor is 1 Number 4 —> ceil is 4, floor is 4 Number 5 —> ceil is 6, floor is 4 Number 6 —> ceil is 6, floor is 6 Number 7 —> ceil is 8, floor is 6 Number 8 —> ceil is 8, floor is 8 Number 9 —> ceil is 9, floor is 9 Number 10 —> ceil is -1, floor is 9

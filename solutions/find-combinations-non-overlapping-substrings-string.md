@@ -16,194 +16,52 @@ For example,
 
 The idea is to use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem. For a given string `str` of length `n`, consider every prefix `str[0, i]` of it one by one. We append the prefix to the output string by enclosing it within the parenthesis and recur for the remaining substring `str[i+1, n-1]`. If every substring of the original string is processed, add the output string to result.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <vector>
-#include <set>
-using namespace std;
-
+```ts
 // Find all combinations of non-overlapping substrings of a given string
-void findCombinations(string str, vector<string> &substring,
-        set<vector<string>> &combinations)
-{
-    // if all characters of the input string are processed,
+function findCombinations(s: string, combinations: Set<string[]>, substring: string[] = []): void {
+
+    // if all characters of the input are processed,
     // add the output string to result
-    if (str.length() == 0)
-    {
-        vector<string> output(substring);
-        combinations.insert(output);
+    if (!s) {
+        // output string to store non-overlapping substrings
+        combinations.add([...substring]);
         return;
     }
 
-    // append each prefix `str[0, i]` to the output string and recur for
-    // remaining substring `str[i+1, n-1]`
-    for (int i = 0; i < str.length(); i++)
-    {
-        // push prefix `str[0, i]` into the output vector
-        substring.push_back(str.substr(0, i + 1));
+    // add each substring `s[0, i]` to the output string and recur for
+    // remaining substring `s[i+1, n-1]`
+    for (let i = 0; i < s.length; i++) {
+        // push substring `s[0, i]` into the output string
+        substring.push(s.slice(0, i + 1));
 
-        // recur for the remaining string `str[i+1, n-1]`
-        findCombinations(str.substr(i + 1), substring, combinations);
+        // recur for the remaining string `s[i+1, n-1]`
+        findCombinations(s.slice(i + 1), combinations, substring);
 
-        // backtrack: remove current substring from the output vector
-        substring.pop_back();
+        // backtrack: remove current substring from the output
+        substring.pop();
     }
 }
 
-set<vector<string>> findCombinations(string s)
-{
-    set<vector<string>> combinations;
-
+function findAllCombinations(s: string): Set<string[]> {
     // base case
-    if (s.length() == 0) {
-        return combinations;
+    if (!s) {
+        return new Set();
     }
 
-    // vector to store non-overlapping substrings
-    vector<string> substring;
-
     // find all non-overlapping substrings
-    findCombinations(s, substring, combinations);
-
+    const combinations = new Set<string[]>();
+    findCombinations(s, combinations);
     return combinations;
 }
 
-// Utility function to print contents of the vector
-void printVector(vector<string> const &out)
-{
-    for (auto str: out) {
-        cout << str << " ";
-    }
-    cout << endl;
-}
+// input string
+const s = 'ABCD';
 
-int main()
-{
-    // input string
-    string str = "ABCD";
-
-    // find all non-overlapping substrings
-    set<vector<string>> combinations = findCombinations(str);
-
-    for (vector<string> combination: combinations) {
-        printVector(combination);
-    }
-
-    return 0;
-}
-```
-
-**Output:** A B C D A B CD A BC D A BCD AB C D AB CD ABC D ABCD
-
-##
-
-```java
-import java.util.*;
-
-public class Main
-{
-    // Find all combinations of non-overlapping substrings of a given string
-    public static void findCombinations(String str, Deque<String> substring,
-                                        Set<List<String>> combinations)
-    {
-        // if all characters of the input string are processed,
-        // add the output string to result
-        if (str.length() == 0) {
-            combinations.add(new ArrayList<>(substring));
-            return;
-        }
-
-        // add each substring `str[0, i]` to the output string and recur for
-        // remaining substring `str[i+1, n-1]`
-        for (int i = 0; i < str.length(); i++)
-        {
-            // push substring `str[0, i]` into the output string
-            substring.addLast(str.substring(0, i + 1));
-
-            // recur for the remaining string `str[i+1, n-1]`
-            findCombinations(str.substring(i + 1), substring, combinations);
-
-            // backtrack: remove current substring from the output
-            substring.pollLast();
-        }
-    }
-
-    public static Set<List<String>> findCombinations(String s)
-    {
-        Set<List<String>> combinations = new HashSet<>();
-
-        // base case
-        if (s == null || s.length() == 0) {
-            return combinations;
-        }
-
-        // string to store non-overlapping substrings
-        Deque<String> substring = new ArrayDeque<>();
-
-        // find all non-overlapping substrings
-        findCombinations(s, substring, combinations);
-
-        return combinations;
-    }
-
-    public static void main(String[] args)
-    {
-        // input string
-        String str = "ABCD";
-
-        // find all non-overlapping substrings
-        Set<List<String>> combinations = findCombinations(str);
-        System.out.println(combinations);
-    }
-}
-```
-
-##
-
-```python3
-# Find all combinations of non-overlapping substrings of a given string
-def findCombinations(s, combinations, substring=[]):
-
-    # if all characters of the input are processed,
-    # add the output string to result
-    if not s:
-        # output string to store non-overlapping substrings
-        combinations.add(tuple(substring))
-        return
-
-    # add each substring `s[0, i]` to the output string and recur for
-    # remaining substring `s[i+1, n-1]`
-    for i in range(len(s)):
-        # push substring `s[0, i]` into the output string
-        substring.append(s[:i + 1])
-
-        # recur for the remaining string `s[i+1, n-1]`
-        findCombinations(s[i + 1:], combinations, substring)
-
-        # backtrack: remove current substring from the output
-        substring.pop()
-
-def findAllCombinations(s):
-    # base case
-    if not s:
-        return set()
-
-    # find all non-overlapping substrings
-    combinations = set()
-    findCombinations(s, combinations)
-    return combinations
-
-if __name__ == '__main__':
-
-    # input string
-    s = 'ABCD'
-
-    # find all non-overlapping substrings
-    combinations = findAllCombinations(s)
-    print(combinations)
+// find all non-overlapping substrings
+const combinations = findAllCombinations(s);
+console.log(combinations);
 ```
 
 The time complexity of the above solution is exponential as there are exactly `2n-1` combinations, where `n` is the length of the input string.

@@ -25,103 +25,86 @@ We can find all the adjacent cells of the given cell by storing the relative pos
 
 row[] = { -1, 0, 0, 1 } col[] = { 0, -1, 1, 0 } So, from any position `(x, y)`, we can move to: (x – 1, y) (x, y – 1) (x, y + 1) (x + 1, y)
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-#include <queue>
-using namespace std;
-
-// Data structure to store the cell coordinates of the matrix
-struct Point {
-    int x, y;
-};
-
+```ts
 // Function to check whether given coordinates is a valid cell or not
-bool isValid(int i, int j, vector<vector<int>> &mat) {
-    return (i >= 0 && i < mat.size()) && (j >= 0 && j < mat[0].size());
-}
+const isValid = (i: number, j: number, M: number, N: number): boolean =>
+    (i >= 0 && i < M) && (j >= 0 && j < N);
 
-// Below arrays detail all four possible movements from a cell
+// Below lists detail all four possible movements from a cell
 // (top, right, bottom, and left)
-int row[] = { -1, 0, 0, 1 };
-int col[] = { 0, -1, 1, 0 };
+const row = [-1, 0, 0, 1];
+const col = [0, -1, 1, 0];
 
 // Returns true if the matrix contains at least one negative value
-bool hasNegative(vector<vector<int>> &mat)
-{
-    for (int i = 0; i < mat.size(); i++)
-    {
-        for (int j = 0; j < mat[0].size(); j++)
-        {
+const hasNegative = (mat: number[][]): boolean => {
+    for (let i = 0; i < mat.length; i++) {
+        for (let j = 0; j < mat[0].length; j++) {
             if (mat[i][j] < 0) {
                 return true;
             }
         }
     }
     return false;
-}
+};
 
 // Find the minimum number of passes required to convert all negative values
 // in the given matrix to positive
-int findMinPasses(vector<vector<int>> &mat)
-{
+const findMinPasses = (mat: number[][]): number => {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || mat.length === 0) {
         return 0;
     }
 
+    // `M × N` matrix
+    const [M, N] = [mat.length, mat[0].length];
+
     // create a queue to store cell coordinates of positive integers
-    queue<Point> Q;
+    let Q: [number, number][] = [];
 
     // enqueue cell coordinates of all positive numbers in the matrix
-    for (int i = 0; i < mat.size(); i++)
-    {
-        for (int j = 0; j < mat[0].size(); j++)
-        {
+    for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
             if (mat[i][j] > 0) {
-                Q.push({i, j});
+                Q.push([i, j]);
             }
         }
     }
 
     // to keep track of the time taken to make all numbers positive
-    int passes = 0;
+    let passes = 0;
 
     // loop till all reachable negative numbers in the matrix are processed
-    while (!Q.empty())
-    {
+    while (Q.length) {
+
         // use two queues to separate positive numbers involved in the
         // previous pass with positive numbers involved in the current pass
-        queue<Point> q;
 
         // copy contents of the original queue `Q` to another queue `q` and
         // empty the original queue
-        swap(Q, q);
+        const q = Q;
+        Q = [];
 
         /* Start of the current pass */
 
         // process all cells in the queue
-        while (!q.empty())
-        {
+        while (q.length) {
+
             // pop front node and process it
-            int x = q.front().x;
-            int y = q.front().y;
-            q.pop();
+            const [x, y] = q.shift() as [number, number];
 
             // check all four adjacent cells of the current cell
-            for (int k = 0; k < 4; k++)
-            {
+            for (let k = 0; k < row.length; k++) {
                 // if the current adjacent cell is valid and has a negative value
-                if (isValid(x + row[k], y + col[k], mat) &&
-                    mat[x + row[k]][y + col[k]] < 0)
-                {
+                if (isValid(x + row[k], y + col[k], M, N) &&
+                        mat[x + row[k]][y + col[k]] < 0) {
                     // make the value positive
-                    mat[x + row[k]][y + col[k]] = -mat[x + row[k]][y + col[k]];
+                    mat[x + row[k]][y + col[k]] = -1 * mat[x + row[k]][y + col[k]];
 
                     // enqueue adjacent cell
-                    Q.push({x + row[k], y + col[k]});
+                    Q.push([x + row[k], y + col[k]]);
                 }
             }
         }
@@ -129,281 +112,31 @@ int findMinPasses(vector<vector<int>> &mat)
         /* End of the current pass */
 
         // increment number of passes by 1
-        passes++;
+        passes = passes + 1;
     }
 
     // return number of passes or
     // -1 if the matrix has an unreachable cell which is negative
     return hasNegative(mat) ? -1 : (passes - 1);
+};
+
+const mat = [
+    [-1, -9, 0, -1, 0],
+    [-8, -3, -2, 9, -7],
+    [2, 0, 0, -6, 0],
+    [0, -7, -3, 5, -4]
+];
+
+const passes = findMinPasses(mat);
+if (passes !== -1) {
+    console.log(`The total number of passes required is ${passes}`);
 }
-
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { -1, -9, 0, -1, 0 },
-        { -8, -3, -2, 9, -7 },
-        { 2, 0, 0, -6, 0 },
-        { 0, -7, -3, 5, -4 }
-    };
-
-    int pass = findMinPasses(mat);
-    if (pass != -1) {
-        cout << "The total number of passes required is " << pass;
-    }
-    else {
-        cout << "Invalid Input";
-    }
-
-    return 0;
+else {
+    console.log('Invalid Input');
 }
 ```
 
 **Output:** The total number of passes required is 3
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-// A class to store the cell coordinates of the matrix
-class Point
-{
-    int x, y;
-
-    Point(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-}
-
-class Main
-{
-    // Function to check whether given coordinates is a valid cell or not
-    private static boolean isValid(int i, int j, int M, int N) {
-        return (i >= 0 && i < M) && (j >= 0 && j < N);
-    }
-
-    // Below arrays detail all four possible movements from a cell
-    // (top, right, bottom, and left)
-    private static int[] row = { -1, 0, 0, 1 };
-    private static int[] col = { 0, -1, 1, 0 };
-
-    // Returns true if the matrix contains at least one negative value
-    private static boolean hasNegative(int[][] mat)
-    {
-        for (int i = 0; i < mat.length; i++)
-        {
-            for (int j = 0; j < mat[0].length; j++) {
-                if (mat[i][j] < 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    // Find the minimum number of passes required to convert all negative values
-    // in the given matrix to positive
-    public static int findMinPasses(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // create a queue to store cell coordinates of positive integers
-        Queue<Point> Q = new ArrayDeque<>();
-
-        // enqueue cell coordinates of all positive numbers in the matrix
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                if (mat[i][j] > 0) {
-                    Q.add(new Point(i, j));
-                }
-            }
-        }
-
-        // to keep track of the time taken to make all numbers positive
-        int passes = 0;
-
-        // loop till all reachable negative numbers in the matrix are processed
-        while (!Q.isEmpty())
-        {
-            // use two queues to separate positive numbers involved in the
-            // previous pass with positive numbers involved in the current pass
-            Queue<Point> q;
-
-            // copy contents of the original queue `Q` to another queue `q` and
-            // empty the original queue
-            q = new ArrayDeque<>(Q);
-            Q.clear();
-
-            /* Start of the current pass */
-
-            // process all cells in the queue
-            while (!q.isEmpty())
-            {
-                // pop front node and process it
-                int x = q.peek().x;
-                int y = q.peek().y;
-                q.poll();
-
-                // check all four adjacent cells of the current cell
-                for (int k = 0; k < row.length; k++)
-                {
-                    // if the current adjacent cell is valid and has a negative value
-                    if (isValid(x + row[k], y + col[k], M, N) &&
-                            mat[x + row[k]][y + col[k]] < 0)
-                    {
-                        // make the value positive
-                        mat[x + row[k]][y + col[k]] = -mat[x + row[k]][y + col[k]];
-
-                        // enqueue adjacent cell
-                        Q.add(new Point(x + row[k], y + col[k]));
-                    }
-                }
-            }
-
-            /* End of the current pass */
-
-            // increment number of passes by 1
-            passes++;
-        }
-
-        // return number of passes or
-        // -1 if the matrix has an unreachable cell which is negative
-        return hasNegative(mat) ? -1 : (passes - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-                {
-                        { -1, -9, 0, -1, 0 },
-                        { -8, -3, -2, 9, -7 },
-                        { 2, 0, 0, -6, 0 },
-                        { 0, -7, -3, 5, -4 }
-                };
-
-        int pass = findMinPasses(mat);
-        if (pass != -1) {
-            System.out.print("The total number of passes required is " + pass);
-        }
-        else {
-            System.out.print("Invalid Input");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to check whether given coordinates is a valid cell or not
-def isValid(i, j, M, N):
-    return (0 <= i < M) and (0 <= j < N)
-
-# Below lists detail all four possible movements from a cell
-# (top, right, bottom, and left)
-row = [-1, 0, 0, 1]
-col = [0, -1, 1, 0]
-
-# Returns true if the matrix contains at least one negative value
-def hasNegative(mat):
-    for i in range(len(mat)):
-        for j in range(len(mat[0])):
-            if mat[i][j] < 0:
-                return True
-    return False
-
-# Find the minimum number of passes required to convert all negative values
-# in the given matrix to positive
-def findMinPasses(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # create a queue to store cell coordinates of positive integers
-    Q = deque()
-
-    # enqueue cell coordinates of all positive numbers in the matrix
-    for i in range(M):
-        for j in range(N):
-            if mat[i][j] > 0:
-                Q.append((i, j))
-
-    # to keep track of the time taken to make all numbers positive
-    passes = 0
-
-    # loop till all reachable negative numbers in the matrix are processed
-    while Q:
-
-        # use two queues to separate positive numbers involved in the
-        # previous pass with positive numbers involved in the current pass
-
-        # copy contents of the original queue `Q` to another queue `q` and
-        # empty the original queue
-        q = Q.copy()
-        Q.clear()
-
-        ''' Start of the current pass '''
-
-        # process all cells in the queue
-        while q:
-
-            # pop front node and process it
-            x, y = q.popleft()
-
-            # check all four adjacent cells of the current cell
-            for k in range(len(row)):
-                # if the current adjacent cell is valid and has a negative value
-                if isValid(x + row[k], y + col[k], M, N) and \
-                        mat[x + row[k]][y + col[k]] < 0:
-                    # make the value positive
-                    mat[x + row[k]][y + col[k]] = -1 * mat[x + row[k]][y + col[k]]
-
-                    # enqueue adjacent cell
-                    Q.append((x + row[k], y + col[k]))
-
-        ''' End of the current pass '''
-
-        # increment number of passes by 1
-        passes = passes + 1
-
-    # return number of passes or
-    # -1 if the matrix has an unreachable cell which is negative
-    return -1 if hasNegative(mat) else (passes - 1)
-
-if __name__ == '__main__':
-
-    mat = [
-        [-1, -9, 0, -1, 0],
-        [-8, -3, -2, 9, -7],
-        [2, 0, 0, -6, 0],
-        [0, -7, -3, 5, -4]
-    ]
-
-    passes = findMinPasses(mat)
-    if passes != -1:
-        print("No of passes required is", passes)
-    else:
-        print("Invalid Input")
-```
 
 The time complexity of the proposed solution is O(M × N) and requires O(M × N) extra space for queue data structure, where `M` and `N` are dimensions of the matrix.
 

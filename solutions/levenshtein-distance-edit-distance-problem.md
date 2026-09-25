@@ -56,121 +56,36 @@ So, we can define the problem recursively as:
 
 | max(i, j) when min(i, j) = 0 dist[i][j] = | dist[i – 1][j – 1] when X[i-1] == Y[j-1] | 1 + minimum { dist[i – 1][j], when X[i-1] != Y[j-1] | dist[i][j – 1], | dist[i – 1][j – 1] }
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Function to find Levenshtein distance between string `X` and `Y`.
 // `m` and `n` is the total number of characters in `X` and `Y`, respectively
-int dist(string X, int m, string Y, int n)
-{
-    // base case: empty strings (case 1)
-    if (m == 0) {
-        return n;
-    }
+function dist(X: string, m: number, Y: string, n: number): number {
+  // base case: empty strings (case 1)
+  if (m === 0) {
+    return n;
+  }
 
-    if (n == 0) {
-        return m;
-    }
+  if (n === 0) {
+    return m;
+  }
 
-    int cost;
+  // if the last characters of the strings match (case 2)
+  const cost = X[m - 1] === Y[n - 1] ? 0 : 1;
 
-    // if the last characters of the strings match (case 2)
-    if (X[m - 1] == Y[n - 1]) {
-        cost = 0;
-    }
-    else {
-        cost = 1;
-    }
-
-    return min (min(dist(X, m - 1, Y, n) + 1,   // deletion    (case 3a))
-            dist(X, m, Y, n - 1) + 1),          // insertion (case 3b))
-            dist(X, m - 1, Y, n - 1) + cost);   // substitution (case 2 & 3c)
+  return Math.min(dist(X, m - 1, Y, n) + 1,      // deletion (case 3a))
+    dist(X, m, Y, n - 1) + 1,                    // insertion (case 3b))
+    dist(X, m - 1, Y, n - 1) + cost);            // substitution (case 2 + 3c)
 }
 
-int main()
-{
-    string X = "kitten", Y = "sitting";
+const X = 'kitten';
+const Y = 'sitting';
 
-    cout << "The Levenshtein distance is " << dist(X, X.length(), Y, Y.length());
-
-    return 0;
-}
+console.log('The Levenshtein distance is', dist(X, X.length, Y, Y.length));
 ```
 
 **Output:** The Levenshtein distance is 3
-
-##
-
-```java
-class Main
-{
-    // Utility function to find the minimum of three numbers
-    public static int minimum(int a, int b, int c) {
-        return Integer.min(a, Integer.min(b, c));
-    }
-
-    // Function to find Levenshtein distance between string `X` and `Y`.
-    // `m` and `n` is the total number of characters in `X` and `Y`, respectively
-    public static int dist(String X, int m, String Y, int n)
-    {
-        // base case: empty strings (case 1)
-        if (m == 0) {
-            return n;
-        }
-
-        if (n == 0) {
-            return m;
-        }
-
-        // if the last characters of the strings match (case 2)
-        int cost = (X.charAt(m - 1) == Y.charAt(n - 1)) ? 0: 1;
-
-        return minimum(dist(X, m - 1, Y, n) + 1,    // deletion (case 3a))
-                dist(X, m, Y, n - 1) + 1,           // insertion (case 3b))
-                dist(X, m - 1, Y, n - 1) + cost);   // substitution (case 2 & 3c)
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "kitten", Y = "sitting";
-
-        System.out.println("The Levenshtein distance is " +
-                dist(X, X.length(), Y, Y.length()));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find Levenshtein distance between string `X` and `Y`.
-# `m` and `n` is the total number of characters in `X` and `Y`, respectively
-def dist(X, m, Y, n):
-
-    # base case: empty strings (case 1)
-    if m == 0:
-        return n
-
-    if n == 0:
-        return m
-
-    # if the last characters of the strings match (case 2)
-    cost = 0 if (X[m - 1] == Y[n - 1]) else 1
-
-    return min(dist(X, m - 1, Y, n) + 1,        # deletion (case 3a))
-            dist(X, m, Y, n - 1) + 1,           # insertion (case 3b))
-            dist(X, m - 1, Y, n - 1) + cost)    # substitution (case 2 + 3c)
-
-if __name__ == '__main__':
-
-    X = 'kitten'
-    Y = 'sitting'
-
-    print('The Levenshtein distance is', dist(X, len(X), Y, len(Y)))
-```
 
 The time complexity of the above solution is exponential and occupies space in the call stack.
 
@@ -182,189 +97,53 @@ The invariant maintained throughout the algorithm is that we can transform the i
 
 For example, let `X` be ‘kitten’, and `Y` be ‘sitting’. The Levenshtein distance between `X` and `Y` is 3. The `i'th` row and `j'th` column in the table below show the Levenshtein distance of substring `X[0…i-1]` and `Y[0…j-1]`.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <cstring>
-using namespace std;
-
+```ts
 // Function to find Levenshtein distance between string `X` and `Y`.
-// `m` and `n` is the total number of characters in `X` and `Y`, respectively
-int dist(string X, string Y)
-{
-    int m = X.length();
-    int n = Y.length();
+function dist(X: string, Y: string): number {
+  // `m` and `n` is the total number of characters in `X` and `Y`, respectively
+  const m = X.length, n = Y.length;
 
-    // For all pairs of `i` and `j`, `T[i, j]` will hold the Levenshtein distance
-    // between the first `i` characters of `X` and the first `j` characters of `Y`.
-    // Note that `T` holds `(m+1)×(n+1)` values.
-    int T[m + 1][n + 1];
+  // For all pairs of `i` and `j`, `T[i, j]` will hold the Levenshtein distance
+  // between the first `i` characters of `X` and the first `j` characters of `Y`.
+  // Note that `T` holds `(m+1)×(n+1)` values.
+  const T: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
 
-    // initialize `T` by all 0's
-    memset(T, 0, sizeof T);
+  // we can transform source prefixes into an empty string by
+  // dropping all characters
+  for (let i = 1; i <= m; i++) {
+    T[i][0] = i;                                // (case 1)
+  }
 
-    // we can transform source prefixes into an empty string by
-    // dropping all characters
+  // we can reach target prefixes from empty source prefix
+  // by inserting every character
+  for (let j = 1; j <= n; j++) {
+    T[0][j] = j;                                // (case 1)
+  }
 
-    for (int i = 1; i <= m; i++) {
-        T[i][0] = i;                // (case 1)
+  // fill the lookup table in a bottom-up manner
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      // if the last characters of the strings match (case 2)
+      const cost = X[i - 1] === Y[j - 1] ? 0 : 1;
+
+      T[i][j] = Math.min(T[i - 1][j] + 1,       // deletion (case 3b)
+        T[i][j - 1] + 1,                        // insertion (case 3a)
+        T[i - 1][j - 1] + cost);                // replace (case 2 + 3c)
     }
+  }
 
-    // we can reach target prefixes from empty source prefix
-    // by inserting every character
-
-    for (int j = 1; j <= n; j++) {
-        T[0][j] = j;                // (case 1)
-    }
-
-    int substitutionCost;
-
-    // fill the lookup table in a bottom-up manner
-    for (int i = 1; i <= m; i++)
-    {
-        for (int j = 1; j <= n; j++)
-        {
-            if (X[i - 1] == Y[j - 1]) {                 // (case 2)
-                substitutionCost = 0;                   // (case 2)
-            }
-            else {
-                substitutionCost = 1;                   // (case 3c)
-            }
-            T[i][j] = min(min(T[i - 1][j] + 1,          // deletion (case 3b)
-                            T[i][j - 1] + 1),           // insertion (case 3a)
-                T[i - 1][j - 1] + substitutionCost);    // replace (case 2 & 3c)
-        }
-    }
-
-    return T[m][n];
+  return T[m][n];
 }
 
-int main()
-{
-    string X = "kitten", Y = "sitting";
+const X = 'kitten';
+const Y = 'sitting';
 
-    cout << "The Levenshtein distance is " << dist(X, Y);
-
-    return 0;
-}
+console.log('The Levenshtein distance is', dist(X, Y));
 ```
 
 **Output:** The Levenshtein distance is 3
-
-##
-
-```java
-class Main
-{
-    // Utility function to find the minimum of three numbers
-    public static int minimum(int a, int b, int c) {
-        return Integer.min(a, Integer.min(b, c));
-    }
-
-    // Function to find Levenshtein distance between string `X` and `Y`.
-    public static int dist(String X, String Y)
-    {
-        // `m` and `n` is the total number of characters in `X` and `Y`, respectively
-        int m = X.length();
-        int n = Y.length();
-
-        // For all pairs of `i` and `j`, `T[i, j]` will hold the Levenshtein distance
-        // between the first `i` characters of `X` and the first `j` characters of `Y`.
-        // Note that `T` holds `(m+1)×(n+1)` values.
-
-        int[][] T = new int[m + 1][n + 1];
-
-        // we can transform source prefixes into an empty string by
-        // dropping all characters
-
-        for (int i = 1; i <= m; i++) {
-            T[i][0] = i;                // (case 1)
-        }
-
-        // we can reach target prefixes from empty source prefix
-        // by inserting every character
-
-        for (int j = 1; j <= n; j++) {
-            T[0][j] = j;                // (case 1)
-        }
-
-        int cost;
-
-        // fill the lookup table in a bottom-up manner
-        for (int i = 1; i <= m; i++)
-        {
-            for (int j = 1; j <= n; j++)
-            {
-                if (X.charAt(i-1) == Y.charAt(j-1)) {   // (case 2)
-                    cost = 0;                           // (case 2)
-                }
-                else {
-                    cost = 1;                           // (case 3c)
-                }
-
-                T[i][j] = minimum(T[i - 1][j] + 1,      // deletion (case 3b)
-                        T[i][j - 1] + 1,                // insertion (case 3a)
-                        T[i - 1][j - 1] + cost);        // replace (case 2 + 3c)
-            }
-        }
-
-        return T[m][n];
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "kitten", Y = "sitting";
-        System.out.print("The Levenshtein distance is " + dist(X, Y));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find Levenshtein distance between string `X` and `Y`.
-def dist(X, Y):
-    # `m` and `n` is the total number of characters in `X` and `Y`, respectively
-    (m, n) = (len(X), len(Y))
-
-    # For all pairs of `i` and `j`, `T[i, j]` will hold the Levenshtein distance
-    # between the first `i` characters of `X` and the first `j` characters of `Y`.
-    # Note that `T` holds `(m+1)×(n+1)` values.
-    T = [[0 for x in range(n + 1)] for y in range(m + 1)]
-
-    # we can transform source prefixes into an empty string by
-    # dropping all characters
-    for i in range(1, m + 1):
-        T[i][0] = i                    # (case 1)
-
-    # we can reach target prefixes from empty source prefix
-    # by inserting every character
-    for j in range(1, n + 1):
-        T[0][j] = j                    # (case 1)
-
-    # fill the lookup table in a bottom-up manner
-    for i in range(1, m + 1):
-
-        for j in range(1, n + 1):
-            if X[i - 1] == Y[j - 1]:            # (case 2)
-                cost = 0                        # (case 2)
-            else:
-                cost = 1                        # (case 3c)
-
-            T[i][j] = min(T[i - 1][j] + 1,      # deletion (case 3b)
-                        T[i][j - 1] + 1,        # insertion (case 3a)
-                        T[i - 1][j - 1] + cost) # replace (case 2 + 3c)
-
-    return T[m][n]
-
-if __name__ == '__main__':
-
-    X = 'kitten'
-    Y = 'sitting'
-
-    print('The Levenshtein distance is', dist(X, Y))
-```
 
 The time complexity of the above solution is O(m.n) and requires O(m.n) extra space, where `m` is the length of the first string and `n` is the length of the second string. It turns out that only two rows of the table are needed for the construction if one does not want to reconstruct the edited input strings (the previous row and the current row being calculated).
 

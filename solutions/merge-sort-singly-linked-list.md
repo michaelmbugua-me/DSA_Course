@@ -10,385 +10,118 @@ Given a linked list, sort it using the merge sort algorithm.
 
 Merge sort is a [Divide and Conquer](https://techiedelight.com/divide-and-conquer-interview-questions/) algorithm. Like all divide-and-conquer algorithms, the merge sort algorithm splits the list into two sublists. Then it recursively sorts each sublist and finally merges both sorted lists together to form the answer. The following solution uses the [frontBackSplit()](https://techiedelight.com/split-nodes-given-linked-list-front-back-halves/) and [sortedMerge()](https://techiedelight.com/merge-given-sorted-linked-lists/) method to solve this problem efficiently. We have already covered them in detail in previous posts.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
-    }
-
-    printf("NULL\n");
+class ListNode {
+    constructor(public data: number, public next: ListNode | null = null) {}
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = *head;
-    *head = newNode;
+// Function to print a given linked list
+function printList(head: ListNode | null): void {
+    let str = '';
+    let ptr = head;
+    while (ptr) {
+        str += `${ptr.data} —> `;
+        ptr = ptr.next;
+    }
+    console.log(str + 'null');
 }
 
 // Takes two lists sorted in increasing order and merge their nodes
 // to make one big sorted list, which is returned
-struct Node* sortedMerge(struct Node* a, struct Node* b)
-{
+function sortedMerge(a: ListNode | null, b: ListNode | null): ListNode | null {
+
     // base cases
-    if (a == NULL) {
+    if (a === null) {
         return b;
     }
-
-    else if (b == NULL) {
+    else if (b === null) {
         return a;
     }
 
-    struct Node* result = NULL;
-
     // pick either `a` or `b`, and recur
-    if (a->data <= b->data)
-    {
-        result = a;
-        result->next = sortedMerge(a->next, b);
+    if (a.data <= b.data) {
+        const result = a;
+        result.next = sortedMerge(a.next, b);
+        return result;
     }
     else {
-        result = b;
-        result->next = sortedMerge(a, b->next);
+        const result = b;
+        result.next = sortedMerge(a, b.next);
+        return result;
     }
-
-    return result;
 }
 
 /*
-    Split the given list's nodes into front and back halves
-    and return the two lists using the reference parameters.
-    If the length is odd, the extra node should go in the front list.
-    It uses the fast/slow pointer strategy
-*/
-void frontBackSplit(struct Node* source, struct Node** frontRef,
-                    struct Node** backRef)
-{
-    // if the length is less than 2, handle it separately
-    if (source == NULL || source->next == NULL)
-    {
-        *frontRef = source;
-        *backRef = NULL;
-        return;
-    }
-
-    struct Node* slow = source;
-    struct Node* fast = source->next;
-
-    // advance `fast` two nodes, and advance `slow` one node
-    while (fast != NULL)
-    {
-        fast = fast->next;
-        if (fast != NULL)
-        {
-            slow = slow->next;
-            fast = fast->next;
-        }
-    }
-
-    // `slow` is before the midpoint in the list, so split it in two
-    // at that point.
-    *frontRef = source;
-    *backRef = slow->next;
-    slow->next = NULL;
-}
-
-// Sort a given linked list using the merge sort algorithm
-void mergesort(struct Node** head)
-{
-    // base case — length 0 or 1
-    if (*head == NULL || (*head)->next == NULL) {
-        return;
-    }
-
-    struct Node* a;
-    struct Node* b;
-
-    // split `head` into `a` and `b` sublists
-    frontBackSplit(*head, &a, &b);
-
-    // recursively sort the sublists
-    mergesort(&a);
-    mergesort(&b);
-
-    // answer = merge the two sorted lists
-    *head = sortedMerge(a, b);
-}
-
-int main(void)
-{
-    // input keys
-    int keys[] = { 6, 8, 4, 3, 1, 9 };
-    int n = sizeof(keys)/sizeof(keys[0]);
-
-    struct Node* head = NULL;
-    for (int i = 0; i < n; i++) {
-        push(&head, keys[i]);
-    }
-
-    // sort the list
-    mergesort(&head);
-
-    // print the sorted list
-    printList(head);
-
-    return 0;
-}
-```
-
-**Output:** 1 —> 3 —> 4 —> 6 —> 8 —> 9 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Takes two lists sorted in increasing order and merge their nodes
-    // to make one big sorted list, which is returned
-    public static Node sortedMerge(Node a, Node b)
-    {
-        // base cases
-        if (a == null) {
-            return b;
-        }
-        else if (b == null) {
-            return a;
-        }
-
-        Node result;
-
-        // pick either `a` or `b`, and recur
-        if (a.data <= b.data)
-        {
-            result = a;
-            result.next = sortedMerge(a.next, b);
-        }
-        else {
-            result = b;
-            result.next = sortedMerge(a, b.next);
-        }
-
-        return result;
-    }
-
-    /*
-        Split the given list's nodes into front and back halves,
-        If the length is odd, the extra node should go in the front list.
-        It uses the fast/slow pointer strategy
-    */
-    public static Node[] frontBackSplit(Node source)
-    {
-        // if the length is less than 2, handle it separately
-        if (source == null || source.next == null) {
-            return new Node[]{ source, null };
-        }
-
-        Node slow = source;
-        Node fast = source.next;
-
-        // advance `fast` two nodes, and advance `slow` one node
-        while (fast != null)
-        {
-            fast = fast.next;
-            if (fast != null)
-            {
-                slow = slow.next;
-                fast = fast.next;
-            }
-        }
-
-        // `slow` is before the midpoint in the list, so split it in two
-        // at that point.
-        Node[] arr = new Node[]{ source, slow.next };
-        slow.next = null;
-
-        return arr;
-    }
-
-    // Sort a given linked list using the merge sort algorithm
-    public static Node mergesort(Node head)
-    {
-        // base case — length 0 or 1
-        if (head == null || head.next == null) {
-            return head;
-        }
-
-        // split `head` into `a` and `b` sublists
-        Node[] arr = frontBackSplit(head);
-        Node front = arr[0];
-        Node back = arr[1];
-
-        // recursively sort the sublists
-        front = mergesort(front);
-        back = mergesort(back);
-
-        // answer = merge the two sorted lists
-        return sortedMerge(front, back);
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 8, 6, 4, 9, 3, 1 };
-
-        Node head = null;
-        for (int key: keys) {
-            head = new Node(key, head);
-        }
-
-        // sort the list
-        head = mergesort(head);
-
-        // print the sorted list
-        printList(head);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
-
-# Takes two lists sorted in increasing order and merge their nodes
-# to make one big sorted list, which is returned
-def sortedMerge(a, b):
-
-    # base cases
-    if a is None:
-        return b
-    elif b is None:
-        return a
-
-    # pick either `a` or `b`, and recur
-    if a.data <= b.data:
-        result = a
-        result.next = sortedMerge(a.next, b)
-    else:
-        result = b
-        result.next = sortedMerge(a, b.next)
-
-    return result
-
-'''
     Split the given list's nodes into front and back halves,
     If the length is odd, the extra node should go in the front list.
     It uses the fast/slow pointer strategy
-'''
+*/
+function frontBackSplit(source: ListNode | null): [ListNode | null, ListNode | null] {
 
-def frontBackSplit(source):
+    // if the length is less than 2, handle it separately
+    if (source === null || source.next === null) {
+        return [source, null];
+    }
 
-    # if the length is less than 2, handle it separately
-    if source is None or source.next is None:
-        return source, None
+    let slow = source;
+    let fast = source.next;
 
-    (slow, fast) = (source, source.next)
+    // advance `fast` two nodes, and advance `slow` one node
+    while (fast) {
 
-    # advance `fast` two nodes, and advance `slow` one node
-    while fast:
+        fast = fast.next;
+        if (fast) {
+            slow = slow.next!;
+            fast = fast.next;
+        }
+    }
 
-        fast = fast.next
-        if fast:
-            slow = slow.next
-            fast = fast.next
+    // `slow` is before the midpoint of the list, so split it in two
+    // at that point.
+    const ret: [ListNode | null, ListNode | null] = [source, slow.next];
+    slow.next = null;
 
-    # `slow` is before the midpoint of the list, so split it in two
-    # at that point.
-    ret = (source, slow.next)
-    slow.next = None
+    return ret;
+}
 
-    return ret
+// Sort a given linked list using the merge sort algorithm
+function mergesort(head: ListNode | null): ListNode | null {
 
-# Sort a given linked list using the merge sort algorithm
-def mergesort(head):
+    // base case — length 0 or 1
+    if (head === null || head.next === null) {
+        return head;
+    }
 
-    # base case — length 0 or 1
-    if head is None or head.next is None:
-        return head
+    // split `head` into `a` and `b` sublists
+    let [front, back] = frontBackSplit(head);
 
-    # split `head` into `a` and `b` sublists
-    front, back = frontBackSplit(head)
+    // recursively sort the sublists
+    front = mergesort(front);
+    back = mergesort(back);
 
-    # recursively sort the sublists
-    front = mergesort(front)
-    back = mergesort(back)
+    // answer = merge the two sorted lists
+    return sortedMerge(front, back);
+}
 
-    # answer = merge the two sorted lists
-    return sortedMerge(front, back)
+// input keys
+const keys = [8, 6, 4, 9, 3, 1];
 
-if __name__ == '__main__':
+let head: ListNode | null = null;
+for (const key of keys) {
+    head = new ListNode(key, head);
+}
 
-    # input keys
-    keys = [8, 6, 4, 9, 3, 1]
+// sort the list
+head = mergesort(head);
 
-    head = None
-    for key in keys:
-        head = Node(key, head)
-
-    # sort the list
-    head = mergesort(head)
-
-    # print the sorted list
-    printList(head)
+// print the sorted list
+printList(head);
 ```
+
+**Output:** 1 —> 3 —> 4 —> 6 —> 8 —> 9 —> NULL
 
 The time complexity of the above solution is O(n.log(n)), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.
 

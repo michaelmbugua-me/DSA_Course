@@ -18,50 +18,41 @@ To delete a node `x` from the treap, remove it if it is a leaf of the tree. If `
 
 To search for a given key value, apply a [standard search algorithm](https://techiedelight.com/search-given-key-in-bst/) in a binary search tree, ignoring the priorities.
 
-Following is the implementation of a treap data structure in C++, Java, and Python demonstrating the above operations:
+Following is the implementation of a treap data structure in TypeScript demonstrating the above operations:
 
-```cpp
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-using namespace std;
-
+```ts
 // A Treap Node
-struct TreapNode
-{
-    int data;
-    int priority;
-    TreapNode* left, *right;
+class TreapNode {
+    // constructor
+    constructor(public data: number, public priority = randrange(100),
+                public left: TreapNode | null = null, public right: TreapNode | null = null) {}
+}
 
-    // Constructor
-    TreapNode(int data)
-    {
-        this->data = data;
-        this->priority = rand() % 100;
-        this->left = this->right = nullptr;
-    }
-};
+// Generates a pseudo-random integer in range [0, max)
+function randrange(max: number): number {
+    return Math.floor(Math.random() * max);
+}
 
 /* Function to left-rotate a given treap
 
-      r                         R
-     / \      Left Rotate      / \
-    L   R        ———>         r   Y
-       / \                   / \
-      X   Y                 L   X
+      r                       R
+     / \     Left Rotate     / \
+    L   R       ———>        r   Y
+       / \                     / \
+      X   Y                   L   X
 */
 
-void rotateLeft(TreapNode* &root)
-{
-    TreapNode* R = root->right;
-    TreapNode* X = root->right->left;
+function rotateLeft(root: TreapNode): TreapNode {
+
+    const R = root.right;
+    const X = root.right!.left;
 
     // rotate
-    R->left = root;
-    root->right = X;
+    R!.left = root;
+    root.right = X;
 
     // set a new root
-    root = R;
+    return R!;
 }
 
 /* Function to right-rotate a given treap
@@ -73,142 +64,134 @@ void rotateLeft(TreapNode* &root)
     X   Y                        Y   R
 */
 
-void rotateRight(TreapNode* &root)
-{
-    TreapNode* L = root->left;
-    TreapNode* Y = root->left->right;
+function rotateRight(root: TreapNode): TreapNode {
+
+    const L = root.left;
+    const Y = root.left!.right;
 
     // rotate
-    L->right = root;
-    root->left = Y;
+    L!.right = root;
+    root.left = Y;
 
     // set a new root
-    root = L;
+    return L!;
 }
 
 // Recursive function to insert a given key with a priority into treap
-// using a reference parameter
-void insertNode(TreapNode* &root, int data)
-{
+function insertNode(root: TreapNode | null, data: number): TreapNode {
+
     // base case
-    if (root == nullptr)
-    {
-        root = new TreapNode(data);
-        return;
+    if (root === null) {
+        return new TreapNode(data);
     }
 
     // if the given data is less than the root node, insert in the left subtree;
     // otherwise, insert in the right subtree
-    if (data < root->data)
-    {
-        insertNode(root->left, data);
+    if (data < root.data) {
+        root.left = insertNode(root.left, data);
 
         // rotate right if heap property is violated
-        if (root->left != nullptr && root->left->priority > root->priority) {
-            rotateRight(root);
+        if (root.left && root.left.priority > root.priority) {
+            root = rotateRight(root);
         }
-    }
-    else {
-        insertNode(root->right, data);
+    } else {
+        root.right = insertNode(root.right, data);
 
         // rotate left if heap property is violated
-        if (root->right != nullptr && root->right->priority > root->priority) {
-            rotateLeft(root);
+        if (root.right && root.right.priority > root.priority) {
+            root = rotateLeft(root);
         }
     }
+
+    return root;
 }
 
 // Recursive function to search for a key in a given treap
-bool searchNode(TreapNode* root, int key)
-{
+function searchNode(root: TreapNode | null, key: number): boolean {
+
     // if the key is not present in the tree
-    if (root == nullptr) {
+    if (root === null) {
         return false;
     }
 
     // if the key is found
-    if (root->data == key) {
+    if (root.data === key) {
         return true;
     }
 
     // if the key is less than the root node, search in the left subtree
-    if (key < root->data) {
-        return searchNode(root->left, key);
+    if (key < root.data) {
+        return searchNode(root.left, key);
     }
 
     // otherwise, search in the right subtree
-    return searchNode(root->right, key);
+    return searchNode(root.right, key);
 }
 
 // Recursive function to delete a key from a given treap
-void deleteNode(TreapNode* &root, int key)
-{
+function deleteNode(root: TreapNode | null, key: number): TreapNode | null {
+
     // base case: the key is not found in the tree
-    if (root == nullptr) {
-        return;
+    if (root === null) {
+        return null;
     }
 
     // if the key is less than the root node, recur for the left subtree
-    if (key < root->data) {
-        deleteNode(root->left, key);
+    if (key < root.data) {
+        root.left = deleteNode(root.left, key);
     }
 
     // if the key is more than the root node, recur for the right subtree
-    else if (key > root->data) {
-        deleteNode(root->right, key);
+    else if (key > root.data) {
+        root.right = deleteNode(root.right, key);
     }
 
     // if the key is found
     else {
+
         // Case 1: node to be deleted has no children (it is a leaf node)
-        if (root->left == nullptr && root->right == nullptr)
-        {
+        if (root.left === null && root.right === null) {
             // deallocate the memory and update root to null
-            delete root;
-            root = nullptr;
+            root = null;
         }
 
         // Case 2: node to be deleted has two children
-        else if (root->left && root->right)
-        {
+        else if (root.left && root.right) {
             // if the left child has less priority than the right child
-            if (root->left->priority < root->right->priority)
-            {
+            if (root.left.priority < root.right.priority) {
                 // call `rotateLeft()` on the root
-                rotateLeft(root);
+                root = rotateLeft(root);
 
                 // recursively delete the left child
-                deleteNode(root->left, key);
-            }
-            else {
+                root.left = deleteNode(root.left, key);
+            } else {
                 // call `rotateRight()` on the root
-                rotateRight(root);
+                root = rotateRight(root);
 
                 // recursively delete the right child
-                deleteNode(root->right, key);
+                root.right = deleteNode(root.right, key);
             }
         }
 
         // Case 3: node to be deleted has only one child
         else {
             // choose a child node
-            TreapNode* child = (root->left)? root->left: root->right;
-            TreapNode* curr = root;
-
+            const child = root.left ? root.left : root.right;
             root = child;
-
-            // deallocate the memory
-            delete curr;
         }
     }
+
+    return root;
 }
 
 // Utility function to print two-dimensional view of a treap using
 // reverse inorder traversal
-void printTreap(TreapNode *root, int space = 0, int height = 10)
-{
+function printTreap(root: TreapNode | null, space: number): void {
+
+    const height = 10;
+
     // Base case
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
@@ -216,488 +199,45 @@ void printTreap(TreapNode *root, int space = 0, int height = 10)
     space += height;
 
     // print the right child first
-    printTreap(root->right, space);
-    cout << endl;
+    printTreap(root.right, space);
 
     // print the current node after padding with spaces
-    for (int i = height; i < space; i++) {
-        cout << ' ';
+    for (let i = height; i < space; i++) {
+        process.stdout.write(' ');
     }
-    cout << root->data << "(" << root->priority << ")\n";
+
+    console.log(`(${root.data}, ${root.priority})`);
 
     // print the left child
-    cout << endl;
-    printTreap(root->left, space);
+    printTreap(root.left, space);
 }
 
-int main()
-{
-    // Treap keys
-    int keys[] = { 5, 2, 1, 4, 9, 8, 10 };
+// Treap keys
+const keys = [5, 2, 1, 4, 9, 8, 10];
 
-    int n = sizeof(keys)/sizeof(int);
-
-    // Construct a treap
-    TreapNode* root = nullptr;
-    srand(time(nullptr));
-
-    for (int key: keys) {
-        insertNode(root, key);
-    }
-
-    cout << "Constructed treap:\n\n";
-    printTreap(root);
-
-    cout << "\nDeleting node 1:\n\n";
-    deleteNode(root, 1);
-    printTreap(root);
-
-    cout << "\nDeleting node 5:\n\n";
-    deleteNode(root, 5);
-    printTreap(root);
-
-    cout << "\nDeleting node 9:\n\n";
-    deleteNode(root, 9);
-    printTreap(root);
-
-    return 0;
+// construct a treap
+let root: TreapNode | null = null;
+for (const key of keys) {
+    root = insertNode(root, key);
 }
+
+console.log('Constructed :\n\n');
+printTreap(root, 0);
+
+console.log('\nDeleting node 1:\n\n');
+root = deleteNode(root, 1);
+printTreap(root, 0);
+
+console.log('\nDeleting node 5:\n\n');
+root = deleteNode(root, 5);
+printTreap(root, 0);
+
+console.log('\nDeleting node 9:\n\n');
+root = deleteNode(root, 9);
+printTreap(root, 0);
 ```
 
 **Output:** The output varies every time we run the program.
-
-##
-
-```java
-import java.util.Random;
-
-// A Treap Node
-class TreapNode
-{
-    int data;
-    int priority;
-    TreapNode left, right;
-
-    // constructor
-    TreapNode(int data)
-    {
-        this.data = data;
-        this.priority = new Random().nextInt(100);
-        this.left = this.right = null;
-    }
-}
-
-class Main
-{
-    /* Function to left-rotate a given treap
-
-          r                         R
-         / \      Left Rotate      / \
-        L   R        ———>         r   Y
-           / \                   / \
-          X   Y                 L   X
-    */
-    public static TreapNode rotateLeft(TreapNode root)
-    {
-        TreapNode R = root.right;
-        TreapNode X = root.right.left;
-
-        // rotate
-        R.left = root;
-        root.right = X;
-
-        // set a new root
-        return R;
-    }
-
-    /* Function to right-rotate a given treap
-
-            r                        L
-           / \     Right Rotate     / \
-          L   R        ———>        X   r
-         / \                          / \
-        X   Y                        Y   R
-    */
-    public static TreapNode rotateRight(TreapNode root)
-    {
-        TreapNode L = root.left;
-        TreapNode Y = root.left.right;
-
-        // rotate
-        L.right = root;
-        root.left = Y;
-
-        // set a new root
-        return L;
-    }
-
-    // Recursive function to insert a given key with a priority into treap
-    public static TreapNode insertNode(TreapNode root, int data)
-    {
-        // base case
-        if (root == null) {
-            return new TreapNode(data);
-        }
-
-        // if data is less than the root node, insert in the left subtree;
-        // otherwise, insert in the right subtree
-        if (data < root.data)
-        {
-            root.left = insertNode(root.left, data);
-
-            // rotate right if heap property is violated
-            if (root.left != null && root.left.priority > root.priority) {
-                root = rotateRight(root);
-            }
-        }
-        else {
-            root.right = insertNode(root.right, data);
-
-            // rotate left if heap property is violated
-            if (root.right != null && root.right.priority > root.priority) {
-                root = rotateLeft(root);
-            }
-        }
-
-        return root;
-    }
-
-    // Recursive function to search for a key in a given treap
-    public static boolean searchNode(TreapNode root, int key)
-    {
-        // if the key is not present in the tree
-        if (root == null) {
-            return false;
-        }
-
-        // if the key is found
-        if (root.data == key) {
-            return true;
-        }
-
-        // if the key is less than the root node, search in the left subtree
-        if (key < root.data) {
-            return searchNode(root.left, key);
-        }
-
-        // otherwise, search in the right subtree
-        return searchNode(root.right, key);
-    }
-
-    // Recursive function to delete a key from a given treap
-    public static TreapNode deleteNode(TreapNode root, int key)
-    {
-        // base case: the key is not found in the tree
-        if (root == null) {
-            return null;
-        }
-
-        // if the key is less than the root node, recur for the left subtree
-        if (key < root.data) {
-            root.left = deleteNode(root.left, key);
-        }
-
-        // if the key is more than the root node, recur for the right subtree
-        else if (key > root.data) {
-            root.right = deleteNode(root.right, key);
-        }
-
-        // if the key is found
-        else {
-            // Case 1: node to be deleted has no children (it is a leaf node)
-            if (root.left == null && root.right == null)
-            {
-                // deallocate the memory and update root to null
-                root = null;
-            }
-
-            // Case 2: node to be deleted has two children
-            else if (root.left != null && root.right != null)
-            {
-                // if the left child has less priority than the right child
-                if (root.left.priority < root.right.priority)
-                {
-                    // call `rotateLeft()` on the root
-                    root = rotateLeft(root);
-
-                    // recursively delete the left child
-                    root.left = deleteNode(root.left, key);
-                }
-                else {
-                    // call `rotateRight()` on the root
-                    root = rotateRight(root);
-
-                    // recursively delete the right child
-                    root.right = deleteNode(root.right, key);
-                }
-            }
-
-            // Case 3: node to be deleted has only one child
-            else {
-                // choose a child node
-                TreapNode child = (root.left != null)? root.left: root.right;
-                root = child;
-            }
-        }
-
-        return root;
-    }
-
-    // Utility function to print two-dimensional view of a treap using
-    // reverse inorder traversal
-    public static void printTreap(TreapNode root, int space)
-    {
-        final int height = 10;
-
-        // Base case
-        if (root == null) {
-            return;
-        }
-
-        // increase distance between levels
-        space += height;
-
-        // print the right child first
-        printTreap(root.right, space);
-        System.lineSeparator();
-
-        // print the current node after padding with spaces
-        for (int i = height; i < space; i++) {
-            System.out.print(' ');
-        }
-
-        System.out.println(root.data + "(" + root.priority + ")");
-
-        // print the left child
-        System.lineSeparator();
-        printTreap(root.left, space);
-    }
-
-    public static void main(String[] args)
-    {
-        // Treap keys
-        int[] keys = { 5, 2, 1, 4, 9, 8, 10 };
-
-        // construct a treap
-        TreapNode root = null;
-        for (int key: keys) {
-            root = insertNode(root, key);
-        }
-
-        System.out.println("Constructed treap:\n\n");
-        printTreap(root, 0);
-
-        System.out.println("\nDeleting node 1:\n\n");
-        root = deleteNode(root, 1);
-        printTreap(root, 0);
-
-        System.out.println("\nDeleting node 5:\n\n");
-        root = deleteNode(root, 5);
-        printTreap(root, 0);
-
-        System.out.println("\nDeleting node 9:\n\n");
-        root = deleteNode(root, 9);
-        printTreap(root, 0);
-    }
-}
-```
-
-##
-
-```python3
-from random import randrange
-
-# A Treap Node
-class TreapNode:
-    # constructor
-    def __init__(self, data, priority=100, left=None, right=None):
-        self.data = data
-        self.priority = randrange(priority)
-        self.left = left
-        self.right = right
-
-''' Function to left-rotate a given treap
-
-      r                       R
-     / \     Left Rotate     / \
-    L   R       ———>        r   Y
-       / \                     / \
-      X   Y                   L   X
-'''
-
-def rotateLeft(root):
-
-    R = root.right
-    X = root.right.left
-
-    # rotate
-    R.left = root
-    root.right = X
-
-    # set a new root
-    return R
-
-''' Function to right-rotate a given treap
-
-        r                        L
-       / \     Right Rotate     / \
-      L   R       ———>         X   r
-     / \                          / \
-    X   Y                        Y   R
-'''
-
-def rotateRight(root):
-
-    L = root.left
-    Y = root.left.right
-
-    # rotate
-    L.right = root
-    root.left = Y
-
-    # set a new root
-    return L
-
-# Recursive function to insert a given key with a priority into treap
-def insertNode(root, data):
-
-    # base case
-    if root is None:
-        return TreapNode(data)
-
-    # if the given data is less than the root node, insert in the left subtree;
-    # otherwise, insert in the right subtree
-    if data < root.data:
-        root.left = insertNode(root.left, data)
-
-        # rotate right if heap property is violated
-        if root.left and root.left.priority > root.priority:
-            root = rotateRight(root)
-    else:
-        root.right = insertNode(root.right, data)
-
-        # rotate left if heap property is violated
-        if root.right and root.right.priority > root.priority:
-            root = rotateLeft(root)
-
-    return root
-
-# Recursive function to search for a key in a given treap
-def searchNode(root, key):
-
-    # if the key is not present in the tree
-    if root is None:
-        return False
-
-    # if the key is found
-    if root.data == key:
-        return True
-
-    # if the key is less than the root node, search in the left subtree
-    if key < root.data:
-        return searchNode(root.left, key)
-
-    # otherwise, search in the right subtree
-    return searchNode(root.right, key)
-
-# Recursive function to delete a key from a given treap
-def deleteNode(root, key):
-
-    # base case: the key is not found in the tree
-    if root is None:
-        return None
-
-    # if the key is less than the root node, recur for the left subtree
-    if key < root.data:
-        root.left = deleteNode(root.left, key)
-
-    # if the key is more than the root node, recur for the right subtree
-    elif key > root.data:
-        root.right = deleteNode(root.right, key)
-
-    # if the key is found
-    else:
-
-        # Case 1: node to be deleted has no children (it is a leaf node)
-        if root.left is None and root.right is None:
-            # deallocate the memory and update root to None
-            root = None
-
-        # Case 2: node to be deleted has two children
-        elif root.left and root.right:
-            # if the left child has less priority than the right child
-            if root.left.priority < root.right.priority:
-                # call `rotateLeft()` on the root
-                root = rotateLeft(root)
-
-                # recursively delete the left child
-                root.left = deleteNode(root.left, key)
-            else:
-                # call `rotateRight()` on the root
-                root = rotateRight(root)
-
-                # recursively delete the right child
-                root.right = deleteNode(root.right, key)
-
-        # Case 3: node to be deleted has only one child
-        else:
-            # choose a child node
-            child = root.left if (root.left) else root.right
-            root = child
-
-    return root
-
-# Utility function to print two-dimensional view of a treap using
-# reverse inorder traversal
-def printTreap(root, space):
-
-    height = 10
-
-    # Base case
-    if root is None:
-        return
-
-    # increase distance between levels
-    space += height
-
-    # print the right child first
-    printTreap(root.right, space)
-
-    # print the current node after padding with spaces
-    for i in range(height, space):
-        print(' ', end='')
-
-    print((root.data, root.priority))
-
-    # print the left child
-    printTreap(root.left, space)
-
-if __name__ == '__main__':
-
-    # Treap keys
-    keys = [5, 2, 1, 4, 9, 8, 10]
-
-    # construct a treap
-    root = None
-    for key in keys:
-        root = insertNode(root, key)
-
-    print("Constructed :\n\n")
-    printTreap(root, 0)
-
-    print("\nDeleting node 1:\n\n")
-    root = deleteNode(root, 1)
-    printTreap(root, 0)
-
-    print("\nDeleting node 5:\n\n")
-    root = deleteNode(root, 5)
-    printTreap(root, 0)
-
-    print("\nDeleting node 9:\n\n")
-    root = deleteNode(root, 9)
-
-    printTreap(root, 0)
-```
 
 **References:** [Treap – Wikipedia](https://en.wikipedia.org/wiki/Treap)
 

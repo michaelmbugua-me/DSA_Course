@@ -20,131 +20,41 @@ There are several variations to the above problem:
 
 The current problem allows us to make unlimited stock transactions. The idea is to traverse the given list of prices and find a local minimum of every increasing sequence. For example, the increasing sequences of length 2 or more in the array `{1, 5, 2, 3, 7, 6, 4, 5}` are `{1, 5}`, `{2, 3, 7}`, and `{4, 5}`. The local minimum of each sequence is 1, 2 and 4, respectively. We can gain maximum profit if we buy the shares at the starting of every increasing sequence (local minimum) and sell them at the end of the increasing sequence (local maximum).
 
-Following is the C, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to find the maximum profit earned by buying and
 // selling shares any number of times
-int findMaxProfit(int price[], int n)
-{
+function findMaxProfit(price: number[]): number {
+
     // keep track of the maximum profit gained
-    int profit = 0;
+    let profit = 0;
 
     // initialize the local minimum to the first element's index
-    int j = 0;
+    let j = 0;
 
     // start from the second element
-    for (int i = 1; i < n; i++)
-    {
+    for (let i = 1; i < price.length; i++) {
+
         // update the local minimum if a decreasing sequence is found
         if (price[i - 1] > price[i]) {
             j = i;
         }
 
-        // sell shares if the current element is the peak,
-        // i.e., (`previous <= current > next`)
+        // sell shares if the current element is the peak, i.e.,
+        // (`previous <= current > next`)
         if (price[i - 1] <= price[i] &&
-            (i + 1 == n || price[i] > price[i + 1]))
-        {
+                (i + 1 === price.length || price[i] > price[i + 1])) {
             profit += (price[i] - price[j]);
-            printf("Buy on day %d and sell on day %d\n", j + 1, i + 1);
+            console.log(`Buy on day ${j + 1} and sell on day ${i + 1}`);
         }
     }
 
     return profit;
 }
 
-int main()
-{
-    int price[] = { 1, 5, 2, 3, 7, 6, 4, 5 };
-    int n = sizeof(price) / sizeof(price[0]);
-
-    printf("\nTotal profit earned is %d", findMaxProfit(price, n));
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to find the maximum profit earned by buying and
-    // selling shares any number of times
-    public static int findMaxProfit(int[] price)
-    {
-        // keep track of the maximum profit gained
-        int profit = 0;
-
-        // initialize the local minimum to the first element's index
-        int j = 0;
-
-        // start from the second element
-        for (int i = 1; i < price.length; i++)
-        {
-            // update the local minimum if a decreasing sequence is found
-            if (price[i - 1] > price[i]) {
-                j = i;
-            }
-
-            // sell shares if the current element is the peak,
-            // i.e., (`previous <= current > next`)
-            if (price[i - 1] <= price[i] &&
-                (i + 1 == price.length || price[i] > price[i + 1]))
-            {
-                profit += (price[i] - price[j]);
-                System.out.printf("Buy on day %d and sell on day %d\n", j + 1, i + 1);
-            }
-        }
-
-        return profit;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] price = { 1, 5, 2, 3, 7, 6, 4, 5 };
-
-        System.out.print("\nTotal profit earned is " + findMaxProfit(price));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the maximum profit earned by buying and
-# selling shares any number of times
-def findMaxProfit(price):
-
-    # keep track of the maximum profit gained
-    profit = 0
-
-    # initialize the local minimum to the first element's index
-    j = 0
-
-    # start from the second element
-    for i in range(1, len(price)):
-
-        # update the local minimum if a decreasing sequence is found
-        if price[i - 1] > price[i]:
-            j = i
-
-        # sell shares if the current element is the peak, i.e.,
-        # (`previous <= current > next`)
-        if price[i - 1] <= price[i] and \
-                (i + 1 == len(price) or price[i] > price[i + 1]):
-            profit += (price[i] - price[j])
-            print(f"Buy on day {j + 1} and sell on day {i + 1}")
-
-    return profit
-
-if __name__ == '__main__':
-
-    price = [1, 5, 2, 3, 7, 6, 4, 5]
-    print("\nTotal profit earned is", findMaxProfit(price))
+const price = [1, 5, 2, 3, 7, 6, 4, 5];
+console.log(`Total profit earned is ${findMaxProfit(price)}`);
 ```
 
 **Output:** Buy on day 1 and sell on day 2 Buy on day 3 and sell on day 5 Buy on day 7 and sell on day 8 Total profit earned is 10

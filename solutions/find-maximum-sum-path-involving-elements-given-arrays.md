@@ -20,255 +20,90 @@ Here, `sum_x _i_` denotes the sum of elements between two common elements in arr
 
 Result = max(sum_x1, sum_y1) + A + max(sum_x2, sum_y2) + B + max(sum_x3, sum_y3) + C + max(sum_x4, sum_y4) + D + max(sum_x5, sum_y5)
 
-Following is the C, Java, and Python implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```c
-#include <stdio.h>
+**Output:** The maximum sum is 199
 
-// Utility function to find the minimum of two integers
-int max (int x, int y) {
-    return (x > y) ? x : y;
-}
-
+```ts
 // Function to find the maximum sum path in two given arrays.
 // The code is similar to the merge routine of the merge sort algorithm
-int findMaxSum(int X[], int Y[], int m, int n)
-{
-    int sum = 0;
-    int sum_x = 0, sum_y = 0;
+function findMaxSum(X: number[], Y: number[]): number {
+
+    let total = 0, sum_x = 0, sum_y = 0;
+
+    const m = X.length, n = Y.length;
 
     // `i` and `j` denotes the current index of `X` and `Y`, respectively
-    int i = 0, j = 0;
+    let i = 0, j = 0;
 
     // loop till `X` and `Y` are empty
-    while (i < m && j < n)
-    {
+    while (i < m && j < n) {
+
         // to handle the duplicate elements in `X`
-        while (i < m-1 && X[i] == X[i+1]) {
-            sum_x += X[i++];
+        while (i < m - 1 && X[i] === X[i + 1]) {
+            sum_x += X[i];
+            i++;
         }
 
         // to handle the duplicate elements in `Y`
-        while (j < n-1 && Y[j] == Y[j+1]) {
-            sum_y += Y[j++];
+        while (j < n - 1 && Y[j] === Y[j + 1]) {
+            sum_y += Y[j];
+            j++;
         }
 
         // if the current element of `Y` is less than the current element of `X`
-        if (Y[j] < X[i])
-        {
+        if (Y[j] < X[i]) {
             sum_y += Y[j];
             j++;
         }
 
         // if the current element of `X` is less than the current element of `Y`
-        else if (X[i] < Y[j])
-        {
+        else if (X[i] < Y[j]) {
             sum_x += X[i];
             i++;
         }
 
-        else    // if (X[i] == Y[j])
-        {
+        else {  // if X[i] === Y[j]
             // consider the maximum sum and include the current cell's value
-            sum += max(sum_x, sum_y) + X[i];
+            total += Math.max(sum_x, sum_y) + X[i];
 
             // move both indices by 1 position
-            i++, j++;
+            i++;
+            j++;
 
             // reset both sums
-            sum_x = 0, sum_y = 0;
+            sum_x = 0;
+            sum_y = 0;
         }
     }
 
     // process the remaining elements of `X` (if any)
     while (i < m) {
-        sum_x += X[i++];
+        sum_x += X[i];
+        i++;
     }
 
     // process the remaining elements of `Y` (if any)
     while (j < n) {
-        sum_y += Y[j++];
+        sum_y += Y[j];
+        j++;
     }
 
-    sum += max(sum_x, sum_y);
-    return sum;
+    total += Math.max(sum_x, sum_y);
+    return total;
 }
 
-int main()
-{
-    int X[] = { 3, 6, 7, 8, 10, 12, 15, 18, 100 };
-    int Y[] = { 1, 2, 3, 5, 7, 9, 10, 11, 15, 16, 18, 25, 50 };
+const X = [3, 6, 7, 8, 10, 12, 15, 18, 100];
+const Y = [1, 2, 3, 5, 7, 9, 10, 11, 15, 16, 18, 25, 50];
 
-    int m = sizeof(X)/sizeof(X[0]);
-    int n = sizeof(Y)/sizeof(Y[0]);
-
-    printf("The maximum sum is %d", findMaxSum(X, Y, m, n));
-
-    return 0;
-}
-```
-
-**Output:** The maximum sum is 199
-
-##
-
-```java
-class Main
-{
-    // Function to find the maximum sum path in two given arrays.
-    // The code is similar to the merge routine of the merge sort algorithm
-    public static int findMaxSum(int[] X, int[] Y)
-    {
-        int sum = 0;
-        int sum_x = 0, sum_y = 0;
-
-        int m = X.length, n = Y.length;
-
-        // `i` and `j` denotes the current index of `X` and `Y`, respectively
-        int i = 0, j = 0;
-
-        // loop till `X` and `Y` are empty
-        while (i < m && j < n)
-        {
-            // to handle the duplicate elements in `X`
-            while (i < m-1 && X[i] == X[i+1]) {
-                sum_x += X[i++];
-            }
-
-            // to handle the duplicate elements in `Y`
-            while (j < n-1 && Y[j] == Y[j+1]) {
-                sum_y += Y[j++];
-            }
-
-            // if the current element of `Y` is less than the current element of `X`
-            if (Y[j] < X[i])
-            {
-                sum_y += Y[j];
-                j++;
-            }
-
-            // if the current element of `X` is less than the current element of `Y`
-            else if (X[i] < Y[j])
-            {
-                sum_x += X[i];
-                i++;
-            }
-
-            else    // if (X[i] == Y[j])
-            {
-                // consider the maximum sum and include the current cell's value
-                sum += Integer.max(sum_x, sum_y) + X[i];
-
-                // move both indices by 1 position
-                i++;
-                j++;
-
-                // reset both sums
-                sum_x = 0;
-                sum_y = 0;
-            }
-        }
-
-        // process the remaining elements of `X` (if any)
-        while (i < m) {
-            sum_x += X[i++];
-        }
-
-        // process the remaining elements of `Y` (if any)
-        while (j < n) {
-            sum_y += Y[j++];
-        }
-
-        sum += Integer.max(sum_x, sum_y);
-        return sum;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] X = { 3, 6, 7, 8, 10, 12, 15, 18, 100 };
-        int[] Y = { 1, 2, 3, 5, 7, 9, 10, 11, 15, 16, 18, 25, 50 };
-
-        System.out.println("The maximum sum is " + findMaxSum(X, Y));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the maximum sum path in two given lists.
-# The code is similar to the merge routine of the merge sort algorithm
-def findMaxSum(X, Y):
-
-    total = sum_x = sum_y = 0
-
-    m = len(X)
-    n = len(Y)
-
-    # `i` and `j` denotes the current index of `X` and `Y`, respectively
-    i = j = 0
-
-    # loop till `X` and `Y` are empty
-    while i < m and j < n:
-
-        # to handle the duplicate elements in `X`
-        while i < m-1 and X[i] == X[i+1]:
-            sum_x += X[i]
-            i = i + 1
-
-        # to handle the duplicate elements in `Y`
-        while j < n-1 and Y[j] == Y[j+1]:
-            sum_y += Y[j]
-            j = j + 1
-
-        # if the current element of `Y` is less than the current element of `X`
-        if Y[j] < X[i]:
-            sum_y += Y[j]
-            j = j + 1
-
-        # if the current element of `X` is less than the current element of `Y`
-        elif X[i] < Y[j]:
-            sum_x += X[i]
-            i = i + 1
-
-        else:    # if X[i] == Y[j]
-            # consider the maximum sum and include the current cell's value
-            total += max(sum_x, sum_y) + X[i]
-
-            # move both indices by 1 position
-            i = i + 1
-            j = j + 1
-
-            # reset both sums
-            sum_x = 0
-            sum_y = 0
-
-    # process the remaining elements of `X` (if any)
-    while i < m:
-        sum_x += X[i]
-        i = i + 1
-
-    # process the remaining elements of `Y` (if any)
-    while j < n:
-        sum_y += Y[j]
-        j = j + 1
-
-    total += max(sum_x, sum_y)
-    return total
-
-if __name__ == '__main__':
-
-    X = [3, 6, 7, 8, 10, 12, 15, 18, 100]
-    Y = [1, 2, 3, 5, 7, 9, 10, 11, 15, 16, 18, 25, 50]
-
-    print('The maximum sum is', findMaxSum(X, Y))
+console.log(`The maximum sum is ${findMaxSum(X, Y)}`);
 ```
 
 The time complexity of the above solution is O(m + n) and runs in constant space. Here, `m` and `n` are the size of the first and second array, respectively.
 
 **Exercise:**
 
-1\. Print maximum sum path (Hint – use `std::vectors`/`ArrayList`)
+1\. Print maximum sum path (Hint – use an array/list)
 
 2\. Use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem.
 

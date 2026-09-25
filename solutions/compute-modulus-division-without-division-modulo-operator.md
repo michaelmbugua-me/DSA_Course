@@ -18,42 +18,32 @@ So, the expression `n & (d-1)` converts all left bits of `n` starting from the `
 
 00010010 & (n = 18) 00000111 (d-1 = 7) ~~~~~~~~ 00000010 (n % d)
 
-This method is demonstrated below in C:
+This method is demonstrated below in TypeScript:
 
-```
-#include <stdio.h>
-
+```ts
 // Function to compute `n % d` without using division and modulo operator
-unsigned int compute(const unsigned int n, const unsigned int d) {
+function compute(n: number, d: number): number {
     return n & (d - 1);
 }
 
-int main()
-{
-    const unsigned int n = 18;
+const n = 18;
 
-    const unsigned int s = 3;
-    const unsigned int d = 1U << s;     // So, `d` is one of 1, 2, 4, 8, 16, 32, …
+const s = 3;
+const d = 1 << s;   // So, `d` is one of 1, 2, 4, 8, 16, 32, …
 
-    unsigned int m;                     // `m` will be `n % d`
-    m = compute(n, d);
+// `m` will be `n % d`
+const m = compute(n, d);
 
-    printf("%d %% %d = %d", n, d, m);
-
-    return 0;
-}
+console.log(`${n} % ${d} = ${m}`);
 ```
 
 **Output:** 18 % 8 = 2
 
-Note that if `d` is not a power of 2, then to compute `n % d`, do repeated subtractions until we get the remainder, as demonstrated below in C:
+Note that if `d` is not a power of 2, then to compute `n % d`, do repeated subtractions until we get the remainder, as demonstrated below in TypeScript:
 
-```
-#include <stdio.h>
-
+```ts
 // Function to compute `n % d` without using division and modulo operator
-int compute(int n, int d)
-{
+function compute(n: number, d: number): number {
     while (n > 0) {
         n = n - d;
     }
@@ -61,16 +51,11 @@ int compute(int n, int d)
     return n + d;
 }
 
-int main()
-{
-    const unsigned int n = 38;
-    const unsigned int d = 7;
+const n = 38;
+const d = 7;
 
-    unsigned int m = compute(n, d);
-    printf("%d %% %d = %d", n, d, m);
-
-    return 0;
-}
+const m = compute(n, d);
+console.log(`${n} % ${d} = ${m}`);
 ```
 
 **Output:** 38 % 7 = 3

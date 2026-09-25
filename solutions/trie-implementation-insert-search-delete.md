@@ -20,196 +20,187 @@ As illustrated in the following figure, each key is represented in the Trie as a
 
 **Insertion** proceeds by walking the Trie according to the string to be inserted, then appending new nodes for the suffix of the string that is not contained in the Trie. **Searching** also proceeds the similar way by walking the Trie according to the string to be searched, returning false if the string is not found. **Deletion** is a bit complicated. The idea is to delete the key in a bottom-up manner using [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/). Special care has to be taken while deleting the key as it can be the prefix of another key, or its prefix can be another key in Trie.
 
-Following is the C implementation of the Trie data structure, which supports insertion, deletion, and search operations. The implementation currently supports only lowercase English characters `(a – z)`, but it can be easily extended to support any set of characters.
+Following is a TypeScript implementation of the Trie data structure, which supports insertion, deletion, and search operations. The implementation currently supports only lowercase English characters `(a – z)`, but it can be easily extended to support any set of characters.
 
-```
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // Define the character size
-#define CHAR_SIZE 26
+const CHAR_SIZE = 26;
 
 // Data structure to store a Trie node
-struct Trie
+class Trie
 {
-    int isLeaf;             // 1 when the node is a leaf node
-    struct Trie* character[CHAR_SIZE];
-};
+    isLeaf: boolean;             // true when the node is a leaf node
+    character: (Trie | null)[];
 
-// Function that returns a new Trie node
-struct Trie* getNewTrieNode()
-{
-    struct Trie* node = (struct Trie*)malloc(sizeof(struct Trie));
-    node->isLeaf = 0;
-
-    for (int i = 0; i < CHAR_SIZE; i++) {
-        node->character[i] = NULL;
+    // Function that returns a new Trie node
+    constructor()
+    {
+        this.isLeaf = false;
+        this.character = new Array<Trie | null>(CHAR_SIZE).fill(null);
     }
-
-    return node;
 }
 
 // Iterative function to insert a string into a Trie
-void insert(struct Trie *head, char* str)
+function insert(head: Trie, str: string): void
 {
     // start from the root node
-    struct Trie* curr = head;
-    while (*str)
+    let curr: Trie = head;
+    for (let i = 0; i < str.length; i++)
     {
+        const idx = str.charCodeAt(i) - 'a'.charCodeAt(0);
+
         // create a new node if the path doesn't exist
-        if (curr->character[*str - 'a'] == NULL) {
-            curr->character[*str - 'a'] = getNewTrieNode();
+        if (curr.character[idx] == null) {
+            curr.character[idx] = new Trie();
         }
 
         // go to the next node
-        curr = curr->character[*str - 'a'];
-
-        // move to the next character
-        str++;
+        curr = curr.character[idx]!;
     }
 
     // mark the current node as a leaf
-    curr->isLeaf = 1;
+    curr.isLeaf = true;
 }
 
-// Iterative function to search a string in a Trie. It returns 1
-// if the string is found in the Trie; otherwise, it returns 0.
-int search(struct Trie* head, char* str)
+// Iterative function to search a string in a Trie. It returns true
+// if the string is found in the Trie; otherwise, it returns false.
+function search(head: Trie | null, str: string): boolean
 {
-    // return 0 if Trie is empty
-    if (head == NULL) {
-        return 0;
+    // return false if Trie is empty
+    if (head == null) {
+        return false;
     }
 
-    struct Trie* curr = head;
-    while (*str)
+    let curr: Trie = head;
+    for (let i = 0; i < str.length; i++)
     {
+        const idx = str.charCodeAt(i) - 'a'.charCodeAt(0);
+
         // go to the next node
-        curr = curr->character[*str - 'a'];
+        curr = curr.character[idx]!;
 
         // if the string is invalid (reached end of a path in the Trie)
-        if (curr == NULL) {
-            return 0;
+        if (curr == null) {
+            return false;
         }
-
-        // move to the next character
-        str++;
     }
 
-    // return 1 if the current node is a leaf and the
+    // return true if the current node is a leaf and the
     // end of the string is reached
-    return curr->isLeaf;
+    return curr.isLeaf;
 }
 
-// Returns 1 if a given Trie node has any children
-int hasChildren(struct Trie* curr)
+// Returns true if a given Trie node has any children
+function hasChildren(curr: Trie): boolean
 {
-    for (int i = 0; i < CHAR_SIZE; i++)
+    for (let i = 0; i < CHAR_SIZE; i++)
     {
-        if (curr->character[i]) {
-            return 1;       // child found
+        if (curr.character[i]) {
+            return true;       // child found
         }
     }
 
-    return 0;
+    return false;
 }
 
-// Recursive function to delete a string from a Trie
-int deletion(struct Trie **curr, char* str)
+// Recursive function to delete a string from a Trie. It returns true
+// if the given node should be deleted, so the caller can drop its
+// reference to it
+function deletion(curr: Trie | null, str: string): boolean
 {
-    // return 0 if Trie is empty
-    if (*curr == NULL) {
-        return 0;
+    // return false if Trie is empty
+    if (curr == null) {
+        return false;
     }
 
     // if the end of the string is not reached
-    if (*str)
+    if (str.length)
     {
+        const idx = str.charCodeAt(0) - 'a'.charCodeAt(0);
+
         // recur for the node corresponding to the next character in
-        // the string and if it returns 1, delete the current node
+        // the string and if it returns true, delete the current node
         // (if it is non-leaf)
-        if (*curr != NULL && (*curr)->character[*str - 'a'] != NULL &&
-            deletion(&((*curr)->character[*str - 'a']), str + 1) &&
-            (*curr)->isLeaf == 0)
+        if (curr.character[idx] != null &&
+            deletion(curr.character[idx]!, str.slice(1)) &&
+            curr.isLeaf === false)
         {
-            if (!hasChildren(*curr))
+            // delete the child node removed by the recursion
+            curr.character[idx] = null;
+
+            if (!hasChildren(curr))
             {
-                free(*curr);
-                (*curr) = NULL;
-                return 1;
+                // delete the current node (the caller drops its reference)
+                return true;
             }
             else {
-                return 0;
+                return false;
             }
         }
     }
 
     // if the end of the string is reached
-    if (*str == '\0' && (*curr)->isLeaf)
+    if (str.length === 0 && curr.isLeaf)
     {
         // if the current node is a leaf node and doesn't have any children
-        if (!hasChildren(*curr))
+        if (!hasChildren(curr))
         {
-            free(*curr);    // delete the current node
-            (*curr) = NULL;
-            return 1;       // delete the non-leaf parent nodes
+            // delete the current node (the caller drops its reference)
+            return true;       // delete the non-leaf parent nodes
         }
 
         // if the current node is a leaf node and has children
         else {
             // mark the current node as a non-leaf node (DON'T DELETE IT)
-            (*curr)->isLeaf = 0;
-            return 0;       // don't delete its parent nodes
+            curr.isLeaf = false;
+            return false;       // don't delete its parent nodes
         }
     }
 
-    return 0;
+    return false;
 }
 
-// Trie implementation in C – Insertion, Searching, and Deletion
-int main()
-{
-    struct Trie* head = getNewTrieNode();
+// Trie implementation in TypeScript – Insertion, Searching, and Deletion
+let head: Trie | null = new Trie();
 
-    insert(head, "hello");
-    printf("%d ", search(head, "hello"));       // print 1
+insert(head, "hello");
+console.log(head.search("hello"));            // print 1
 
-    insert(head, "helloworld");
-    printf("%d ", search(head, "helloworld"));  // print 1
+insert(head, "helloworld");
+console.log(head.search("helloworld"));       // print 1
 
-    printf("%d ", search(head, "helll"));       // print 0 (Not present)
+console.log(head.search("helll"));            // print 0 (Not present)
 
-    insert(head, "hell");
-    printf("%d ", search(head, "hell"));        // print 1
+insert(head, "hell");
+console.log(head.search("hell"));             // print 1
 
-    insert(head, "h");
-    printf("%d \n", search(head, "h"));         // print 1 + newline
+insert(head, "h");
+console.log(head.search("h"));                // print 1
 
-    deletion(&head, "hello");
-    printf("%d ", search(head, "hello"));       // print 0 (hello deleted)
-    printf("%d ", search(head, "helloworld"));  // print 1
-    printf("%d \n", search(head, "hell"));      // print 1 + newline
+deletion(head, "hello");
+console.log(head?.search("hello"));           // print 0 (hello deleted)
+console.log(head?.search("helloworld"));      // print 1
+console.log(head?.search("hell"));            // print 1
 
-    deletion(&head, "h");
-    printf("%d ", search(head, "h"));           // print 0 (h deleted)
-    printf("%d ", search(head, "hell"));        // print 1
-    printf("%d\n", search(head, "helloworld")); // print 1 + newline
+deletion(head, "h");
+console.log(head?.search("h"));               // print 0 (h deleted)
+console.log(head?.search("hell"));            // print 1
+console.log(head?.search("helloworld"));      // print 1
 
-    deletion(&head, "helloworld");
-    printf("%d ", search(head, "helloworld"));  // print 0
-    printf("%d ", search(head, "hell"));        // print 1
+deletion(head, "helloworld");
+console.log(head?.search("helloworld"));      // print 0
+console.log(head?.search("hell"));            // print 1
 
-    deletion(&head, "hell");
-    printf("%d\n", search(head, "hell"));       // print 0 + newline
-
-    if (head == NULL) {
-        printf("Trie empty!!\n");               // Trie is empty now
-    }
-
-    printf("%d ", search(head, "hell"));        // print 0
-
-    return 0;
+if (deletion(head!, "hell")) {
+    head = null;                              // the Trie is now empty
 }
+console.log(head?.search("hell") ?? false);   // print 0
+
+if (head === null) {
+    console.log("Trie empty!!");              // Trie is empty now
+}
+
+console.log(head?.search("hell") ?? false);   // print 0
 ```
 
 **Output:** 1 1 0 1 1 0 1 1 0 1 1 0 1 0 Trie empty!! 0

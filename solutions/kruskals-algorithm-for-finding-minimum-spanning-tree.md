@@ -46,338 +46,98 @@ KRUSKAL(graph G) MST = {} for each vertex `v` belonging G.V: MAKE-SET(v) for eac
 
 Please note that if the graph is not connected, Kruskal’s Algorithm finds a **Minimum Spanning Forest** , a minimum spanning tree for each connected component of the graph.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest, weight;
-};
-
-// Comparison object to be used to order the edges
-struct compare
-{
-    bool operator() (Edge const &a, Edge const &b) const {
-        return a.weight > b.weight;
-    }
-};
-
+```ts
 // A class to represent a disjoint set
-class DisjointSet
-{
-    unordered_map<int, int> parent;
+class DisjointSet {
+    parent: Map<number, number> = new Map();
 
-public:
     // perform MakeSet operation
-    void makeSet(int n)
-    {
+    makeSet(n: number): void {
         // create `n` disjoint sets (one for each vertex)
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
+        for (let i = 0; i < n; i++) {
+            this.parent.set(i, i);
         }
     }
 
     // Find the root of the set in which element `k` belongs
-    int Find(int k)
-    {
+    find(k: number): number {
         // if `k` is root
-        if (parent[k] == k) {
+        if (this.parent.get(k) === k) {
             return k;
         }
 
         // recur for the parent until we find the root
-        return Find(parent[k]);
+        return this.find(this.parent.get(k)!);
     }
 
     // Perform Union of two subsets
-    void Union(int a, int b)
-    {
-        // find the root of the sets in which elements
-        // `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
+    union(a: number, b: number): void {
+        // find the root of the sets in which elements `x` and `y` belongs
+        const x = this.find(a);
+        const y = this.find(b);
 
-        parent[x] = y;
+        this.parent.set(x, y);
     }
-};
+}
 
 // Function to construct MST using Kruskal’s algorithm
-vector<Edge> runKruskalAlgorithm(vector<Edge> edges, int n)        // no-ref, no-const
-{
+function runKruskalAlgorithm(edges: [number, number, number][], n: number): [number, number, number][] {
+
     // stores the edges present in MST
-    vector<Edge> MST;
+    const MST: [number, number, number][] = [];
 
-    // initialize `DisjointSet` class
-    DisjointSet ds;
-
-    // create a singleton set for each element of the universe
+    // Initialize `DisjointSet` class.
+    // Create a singleton set for each element of the universe.
+    const ds = new DisjointSet();
     ds.makeSet(n);
 
+    let index = 0;
+
     // sort edges by increasing weight
-    sort(edges.begin(), edges.end(), compare());
+    edges.sort((a, b) => a[2] - b[2]);
 
     // MST contains exactly `V-1` edges
-    while (MST.size() != n - 1)
-    {
+    while (MST.length !== n - 1) {
+
         // consider the next edge with minimum weight from the graph
-        Edge next_edge = edges.back();
-        edges.pop_back();
+        const [src, dest, weight] = edges[index];
+        index = index + 1;
 
         // find the root of the sets to which two endpoints
         // vertices of the next edge belongs
-        int x = ds.Find(next_edge.src);
-        int y = ds.Find(next_edge.dest);
+        const x = ds.find(src);
+        const y = ds.find(dest);
 
         // if both endpoints have different parents, they belong to
         // different connected components and can be included in MST
-        if (x != y)
-        {
-            MST.push_back(next_edge);
-            ds.Union(x, y);
+        if (x !== y) {
+            MST.push([src, dest, weight]);
+            ds.union(x, y);
         }
     }
+
     return MST;
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram.
-    vector<Edge> edges =
-    {
-        // (u, v, w) triplet represent undirected edge from
-        // vertex `u` to vertex `v` having weight `w`
-        {0, 1, 7}, {1, 2, 8}, {0, 3, 5}, {1, 3, 9}, {1, 4, 7}, {2, 4, 5},
-        {3, 4, 15}, {3, 5, 6}, {4, 5, 8}, {4, 6, 9}, {5, 6, 11}
-    };
+// (u, v, w) triplet represent undirected edge from
+// vertex `u` to vertex `v` having weight `w`
+const edges: [number, number, number][] = [
+    [0, 1, 7], [1, 2, 8], [0, 3, 5], [1, 3, 9], [1, 4, 7], [2, 4, 5],
+    [3, 4, 15], [3, 5, 6], [4, 5, 8], [4, 6, 9], [5, 6, 11]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 6)
-    int n = 7;
+// total number of nodes in the graph (labelled from 0 to 6)
+const n = 7;
 
-    // construct graph
-    vector<Edge> e = runKruskalAlgorithm(edges, n);
+// construct graph
+const e = runKruskalAlgorithm(edges, n);
 
-    for (Edge &edge: e)
-    {
-        cout << "(" << edge.src << ", " << edge.dest << ", "
-             << edge.weight << ")" << endl;
-    }
-
-    return 0;
-}
+console.log(e);
 ```
 
 **Output:** (2, 4, 5) (0, 3, 5) (3, 5, 6) (1, 4, 7) (0, 1, 7) (4, 6, 9)
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int src, dest, weight;
-
-    public Edge(int src, int dest, int weight)
-    {
-        this.src = src;
-        this.dest = dest;
-        this.weight = weight;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + src + ", " + dest + ", " + weight + ")";
-    }
-}
-
-// A class to represent a disjoint set
-class DisjointSet
-{
-    Map<Integer, Integer> parent = new HashMap<>();
-
-    // perform MakeSet operation
-    public void makeSet(int n)
-    {
-        // create `n` disjoint sets (one for each vertex)
-        for (int i = 0; i < n; i++) {
-            parent.put(i, i);
-        }
-    }
-
-    // Find the root of the set in which element `k` belongs
-    private int find(int k)
-    {
-        // if `k` is root
-        if (parent.get(k) == k) {
-            return k;
-        }
-
-        // recur for the parent until we find the root
-        return find(parent.get(k));
-    }
-
-    // Perform Union of two subsets
-    private void union(int a, int b)
-    {
-        // find the root of the sets in which elements `x` and `y` belongs
-        int x = find(a);
-        int y = find(b);
-
-        parent.put(x, y);
-    }
-
-    // Function to construct MST using Kruskal’s algorithm
-    public static List<Edge> runKruskalAlgorithm(List<Edge> edges, int n)
-    {
-        // stores the edges present in MST
-        List<Edge> MST = new ArrayList<>();
-
-        // Initialize `DisjointSet` class.
-        // create a singleton set for each element of the universe.
-        DisjointSet ds = new DisjointSet();
-        ds.makeSet(n);
-
-        int index = 0;
-
-        // sort edges by increasing weight
-        Collections.sort(edges, Comparator.comparingInt(e -> e.weight));
-
-        // MST contains exactly `V-1` edges
-        while (MST.size() != n - 1)
-        {
-            // consider the next edge with minimum weight from the graph
-            Edge next_edge = edges.get(index++);
-
-            // find the root of the sets to which two endpoints
-            // vertices of the next edge belongs
-            int x = ds.find(next_edge.src);
-            int y = ds.find(next_edge.dest);
-
-            // if both endpoints have different parents, they belong to
-            // different connected components and can be included in MST
-            if (x != y)
-            {
-                MST.add(next_edge);
-                ds.union(x, y);
-            }
-        }
-
-        return MST;
-    }
-}
-
-class Main
-{
-    public static void main(String[] args)
-    {
-        // (u, v, w) triplet represent undirected edge from
-        // vertex `u` to vertex `v` having weight `w`
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1, 7), new Edge(1, 2, 8), new Edge(0, 3, 5),
-                new Edge(1, 3, 9), new Edge(1, 4, 7), new Edge(2, 4, 5),
-                new Edge(3, 4, 15), new Edge(3, 5, 6), new Edge(4, 5, 8),
-                new Edge(4, 6, 9), new Edge(5, 6, 11));
-
-        // total number of nodes in the graph (labelled from 0 to 6)
-        int n = 7;
-
-        // construct graph
-        List<Edge> e = DisjointSet.runKruskalAlgorithm(edges, n);
-        System.out.println(e);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a disjoint set
-class DisjointSet:
-    parent = {}
-
-    # perform MakeSet operation
-    def makeSet(self, n):
-        # create `n` disjoint sets (one for each vertex)
-        for i in range(n):
-            self.parent[i] = i
-
-    # Find the root of the set in which element `k` belongs
-    def find(self, k):
-        # if `k` is root
-        if self.parent[k] == k:
-            return k
-
-        # recur for the parent until we find the root
-        return self.find(self.parent[k])
-
-    # Perform Union of two subsets
-    def union(self, a, b):
-        # find the root of the sets in which elements `x` and `y` belongs
-        x = self.find(a)
-        y = self.find(b)
-
-        self.parent[x] = y
-
-# Function to construct MST using Kruskal’s algorithm
-def runKruskalAlgorithm(edges, n):
-
-    # stores the edges present in MST
-    MST = []
-
-    # Initialize `DisjointSet` class.
-    # Create a singleton set for each element of the universe.
-    ds = DisjointSet()
-    ds.makeSet(n)
-
-    index = 0
-
-    # sort edges by increasing weight
-    edges.sort(key=lambda x: x[2])
-
-    # MST contains exactly `V-1` edges
-    while len(MST) != n - 1:
-
-        # consider the next edge with minimum weight from the graph
-        (src, dest, weight) = edges[index]
-        index = index + 1
-
-        # find the root of the sets to which two endpoints
-        # vertices of the next edge belongs
-        x = ds.find(src)
-        y = ds.find(dest)
-
-        # if both endpoints have different parents, they belong to
-        # different connected components and can be included in MST
-        if x != y:
-            MST.append((src, dest, weight))
-            ds.union(x, y)
-
-    return MST
-
-if __name__ == '__main__':
-
-    # (u, v, w) triplet represent undirected edge from
-    # vertex `u` to vertex `v` having weight `w`
-    edges = [
-        (0, 1, 7), (1, 2, 8), (0, 3, 5), (1, 3, 9), (1, 4, 7), (2, 4, 5),
-        (3, 4, 15), (3, 5, 6), (4, 5, 8), (4, 6, 9), (5, 6, 11)
-    ]
-
-    # total number of nodes in the graph (labelled from 0 to 6)
-    n = 7
-
-    # construct graph
-    e = runKruskalAlgorithm(edges, n)
-
-    print(e)
-```
 
 The time complexity of the above solution is O(n2), where `n` is the total number of vertices in the graph. The time complexity can be improved to O(n.log(n)) by using the [optimized implementation of _Union_ and _Find_ operations](https://techiedelight.com/disjoint-set-data-structure-union-find-algorithm/).
 

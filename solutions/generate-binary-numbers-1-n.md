@@ -10,149 +10,57 @@ For example, for `n = 16`, the binary numbers are:
 
 > 
 
-Following is the C++, Java, and Python implementation:
+Following is the TypeScript implementation:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <queue>
-using namespace std;
-
+```ts
 // Function to generate binary numbers between 1 and `n` using the
 // queue data structure
-void generate(int n)
-{
+function generate(n: number): void {
+
     // create an empty queue and enqueue 1
-    queue<string> q;
-    q.push("1");
+    const q: string[] = [];
+    q.push('1');
 
     // run `n` times
-    int i = 1;
-    while (i++ <= n)
-    {
+    for (let i = 0; i < n; i++) {
+        // remove the front element
+        const front = q.shift()!;
+
         // append 0 and 1 to the front element of the queue and
         // enqueue both strings
-        q.push(q.front() + "0");
-        q.push(q.front() + "1");
+        q.push(front + '0');
+        q.push(front + '1');
 
-        // dequeue front element after printing it
-        cout << q.front() << ' ';
-        q.pop();
+        // print the front element
+        console.log(front);
     }
 }
 
-int main()
-{
-    int n = 16;
-    generate(n);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-class Main
-{
-    // Function to generate binary numbers between 1 and `n` using the
-    // queue data structure
-    public static void generate(int n)
-    {
-        // create an empty queue and enqueue 1
-        Queue<String> q = new ArrayDeque<>();
-        q.add("1");
-
-        // run `n` times
-        int i = 1;
-        while (i++ <= n)
-        {
-            // append 0 and 1 to the front element of the queue and
-            // enqueue both strings
-            q.add(q.peek() + '0');
-            q.add(q.peek() + '1');
-
-            // remove the front element and print it
-            System.out.print(q.poll() + ' ');
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 16;
-        generate(n);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Function to generate binary numbers between 1 and `n` using the
-# queue data structure
-def generate(n):
-
-    # create an empty queue and enqueue 1
-    q = deque()
-    q.append('1')
-
-    # run `n` times
-    for i in range(n):
-        # remove the front element
-        front = str(q.popleft())
-
-        # append 0 and 1 to the front element of the queue and
-        # enqueue both strings
-        q.append(front + '0')
-        q.append(front + '1')
-
-        # print the front element
-        print(front, end=' ')
-
-if __name__ == '__main__':
-
-    n = 16
-    generate(n)
+const n = 16;
+generate(n);
 ```
 
 **Output:** 1 10 11 100 101 110 111 1000 1001 1010 1011 1100 1101 1110 1111 10000
 
 The time complexity of the above solution is O(n) and requires O(n) extra space.
 
-We can also use [std::bitset](https://cplusplus.com/reference/bitset/bitset/) in C++, as shown below:
+We can also use [Number.prototype.toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toString) in TypeScript, as shown below:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <bitset>
-using namespace std;
-
-// Function to generate binary numbers between 1 and `n` using `std::bitset`
-int generate(int n)
-{
+```ts
+// Function to generate binary numbers between 1 and `n` using `toString(2)`
+function generate(n: number): void {
     // run `n` times
-    for (int i = 1; i <= n; i++)
-    {
+    for (let i = 1; i <= n; i++) {
         // convert `i` to an 8–bit binary number
-        bitset<8> binary(i);
+        const binary = i.toString(2).padStart(8, '0');
 
         // print the current binary number
-        cout << binary.to_string() << ' ';
+        console.log(binary);
     }
 }
 
-int main()
-{
-    int n = 16;
-    generate(n);
-
-    return 0;
-}
+const n = 16;
+generate(n);
 ```
 
 **Output:** 00000001 00000010 00000011 00000100 00000101 00000110 00000111 00001000 00001001 00001010 00001011 00001100 00001101 00001110 00001111 00010000

@@ -6,79 +6,47 @@
 
 Write a program to print “Hello World” with an empty main function, i.e., without writing anything inside the `main()` function.
 
-The main function is the entry point of any C or C++ program, where the execution begins and ends. The main function has the following syntax:
+The main function is the entry point of any program, where the execution begins and ends. The main function has the following syntax:
 
-```
-int main (void) {
+```ts
+function main() {
     // statements
-    return 0;
 }
 ```
 
-The main function usually contains some statements that perform the logic of the program. In this post, we will explore some of the possible ways to print “Hello World” with an empty main function. This may seem impossible or absurd, but there are actually some clever tricks to achieve this goal in C/C++:
+The main function usually contains some statements that perform the logic of the program. In this post, we will explore some of the possible ways to print “Hello World” with an empty main function. This may seem impossible or absurd, but there are actually some clever tricks to achieve this goal in TypeScript:
 
 ## 1\. Using Constructor
 
 One of the possible ways to print “Hello World” with an empty main function is to use constructor. A constructor is a special member function of a class that is invoked when an object of that class is created.
 
-We can use a constructor to print “Hello World” to the `std::cout` or `printf()` function, and create an object of that class before the main function. This way, the constructor will be executed before the main function, and print “Hello World” to the standard output. For example, we can write the following code in C++:
+We can use a constructor to print “Hello World” using `console.log()`, and create an object of that class before calling the main function. This way, the constructor will be executed before the main function, and print “Hello World” to the standard output. For example, we can write the following code in TypeScript:
 
-```
-#include <iostream>
-
-class test
-{
-public:
-    test() {
-        std::cout << "Hello World";
+```ts
+class Test {
+    constructor() {
+        console.log("Hello World");
     }
-} obj;
+}
 
-int main() {}
-```
+const obj = new Test();
 
-Please note that we can also use `std::cout` or `printf()` inside constructor of a struct and create its object outside `main()` function, as shown below:
-
-```
-#include <iostream>
-
-struct test
-{
-    test() {
-        std::cout << "Hello World";
-    }
-} obj;
-
-int main() {}
+function main() {}
 ```
 
 ## 2\. Using Global Variables
 
-Another possible way to print “Hello World” with an empty main function is to use global variables and the `printf()` function. We can use a global variable to store the return value of the `printf()` function that prints Hello World, and declare it before the main function. This way, the `printf()` function will be executed before the main function, and print “Hello World” to the standard output. For example, we can write the following code in C:
+Another possible way to print “Hello World” with an empty main function is to use global variables. We can use a global variable to store the return value of the function that prints Hello World, and declare it before the main function. This way, the function will be executed before the main function, and print “Hello World” to the standard output. For example, we can write the following code in TypeScript:
 
-```
-#include <iostream>
-
-// global variable that stores the return value of printf()
-int n = printf("Hello World");
-
-int main() {}
-```
-
-In C++, we can initialize the global variable with return type of function that prints “Hello World” using `std::cout`.
-
-```
-#include <iostream>
-
-int fun()
-{
-    std::cout << "Hello World";
+```ts
+function fun(): number {
+    console.log("Hello World");
     return 1;
 }
 
-int x = fun();
+const x = fun();
 
-int main() {}
+function main() {}
 ```
 
 Rate this post

@@ -24,257 +24,84 @@ total = sum[r][s] – sum[r][q – 1] – sum[p – 1][s] + sum[p – 1][q – 1
 
 The following diagram explains this relation. _(Here the greyed portion represent the submatrix)_.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-vector<vector<int>> preprocess(vector<vector<int>> const &mat)
-{
+```ts
+const preprocess = (mat: number[][]): number[][] => {
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length, N = mat[0].length;
 
-    // preprocess the matrix `mat` such that `sum[i][j]` stores
+    // preprocess the matrix `mat` such that `s[i][j]` stores
     // sum of elements in the matrix from (0, 0) to (i, j)
-    vector<vector<int>> sum(M, vector<int>(N));
-
-    sum[0][0] = mat[0][0];
+    const s: number[][] = Array.from({ length: M }, () => new Array(N).fill(0));
+    s[0][0] = mat[0][0];
 
     // preprocess the first row
-    for (int j = 1; j < N; j++) {
-        sum[0][j] = mat[0][j] + sum[0][j - 1];
+    for (let j = 1; j < N; j++) {
+        s[0][j] = mat[0][j] + s[0][j - 1];
     }
 
     // preprocess the first column
-    for (int i = 1; i < M; i++) {
-        sum[i][0] = mat[i][0] + sum[i - 1][0];
+    for (let i = 1; i < M; i++) {
+        s[i][0] = mat[i][0] + s[i - 1][0];
     }
 
     // preprocess the rest of the matrix
-    for (int i = 1; i < M; i++)
-    {
-        for (int j = 1; j < N; j++)
-        {
-            sum[i][j] = mat[i][j] + sum[i - 1][j] + sum[i][j - 1]
-                - sum[i - 1][j - 1];
+    for (let i = 1; i < M; i++) {
+        for (let j = 1; j < N; j++) {
+            s[i][j] = mat[i][j] + s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1];
         }
     }
-    return sum;
-}
+
+    return s;
+};
 
 // Calculate the sum of all elements in a submatrix in constant time
-int findSubmatrixSum(vector<vector<int>> const &mat, int p, int q, int r, int s)
-{
+const findSubmatrixSum = (mat: number[][], p: number, q: number, r: number, s: number): number => {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || mat.length === 0) {
         return 0;
     }
 
     // preprocess the matrix
-    vector<vector<int>> sum = preprocess(mat);
+    mat = preprocess(mat);
 
-    // `total` is `sum[r][s] - sum[r][q-1] - sum[p-1][s] + sum[p-1][q-1]`
-    int total = sum[r][s];
+    // `total` is `mat[r][s] - mat[r][q-1] - mat[p-1][s] + mat[p-1][q-1]`
+    let total = mat[r][s];
 
     if (q - 1 >= 0) {
-        total -= sum[r][q - 1];
+        total -= mat[r][q - 1];
     }
 
     if (p - 1 >= 0) {
-        total -= sum[p - 1][s];
+        total -= mat[p - 1][s];
     }
 
     if (p - 1 >= 0 && q - 1 >= 0) {
-        total += sum[p - 1][q - 1];
+        total += mat[p - 1][q - 1];
     }
 
     return total;
-}
+};
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 0, 2, 5, 4, 1 },
-        { 4, 8, 2, 3, 7 },
-        { 6, 3, 4, 6, 2 },
-        { 7, 3, 1, 8, 3 },
-        { 1, 5, 7, 9, 4 }
-    };
+const mat = [
+    [0, 2, 5, 4, 1],
+    [4, 8, 2, 3, 7],
+    [6, 3, 4, 6, 2],
+    [7, 3, 1, 8, 3],
+    [1, 5, 7, 9, 4]
+];
 
-    // (p, q) and (r, s) represent top-left and bottom-right
-    // coordinates of the submatrix
-    int p = 1, q = 1, r = 3, s = 3;
+// (p, q) and (r, s) represent top-left and bottom-right
+// coordinates of the submatrix
+const p = 1, q = 1, r = 3, s = 3;
 
-    // calculate the submatrix sum
-    cout << findSubmatrixSum(mat, p, q, r, s);
-
-    return 0;
-}
+// calculate the submatrix sum
+console.log(findSubmatrixSum(mat, p, q, r, s));
 ```
 
 **Output:** 38
-
-##
-
-```java
-class Main
-{
-    public static int[][] preprocess(int[][] mat)
-    {
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // preprocess the matrix `mat` such that `sum[i][j]` stores
-        // sum of elements in the matrix from (0, 0) to (i, j)
-        int[][] sum = new int[mat.length][mat[0].length];
-        sum[0][0] = mat[0][0];
-
-        // preprocess the first row
-        for (int j = 1; j < mat[0].length; j++) {
-            sum[0][j] = mat[0][j] + sum[0][j - 1];
-        }
-
-        // preprocess the first column
-        for (int i = 1; i < mat.length; i++) {
-            sum[i][0] = mat[i][0] + sum[i - 1][0];
-        }
-
-        // preprocess the rest of the matrix
-        for (int i = 1; i < mat.length; i++)
-        {
-            for (int j = 1; j < mat[0].length; j++)
-            {
-                sum[i][j] = mat[i][j] + sum[i - 1][j] + sum[i][j - 1]
-                        - sum[i - 1][j - 1];
-            }
-        }
-        return sum;
-    }
-
-    // Calculate the sum of all elements in a submatrix in constant time
-    public static int findSubmatrixSum(int[][] mat, int p, int q, int r, int s)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // preprocess the matrix
-        int[][] sum = preprocess(mat);
-
-        /* `total` is `sum[r][s] - sum[r][q-1] - sum[p-1][s] + sum[p-1][q-1]` */
-        int total = sum[r][s];
-
-        if (q - 1 >= 0) {
-            total -= sum[r][q - 1];
-        }
-
-        if (p - 1 >= 0) {
-            total -= sum[p - 1][s];
-        }
-
-        if (p - 1 >= 0 && q - 1 >= 0) {
-            total += sum[p - 1][q - 1];
-        }
-
-        return total;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 0, 2, 5, 4, 1 },
-            { 4, 8, 2, 3, 7 },
-            { 6, 3, 4, 6, 2 },
-            { 7, 3, 1, 8, 3 },
-            { 1, 5, 7, 9, 4 }
-        };
-
-        // (p, q) and (r, s) represent top-left and bottom-right
-        // coordinates of the submatrix
-        int p = 1, q = 1, r = 3, s = 3;
-
-        // calculate the submatrix sum
-        System.out.print(findSubmatrixSum(mat, p, q, r, s));
-    }
-}
-```
-
-##
-
-```python3
-def preprocess(mat):
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # preprocess the matrix `mat` such that `s[i][j]` stores
-    # sum of elements in the matrix from (0, 0) to (i, j)
-    s = [[0 for x in range(len(mat[0]))] for y in range(len(mat))]
-    s[0][0] = mat[0][0]
-
-    # preprocess the first row
-    for j in range(1, len(mat[0])):
-        s[0][j] = mat[0][j] + s[0][j - 1]
-
-    # preprocess the first column
-    for i in range(1, len(mat)):
-        s[i][0] = mat[i][0] + s[i - 1][0]
-
-    # preprocess the rest of the matrix
-    for i in range(1, len(mat)):
-        for j in range(1, len(mat[0])):
-            s[i][j] = mat[i][j] + s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1]
-
-    return s
-
-# Calculate the sum of all elements in a submatrix in constant time
-def findSubmatrixSum(mat, p, q, r, s):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # preprocess the matrix
-    mat = preprocess(mat)
-
-    # `total` is `mat[r][s] - mat[r][q-1] - mat[p-1][s] + mat[p-1][q-1]`
-    total = mat[r][s]
-
-    if q - 1 >= 0:
-        total -= mat[r][q - 1]
-
-    if p - 1 >= 0:
-        total -= mat[p - 1][s]
-
-    if p - 1 >= 0 and q - 1 >= 0:
-        total += mat[p - 1][q - 1]
-
-    return total
-
-if __name__ == '__main__':
-
-    mat = [
-        [0, 2, 5, 4, 1],
-        [4, 8, 2, 3, 7],
-        [6, 3, 4, 6, 2],
-        [7, 3, 1, 8, 3],
-        [1, 5, 7, 9, 4]
-    ]
-
-    # (p, q) and (r, s) represent top-left and bottom-right
-    # coordinates of the submatrix
-    p = q = 1
-    r = s = 3
-
-    # calculate the submatrix sum
-    print(findSubmatrixSum(mat, p, q, r, s))
-```
 
 This solution takes O(N2) time for an `N × N` matrix, but we can do constant-time lookups any number of times once the matrix is preprocessed. In other words, if `M` lookup calls are made to the matrix, then the naive solution takes O(M × N2) time, while the above solution takes only O(M + N2) time.
 

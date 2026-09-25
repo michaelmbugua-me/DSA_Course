@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/find-permutations-given-string/
 
-This post will find all permutations of a string containing all distinct characters in C++.
+This post will find all permutations of a string containing all distinct characters in TypeScript.
 
 For example, the string `ABC` has 6 permutations, i.e., `ABC, ACB, BAC, BCA, CBA, CAB`.
 
@@ -12,43 +12,34 @@ For example, the string `ABC` has 6 permutations, i.e., `ABC, ACB, BAC, BCA, CBA
 
 We can [in-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) find all permutations of the given string by using [backtracking](https://techiedelight.com/backtracking-interview-questions/). The idea is to swap each of the remaining characters in the string with its first character and then find all the permutations of the remaining characters using a recursive call. The base case of the recursion is when the string is left with only one unprocessed element. Following is the recursion tree for printing all permutations of the string `ABC`:
 
-```
-#include <iostream>
-using namespace std;
-
+```ts
 // Function to find all permutations of a given string `str[i…n-1]`
 // containing all distinct characters
-void permutations(string str, int i, int n)
-{
+function permutations(str: string[], i: number, n: number): void {
     // base condition
-    if (i == n - 1)
+    if (i === n - 1)
     {
-        cout << str << endl;
+        console.log(str.join(''));
         return;
     }
 
     // process each character of the remaining string
-    for (int j = i; j < n; j++)
+    for (let j = i; j < n; j++)
     {
         // swap character at index `i` with the current character
-        swap(str[i], str[j]);        // STL `swap()` used
+        [str[i], str[j]] = [str[j], str[i]];
 
         // recur for substring `str[i+1, n-1]`
         permutations(str, i + 1, n);
 
         // backtrack (restore the string to its original state)
-        swap(str[i], str[j]);
+        [str[i], str[j]] = [str[j], str[i]];
     }
 }
 
-int main()
-{
-    string str = "ABC";
+const str = "ABC".split('');
 
-    permutations(str, 0, str.length());
-
-    return 0;
-}
+permutations(str, 0, str.length);
 ```
 
 **Output:** ABC ACB BAC BCA CBA CAB
@@ -57,44 +48,33 @@ int main()
 
 We can use [std::rotate](https://cplusplus.com/reference/algorithm/rotate/) to in-place rotate a string in linear time and recursively permute on the rotated string. Following is the recursion tree for printing all permutations of the string `ABC`:
 
-```
-#include <iostream>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find all permutations of a given string
 // containing all distinct characters
-void permutations(string str, int n, string result)
-{
+function permutations(str: string, n: number, result: string): void {
     // base condition (only one character is left in the string)
-    if (n == 1)
+    if (n === 1)
     {
-        cout << result + str << endl;
+        console.log(result + str);
         return;
     }
 
     // process each character of the remaining string
-    for (int i = 0; i < n; i++)
+    for (let i = 0; i < n; i++)
     {
         // push the current character into the output string and recur
         // for the remaining characters
-        permutations(str.substr(1), n - 1, result + str[0]);
+        permutations(str.slice(1), n - 1, result + str[0]);
 
         // left-rotate the string by 1 unit for the next iteration
-        // (use a reverse iterator to right-rotate the string)
-        rotate(str.begin(), str.begin() + 1, str.end());
+        str = str.slice(1) + str[0];
     }
 }
 
-int main()
-{
-    string str = "ABC";
-    string result;        // empty string
+const str = "ABC";
+let result = '';      // empty string
 
-    permutations(str, str.size(), result);
-
-    return 0;
-}
+permutations(str, str.length, result);
 ```
 
 **Output:** ABC ACB BCA BAC CAB CBA

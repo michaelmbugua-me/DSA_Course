@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/heap-sort-place-place-implementation-c-c/
 
-Given an integer array, sort it using the heapsort algorithm in C, C++, Java, and Python.
+Given an integer array, sort it using the heapsort algorithm in TypeScript.
 
 ## Heapsort Overview
 
@@ -40,713 +40,230 @@ Heapsort can be performed in place. We can do this by
 
 The idea is to split the array into two parts – the heap and the sorted array. As each pop operation free space to the end of the array in a binary heap, move the popped item to the free space. So, the first popped item (maximum element) will go to the last position in the array, the second popped item (next maximum element) will go to the second last position in the array, and so on… finally, when all items are popped from the heap, we will get an array sorted in ascending order.
 
-```c
-#include <stdio.h>
-
-// stores size of the heap
-int end;
-
-void swap(int *x, int *y) {
-    *x = (*x**y) / (*y = *x);
-}
-
+```ts
 // return left child of `A[i]`
-int LEFT(int i) {
-    return (2*i + 1);
+function LEFT(i: number): number {
+    return 2 * i + 1;
 }
 
 // return right child of `A[i]`
-int RIGHT(int i) {
-    return (2*i + 2);
+function RIGHT(i: number): number {
+    return 2 * i + 2;
 }
 
-// Recursive heapify-down algorithm
-// the node at index `i` and its two direct children
-// violates the heap property
-void heapify(int A[], int i)
-{
+// Utility function to swap two indices in a list
+function swap(A: number[], i: number, j: number): void {
+
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
+
+// Recursive heapify-down algorithm. The node at index `i` and
+// its two direct children violates the heap property
+function heapify(A: number[], i: number, size: number): void {
+
     // get left and right child of node at index `i`
-    int left = LEFT(i);
-    int right = RIGHT(i);
+    const left = LEFT(i);
+    const right = RIGHT(i);
+
+    let largest = i;
 
     // compare `A[i]` with its left and right child
     // and find the largest value
-    int largest = i;
-
-    if (left < end && A[left] > A[i]) {
+    if (left < size && A[left] > A[i]) {
         largest = left;
     }
 
-    if (right < end && A[right] > A[largest]) {
+    if (right < size && A[right] > A[largest]) {
         largest = right;
     }
 
     // swap with a child having greater value and
-    // call heapify on the child
-    if (largest != i)
-    {
-        swap(&A[i], &A[largest]);
-        heapify(A, largest);
+    // call heapify-down on the child
+    if (largest !== i) {
+        swap(A, i, largest);
+        heapify(A, largest, size);
     }
 }
 
-// Re-arrange array elements to build max-heap
-void BuildHeap(int A[])
-{
-    // call heapify starting from the last internal node all the
-    // way up to the root node
-    int i = (end - 2) / 2;
+// Function to remove an element with the highest priority (present at the root)
+function pop(A: number[], size: number): number {
+
+    // if the heap has no elements
+    if (size <= 0) {
+        return -1;
+    }
+
+    const top = A[0];
+
+    // replace the root of the heap with the last element
+    // of the list
+    A[0] = A[size - 1];
+
+    // call heapify-down on the root node
+    heapify(A, 0, size - 1);
+
+    return top;
+}
+
+// Function to perform heapsort on a list `A` of size `n`
+function heapsort(A: number[]): void {
+
+    // build a priority queue and initialize it by the given list
+    let n = A.length;
+
+    // Build-heap: Call heapify starting from the last internal
+    // node all the way up to the root node
+    let i = Math.floor((n - 2) / 2);
     while (i >= 0) {
-        heapify(A, i--);
+        heapify(A, i, n);
+        i = i - 1;
     }
-}
-
-void heapsort(int A[], int n)
-{
-    // initialize heap size as the total number of elements in the array
-    end = n;
-
-    // re-arrange array elements to build max-heap
-    BuildHeap(A);
-
-    /* The following loop maintains that `A[0, end-1]`
-       is a heap and every element beyond the end is greater than
-       everything before it (so `A[end: n-1]` is in sorted order) */
-
-    // do till only one element is left on the heap
-    while (end != 1)
-    {
-        // move the next greatest element to the end of the
-        // array (moves it in front of the sorted elements)
-        swap(&A[0], &A[end - 1]);
-
-        // decrease heap size by 1
-        end--;
-
-        // call heapify on root node as the swap destroyed
-        // the heap property
-        heapify(A, 0);
-    }
-}
-
-// Heapsort algorithm implementation in C
-int main(void)
-{
-    int A[] = { 6, 4, 7, 1, 9, -2 };
-    int n = sizeof(A) / sizeof(A[0]);
-
-    // perform heapsort on the array
-    heapsort(A, n);
-
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        printf("%d ", A[i]);
-    }
-
-    return 0;
-}
-```
-
-##
-
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-class PriorityQueue
-{
-    // return left child of `A[i]`
-    int LEFT(int i) {
-        return (2*i + 1);
-    }
-
-    // return right child of `A[i]`
-    int RIGHT(int i) {
-        return (2*i + 2);
-    }
-
-    // Recursive heapify-down algorithm
-    // the node at index `i` and its two direct children
-    // violates the heap property
-    void heapify(vector<int> &A, int i, int size)
-    {
-        // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
-
-        int largest = i;
-
-        // compare `A[i]` with its left and right child
-        // and find the largest value
-        if (left < size && A[left] > A[i]) {
-            largest = left;
-        }
-
-        if (right < size && A[right] > A[largest]) {
-            largest = right;
-        }
-
-        // swap with a child having greater value and
-        // call heapify-down on the child
-        if (largest != i)
-        {
-            swap(A[i], A[largest]);
-            heapify(A, largest, size);
-        }
-    }
-
-public:
-
-    // Constructor (Build-Heap)
-    PriorityQueue(vector<int> &A, int n)
-    {
-        // call heapify starting from the last internal node all the
-        // way up to the root node
-        int i = (n - 2) / 2;
-        while (i >= 0) {
-            heapify(A, i--, n);
-        }
-    }
-
-    // Function to remove an element with the highest priority (present at the root)
-    int pop(vector<int> &A, int size)
-    {
-        // if the heap has no elements
-        if (size <= 0) {
-            return -1;
-        }
-
-        int top = A[0];
-
-        // replace the root of the heap with the last element
-        // of the array
-        A[0] = A[size-1];
-
-        // call heapify-down on the root node
-        heapify(A, 0, size - 1);
-
-        return top;
-    }
-};
-
-// Function to perform heapsort on array `A` of size `n`
-void heapsort(vector<int> &A, int n)
-{
-    // build a priority queue and initialize it by the given array
-    PriorityQueue pq(A, n);
 
     // repeatedly pop from the heap till it becomes empty
-    while (n > 0)
-    {
-        A[n - 1] = pq.pop(A, n);
-        n--;
+    while (n > 0) {
+        A[n - 1] = pop(A, n);
+        n = n - 1;
     }
 }
 
-// Heapsort algorithm implementation in C++
-int main()
-{
-    vector<int> A = { 6, 4, 7, 1, 9, -2 };
-    int n = A.size();
+const A = [6, 4, 7, 1, 9, -2];
 
-    // perform heapsort on the array
-    heapsort(A, n);
+// perform heapsort on the list
+heapsort(A);
 
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << A[i] << " ";
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // return left child of `A[i]`
-    private static int LEFT(int i) {
-        return (2*i + 1);
-    }
-
-    // return right child of `A[i]`
-    private static int RIGHT(int i) {
-        return (2*i + 2);
-    }
-
-    // Utility function to swap two indices in the array
-    private static void swap(int[] A, int i, int j)
-    {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
-    }
-
-    // Recursive heapify-down algorithm. The node at index `i` and
-    // its two direct children violates the heap property
-    private static void heapify(int[] A, int i, int size)
-    {
-        // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
-
-        int largest = i;
-
-        // compare `A[i]` with its left and right child
-        // and find the largest value
-        if (left < size && A[left] > A[i]) {
-            largest = left;
-        }
-
-        if (right < size && A[right] > A[largest]) {
-            largest = right;
-        }
-
-        // swap with a child having greater value and
-        // call heapify-down on the child
-        if (largest != i)
-        {
-            swap(A, i, largest);
-            heapify(A, largest, size);
-        }
-    }
-
-    // Function to remove an element with the highest priority (present at the root)
-    public static int pop(int[] A, int size)
-    {
-        // if the heap has no elements
-        if (size <= 0) {
-            return -1;
-        }
-
-        int top = A[0];
-
-        // replace the root of the heap with the last element
-        // of the array
-        A[0] = A[size-1];
-
-        // call heapify-down on the root node
-        heapify(A, 0, size - 1);
-
-        return top;
-    }
-
-    // Function to perform heapsort on array `A` of size `n`
-    public static void heapsort(int[] A)
-    {
-        // build a priority queue and initialize it by the given array
-        int n = A.length;
-
-        // Build-heap: Call heapify starting from the last internal
-        // node all the way up to the root node
-        int i = (n - 2) / 2;
-        while (i >= 0) {
-            heapify(A, i--, n);
-        }
-
-        // repeatedly pop from the heap till it becomes empty
-        while (n > 0)
-        {
-            A[n - 1] = pop(A, n);
-            n--;
-        }
-    }
-
-    // Heapsort algorithm implementation in Java
-    public static void main(String[] args)
-    {
-        int[] A = { 6, 4, 7, 1, 9, -2 };
-
-        // perform heapsort on the array
-        heapsort(A);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# return left child of `A[i]`
-def LEFT(i):
-    return 2*i + 1
-
-# return right child of `A[i]`
-def RIGHT(i):
-    return 2*i + 2
-
-# Utility function to swap two indices in a list
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Recursive heapify-down algorithm. The node at index `i` and
-# its two direct children violates the heap property
-def heapify(A, i, size):
-
-    # get left and right child of node at index `i`
-    left = LEFT(i)
-    right = RIGHT(i)
-
-    largest = i
-
-    # compare `A[i]` with its left and right child
-    # and find the largest value
-    if left < size and A[left] > A[i]:
-        largest = left
-
-    if right < size and A[right] > A[largest]:
-        largest = right
-
-    # swap with a child having greater value and
-    # call heapify-down on the child
-    if largest != i:
-        swap(A, i, largest)
-        heapify(A, largest, size)
-
-# Function to remove an element with the highest priority (present at the root)
-def pop(A, size):
-
-    # if the heap has no elements
-    if size <= 0:
-        return -1
-
-    top = A[0]
-
-    # replace the root of the heap with the last element
-    # of the list
-    A[0] = A[size - 1]
-
-    # call heapify-down on the root node
-    heapify(A, 0, size - 1)
-
-    return top
-
-# Function to perform heapsort on a list `A` of size `n`
-def heapsort(A):
-
-    # build a priority queue and initialize it by the given list
-    n = len(A)
-
-    # Build-heap: Call heapify starting from the last internal
-    # node all the way up to the root node
-    i = (n - 2) // 2
-    while i >= 0:
-        heapify(A, i, n)
-        i = i - 1
-
-    # repeatedly pop from the heap till it becomes empty
-    while n:
-        A[n - 1] = pop(A, n)
-        n = n - 1
-
-if __name__ == '__main__':
-
-    A = [6, 4, 7, 1, 9, -2]
-
-    # perform heapsort on the list
-    heapsort(A)
-
-    # print the sorted list
-    print(A)
+// print the sorted list
+console.log(A);
 ```
 
 The time complexity of the above algorithm is O(n.log(n)), where `n` is the input size and requires O(n) implicit space for the call stack.
 
 ## 2\. Out-of-place Heapsort Implementation
 
-The [out-of-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) heapsort algorithm can be implemented as follows in C++ and Java:
+The [out-of-place](https://techiedelight.com/in-place-vs-out-of-place-algorithms/) heapsort algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // A class to store a min-heap node
-class PriorityQueue
-{
+// min-heap assumed (JS has no builtin heap)
+class PriorityQueue {
     // array to store heap elements
-    int *A;
+    private A: number[];
 
     // stores current size of the heap
-    unsigned size;
+    private size: number;
 
     // return left child of `A[i]`
-    int LEFT(int i) {
-        return (2*i + 1);
+    private LEFT(i: number): number {
+        return 2 * i + 1;
     }
 
     // return right child of `A[i]`
-    int RIGHT(int i) {
-        return (2*i + 2);
+    private RIGHT(i: number): number {
+        return 2 * i + 2;
     }
 
-    // Recursive heapify-down algorithm
-    // the node at index `i` and its two direct children
-    // violates the heap property
-    void heapify(int i)
-    {
-        // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
+    // Utility function to swap two indices in the array
+    private swap(A: number[], i: number, j: number): void {
+        const temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
 
-        int smallest = i;
+    // Recursive heapify-down algorithm. The node at index `i` and
+    // its two direct children violate the heap property
+    private heapify(i: number): void {
+        // get left and right child of node at index `i`
+        const left = this.LEFT(i);
+        const right = this.RIGHT(i);
+
+        let smallest = i;
 
         // compare `A[i]` with its left and right child
         // and find the smallest value
-        if (left < size && A[left] < A[i]) {
+        if (left < this.size && this.A[left] < this.A[i]) {
             smallest = left;
         }
 
-        if (right < size && A[right] < A[smallest]) {
+        if (right < this.size && this.A[right] < this.A[smallest]) {
             smallest = right;
         }
 
         // swap with a child having lesser value and
         // call heapify-down on the child
-        if (smallest != i)
-        {
-            swap(A[i], A[smallest]);
-            heapify(smallest);
+        if (smallest !== i) {
+            this.swap(this.A, i, smallest);
+            this.heapify(smallest);
         }
     }
 
-public:
-
     // Constructor (Build-Heap)
-    PriorityQueue(vector<int> &arr, int n)
-    {
+    constructor(arr: number[]) {
         // allocate memory to the heap and initialize it by the given array
-        A = new int[n];
-        for (int i = 0; i < n; i++) {
-            A[i] = arr[i];
-        }
+        this.A = [...arr];
 
         // set heap capacity equal to the array size
-        size = n;
+        this.size = arr.length;
 
         // call heapify starting from the last internal node all the
         // way up to the root node
-        int i = (n - 2) / 2;
+        let i = Math.floor((arr.length - 2) / 2);
         while (i >= 0) {
-            heapify(i--);
+            this.heapify(i);
+            i--;
         }
-    }
-
-    // Destructor
-    ~PriorityQueue()
-    {
-        // free the memory used by heap nodes
-        delete[] A;
     }
 
     // Function to check if the heap is empty or not
-    int empty() {
-        return size == 0;
+    empty(): boolean {
+        return this.size === 0;
     }
 
     // Function to remove an element with the highest priority (present at the root)
-    int pop()
-    {
+    pop(): number {
         // if the heap has no elements
-        if (size <= 0) {
+        if (this.size <= 0) {
             return -1;
         }
 
-        int top = A[0];
+        const top = this.A[0];
 
         // replace the root of the heap with the last element
         // of the array
-        A[0] = A[size-1];
+        this.A[0] = this.A[this.size - 1];
 
         // decrease heap size by 1
-        size--;
+        this.size--;
 
         // call heapify-down on the root node
-        heapify(0);
+        this.heapify(0);
 
         return top;
     }
-};
+}
 
 // Function to perform heapsort on array `A` of size `n`
-void heapsort(vector<int> &A, int n)
-{
+function heapsort(A: number[]): void {
     // build a priority queue and initialize it by the given array
-    PriorityQueue pq(A, n);
-
-    int i = 0;
+    const pq = new PriorityQueue(A);
 
     // repeatedly pop from the heap till it becomes empty
+    let i = 0;
     while (!pq.empty()) {
         A[i++] = pq.pop();
     }
 }
 
-// Heapsort algorithm implementation in C++
-int main()
-{
-    vector<int> A = { 6, 4, 7, 1, 9, -2 };
-    int n = A.size();
+const A = [6, 4, 7, 1, 9, -2];
 
-    // perform heapsort on the array
-    heapsort(A, n);
+// perform heapsort on the array
+heapsort(A);
 
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << A[i] << " ";
-    }
-
-    return 0;
-}
+// print the sorted array
+console.log(A);
 ```
 
 **Output:** -2 1 4 6 7 9
-
-##
-
-```java
-import java.util.Arrays;
-
-// A class to store a min-heap node
-class PriorityQueue
-{
-    // array to store heap elements
-    private static int[] A = null;
-
-    // stores current size of the heap
-    private static int size;
-
-    // return left child of `A[i]`
-    private static int LEFT(int i) {
-        return (2*i + 1);
-    }
-
-    // return right child of `A[i]`
-    private static int RIGHT(int i) {
-        return (2*i + 2);
-    }
-
-    // Recursive heapify-down algorithm. The node at index `i` and
-    // its two direct children violate the heap property
-    private static void heapify(int i)
-    {
-        // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
-
-        int smallest = i;
-
-        // compare `A[i]` with its left and right child
-        // and find the smallest value
-        if (left < size && A[left] < A[i]) {
-            smallest = left;
-        }
-
-        if (right < size && A[right] < A[smallest]) {
-            smallest = right;
-        }
-
-        // swap with a child having lesser value and
-        // call heapify-down on the child
-        if (smallest != i)
-        {
-            swap(A, i, smallest);
-            heapify(smallest);
-        }
-    }
-
-    // Utility function to swap two indices in the array
-    private static void swap(int[] A, int i, int j)
-    {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
-    }
-
-    // Constructor (Build-Heap)
-    PriorityQueue(int[] arr)
-    {
-        // allocate memory to the heap and initialize it by the given array
-        A = Arrays.copyOf(arr, arr.length);
-
-        // set heap capacity equal to the array size
-        size = arr.length;
-
-        // call heapify starting from the last internal node all the
-        // way up to the root node
-        int i = (arr.length - 2) / 2;
-        while (i >= 0) {
-            heapify(i--);
-        }
-    }
-
-    // Function to check if the heap is empty or not
-    public static boolean empty() {
-        return size == 0;
-    }
-
-    // Function to remove an element with the highest priority (present at the root)
-    public static int pop()
-    {
-        // if the heap has no elements
-        if (size <= 0) {
-            return -1;
-        }
-
-        int top = A[0];
-
-        // replace the root of the heap with the last element
-        // of the array
-        A[0] = A[size-1];
-
-        // decrease heap size by 1
-        size--;
-
-        // call heapify-down on the root node
-        heapify(0);
-
-        return top;
-    }
-}
-
-class Main
-{
-    // Function to perform heapsort on array `A` of size `n`
-    public static void heapsort(int[] A)
-    {
-        // build a priority queue and initialize it by the given array
-        PriorityQueue pq = new PriorityQueue(A);
-
-        // repeatedly pop from the heap till it becomes empty
-        int i = 0;
-        while (!pq.empty()) {
-            A[i++] = pq.pop();
-        }
-    }
-
-    // Heapsort algorithm implementation in Java
-    public static void main(String[] args)
-    {
-        int[] A = { 6, 4, 7, 1, 9, -2 };
-
-        // perform heapsort on the array
-        heapsort(A);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
 
 The time complexity of the above algorithm is O(n.log(n)), and the auxiliary space used by the program is O(n), where `n` is the size of the input.
 

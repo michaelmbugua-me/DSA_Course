@@ -21,131 +21,135 @@ The time complexity of all the above operations is constant.
 
 > 
 
-## Stack Implementation using a List
+## Stack Implementation using an Array
 
-The stack can easily be implemented as a list. Following is the custom stack implementation in Python, which uses a list:
+The stack can easily be implemented as an array. Following is the custom stack implementation in TypeScript, which uses an array:
 
-```
-# Custom stack implementation in Python
-class Stack:
+```ts
+// Custom stack implementation in TypeScript
+class Stack {
+    // Constructor to initialize the stack
+    constructor(private arr: (number | null)[], private capacity: number, private top: number) {}
 
-    # Constructor to initialize the stack
-    def __init__(self, size):
-        self.arr = [None] * size
-        self.capacity = size
-        self.top = -1
+    // Function to add an element `val` to the stack
+    push(val: number): void {
+        if (this.isFull()) {
+            console.log('Stack Overflow!! Calling exit()…');
+            process.exit(-1);
+        }
 
-    # Function to add an element `val` to the stack
-    def push(self, val):
-        if self.isFull():
-            print('Stack Overflow!! Calling exit()…')
-            exit(-1)
+        console.log(`Inserting ${val} into the stack…`);
+        this.top = this.top + 1;
+        this.arr[this.top] = val;
+    }
 
-        print(f'Inserting {val} into the stack…')
-        self.top = self.top + 1
-        self.arr[self.top] = val
+    // Function to pop a top element from the stack
+    pop(): number | null {
+        // check for stack underflow
+        if (this.isEmpty()) {
+            console.log('Stack Underflow!! Calling exit()…');
+            process.exit(-1);
+        }
 
-    # Function to pop a top element from the stack
-    def pop(self):
-        # check for stack underflow
-        if self.isEmpty():
-            print('Stack Underflow!! Calling exit()…')
-            exit(-1)
+        console.log(`Removing ${this.peek()} from the stack`);
 
-        print(f'Removing {self.peek()} from the stack')
+        // decrease stack size by 1 and (optionally) return the popped element
+        const top = this.arr[this.top];
+        this.top = this.top - 1;
+        return top;
+    }
 
-        # decrease stack size by 1 and (optionally) return the popped element
-        top = self.arr[self.top]
-        self.top = self.top - 1
-        return top
+    // Function to return the top element of the stack
+    peek(): number | null {
+        if (this.isEmpty()) {
+            process.exit(-1);
+        }
+        return this.arr[this.top];
+    }
 
-    # Function to return the top element of the stack
-    def peek(self):
-        if self.isEmpty():
-            exit(-1)
-        return self.arr[self.top]
+    // Function to return the size of the stack
+    size(): number {
+        return this.top + 1;
+    }
 
-    # Function to return the size of the stack
-    def size(self):
-        return self.top + 1
+    // Function to check if the stack is empty or not
+    isEmpty(): boolean {
+        return this.size() === 0;
+    }
 
-    # Function to check if the stack is empty or not
-    def isEmpty(self):
-        return self.size() == 0
+    // Function to check if the stack is full or not
+    isFull(): boolean {
+        return this.size() === this.capacity;
+    }
+}
 
-    # Function to check if the stack is full or not
-    def isFull(self):
-        return self.size() == self.capacity
+const stack = new Stack(new Array<number | null>(3).fill(null), 3, -1);
 
-if __name__ == '__main__':
+stack.push(1);       // Inserting 1 in the stack
+stack.push(2);       // Inserting 2 in the stack
 
-    stack = Stack(3)
+stack.pop();         // removing the top element (2)
+stack.pop();         // removing the top element (1)
 
-    stack.push(1)       # Inserting 1 in the stack
-    stack.push(2)       # Inserting 2 in the stack
+stack.push(3);       // Inserting 3 in the stack
 
-    stack.pop()         # removing the top element (2)
-    stack.pop()         # removing the top element (1)
+console.log('Top element is', stack.peek());
+console.log('The stack size is', stack.size());
 
-    stack.push(3)       # Inserting 3 in the stack
+stack.pop();         // removing the top element (3)
 
-    print('Top element is', stack.peek())
-    print('The stack size is', stack.size())
-
-    stack.pop()         # removing the top element (3)
-
-    # check if the stack is empty
-    if stack.isEmpty():
-        print('The stack is empty')
-    else:
-        print('The stack is not empty')
+// check if the stack is empty
+if (stack.isEmpty()) {
+    console.log('The stack is empty');
+}
+else {
+    console.log('The stack is not empty');
+}
 ```
 
 **Output:** Inserting 1 into the stack… Inserting 2 into the stack… Removing 2 from the stack Removing 1 from the stack Inserting 3 into the stack… The top element is 3 The stack size is 1 Removing 3 from the stack The stack is empty
 
-## Using `deque()`
+## Using an Array
 
-Python’s library offers a [deque](https://docs.python.org/3.3/library/collections.html#collections.deque) object, which stands for the double-ended queue. A deque is a generalization of stacks and queues which support constant-time additions and deletions from either side of the deque in either direction.
+The TypeScript standard library offers array operations, which can act as a double-ended queue. A deque is a generalization of stacks and queues which support constant-time additions and deletions from either side of the deque in either direction.
 
-Following is a simple example demonstrating the usage of deque to implement stack data structure in Python:
+Following is a simple example demonstrating the usage of array operations to implement stack data structure in TypeScript:
 
-```
-# Stack implementation using deque class in Python
+```ts
+// Stack implementation using array operations in TypeScript
 
-from collections import deque
+const stack: string[] = [];
 
-if __name__ == '__main__':
+console.log('Inserting A into the stack…');
+stack.push('A');
 
-    stack = deque()
+console.log('Inserting B into the stack…');
+stack.push('B');
 
-    print('Inserting A into the stack…')
-    stack.append('A')
+console.log('Inserting C into the stack…');
+stack.push('C');
 
-    print('Inserting B into the stack…')
-    stack.append('B')
+console.log('Inserting D into the stack…');
+stack.push('D');
 
-    print('Inserting C into the stack…')
-    stack.append('C')
+console.log('Top element is', stack[stack.length - 1]);                 // prints the stack's top (D)
 
-    print('Inserting D into the stack…')
-    stack.append('D')
+console.log(`Removing ${stack.pop()} from the stack`);   // removing the top element (D)
+console.log(`Removing ${stack.pop()} from the stack`);   // removing the next top (C)
 
-    print('Top element is', stack[-1])                 # prints the stack's top (D)
+// returns the total number of elements present in the stack
+console.log('The stack size is', stack.length);
 
-    print(f'Removing {stack.pop()} from the stack')   # removing the top element (D)
-    print(f'Removing {stack.pop()} from the stack')   # removing the next top (C)
+console.log(`Removing ${stack.pop()} from the stack`);   // removing the top element (B)
+console.log(`Removing ${stack.pop()} from the stack`);   // removing the next top (A)
 
-    # returns the total number of elements present in the stack
-    print('The stack size is', len(stack))
-
-    print(f'Removing {stack.pop()} from the stack')   # removing the top element (B)
-    print(f'Removing {stack.pop()} from the stack')   # removing the next top (A)
-
-    # check if the stack is empty
-    if len(stack) == 0:
-        print('The stack is empty')
-    else:
-        print('The stack is not empty')
+// check if the stack is empty
+if (stack.length === 0) {
+    console.log('The stack is empty');
+}
+else {
+    console.log('The stack is not empty');
+}
 ```
 
 **Output:** Inserting A into the stack… Inserting B into the stack… Inserting C into the stack… Inserting D into the stack… The top element is D Removing D from the stack Removing C from the stack The stack size is 2 Removing B from the stack Removing A from the stack The stack is empty

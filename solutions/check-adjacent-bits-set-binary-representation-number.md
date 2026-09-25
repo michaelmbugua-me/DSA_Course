@@ -14,80 +14,26 @@ The expression `n & (n << 1)` or `n & (n >> 1)` returns true if `n` contains any
 
 00101101 & (n) 01011010 left shift n by 1 ~~~~~~~~ 00001000 (n & (n << 1))
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
+```ts
+// Returns true if adjacent bits are set in the binary representation of `n`
+const check = (n: number): boolean => {
+    return (n & (n << 1)) !== 0;
+};
 
-// Returns true if adjacent bits are set in a binary representation of `n`
-bool check(int n) {
-    return n & (n << 1);
+const n = 67;
+console.log(`${n} in binary is ${n.toString(2)}`);
+
+if (check(n)) {
+    console.log('Adjacent pair of set bits found');
 }
-
-int main()
-{
-    int n = 67;
-
-    cout << n << " in binary is " << bitset<8>(n) << endl;
-
-    if (check(n)) {
-        cout << "Adjacent pair of set bits found";
-    }
-    else {
-        cout << "No adjacent pair of set bits found";
-    }
-
-    return 0;
+else {
+    console.log('No adjacent pair of set bits found');
 }
 ```
 
 **Output:** 67 in binary is 01000011 Adjacent pair of set bits found
-
-##
-
-```java
-class Main
-{
-    // Returns true if adjacent bits are set in the binary representation of `n`
-    public static boolean check(int n) {
-        return (n & (n << 1)) != 0;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 67;
-
-        System.out.println(n + " in binary is " + Integer.toBinaryString(n));
-
-        if (check(n)) {
-            System.out.println("Adjacent pair of set bits found");
-        }
-        else {
-            System.out.println("No adjacent pair of set bits found");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Returns true if adjacent bits are set in the binary representation of `n`
-def check(n):
-    return (n & (n << 1)) != 0
-
-if __name__ == '__main__':
-
-    n = 67
-    print(f'{n} in binary is {bin(n)}')
-
-    if check(n):
-        print('Adjacent pair of set bits found')
-    else:
-        print('No adjacent pair of set bits found')
-```
 
 **Also See:**
 

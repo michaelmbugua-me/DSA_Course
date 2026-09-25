@@ -19,212 +19,69 @@ For example,
 
 “This sentence is syntactically correct.” “This sentence is syntactically incorrect as two continuous spaces are not allowed.” “This sentence is syntactically correct Y.” “This sentence is syntactically incorRect as uppercase character is not allowed midway of the string.” “THis sentence is syntactically incorrect as two continuous uppercase characters are not allowed.” “This sentence is syntactically incorrect as it doesn’t end with a full stop”
 
-The idea is to scan the given string and check for the above rules by comparing adjacent characters. Return false if any of the given constraints gets violated. Following is the C++, Java, and Python implementation of the idea:
+The idea is to scan the given string and check for the above rules by comparing adjacent characters. Return false if any of the given constraints gets violated. Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <cctype>
-#include <vector>
-using namespace std;
+```ts
+const validateSentence = (s: string): boolean => {
 
-// Function to check if a given sentence is syntactically
-// correct or not
-bool validateSentence(string str)
-{
-    int index = 0;
+    let index = 0;
 
-    // 1st condition
-    if (islower(str[index])) {
+    if (s[index] === s[index].toLowerCase() && s[index] !== s[index].toUpperCase()) {   // 1st condition
         return false;
     }
 
-    while (str[index])
-    {
-        if (isupper(str[index]))
-        {
-            // 5th condition
-            if (isupper(str[index + 1])) {
+    while (index < s.length) {
+        const ch = s[index];
+
+        if (ch !== ch.toLowerCase() && ch !== ' ') {
+            if (s[index + 1] !== s[index + 1].toLowerCase() && s[index + 1] !== ' ') {  // 5th condition
                 return false;
             }
 
-            // 2nd condition
-            if (index - 1 >= 0 && str[index - 1] != ' ') {
+            if (index - 1 >= 0 && s[index - 1] !== ' ') {                              // 2nd condition
                 return false;
             }
         }
 
-        // 4th condition
-        if (str[index] == ' ' && str[index + 1] == ' ') {
+        if (ch === ' ' && s[index + 1] === ' ') {                                      // 4th condition
             return false;
         }
 
-        index++;
+        index = index + 1;
     }
 
-    // 3rd condition
-    if (str[index - 2] == ' ' || str[index - 1] != '.') {
+    if (s[index - 2] === ' ' || s[index - 1] !== '.') {                                // 3rd condition
         return false;
     }
 
     return true;
-}
+};
 
-int main()
-{
-    vector<string> sentences =
-    {
-        "This sentence is syntactically correct.",
+// demo
+const sentences = [
+    'This sentence is syntactically correct.',
 
-        "This sentence is syntactically  incorrect as two "
-        "continuous spaces are not allowed.",
+    'This sentence is syntactically  incorrect as two ' +
+    'continuous spaces are not allowed.',
 
-        "This sentence is syntactically correct Y.",
+    'This sentence is syntactically correct Y.',
 
-        "This sentence is syntactically incorRect as uppercase "
-        "character is not allowed midway of the string.",
+    'This sentence is syntactically incorRect as uppercase ' +
+    'character is not allowed midway of the string.',
 
-        "THis sentence is syntactically incorrect as two "
-        "continuous uppercase characters are not allowed.",
+    'THis sentence is syntactically incorrect as two ' +
+    'continuous uppercase characters are not allowed.',
 
-        "This sentence is syntactically incorrect as it doesn't "
-        "end with a full stop"
-    };
+    'This sentence is syntactically incorrect as it doesn\'t ' +
+    'end with a full stop'
+];
 
-    cout << "The valid sentences are:\n\n";
-
-    for (string str: sentences)
-    {
-        if (validateSentence(str)) {
-            cout << str << endl;
-        }
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.List;
-
-class Main
-{
-    public static boolean validateSentence(char[] chars)
-    {
-        int index = 0;
-        if (Character.isLowerCase(chars[index])) {                  // 1st condition
-            return false;
-        }
-
-        while (index < chars.length)
-        {
-            if (Character.isUpperCase(chars[index]))
-            {
-                if (Character.isUpperCase(chars[index + 1])) {      // 5th condition
-                    return false;
-                }
-
-                if (index - 1 >= 0 && chars[index - 1] != ' ') {    // 2nd condition
-                    return false;
-                }
-            }
-
-            if (chars[index] == ' ' && chars[index + 1] == ' ') {   // 4th condition
-                return false;
-            }
-
-            index++;
-        }
-
-        if (chars[index - 2] == ' ' || chars[index - 1] != '.') {   // 3rd condition
-            return false;
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        List<String> sentences = Arrays.asList(
-                "This sentence is syntactically correct.",
-
-                "This sentence is syntactically  incorrect as two " +
-                    "continuous spaces are not allowed.",
-
-                "This sentence is syntactically correct Y.",
-
-                "This sentence is syntactically incorRect as uppercase " +
-                    "character is not allowed midway of the String.",
-
-                "THis sentence is syntactically incorrect as two " +
-                    "continuous uppercase characters are not allowed.",
-
-                "This sentence is syntactically incorrect as it doesn't " +
-                    "end with a full stop"
-        );
-
-        System.out.println("The valid sentences are:");
-        for (String sentence: sentences)
-        {
-            if (validateSentence(sentence.toCharArray())) {
-                System.out.println(sentence);
-            }
-        }
+console.log('The valid sentences are –');
+for (const sentence of sentences) {
+    if (validateSentence(sentence)) {
+        console.log(sentence);
     }
 }
-```
-
-##
-
-```python3
-def validateSentence(s):
-
-    index = 0
-    if s[index].islower():                                # 1st condition
-        return False
-
-    while index < len(s):
-        if s[index].isupper():
-            if s[index + 1].isupper():                    # 5th condition
-                return False
-            if index - 1 >= 0 and s[index - 1] != ' ':    # 2nd condition
-                return False
-        if s[index] == ' ' and s[index + 1] == ' ':     # 4th condition
-            return False
-        index = index + 1
-
-    if s[index - 2] == ' ' or s[index - 1] != '.':      # 3rd condition
-        return False
-
-    return True
-
-if __name__ == '__main__':
-
-    sentences = [
-        'This sentence is syntactically correct.',
-
-        'This sentence is syntactically  incorrect as two ' +
-        'continuous spaces are not allowed.',
-
-        'This sentence is syntactically correct Y.',
-
-        'This sentence is syntactically incorRect as uppercase ' +
-        'character is not allowed midway of the String.',
-
-        'THis sentence is syntactically incorrect as two ' +
-        'continuous uppercase characters are not allowed.',
-
-        'This sentence is syntactically incorrect as it doesn\'t ' +
-        'end with a full stop'
-    ]
-
-    print('The valid sentences are –')
-    for sentence in sentences:
-        if validateSentence(sentence):
-            print(sentence)
 ```
 
 **Output:** The valid sentences are: This sentence is syntactically correct. This sentence is syntactically correct Y.

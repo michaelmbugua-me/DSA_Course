@@ -10,279 +10,88 @@ A simple solution would be to divide the array into two halves and allocate each
 
 To handle this, we can grow stacks from two extreme corners of the array. In other words, the first stack grows from the `0'th` index, and the second stack grows from the `(n-1)'th` index, where `n` is the array size. Both stacks can grow towards each other with no fixed capacity. Now overflow will only happen if both stacks are full (i.e., top elements of both stacks are adjacent), and there is no space left in the array to accommodate a new element.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-using namespace std;
-
-class Stack
-{
-    int *arr;
-    int capacity;
-    int top1, top2;
-
-public:
-
+```ts
+class Stack {
     // Constructor
-    Stack(int n)
-    {
-        capacity = n;
-        arr = new int[n];
-        top1 = -1;
-        top2 = n;
+    capacity: number;
+    A: number[];
+    top1: number;
+    top2: number;
+
+    constructor(n: number) {
+        this.capacity = n;
+        this.A = new Array(n).fill(0);
+        this.top1 = -1;
+        this.top2 = n;
     }
 
     // Function to insert a given element into the first stack
-    void pushFirst(int key)
-    {
+    pushFirst(key: number): void {
         // check if the array is full
-        if (top1 + 1 == top2)
-        {
-            cout << "Stack Overflow";
-            exit(EXIT_FAILURE);
+        if (this.top1 + 1 === this.top2) {
+            console.log('Stack Overflow');
+            process.exit(-1);
         }
-
-        top1++;
-        arr[top1] = key;
+        this.top1 = this.top1 + 1;
+        this.A[this.top1] = key;
     }
 
     // Function to insert a given element into the second stack
-    void pushSecond(int key)
-    {
+    pushSecond(key: number): void {
         // check if the array is full
-        if (top1 + 1 == top2)
-        {
-            cout << "Stack Overflow";
-            exit(EXIT_FAILURE);
+        if (this.top1 + 1 === this.top2) {
+            console.log('Stack Overflow');
+            process.exit(-1);
         }
-
-        top2--;
-        arr[top2] = key;
+        this.top2 = this.top2 - 1;
+        this.A[this.top2] = key;
     }
 
     // Function to pop an element from the first stack
-    int popFirst()
-    {
+    popFirst(): number {
         // if no elements are left in the array
-        if (top1 < 0)
-        {
-            cout << "Stack Underflow";
-            exit(EXIT_FAILURE);
+        if (this.top1 < 0) {
+            console.log('Stack Underflow');
+            process.exit(-1);
         }
-
-        int top = arr[top1];
-        top1--;
+        const top = this.A[this.top1];
+        this.top1 = this.top1 - 1;
         return top;
     }
 
     // Function to pop an element from the second stack
-    int popSecond()
-    {
+    popSecond(): number {
         // if no elements are left in the array
-        if (top2 >= capacity)
-        {
-            cout << "Stack Underflow";
-            exit(EXIT_FAILURE);
+        if (this.top2 >= this.capacity) {
+            console.log('Stack Underflow');
+            process.exit(-1);
         }
-
-        int top = arr[top2];
-        top2++;
+        const top = this.A[this.top2];
+        this.top2 = this.top2 + 1;
         return top;
     }
-};
-
-int main()
-{
-    vector<int> arr1 = { 1, 2, 3, 4, 5 };
-    vector<int> arr2 = { 6, 7, 8, 9, 10 };
-
-    Stack stack(arr1.size() + arr2.size());
-
-    for (int i: arr1) {
-        stack.pushFirst(i);
-    }
-
-    for (int j: arr2) {
-        stack.pushSecond(j);
-    }
-
-    cout << "Popping element from the first stack: " << stack.popFirst() << endl;
-    cout << "Popping element from the second stack: " << stack.popSecond() << endl;
-
-    return 0;
 }
+
+const first = [1, 2, 3, 4, 5];
+const second = [6, 7, 8, 9, 10];
+
+const stack = new Stack(first.length + second.length);
+
+for (const i of first) {
+    stack.pushFirst(i);
+}
+
+for (const j of second) {
+    stack.pushSecond(j);
+}
+
+console.log('Popping element from the first stack:', stack.popFirst());
+console.log('Popping element from the second stack:', stack.popSecond());
 ```
 
 **Output:** Popping element from the first stack: 5 Popping element from the second stack: 10
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.List;
-
-class Stack
-{
-    private int[] arr;
-    private int capacity;
-    private int top1, top2;
-
-    // Constructor
-    public Stack(int n)
-    {
-        capacity = n;
-        arr = new int[n];
-        top1 = -1;
-        top2 = n;
-    }
-
-    // Function to insert a given element into the first stack
-    public void pushFirst(int key)
-    {
-        // check if the array is full
-        if (top1 + 1 == top2)
-        {
-            System.out.println("Stack Overflow");
-            System.exit(-1);
-        }
-
-        top1++;
-        arr[top1] = key;
-    }
-
-    // Function to insert a given element into the second stack
-    public void pushSecond(int key)
-    {
-        // check if the array is full
-        if (top1 + 1 == top2)
-        {
-            System.out.println("Stack Overflow");
-            System.exit(-1);
-        }
-
-        top2--;
-        arr[top2] = key;
-    }
-
-    // Function to pop an element from the first stack
-    public int popFirst()
-    {
-        // if no elements are left in the array
-        if (top1 < 0)
-        {
-            System.out.println("Stack Underflow");
-            System.exit(-1);
-        }
-
-        int top = arr[top1];
-        top1--;
-        return top;
-    }
-
-    // Function to pop an element from the second stack
-    public int popSecond()
-    {
-        // if no elements are left in the array
-        if (top2 >= capacity)
-        {
-            System.out.println("Stack Underflow");
-            System.exit(-1);
-        }
-
-        int top = arr[top2];
-        top2++;
-        return top;
-    }
-}
-
-class Main
-{
-    public static void main(String[] args)
-    {
-        List<Integer> list1 = Arrays.asList(1, 2, 3, 4, 5);
-        List<Integer> list2 = Arrays.asList(6, 7, 8, 9, 10);
-
-        Stack stack = new Stack(list1.size() + list2.size());
-
-        for (int i: list1) {
-            stack.pushFirst(i);
-        }
-
-        for (int j: list2) {
-            stack.pushSecond(j);
-        }
-
-        System.out.println("Popping element from the first stack: " + stack.popFirst());
-        System.out.println("Popping element from the second stack: " + stack.popSecond());
-    }
-}
-```
-
-##
-
-```python3
-class Stack:
-    # Constructor
-    def __init__(self, n):
-        self.capacity = n
-        self.A = [None] * n
-        self.top1 = -1
-        self.top2 = n
-
-    # Function to insert a given element into the first stack
-    def push_first(self, key):
-        # check if the list is full
-        if self.top1 + 1 == self.top2:
-            print('Stack Overflow')
-            exit(-1)
-        self.top1 = self.top1 + 1
-        self.A[self.top1] = key
-
-    # Function to insert a given element into the second stack
-    def push_second(self, key):
-        # check if the list is full
-        if self.top1 + 1 == self.top2:
-            print('Stack Overflow')
-            exit(-1)
-        self.top2 = self.top2 - 1
-        self.A[self.top2] = key
-
-    # Function to pop an element from the first stack
-    def pop_first(self):
-        # if no elements are left in the list
-        if self.top1 < 0:
-            print('Stack Underflow')
-            exit(-1)
-        top = self.A[self.top1]
-        self.top1 = self.top1 - 1
-        return top
-
-    # Function to pop an element from the second stack
-    def pop_second(self):
-        # if no elements are left in the list
-        if self.top2 >= self.capacity:
-            print('Stack Underflow')
-            exit(-1)
-        top = self.A[self.top2]
-        self.top2 = self.top2 + 1
-        return top
-
-if __name__ == '__main__':
-
-    first = [1, 2, 3, 4, 5]
-    second = [6, 7, 8, 9, 10]
-
-    stack = Stack(len(first) + len(second))
-
-    [stack.push_first(i) for i in first]
-    [stack.push_second(j) for j in second]
-
-    print('Popping element from the first stack:', stack.pop_first())
-    print('Popping element from the second stack:', stack.pop_second())
-```
 
 The time complexity of all stack operations is constant, i.e., O(1).
 

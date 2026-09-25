@@ -14,270 +14,84 @@ The idea is to traverse the binary tree and store its keys in a set. We know tha
 
 The advantage of using a set over an array is that the keys are always retrieved in sorted order from the set. If an array is used, [sort the keys](https://techiedelight.com/sort-array-ascending-order-cpp/) first before inserting them back.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <set>
-using namespace std;
-
-// Data structure to store a BST node
-struct Node
-{
-    int data;
-    Node* left = nullptr, *right = nullptr;
-
-    Node() {}
-    Node(int data): data(data) {}
-};
+```ts
+// A class to store a BST node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Function to perform inorder traversal on the tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+function inorder(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
-
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
+    inorder(root.left, output);
+    output.push(root.data);
+    inorder(root.right, output);
 }
 
 // Function to traverse the binary tree and store its keys in a set
-void extractKeys(Node* root, auto &set)
-{
+function extractKeys(root: Node | null, keys: number[]): void {
     // base case
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
-
-    extractKeys(root->left, set);
-    set.insert(root->data);
-    extractKeys(root->right, set);
+    extractKeys(root.left, keys);
+    keys.push(root.data);
+    extractKeys(root.right, keys);
 }
 
 // Function to put keys back into a set in their correct order in a BST
 // by doing inorder traversal
-void convertToBST(Node* root, auto &it)
-{
-    if (root == nullptr) {
+function convertToBST(root: Node | null, it: Iterator<number>): void {
+    if (root === null) {
         return;
     }
-
-    convertToBST(root->left, it);
-
-    root->data = *it;
-    it++;
-
-    convertToBST(root->right, it);
+    convertToBST(root.left, it);
+    root.data = it.next().value;
+    convertToBST(root.right, it);
 }
 
 // Function to convert a binary tree to BST by maintaining its original structure
-void convertToBST(Node* root)
-{
+function convert(root: Node | null): void {
     // traverse the binary tree and store its keys in a set
-    set<int> set;
-    extractKeys(root, set);
+    const keys: number[] = [];
+    extractKeys(root, keys);
 
     // put back keys present in the set to their correct order in the BST
-    auto it = set.begin();
+    const it = keys.sort((a, b) => a - b)[Symbol.iterator]();
     convertToBST(root, it);
 }
 
-int main()
-{
-    /* Construct the following tree
-               8
-             /   \
-            /     \
-           3       5
-          / \     / \
-         /   \   /   \
-        10    2 4     6
-    */
+/* Construct the following tree
+           8
+         /   \
+        /     \
+       3       5
+      / \     / \
+     /   \   /   \
+    10    2 4     6
+*/
 
-    Node* root = new Node(8);
-    root->left = new Node(3);
-    root->right = new Node(5);
-    root->left->left = new Node(10);
-    root->left->right = new Node(2);
-    root->right->left = new Node(4);
-    root->right->right = new Node(6);
+let root = new Node(8);
+root.left = new Node(3);
+root.right = new Node(5);
+root.left!.left = new Node(10);
+root.left!.right = new Node(2);
+root.right!.left = new Node(4);
+root.right!.right = new Node(6);
 
-    convertToBST(root);
-    inorder(root);
-
-    return 0;
-}
+convert(root);
+const output: number[] = [];
+inorder(root, output);
+console.log(output.join(' '));
 ```
 
 **Output:** 2 3 4 5 6 8 10
-
-##
-
-```java
-import java.util.TreeSet;
-import java.util.Iterator;
-import java.util.Set;
-
-// A class to store a BST node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform inorder traversal on the tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // Function to traverse the binary tree and store its keys in a set
-    public static void extractKeys(Node root, Set<Integer> set)
-    {
-        // base case
-        if (root == null) {
-            return;
-        }
-
-        extractKeys(root.left, set);
-        set.add(root.data);
-        extractKeys(root.right, set);
-    }
-
-    // Function to put keys back into a set in their correct order in the BST
-    // by doing inorder traversal
-    public static void convertToBST(Node root, Iterator<Integer> it)
-    {
-        if (root == null) {
-            return;
-        }
-
-        convertToBST(root.left, it);
-        root.data = it.next();
-        convertToBST(root.right, it);
-    }
-
-    // Function to convert a binary tree to BST by maintaining its original structure
-    public static void convertToBST(Node root)
-    {
-        // traverse the binary tree and store its keys in a set
-        Set<Integer> set = new TreeSet<>();
-        extractKeys(root, set);
-
-        // put back keys present in the set to their correct order in the BST
-        Iterator<Integer> it = set.iterator();
-        convertToBST(root, it);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                   8
-                 /   \
-                /     \
-               3       5
-              / \     / \
-             /   \   /   \
-            10    2 4     6
-        */
-
-        Node root = new Node(8);
-        root.left = new Node(3);
-        root.right = new Node(5);
-        root.left.left = new Node(10);
-        root.left.right = new Node(2);
-        root.right.left = new Node(4);
-        root.right.right = new Node(6);
-
-        convertToBST(root);
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a BST node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform inorder traversal on the tree
-def inorder(root):
-    if root is None:
-        return
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# Function to traverse the binary tree and store its keys in a set
-def extractKeys(root, keys):
-    # base case
-    if root is None:
-        return
-    extractKeys(root.left, keys)
-    keys.append(root.data)
-    extractKeys(root.right, keys)
-
-# Function to put keys back into a set in their correct order in a BST
-# by doing inorder traversal
-def convertToBST(root, it):
-    if root is None:
-        return
-    convertToBST(root.left, it)
-    root.data = next(it)
-    convertToBST(root.right, it)
-
-# Function to convert a binary tree to BST by maintaining its original structure
-def convert(root):
-    # traverse the binary tree and store its keys in a set
-    keys = list()
-    extractKeys(root, keys)
-
-    # put back keys present in the set to their correct order in the BST
-    it = iter(sorted(keys))
-    convertToBST(root, it)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               8
-             /   \
-            /     \
-           3       5
-          / \     / \
-         /   \   /   \
-        10    2 4     6
-    '''
-
-    root = Node(8)
-    root.left = Node(3)
-    root.right = Node(5)
-    root.left.left = Node(10)
-    root.left.right = Node(2)
-    root.right.left = Node(4)
-    root.right.right = Node(6)
-
-    convert(root)
-    inorder(root)
-```
 
 The time complexity of the above solution is O(n.log(n)), where `n` is the size of the BST, and requires linear space for storing the tree nodes.
 

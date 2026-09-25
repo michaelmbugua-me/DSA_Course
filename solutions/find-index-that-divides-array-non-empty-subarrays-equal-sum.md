@@ -18,136 +18,44 @@ To improve the space complexity to constant, preprocess the given array and stor
 
 > Right subarray sum = Sum of all elements – (Current element + Left subarray sum)
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
-// Function to find index `i` in an array such that the sum of the left
+```ts
+// Function to find index `i` in the array such that the sum of the left
 // subarray of `A[i]` is equal to the sum of its right subarray
-void findBreakPoint(int A[], int n)
-{
+function findBreakPoint(A: number[]): void {
+
     // base case
-    if (n == 0) {
+    if (!A.length) {
         return;
     }
 
-    int total = 0;
-
     // calculate the sum of all array elements
-    for (int i = 0; i < n; i++) {
-        total += A[i];
-    }
+    const total = A.reduce((x, y) => x + y, 0);
 
     // stores sum of the left subarray
-    int left_sum = A[0];
+    let leftSum = A[0];
 
     // start from index 1 to find non-empty subarrays
-    for (int i = 1; i < n - 1; i++)
-    {
+    for (let i = 1; i < A.length - 1; i++) {
+
         // if the sum of `A[0…i-1]` is equal to `A[i+1, n-1]`
-        if (left_sum == total - (A[i] + left_sum)) {
-            printf("The index is %d\n", i);
+        if (leftSum === total - (A[i] + leftSum)) {
+            console.log(`The index is ${i}`);
         }
 
         // update the left subarray sum
-        left_sum += A[i];
+        leftSum += A[i];
     }
 }
 
-int main(void)
-{
-    int A[] = { -1, 6, 3, 1, -2, 3, 3 };
-    int n = sizeof(A)/sizeof(A[0]);
+const A = [-1, 6, 3, 1, -2, 3, 3];
 
-    // divide the array into two non-empty subarrays with equal sum
-    findBreakPoint(A, n);
-
-    return 0;
-}
+// divide the array into two non-empty subarrays with equal sum
+findBreakPoint(A);
 ```
 
 **Output:** The index is 2
-
-##
-
-```java
-import java.util.stream.IntStream;
-
-class Main
-{
-    // Function to find index `i` in the array such that the sum of the left
-    // subarray of `A[i]` is equal to the sum of its right subarray
-    public static void findBreakPoint(int[] A)
-    {
-        // base case
-        if (A.length == 0) {
-            return;
-        }
-
-        // calculate the sum of all array elements
-        int total = IntStream.of(A).sum();
-
-        // stores sum of the left subarray
-        int left_sum = A[0];
-
-        // start from index 1 to find non-empty subarrays
-        for (int i = 1; i < A.length - 1; i++)
-        {
-            // if the sum of `A[0…i-1]` is equal to `A[i+1, n-1]`
-            if (left_sum == total - (A[i] + left_sum)) {
-                System.out.println("The index is " + i);
-            }
-
-            // update the left subarray sum
-            left_sum += A[i];
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { -1, 6, 3, 1, -2, 3, 3 };
-
-        // divide the array into two non-empty subarrays with equal sum
-        findBreakPoint(A);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find index `i` in the list such that the sum of the left
-# sublist of `A[i]` is equal to the sum of its right sublist
-def findBreakPoint(A):
-
-    # base case
-    if not len(A):
-        return -1
-
-    # calculate the sum of all list elements
-    total = sum(A)
-
-    # stores sum of the left sublist
-    left_sum = A[0]
-
-    # start from index 1 to find non-empty sublists
-    for i in range(1, len(A) - 1):
-
-        # if the sum of `A[0…i-1]` is equal to `A[i+1, n-1]`
-        if left_sum == total - (A[i] + left_sum):
-            print("Index is", i)
-
-        # update the left sublist sum
-        left_sum += A[i]
-
-if __name__ == '__main__':
-
-    A = [-1, 6, 3, 1, -2, 3, 3]
-
-    # divide the list into two non-empty sublists with equal sum
-    findBreakPoint(A)
-```
 
 Also See:
 

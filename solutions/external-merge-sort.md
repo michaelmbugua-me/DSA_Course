@@ -12,207 +12,232 @@ In other words, external merge sort sorts the chunks of data that fits in the ma
   2. Next, sort each run in main memory using the standard [merge sort sorting algorithm](https://techiedelight.com/merge-sort/).
   3. Finally, [merge the resulting runs](https://techiedelight.com/merge-m-sorted-lists-variable-length/) into successively bigger runs until the file is sorted.
 
-Following is the C++ code to demonstrate the external merge sort algorithm:
+Following is the TypeScript code to demonstrate the external merge sort algorithm:
 
-```
-#include <iostream>
-#include <algorithm>
-#include <queue>
-#include <limits>
-using namespace std;
+```ts
+import * as fs from 'fs';
 
-struct MinHeapNode
+// A class to store a heap node
+class MinHeapNode
 {
     // element to be stored
-    int element;
+    element: number;
 
     // array index from which the element is taken
-    int i;
-};
+    i: number;
 
-// Comparison object to be used to order the heap
-struct comp
-{
-    bool operator()(const MinHeapNode &lhs, const MinHeapNode &rhs) const {
-        return lhs.element > rhs.element;
+    constructor(element: number, i: number) {
+        this.element = element;
+        this.i = i;
     }
-};
+}
 
-FILE* openFile(char* fileName, char* mode)
+// Comparison function to be used to order the heap
+const comp = (lhs: MinHeapNode, rhs: MinHeapNode): boolean => lhs.element > rhs.element;
+
+// min-heap assumed (JS has no builtin heap) — a tiny array-based min-heap
+class MinHeap
 {
-    FILE* fp = fopen(fileName, mode);
-    if (fp == NULL)
-    {
-        perror("Error while opening the file.\n");
-        exit(EXIT_FAILURE);
+    private data: MinHeapNode[] = [];
+
+    top(): MinHeapNode {
+        return this.data[0];
     }
-    return fp;
+
+    pop(): MinHeapNode {
+        const min = this.data[0];
+        const last = this.data.pop()!;
+        if (this.data.length > 0) {
+            this.data[0] = last;
+            let i = 0;
+            while (true) {
+                const left = 2 * i + 1;
+                const right = left + 1;
+                let smallest = i;
+                if (left < this.data.length && comp(this.data[left], this.data[smallest])) {
+                    smallest = left;
+                }
+                if (right < this.data.length && comp(this.data[right], this.data[smallest])) {
+                    smallest = right;
+                }
+                if (smallest === i) {
+                    break;
+                }
+                [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]];
+                i = smallest;
+            }
+        }
+        return min;
+    }
+
+    push(node: MinHeapNode): void {
+        this.data.push(node);
+        let i = this.data.length - 1;
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (comp(this.data[i], this.data[parent])) {
+                [this.data[i], this.data[parent]] = [this.data[parent], this.data[i]];
+                i = parent;
+            }
+            else {
+                break;
+            }
+        }
+    }
+}
+
+// Read all integers from a file (mimics repeated `fscanf` of "%d ")
+function readNumbers(fileName: string): number[] {
+    return fs.readFileSync(fileName, 'utf8')
+        .split(/\s+/)
+        .filter((s) => s.length > 0)
+        .map(Number);
 }
 
 // Merges `k` sorted files. Names of files are assumed to be 1, 2, … `k`
-void mergeFiles(char *output_file, int n, int k)
+function mergeFiles(output_file: string, n: number, k: number): void
 {
-    FILE* in[k];
-    for (int i = 0; i < k; i++)
+    const inData: number[][] = [];
+    const inPos: number[] = [];
+    for (let i = 0; i < k; i++)
     {
-        char fileName[2];
-
-        // convert `i` to a string
-        snprintf(fileName, sizeof(fileName), "%d", i);
-
         // open output files in reading mode
-        in[i] = openFile(fileName, "r");
+        inData.push(readNumbers(String(i)));
+        inPos.push(0);
     }
 
     // FINAL OUTPUT FILE
-    FILE *out = openFile(output_file, "w");
+    const outLines: string[] = [];
 
     // Create a min-heap with `k` heap nodes. Every heap node has the first
     // element of the scratch output file
-    MinHeapNode harr[k];
-    priority_queue<MinHeapNode, vector<MinHeapNode>, comp> pq;
+    const harr: MinHeapNode[] = [];
+    const pq = new MinHeap();
 
-    int i;
+    let i;
     for (i = 0; i < k; i++)
     {
         // break if no output file is empty and
         // index `i` will be a number of input files
-        if (fscanf(in[i], "%d ", &harr[i].element) != 1) {
+        if (inPos[i] === inData[i].length) {
             break;
         }
 
         // index of the scratch output file
-        harr[i].i = i;
+        harr.push(new MinHeapNode(inData[i][inPos[i]], i));
+        inPos[i]++;
         pq.push(harr[i]);
     }
 
-    int count = 0;
+    let count = 0;
 
     // One by one, get the minimum element from the min-heap and replace
     // it with the next element. Run till all filled input files reach EOF.
-    while (count != i)
+    while (count !== i)
     {
         // Get the minimum element and store it in the output file
-        MinHeapNode root = pq.top();
-        pq.pop();
-        fprintf(out, "%d ", root.element);
+        const root = pq.pop();
+        outLines.push(String(root.element));
 
         // Find the next element that should replace the current root of the heap.
         // The next element belongs to the same input file as the current
         // minimum element.
-        if (fscanf(in[root.i], "%d ", &root.element) != 1 )
+        if (inPos[root.i] === inData[root.i].length)
         {
-            root.element = numeric_limits<int>::max();
+            root.element = Number.MAX_SAFE_INTEGER;
             count++;
+        }
+        else {
+            root.element = inData[root.i][inPos[root.i]++];
         }
 
         // Replace the root with the next element of the input file
         pq.push(root);
     }
 
-    // close the input and output files
-    for (int i = 0; i < k; i++) {
-        fclose(in[i]);
-    }
-
-    fclose(out);
+    // write the final output file
+    fs.writeFileSync(output_file, outLines.join(' '));
 }
 
 // Using a merge sort algorithm, create the initial runs and divide them
 // evenly among the output files
-void createInitialRuns(char *input_file, int run_size, int num_ways)
+function createInitialRuns(input_file: string, run_size: number, num_ways: number): void
 {
     // For big input file
-    FILE *in = openFile(input_file, "r");
+    const inData = readNumbers(input_file);
+    let inPos = 0;
 
     // output scratch files
-    FILE* out[num_ways];
-    char fileName[2];
-    for (int i = 0; i < num_ways; i++)
-    {
-        // convert `i` to a string
-        snprintf(fileName, sizeof(fileName), "%d", i);
-
-        // Open output files in write mode.
-        out[i] = openFile(fileName, "w");
+    const out: number[][] = [];
+    for (let i = 0; i < num_ways; i++) {
+        out.push([]);
     }
 
-    // allocate a dynamic array large enough to accommodate runs of
-    // size `run_size`
-    int* arr = new int[run_size];
+    let more_input = true;
+    let next_output_file = 0;
 
-    bool more_input = true;
-    int next_output_file = 0;
-
-    int i;
+    let i;
     while (more_input)
     {
+        // allocate an array large enough to accommodate runs of
+        // size `run_size`
+        const arr: number[] = [];
+
         // write `run_size` elements into `arr` from the input file
         for (i = 0; i < run_size; i++)
         {
-            if (fscanf(in, "%d ", &arr[i]) != 1)
+            if (inPos === inData.length)
             {
                 more_input = false;
                 break;
             }
+
+            arr.push(inData[inPos++]);
         }
 
         // sort the array using merge sort
-        sort(arr, arr + i);
+        arr.sort((a, b) => a - b);
 
         // write the records to the appropriate scratch output file
         // can't assume that the loop runs to `run_size`
         // since the last run's length may be less than `run_size`
-        for (int j = 0; j < i; j++) {
-            fprintf(out[next_output_file], "%d ", arr[j]);
+        for (let j = 0; j < arr.length; j++) {
+            out[next_output_file].push(arr[j]);
         }
 
         next_output_file++;
     }
 
-    // deallocate memory
-    delete arr;
-
-    // close the input and output files
-    for (int i = 0; i < num_ways; i++) {
-        fclose(out[i]);
+    // write the scratch output files to disk
+    for (let i = 0; i < num_ways; i++) {
+        fs.writeFileSync(String(i), out[i].join(' '));
     }
-
-    fclose(in);
 }
 
 // Program to demonstrate external sorting
-int main()
-{
-    // number of partitions of the input file
-    int num_ways = 10;
 
-    // the size of each partition
-    int run_size = 1000;
+// number of partitions of the input file
+const num_ways = 10;
 
-    char input_file[] = "input.txt";
-    char output_file[] = "output.txt";
+// the size of each partition
+const run_size = 1000;
 
-    FILE* in = openFile(input_file, "w");
+const input_file = 'input.txt';
+const output_file = 'output.txt';
 
-    srand(time(NULL));
-
-    // generate input
-    for (int i = 0; i < num_ways * run_size; i++) {
-        fprintf(in, "%d ", rand());
-    }
-
-    fclose(in);
-
-    // Read the input file, create the initial runs,
-    // and assign the runs to the scratch output files
-    createInitialRuns(input_file, run_size, num_ways);
-
-    // Merge the runs using the k–way merging
-    mergeFiles(output_file, run_size, num_ways);
-
-    return 0;
+// generate input
+const input: string[] = [];
+for (let i = 0; i < num_ways * run_size; i++) {
+    input.push(String(Math.floor(Math.random() * 32768)));
 }
+fs.writeFileSync(input_file, input.join(' '));
+
+// Read the input file, create the initial runs,
+// and assign the runs to the scratch output files
+createInitialRuns(input_file, run_size, num_ways);
+
+// Merge the runs using the k–way merging
+mergeFiles(output_file, run_size, num_ways);
 ```
 
 Please note that this code doesn’t work on online compilers as it requires file creation permissions. When run locally, it will produce a sample input file “input.txt” with 10000 random numbers. It sorts the numbers and puts the sorted numbers in a file “output.txt.” It also generates files with names 1, 2, … to store sorted runs.

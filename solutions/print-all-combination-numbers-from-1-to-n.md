@@ -12,33 +12,21 @@ For **n = 5** , the following combinations are possible: { 5 } { 1, 4 } { 2, 3 }
 
 We can use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem. The idea is to consider every integer `i` from 1 to `n` and add it to the output and recur for remaining elements `[i…n]` with reduced sum `n-i`. To avoid printing permutations, each combination will be constructed in non-decreasing order. If a combination with the given sum is reached, print it.
 
-Following is the C, C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-
-// Function to print the contents of a given array
-void printCombination(int out[], int n)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", out[i]);
-    }
-
-    printf("\n");
-}
-
+```ts
 // Recursive function to print all combinations of numbers from `i` to `n`
-// having sum `n`. The `index` denotes the next free slot in the output array `out`
-void printCombinations(int i, int n, int out[], int index)
-{
+// having sum `n`. The `index` denotes the next free slot in the output list `out`
+function printCombinations(i: number, n: number, out: number[], index: number): void {
+
     // if the sum becomes `n`, print the combination
-    if (n == 0) {
-        printCombination(out, index);
+    if (n === 0) {
+        console.log(out.slice(0, index));
     }
 
     // start from the previous element in the combination till `n`
-    for (int j = i; j <= n; j++)
-    {
+    for (let j = i; j <= n; j++) {
+
         // place current element at the current index
         out[index] = j;
 
@@ -47,141 +35,14 @@ void printCombinations(int i, int n, int out[], int index)
     }
 }
 
-int main(void)
-{
-    int n = 5;
-    int out[n];
+const n = 5;
+const out: number[] = Array(n).fill(0);
 
-    // print all combinations of numbers from 1 to `n` having sum `n`
-    printCombinations(1, n, out, 0);
-
-    return 0;
-}
+// print all combinations of numbers from 1 to `n` having sum `n`
+printCombinations(1, n, out, 0);
 ```
 
 **Output:** 1 1 1 1 1 1 1 1 2 1 1 3 1 2 2 1 4 2 3 5
-
-##
-
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Function to print the contents of a given array
-void printCombination(vector<int> const &out)
-{
-    for (int i: out) {
-        cout << i << " ";
-    }
-    cout << endl;
-}
-
-// Recursive function to print all combinations of numbers
-// from `i` to `n` having sum `n`
-void printCombinations(int i, int n, vector<int> &out)
-{
-    // if the sum becomes `n`, print the combination
-    if (n == 0) {
-        printCombination(out);
-    }
-
-    // start from the previous element in the combination till `n`
-    for (int j = i; j <= n; j++)
-    {
-        // include current element from the combination
-        out.push_back(j);
-
-        // recur with a reduced sum
-        printCombinations(j, n - j, out);
-
-        // backtrack: remove the current element from the combination
-        out.pop_back();
-    }
-}
-
-int main()
-{
-    int n = 5;
-
-    vector<int> out;
-
-    // recur all combinations of numbers from 1 to `n` having sum `n`
-    printCombinations(1, n, out);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-class Main
-{
-    // Recursive function to print all combinations of numbers from `i` to `n`
-    // having sum `n`. The `index` denotes the next free slot in the output array `out`
-    public static void printCombinations(int i, int n, int[] out, int index)
-    {
-        // if the sum becomes `n`, print the combination
-        if (n == 0)
-        {
-            System.out.println(Arrays.stream(out).limit(index)
-                    .boxed().collect(Collectors.toList()));
-        }
-
-        // start from the previous element in the combination till `n`
-        for (int j = i; j <= n; j++)
-        {
-            // place current element at the current index
-            out[index] = j;
-
-            // recur with a reduced sum
-            printCombinations(j, n - j, out, index + 1);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 5;
-        int[] out = new int[n];
-
-        // print all combinations of numbers from 1 to `n` having sum `n`
-        printCombinations(1, n, out, 0);
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to print all combinations of numbers from `i` to `n`
-# having sum `n`. The `index` denotes the next free slot in the output list `out`
-def printCombinations(i, n, out, index):
-
-    # if the sum becomes `n`, print the combination
-    if n == 0:
-        print(out[:index])
-
-    # start from the previous element in the combination till `n`
-    for j in range(i, n + 1):
-
-        # place current element at the current index
-        out[index] = j
-
-        # recur with a reduced sum
-        printCombinations(j, n - j, out, index + 1)
-
-if __name__ == '__main__':
-
-    n = 5
-    out = [None] * n
-
-    # print all combinations of numbers from 1 to `n` having sum `n`
-    printCombinations(1, n, out, 0)
-```
 
 The time complexity of the above solution is exponential and requires additional space for the recursion (call stack).
 

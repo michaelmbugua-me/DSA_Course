@@ -14,143 +14,39 @@ For example,
 
 The idea is to use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/). At each point in the recursion, consider each word in the current list, append the word to output one by one, and recur for the next list. Finally, when no list is left to recur (i.e., all lists are considered), print the output phase.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <vector>
-using namespace std;
-
+```ts
 // Function to print all combinations of phrases that can be formed
 // by words from each of the given lists
-void printAllCombinations(vector<vector<string>> const &lists, string result, int n)
-{
+function printAllCombinations(lists: string[][], result = '', n = 0): void {
+
     // base case
-    if (lists.size() == 0) {
+    if (!lists || lists.length === 0) {
         return;
     }
 
     // if we have traversed each list
-    if (n == lists.size())
-    {
+    if (n === lists.length) {
         // print phrase after removing trailing space
-        cout << result.substr(1) << endl;
+        console.log(result.slice(1));
         return;
     }
 
-    // get the size of the current list
-    int m = lists[n].size();
-
     // do for each word in the current list
-    for (int i = 0; i < m; i++)
-    {
-        // append current word to output
-        string out = result + " " + lists[n].at(i);
-
-        // recur for the next list
-        printAllCombinations(lists, out, n + 1);
+    for (const word of lists[n]) {
+        const out = result + ' ' + word; // append current word to output
+        printAllCombinations(lists, out, n + 1); // recur for the next list
     }
 }
 
-int main()
-{
-    vector<vector<string>> lists =
-    {
-        { "John", "Emma" },
-        { "Plays", "Hates", "Watches" },
-        { "Cricket", "Soccer", "Chess" }
-    };
+const lists = [
+    ['John', 'Emma'],
+    ['Plays', 'Hates', 'Watches'],
+    ['Cricket', 'Soccer', 'Chess']
+];
 
-    printAllCombinations(lists, "", 0);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.List;
-
-class Main
-{
-    // Function to print all combinations of phrases that can be formed
-    // by words from each of the given lists
-    public static void printAllCombinations(List<List<String>> lists, String result, int n)
-    {
-        // base case
-        if (lists == null || lists.size() == 0) {
-            return;
-        }
-
-        // if we have traversed each list
-        if (n == lists.size())
-        {
-            // print phrase after removing trailing space
-            System.out.println(result.substring(1));
-            return;
-        }
-
-        // get the size of the current list
-        int m = lists.get(n).size();
-
-        // do for each word in the current list
-        for (int i = 0; i < m; i++)
-        {
-            // append current word to output
-            String out = result + " " + lists.get(n).get(i);
-
-            // recur for the next list
-            printAllCombinations(lists, out, n + 1);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        List<List<String>> lists = Arrays.asList(
-                Arrays.asList("John", "Emma"),
-                Arrays.asList( "Plays", "Hates", "Watches" ),
-                Arrays.asList( "Cricket", "Soccer", "Chess" )
-        );
-
-        printAllCombinations(lists, "", 0);
-    }
-}
-```
-
-##
-
-```python3
-# Function to print all combinations of phrases that can be formed
-# by words from each of the given lists
-def printAllCombinations(lists, result='', n=0):
-
-    # base case
-    if not lists:
-        return
-
-    # if we have traversed each list
-    if n == len(lists):
-        # print phrase after removing trailing space
-        print(result[1:])
-        return
-
-    # do for each word in the current list
-    for word in lists[n]:
-        out = result + " " + word  # append current word to output
-        printAllCombinations(lists, out, n + 1)  # recur for the next list
-
-if __name__ == '__main__':
-
-    lists = [
-        ["John", "Emma"],
-        ["Plays", "Hates", "Watches"],
-        ["Cricket", "Soccer", "Chess"]
-    ]
-
-    printAllCombinations(lists)
+printAllCombinations(lists);
 ```
 
 **Output:** John Plays Cricket John Plays Soccer John Plays Chess John Hates Cricket John Hates Soccer John Hates Chess John Watches Cricket John Watches Soccer John Watches Chess Emma Plays Cricket Emma Plays Soccer Emma Plays Chess Emma Hates Cricket Emma Hates Soccer Emma Hates Chess Emma Watches Cricket Emma Watches Soccer Emma Watches Chess

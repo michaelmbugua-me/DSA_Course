@@ -44,23 +44,17 @@ To move `n` discs from pole 1 to pole 3:
   * Move disc `n` from 1 to 3.
   * Move `n-1` discs from 2 to 3, so they sit on disc `n`.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-void move(int disks, int source=1, int auxiliary=2, int target=3)
-{
-    if (disks > 0)
-    {
+```ts
+function move(disks: number, source = 1, auxiliary = 2, target = 3): void {
+    if (disks > 0) {
         // move `n-1` discs from source to auxiliary using the target
         // as an intermediate pole
         move(disks - 1, source, target, auxiliary);
 
         // move one disc from source to target
-        cout << "Move disk " << disks << " from " << source << " —> "
-             << target << endl;
+        console.log(`Move disk ${disks} from ${source} —> ${target}`);
 
         // move `n-1` discs from auxiliary to target using the source
         // as an intermediate pole
@@ -68,70 +62,9 @@ void move(int disks, int source=1, int auxiliary=2, int target=3)
     }
 }
 
-int main()
-{
-    int n = 3;
-    move(n);
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    public static void move(int disks, int source, int auxiliary, int target)
-    {
-        if (disks > 0)
-        {
-            // move `n-1` discs from source to auxiliary using the target
-            // as an intermediate pole
-            move(disks - 1, source, target, auxiliary);
-
-            // move one disc from source to target
-            System.out.println("Move disk " + disks + " from " + source + " —> " +
-                                target);
-
-            // move `n-1` discs from auxiliary to target using the source
-            // as an intermediate pole
-            move(disks - 1, auxiliary, source, target);
-        }
-    }
-
-    // Tower of Hanoi Problem
-    public static void main(String[] args)
-    {
-        int n = 3;
-        move(n, 1, 2, 3);
-    }
-}
-```
-
-##
-
-```python3
-def move(disks, source=1, auxiliary=2, target=3):
-
-    if disks > 0:
-
-        # move `n-1` discs from source to auxiliary using the target
-        # as an intermediate pole
-        move(disks - 1, source, target, auxiliary)
-
-        # move one disc from source to target
-        print(f'Move disk {disks} from {source} —> {target}')
-
-        # move `n-1` discs from auxiliary to target using the source
-        # as an intermediate pole
-        move(disks - 1, auxiliary, source, target)
-
-# Tower of Hanoi Problem
-if __name__ == '__main__':
-
-    n = 3
-    move(n)
+// Tower of Hanoi Problem
+const n = 3;
+move(n);
 ```
 
 **Output:** Move disk 1 from 1 —> 3 Move disk 2 from 1 —> 2 Move disk 1 from 3 —> 2 Move disk 3 from 1 —> 3 Move disk 1 from 2 —> 1 Move disk 2 from 2 —> 3 Move disk 1 from 1 —> 3

@@ -15,263 +15,83 @@ We can use [recursion](https://techiedelight.com/recursion-practice-problems-wit
   * If the digit is seen for the first time, replace it with each character in the corresponding list and recur for the next digit.
   * If the digit is seen before, replace it with the same character used in the previous occurrence.
 
-To store the mapping of digits to characters of the list, use a map. If every digit of the key is processed, print the modified key. Following is the C++, Java, and Python implementation of the idea:
+To store the mapping of digits to characters of the list, use a map. If every digit of the key is processed, print the modified key. Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Top-down recursive function to find all possible combinations by
 // replacing the key's digits with the corresponding characters in a list
-void findCombinations(auto const &list, auto const &keys, auto &combinations,
-            string result, int index, auto map)
-{
+function findCombinations(lists: string[][], keys: number[],
+                      combinations: Set<string>, index: number,
+                      d: Map<number, string>, result = ''): void {
     // print the result if every digit of the key is processed
-    if (index == -1) {
-        combinations.insert(result);
+    if (index === -1) {
+        combinations.add(result);
         return;
     }
 
-    // stores the current digit
-    int digit = keys[index];
+    // `d` stores the mapping of digits
 
-    // get the size of the list corresponding to the current digit
-    int len = list[digit].size();
+    // stores the current digit
+    const digit = keys[index];
 
     // if the digit is seen for the first time
-    if (map.find(digit) == map.end())
-    {
+    if (!d.has(digit)) {
+
+        // get the size of the list corresponding to the current digit
+        const n = lists[digit].length;
+
         // one by one, replace it with each character in the corresponding
         // list and recur for the next digit
-        for (int i = 0; i < len; i++)
-        {
+        for (let i = 0; i < n; i++) {
             // store character that maps to the current digit in a map
-            map[digit] = list[digit][i];
+            d.set(digit, lists[digit][i]);
 
             // recur for the next digit
-            findCombinations(list, keys, combinations, list[digit][i] + result,
-                        index - 1, map);
+            findCombinations(lists, keys, combinations, index - 1,
+                        d, `${lists[digit][i]}${result}`);
+
+            // backtrack
+            d.delete(digit);
         }
+
         return;
     }
 
     // if the digit is seen before, replace it with the same character
-    // used in the previous occurrence
-    findCombinations(list, keys, combinations, map[digit] + result, index - 1, map);
+    // used in the previous occurrence.
+    findCombinations(lists, keys, combinations, index - 1, d, `${d.get(digit)}${result}`);
 }
 
-unordered_set<string> findCombinations(auto const &lists, auto const &keys)
-{
-    // create a set to store all combinations
-    unordered_set<string> combinations;
+function findAllCombinations(lists: string[][], keys: number[]): Set<string> {
 
     // invalid input
-    if (lists.size() == 0 || keys.size() == 0) {
-        return combinations;
+    if (!lists.length || !keys.length) {
+        return new Set();
     }
 
-    // create an empty map to store the mapping of digits
-    unordered_map<int, char> map;
+    // set to store all combinations
+    const combinations = new Set<string>();
 
-    // find all combinations
-    int n = keys.size();
-    findCombinations(lists, keys, combinations, "", n - 1, map);
-
+    // find and return all combinations
+    const d = new Map<number, string>();
+    findCombinations(lists, keys, combinations, keys.length - 1, d);
     return combinations;
 }
 
-int main()
-{
-    // `N` lists of characters
-    vector<vector<char>> lists =
-    {
-        { 'A', 'B', 'C', 'D'},
-        { 'E', 'F', 'G', 'H', 'I', 'J', 'K' },
-        { 'L', 'M', 'N', 'O', 'P', 'Q' },
-        { 'R', 'S', 'T'},
-        { 'U', 'V', 'W', 'X', 'Y', 'Z' }
-    };
+// `N` lists of characters
+const lists = [
+    ['A', 'B', 'C', 'D'],
+    ['E', 'F', 'G', 'H', 'I', 'J', 'K'],
+    ['L', 'M', 'N', 'O', 'P', 'Q'],
+    ['R', 'S', 'T'],
+    ['U', 'V', 'W', 'X', 'Y', 'Z']
+];
 
-    // input number in the form of an array
-    vector<int> keys = {0, 2, 0};
+// input number in the form of a list
+const keys = [0, 2, 0];
 
-    // find all combinations
-    unordered_set<string> combinations = findCombinations(lists, keys);
-
-    // print all combinations
-    for (string combination: combinations) {
-        cout << combination << ' ';
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.*;
-
-class Main
-{
-    // Top-down recursive function to find all possible combinations by
-    // replacing the key's digits with the corresponding characters in a list
-    public static void findCombinations(List<List<Character>> lists,
-                                int[] keys, Set<String> combinations, String result,
-                                int index, Map<Integer, Character> map)
-    {
-        // print the result if every digit of the key is processed
-        if (index == -1) {
-            combinations.add(result);
-            return;
-        }
-
-        // stores the current digit
-        int digit = keys[index];
-
-        // get the size of the list corresponding to the current digit
-        int len = lists.get(digit).size();
-
-        // if the digit is seen for the first time
-        if (!map.containsKey(digit))
-        {
-            // one by one, replace it with each character in the
-            // corresponding list and recur for the next digit
-            for (int i = 0; i < len; i++)
-            {
-                // store character that maps to the current digit in a map
-                map.put(digit, lists.get(digit).get(i));
-
-                // recur for the next digit
-                findCombinations(lists, keys, combinations, lists.get(digit).get(i) +
-                            result, index - 1, map);
-
-                // backtrack
-                map.remove(digit);
-            }
-
-            return;
-        }
-
-        // if the digit is seen before, replace it with the same character
-        // used in the previous occurrence
-        findCombinations(lists, keys, combinations, map.get(digit) + result,
-                    index - 1, map);
-    }
-
-    public static Set<String> findCombinations(List<List<Character>> lists, int[] keys)
-    {
-        // HashSet to store all combinations
-        Set<String> combinations = new HashSet<>();
-
-        // invalid input
-        if (lists == null || lists.size() == 0 || keys == null || keys.length == 0) {
-            return combinations;
-        }
-
-        // create an empty map to store the mapping of digits
-        Map<Integer, Character> map = new HashMap<>();
-
-        // find all combinations
-        findCombinations(lists, keys, combinations, "", keys.length - 1, map);
-
-        return combinations;
-    }
-
-    public static void main(String[] args)
-    {
-        // `N` lists of characters
-        List<List<Character>> list = Arrays.asList(
-                Arrays.asList( 'A', 'B', 'C', 'D' ),
-                Arrays.asList( 'E', 'F', 'G', 'H', 'I', 'J', 'K' ),
-                Arrays.asList( 'L', 'M', 'N', 'O', 'P', 'Q' ),
-                Arrays.asList( 'R', 'S', 'T' ),
-                Arrays.asList( 'U', 'V', 'W', 'X', 'Y', 'Z' )
-        );
-
-        // input number in the form of an array
-        int[] keys = {0, 2, 0};
-
-        // find and print all combinations
-        System.out.println(findCombinations(list, keys));
-    }
-}
-```
-
-##
-
-```python3
-# Top-down recursive function to find all possible combinations by
-# replacing the key's digits with the corresponding characters in a list
-def findCombinations(lists, keys, combinations, index, d, result=''):
-    # print the result if every digit of the key is processed
-    if index == -1:
-        combinations.add(result)
-        return
-
-    # map stores the mapping of digits
-
-    # stores the current digit
-    digit = keys[index]
-
-    # if the digit is seen for the first time
-    if digit not in d:
-
-        # get the size of the list corresponding to the current digit
-        n = len(lists[digit])
-
-        # one by one, replace it with each character in the corresponding
-        # list and recur for the next digit
-        for i in range(n):
-            # store character that maps to the current digit in a dictionary
-            d[digit] = lists[digit][i]
-
-            # recur for the next digit
-            findCombinations(lists, keys, combinations, index - 1,
-                        d, str(lists[digit][i]) + result)
-
-            # backtrack
-            d.pop(digit)
-
-        return
-
-    # if the digit is seen before, replace it with the same character
-    # used in the previous occurrence.
-    findCombinations(lists, keys, combinations, index - 1, d, f'{d[digit]}{result}')
-
-def findAllCombinations(lists, keys):
-
-    # invalid input
-    if not lists or not keys:
-        return set()
-
-    # set to store all combinations
-    combinations = set()
-
-    # find and return all combinations
-    d = {}
-    findCombinations(lists, keys, combinations, len(keys) - 1, d)
-    return combinations
-
-if __name__ == '__main__':
-
-    # `N` lists of characters
-    lists = [
-        ['A', 'B', 'C', 'D'],
-        ['E', 'F', 'G', 'H', 'I', 'J', 'K'],
-        ['L', 'M', 'N', 'O', 'P', 'Q'],
-        ['R', 'S', 'T'],
-        ['U', 'V', 'W', 'X', 'Y', 'Z']
-    ]
-
-    # input number in the form of a list
-    keys = [0, 2, 0]
-
-    # find and print all combinations
-    print(findAllCombinations(lists, keys))
+// find and print all combinations
+console.log(findAllCombinations(lists, keys));
 ```
 
 **Output:** BOB DMD BNB AMA BPB BLB DND AOA DPD CQC BMB ANA ALA DOD DQD AQA BQB CLC CMC CNC COC DLD APA CPC

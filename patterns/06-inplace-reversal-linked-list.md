@@ -12,17 +12,19 @@ Reverse the links between a set of nodes of a linked list **in place** — reusi
 - Constraint of in-place, O(1) space
 - Problems needing the middle of a list flipped while the ends stay put (pairs with Fast & Slow)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def reverse(head, prev=None):
-    curr = head
-    while curr:
-        nxt = curr.next   # save
-        curr.next = prev  # flip
-        prev = curr       # advance
-        curr = nxt
-    return prev           # new head
+```ts
+function reverse(head: ListNode | null, prev: ListNode | null = null): ListNode | null {
+    let curr = head;
+    while (curr) {
+        const nxt = curr.next; // save
+        curr.next = prev;      // flip
+        prev = curr;           // advance
+        curr = nxt;
+    }
+    return prev;               // new head
+}
 ```
 
 For "reverse every K nodes": reverse group 1..K, then **recursively/iteratively** reverse the rest and attach; remember the group head (now tail) to splice.

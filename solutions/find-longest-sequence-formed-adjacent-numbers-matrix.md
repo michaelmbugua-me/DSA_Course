@@ -12,296 +12,91 @@ The idea is to use [recursion](https://techiedelight.com/recursion-practice-prob
 
 The longest path starting from cell (i, j) = M[i][j] + | longest path starting from cell (i-1, j) (if M[i][j] + 1 = M[i-1][j]) | longest path starting from cell (i, j-1) (if M[i][j] + 1 = M[i][j-1]) | longest path starting from cell (i, j+1) (if M[i][j] + 1 = M[i][j+1]) | longest path starting from cell (i+1, j) (if M[i][j] + 1 = M[i+1][j])
 
-This is demonstrated below in C++, Java, and Python:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <climits>
-using namespace std;
-
+```ts
 // Function to check if a cell (i, j) is valid or not
-bool isValid(int i, int j, int N) {
-    return (i >= 0 && i < N && j >= 0 && j < N);
+function isValid(mat: number[][], i: number, j: number): boolean {
+    return 0 <= i && i < mat.length && 0 <= j && j < mat.length;
 }
 
 // Find the longest path starting from cell (i, j) formed by adjacent
 // numbers in a matrix
-vector<int> findLongestPath(vector<vector<int>> const &mat, int i, int j)
-{
-    // string to store path starting (i, j)
-    vector<int> path;
-
-    // `N × N` matrix
-    int N = mat.size();
+function findLongestPath(mat: number[][], i: number, j: number): number[] {
 
     // if the cell is invalid
-    if (!isValid (i, j, N)) {
-        return path;
+    if (!isValid(mat, i, j)) {
+        return [];
     }
+
+    // path to store path starting (i, j)
+    let path: number[] = [];
 
     // Since the matrix contains all distinct elements,
     // there is only one path possible from the current cell
 
     // recur top cell if its value is +1 of value at (i, j)
-    if (i > 0 && mat[i - 1][j] - mat[i][j] == 1) {
+    if (i > 0 && mat[i - 1][j] - mat[i][j] === 1) {
         path = findLongestPath(mat, i - 1, j);
     }
 
     // recur right cell if its value is +1 of value at (i, j)
-    if (j + 1 < N && mat[i][j + 1] - mat[i][j] == 1) {
+    if (j + 1 < mat.length && mat[i][j + 1] - mat[i][j] === 1) {
         path = findLongestPath(mat, i, j + 1);
     }
 
     // recur bottom cell if its value is +1 of value at (i, j)
-    if (i + 1 < N && mat[i + 1][j] - mat[i][j] == 1) {
+    if (i + 1 < mat.length && mat[i + 1][j] - mat[i][j] === 1) {
         path = findLongestPath(mat, i + 1, j);
     }
 
     // recur left cell if its value is +1 of value at (i, j)
-    if (j > 0 && mat[i][j - 1] - mat[i][j] == 1) {
+    if (j > 0 && mat[i][j - 1] - mat[i][j] === 1) {
         path = findLongestPath(mat, i, j - 1);
     }
 
     // return path starting from (i, j)
-    path.push_back(mat[i][j]);
+    path.unshift(mat[i][j]);
     return path;
 }
 
-vector<int> findLongestPath(vector<vector<int>> const &mat)
-{
+function longestPath(mat: number[][]): number[] {
+
+    // base case
+    if (!mat || !mat.length) {
+        return [];
+    }
+
     // stores the longest path found so far
-    vector<int> longest_path;
+    let longest_path: number[] = [];
 
     // from each cell (i, j), find the longest path starting from it
-    for (int i = 0; i < mat.size(); i++)
-    {
-        for (int j = 0; j < mat.size(); j++)
-        {
-            vector<int> path = findLongestPath(mat, i, j);
+    for (let i = 0; i < mat.length; i++) {
+        for (let j = 0; j < mat.length; j++) {
+            // store current path
+            const path = findLongestPath(mat, i, j);
 
             // update result if a longer path is found
-            if (path.size() > longest_path.size()) {
-                longest_path = path;
+            if (path.length > longest_path.length) {
+                longest_path = path; // update the longest path found so far
             }
         }
     }
 
-    reverse(longest_path.begin(), longest_path.end());
+    // print the path
     return longest_path;
 }
 
-template <typename T>
-void printVector(vector<T> const &input)
-{
-    cout << "[";
-    int n = input.size();
-    for (int i = 0; i < n; i++) {
-        cout << input[i];
-        if (i < n - 1) {
-            cout << ", ";
-        }
-    }
-    cout << "]";
-}
+const mat = [
+    [10, 13, 14, 21, 23],
+    [11, 9, 22, 2, 3],
+    [12, 8, 1, 5, 4],
+    [15, 24, 7, 6, 20],
+    [16, 17, 18, 19, 25]
+];
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 10, 13, 14, 21, 23 },
-        { 11, 9, 22, 2, 3 },
-        { 12, 8, 1, 5, 4 },
-        { 15, 24, 7, 6, 20 },
-        { 16, 17, 18, 19, 25 }
-    };
-
-    vector<int> output = findLongestPath(mat);
-    printVector(output);
-
-    return 0;
-}
-```
-
-**Output:** [2, 3, 4, 5, 6, 7]
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-class Main
-{
-    // Function to check if a cell (i, j) is valid or not
-    public static boolean isValid(int[][] mat, int i, int j) {
-        return (i >= 0 && i < mat.length && j >= 0 && j < mat.length);
-    }
-
-    // Find the longest path starting from cell (i, j) formed by adjacent
-    // numbers in a matrix
-    public static List<Integer> findLongestPath(int[][] mat, int i, int j)
-    {
-        // string to store path starting (i, j)
-        List<Integer> path = new ArrayList<>();
-
-        // if the cell is invalid
-        if (!isValid (mat, i, j)) {
-            return path;
-        }
-
-        // Since the matrix contains all distinct elements,
-        // there is only one path possible from the current cell
-
-        // recur top cell if its value is +1 of value at (i, j)
-        if (i > 0 && mat[i - 1][j] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i - 1, j);
-        }
-
-        // recur right cell if its value is +1 of value at (i, j)
-        if (j + 1 < mat.length && mat[i][j + 1] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i, j + 1);
-        }
-
-        // recur bottom cell if its value is +1 of value at (i, j)
-        if (i + 1 < mat.length && mat[i + 1][j] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i + 1, j);
-        }
-
-        // recur left cell if its value is +1 of value at (i, j)
-        if (j > 0 && mat[i][j - 1] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i, j - 1);
-        }
-
-        // return path starting from (i, j)
-        path.add(mat[i][j]);
-
-        return path;
-    }
-
-    public static List<Integer> findLongestPath(int[][] mat)
-    {
-        // stores the longest path found so far
-        List<Integer> longest_path = new ArrayList<>();
-
-        // base case
-        if (mat == null || mat.length == 0) {
-            return longest_path;
-        }
-
-        // from each cell (i, j), find the longest path starting from it
-        for (int i = 0; i < mat.length; i++)
-        {
-            for (int j = 0; j < mat.length; j++)
-            {
-                // find current path
-                List<Integer> path = findLongestPath(mat, i, j);
-
-                // update result if a longer path is found
-                if (longest_path == null || path.size() > longest_path.size()) {
-                    longest_path = path;
-                }
-            }
-        }
-
-        Collections.reverse(longest_path);
-        return longest_path;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 10, 13, 14, 21, 23 },
-            { 11, 9, 22, 2, 3 },
-            { 12, 8, 1, 5, 4 },
-            { 15, 24, 7, 6, 20 },
-            { 16, 17, 18, 19, 25 }
-        };
-
-        // find and print the longest path
-        System.out.println(findLongestPath(mat));
-    }
-}
-```
-
-##
-
-```python3
-# Function to check if a cell (i, j) is valid or not
-def isValid(mat, i, j):
-    return 0 <= i < len(mat) and 0 <= j < len(mat)
-
-# Find the longest path starting from cell (i, j) formed by adjacent
-# numbers in a matrix
-def findLongestPath(mat, i, j):
-
-    # if the cell is invalid
-    if not isValid(mat, i, j):
-        return []
-
-    # string to store path starting (i, j)
-    path = []
-
-    # Since the matrix contains all distinct elements,
-    # there is only one path possible from the current cell
-
-    # recur top cell if its value is +1 of value at (i, j)
-    if i > 0 and mat[i - 1][j] - mat[i][j] == 1:
-        path = findLongestPath(mat, i - 1, j)
-
-    # recur right cell if its value is +1 of value at (i, j)
-    if j + 1 < len(mat) and mat[i][j + 1] - mat[i][j] == 1:
-        path = findLongestPath(mat, i, j + 1)
-
-    # recur bottom cell if its value is +1 of value at (i, j)
-    if i + 1 < len(mat) and mat[i + 1][j] - mat[i][j] == 1:
-        path = findLongestPath(mat, i + 1, j)
-
-    # recur left cell if its value is +1 of value at (i, j)
-    if j > 0 and mat[i][j - 1] - mat[i][j] == 1:
-        path = findLongestPath(mat, i, j - 1)
-
-    # return path starting from (i, j)
-    path.insert(0, mat[i][j])
-    return path
-
-def longestPath(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return []
-
-    # stores the longest path found so far
-    longest_path = []
-
-    # from each cell (i, j), find the longest path starting from it
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            # store current path
-            path = findLongestPath(mat, i, j)
-
-            # update result if a longer path is found
-            if len(path) > len(longest_path):
-                longest_path = path  # update the longest path found so far
-
-    # print the path
-    return longest_path
-
-if __name__ == '__main__':
-
-    mat = [
-            [10, 13, 14, 21, 23],
-            [11, 9, 22, 2, 3],
-            [12, 8, 1, 5, 4],
-            [15, 24, 7, 6, 20],
-            [16, 17, 18, 19, 25]
-        ]
-
-    # find and print the longest path
-    print(longestPath(mat))
+// find and print the longest path
+console.log(longestPath(mat));
 ```
 
 The implementation that involves only finding the length of the longest sequence can be seen [here](https://techiedelight.com/compiler/?run=EOO3Gy).
@@ -318,329 +113,103 @@ The longest path starting from 2 is (2 — 3 — 4 — 5 — **6 — 7**) The lo
 
 As we can see, the same subproblems are getting computed repeatedly. As the recursion grows deeper, more and more of this type of unnecessary repetition occurs. We know that problems having optimal substructure and [overlapping subproblems](https://techiedelight.com/introduction-dynamic-programming/#overlapping-subproblems) can be solved by dynamic programming, in which subproblem solutions are memoized rather than computed repeatedly. Now each time we compute the longest path starting from cell (i, j), save it. If we are ever asked to compute it again, give the saved answer and do not recompute it.
 
-The implementation can be seen below in C++, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <climits>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
-
-// create a map to store solutions to subproblems
-unordered_map<string, string> lookup;
-
+```ts
 // Function to check if a cell (i, j) is valid or not
-bool isValid(int i, int j, int N) {
-    return (i >= 0 && i < N && j >= 0 && j < N);
+function isValid(mat: number[][], i: number, j: number): boolean {
+    return (0 <= i && i < mat.length) && (0 <= j && j < mat.length);
 }
 
 // Find the longest path starting from cell (i, j) formed by adjacent
 // numbers in a matrix
-string findLongestPath(vector<vector<int>> const &mat, int i, int j)
-{
-    // get size of the matrix
-    int N = mat.size();
+function findLongestPath(mat: number[][], i: number, j: number,
+                         lookup: Map<string, string>): string {
 
     // if the cell is invalid
-    if (!isValid(i, j, N)) {
-        return 0;
+    if (!isValid(mat, i, j)) {
+        return null;
     }
 
     // construct a unique map key from dynamic elements of the input
-    string key = to_string(i) + "|" + to_string(j);
+    const key = `${i}|${j}`;
 
     // if the subproblem is seen for the first time, solve it and
     // store its result in a map
-    if (lookup.find(key) == lookup.end())
-    {
+    if (!lookup.has(key)) {
+
         // string to store path starting (i, j)
-        string path;
+        let path: string = null;
 
         // recur top cell if its value is +1 of value at (i, j)
-        if (i > 0 && mat[i - 1][j] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i - 1, j);
+        if (i > 0 && mat[i - 1][j] - mat[i][j] === 1) {
+            path = findLongestPath(mat, i - 1, j, lookup);
         }
 
         // recur right cell if its value is +1 of value at (i, j)
-        if (j + 1 < N && mat[i][j + 1] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i, j + 1);
+        if (j + 1 < mat.length && mat[i][j + 1] - mat[i][j] === 1) {
+            path = findLongestPath(mat, i, j + 1, lookup);
         }
 
         // recur bottom cell if its value is +1 of value at (i, j)
-        if (i + 1 < N && mat[i + 1][j] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i + 1, j);
+        if (i + 1 < mat.length && mat[i + 1][j] - mat[i][j] === 1) {
+            path = findLongestPath(mat, i + 1, j, lookup);
         }
 
         // recur left cell if its value is +1 of value at (i, j)
-        if (j > 0 && mat[i][j - 1] - mat[i][j] == 1) {
-            path = findLongestPath(mat, i, j - 1);
+        if (j > 0 && mat[i][j - 1] - mat[i][j] === 1) {
+            path = findLongestPath(mat, i, j - 1, lookup);
         }
 
         // note that as the matrix contains all distinct elements,
         // there is only one path possible from the current cell
 
-        if (path.size() > 0) {
-            lookup[key] = to_string(mat[i][j]) + ", " + path;
-        } else {
-            lookup[key] = to_string(mat[i][j]);
-        }
+        lookup.set(key, path ? `${mat[i][j]}, ${path}` : String(mat[i][j]));
     }
 
     // return path starting from (i, j)
-    return lookup[key];
+    return lookup.get(key);
 }
 
-string longestPath(vector<vector<int>> const &mat)
-{
-    string result;              // stores the longest path found so far
-    string str;                 // stores current path
-    int res_size = INT_MIN;     // stores number of elements in `result`
+function longestPath(mat: number[][]): string {
+
+    let res_size = Number.MIN_SAFE_INTEGER; // stores number of elements in `result`
+    let result: string = null;             // stores the longest path found so far
+
+    // create a map to store solutions to subproblems
+    const lookup = new Map<string, string>();
 
     // from each cell (i, j), find the longest path starting from it
-    for (int i = 0; i < mat.size(); i++)
-    {
-        for (int j = 0; j < mat.size(); j++)
-        {
-            // `path` would be like `1, 2, 3, 4, 5, 6, 7`
-            string path = findLongestPath(mat, i, j);
+    for (let i = 0; i < mat.length; i++) {
+        for (let j = 0; j < mat.length; j++) {
+            // store current path (`path` would be like `1, 2, 3, 4, 5, 6, 7`)
+            const path = findLongestPath(mat, i, j, lookup);
 
             // find the number of elements involved in the current path
-            int size = count(path.begin(), path.end(), ',');
+            const size = [...path].filter(ch => ch === ',').length;
 
             // update result if a longer path is found
             if (size > res_size) {
-                result = path, res_size = size;
+                result = path;         // update the longest path found so far
+                res_size = size;
             }
         }
     }
 
-    // return the path
+    // print the path
     return result;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 10, 13, 14, 21, 23 },
-        { 11, 9, 22, 2, 3 },
-        { 12, 8, 1, 5, 4 },
-        { 15, 24, 7, 6, 20 },
-        { 16, 17, 18, 19, 25 }
-    };
+const mat = [
+    [10, 13, 14, 21, 23],
+    [11, 9, 22, 2, 3],
+    [12, 8, 1, 5, 4],
+    [15, 24, 7, 6, 20],
+    [16, 17, 18, 19, 25]
+];
 
-    cout << longestPath(mat) << endl;
-
-    return 0;
-}
-```
-
-**Output:** 2, 3, 4, 5, 6, 7
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to check if a cell (i, j) is valid or not
-    public static boolean isValid(int[][] mat, int i, int j) {
-        return (i >= 0 && i < mat.length) && (j >= 0 && j < mat.length);
-    }
-
-    // Find the longest path starting from cell (i, j) formed by adjacent
-    // numbers in a matrix
-    public static String findLongestPath(int[][] mat, int i, int j,
-                                         Map<String, String> lookup)
-    {
-        // if the cell is invalid
-        if (!isValid (mat, i, j)) {
-            return null;
-        }
-
-        // construct a unique map key from dynamic elements of the input
-        String key = i + "|" + j;
-
-        // if the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (!lookup.containsKey(key))
-        {
-            // string to store path starting (i, j)
-            String path = null;
-
-            // recur top cell if its value is +1 of value at (i, j)
-            if (i > 0 && mat[i - 1][j] - mat[i][j] == 1) {
-                path = findLongestPath(mat, i - 1, j, lookup);
-            }
-
-            // recur right cell if its value is +1 of value at (i, j)
-            if (j + 1 < mat.length && mat[i][j + 1] - mat[i][j] == 1) {
-                path = findLongestPath(mat, i, j + 1, lookup);
-            }
-
-            // recur bottom cell if its value is +1 of value at (i, j)
-            if (i + 1 < mat.length && mat[i + 1][j] - mat[i][j] == 1) {
-                path = findLongestPath(mat, i + 1, j, lookup);
-            }
-
-            // recur left cell if its value is +1 of value at (i, j)
-            if (j > 0 && mat[i][j - 1] - mat[i][j] == 1) {
-                path = findLongestPath(mat, i, j - 1, lookup);
-            }
-
-            // note that as the matrix contains all distinct elements,
-            // there is only one path possible from the current cell
-
-            if (path != null) {
-                lookup.put(key, mat[i][j] + ", " + path);
-            } else {
-                lookup.put(key, String.valueOf(mat[i][j]));
-            }
-        }
-
-        // return path starting from (i, j)
-        return lookup.get(key);
-    }
-
-    public static String findLongestPath(int[][] mat)
-    {
-        String result = null;                 // stores the longest path found so far
-        String path;                         // stores current path
-        long res_size = Long.MIN_VALUE;     // stores number of elements in `result`
-
-        // create a map to store solutions to subproblems
-        Map<String, String> lookup = new HashMap<>();
-
-        // from each cell (i, j), find the longest path starting from it
-        for (int i = 0; i < mat.length; i++)
-        {
-            for (int j = 0; j < mat.length; j++)
-            {
-                // `path` would be like `1, 2, 3, 4, 5, 6, 7`
-                path = findLongestPath(mat, i, j, lookup);
-
-                // find the number of elements involved in the current path
-                long size = path.chars().filter(ch -> ch == ',').count();
-
-                // update result if a longer path is found
-                if (size > res_size) {
-                    result = path;
-                    res_size = size;
-                }
-            }
-        }
-
-        // return the path
-        return result;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 10, 13, 14, 21, 23 },
-            { 11, 9, 22, 2, 3 },
-            { 12, 8, 1, 5, 4 },
-            { 15, 24, 7, 6, 20 },
-            { 16, 17, 18, 19, 25 }
-        };
-
-        // find and print the longest path
-        System.out.println(findLongestPath(mat));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to check if a cell (i, j) is valid or not
-def isValid(mat, i, j):
-    return 0 <= i < len(mat) and 0 <= j < len(mat)
-
-# Find the longest path starting from cell (i, j) formed by adjacent
-# numbers in a matrix
-def findLongestPath(mat, i, j, lookup):
-
-    # if the cell is invalid
-    if not isValid(mat, i, j):
-        return None
-
-    # construct a unique dictionary key from dynamic elements of the input
-    key = (i, j)
-
-    # if the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        # string to store path starting (i, j)
-        path = None
-
-        # recur top cell if its value is +1 of value at (i, j)
-        if i > 0 and mat[i - 1][j] - mat[i][j] == 1:
-            path = findLongestPath(mat, i - 1, j, lookup)
-
-        # recur right cell if its value is +1 of value at (i, j)
-        if j + 1 < len(mat) and mat[i][j + 1] - mat[i][j] == 1:
-            path = findLongestPath(mat, i, j + 1, lookup)
-
-        # recur bottom cell if its value is +1 of value at (i, j)
-        if i + 1 < len(mat) and mat[i + 1][j] - mat[i][j] == 1:
-            path = findLongestPath(mat, i + 1, j, lookup)
-
-        # recur left cell if its value is +1 of value at (i, j)
-        if j > 0 and mat[i][j - 1] - mat[i][j] == 1:
-            path = findLongestPath(mat, i, j - 1, lookup)
-
-        # note that as the matrix contains all distinct elements,
-        # there is only one path possible from the current cell
-
-        lookup[key] = f'{mat[i][j]}, {path}' if path else str(mat[i][j])
-
-    # return path starting from (i, j)
-    return lookup[key]
-
-def longestPath(mat):
-
-    res_size = -sys.maxsize        # stores number of elements in `result`
-
-    # create a dictionary to store solutions to subproblems
-    lookup = {}
-
-    # from each cell (i, j), find the longest path starting from it
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            # store current path (`path` would be like `1, 2, 3, 4, 5, 6, 7`)
-            path = findLongestPath(mat, i, j, lookup)
-
-            # find the number of elements involved in the current path
-            size = path.count(',')
-
-            # update result if a longer path is found
-            if size > res_size:
-                result = path            # update the longest path found so far
-                res_size = size
-
-    # print the path
-    return result
-
-if __name__ == '__main__':
-
-    mat = [
-            [10, 13, 14, 21, 23],
-            [11, 9, 22, 2, 3],
-            [12, 8, 1, 5, 4],
-            [15, 24, 7, 6, 20],
-            [16, 17, 18, 19, 25]
-        ]
-
-    # find and print the longest path
-    print(longestPath(mat))
+// find and print the longest path
+console.log(longestPath(mat));
 ```
 
 The time complexity of the proposed solution is O(N2) for an `N × N` matrix. The auxiliary space required by the program is O(N2).

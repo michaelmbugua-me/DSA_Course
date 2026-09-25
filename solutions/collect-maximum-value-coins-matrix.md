@@ -14,46 +14,54 @@ For example,
 
 The idea is to simultaneously start both traversals from the top-left corner `(0, 0)` and the top-right corner `(0, N-1)` of the matrix. For each step, the row number would increase by one and the column number might remain the same or can increase/decrease by 1, i.e., `(i, j) —> (i+1, j-1)` or `(i+1, j) or (i+1, j+1)`.
 
-We collect the coins as we move along and return the maximum possible collection. The recursive algorithm can be implemented as follows in C, Java, and Python:
+We collect the coins as we move along and return the maximum possible collection. The recursive algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <climits>
-#include <vector>
-using namespace std;
-
+```ts
 // Function to check whether (i, x) and (i, y) are valid matrix coordinates
-int isValid(int i, int x, int y, int M, int N) {
+function isValid(i: number, x: number, y: number, M: number, N: number): boolean {
     return i < M && x >= 0 && x < N && y >= 0 && y < N;
 }
 
 // Collect maximum coins from cell (i, x) to cell (M-1, 0) and from
 // cell (i, y) to cell (M-1, N-1) of a `M × N` matrix
-int getMaxCoins(vector<vector<int>> const &mat, int i, int x, int y)
-{
+function getMaxCoins(mat: number[][], i: number, x: number, y: number): number;
+function getMaxCoins(mat: number[][]): number;
+function getMaxCoins(mat: number[][], i?: number, x?: number, y?: number): number {
+    if (i === undefined || x === undefined || y === undefined) {
+        // base case
+        if (!mat || mat.length === 0) {
+            return 0;
+        }
+
+        // `M × N` matrix
+        const N = mat[0].length;
+
+        // start with cell (0, 0) and (0, N-1)
+        return getMaxCoins(mat, 0, 0, N - 1);
+    }
+
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length;
+    const N = mat[0].length;
 
     // return if either (i, x) or (i, y) is invalid
     if (!isValid(i, x, y, M, N)) {
-        return INT_MIN;
+        return Number.MIN_SAFE_INTEGER;
     }
 
     // current row is the last row
-    if (i == M - 1)
-    {
+    if (i === M - 1) {
         // destination reached
-        if (x == 0 && y == N - 1) {
-            return (x == y) ? mat[i][x] : mat[i][x] + mat[i][y];
+        if (x === 0 && y === N - 1) {
+            return (x === y) ? mat[i][x] : mat[i][x] + mat[i][y];
         }
 
         // destination not reached
-        return INT_MIN;
+        return Number.MIN_SAFE_INTEGER;
     }
 
     // stores the max number of coins
-    int coins = INT_MIN;
+    let coins = Number.MIN_SAFE_INTEGER;
 
     /*
       Recur for all possible ways:
@@ -61,20 +69,20 @@ int getMaxCoins(vector<vector<int>> const &mat, int i, int x, int y)
         (i, y) —> (i+1, y-1) or (i+1, y) or (i+1, y+1)
     */
 
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y - 1));
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y));
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y + 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y - 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y + 1));
 
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y - 1));
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y));
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y + 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y - 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y + 1));
 
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y - 1));
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y));
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y + 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y - 1));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y));
+    coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y + 1));
 
     // update max number of coins with current cell coins before returning
-    if (x == y) {
+    if (x === y) {
         return mat[i][x] + coins;
     }
     else {
@@ -82,214 +90,18 @@ int getMaxCoins(vector<vector<int>> const &mat, int i, int x, int y)
     }
 }
 
-int getMaxCoins(vector<vector<int>> const &mat)
-{
-    // base case
-    if (mat.size() == 0) {
-        return 0;
-    }
+const mat = [
+    [0, 2, 4, 1],
+    [4, 8, 3, 7],
+    [2, 3, 6, 2],
+    [9, 7, 8, 3],
+    [1, 5, 9, 4]
+];
 
-    // `M × N` matrix
-    int N = mat[0].size();
-
-    // start with cell (0, 0) and (0, N-1)
-    return getMaxCoins(mat, 0, 0, N - 1);
-}
-
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 0, 2, 4, 1 },
-        { 4, 8, 3, 7 },
-        { 2, 3, 6, 2 },
-        { 9, 7, 8, 3 },
-        { 1, 5, 9, 4 }
-    };
-
-    cout << "The maximum coins collected is " << getMaxCoins(mat);
-
-    return 0;
-}
+console.log(`The maximum coins collected is ${getMaxCoins(mat)}`);
 ```
 
 **Output:** The maximum coins collected is 47
-
-##
-
-```java
-class Main
-{
-    // Function to check whether (i, x) and (i, y) are valid matrix coordinates
-    public static boolean isValid(int i, int x, int y, int M, int N) {
-        return i < M && x >= 0 && x < N && y >= 0 && y < N;
-    }
-
-    // Collect maximum coins from cell (i, x) to cell (M-1, 0) and from
-    // cell (i, y) to cell (M-1, N-1)
-    public static int getMaxCoins(int[][] mat, int i, int x, int y)
-    {
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // return if either (i, x) or (i, y) is invalid
-        if (!isValid(i, x, y, M, N)) {
-            return Integer.MIN_VALUE;
-        }
-
-        // current row is the last row
-        if (i == M - 1)
-        {
-            // destination reached
-            if (x == 0 && y == N - 1) {
-                return (x == y) ? mat[i][x] : mat[i][x] + mat[i][y];
-            }
-
-            // destination not reached
-            return Integer.MIN_VALUE;
-        }
-
-        // stores the max number of coins
-        int coins = Integer.MIN_VALUE;
-
-        /*
-          Recur for all possible ways:
-            (i, x) —> (i+1, x-1) or (i+1, x) or (i+1, x+1)
-            (i, y) —> (i+1, y-1) or (i+1, y) or (i+1, y+1)
-        */
-
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y - 1));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x - 1, y + 1));
-
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y - 1));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x, y + 1));
-
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y - 1));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y));
-        coins = Math.max(coins, getMaxCoins(mat, i + 1, x + 1, y + 1));
-
-        // update max number of coins with current cell coins before returning
-        if (x == y) {
-            return mat[i][x] + coins;
-        }
-        else {
-            return (mat[i][x] + mat[i][y]) + coins;
-        }
-    }
-
-    public static int getMaxCoins(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int N = mat[0].length;
-
-        // start with cell (0, 0) and (0, N-1)
-        return getMaxCoins(mat, 0, 0, N - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 0, 2, 4, 1 },
-            { 4, 8, 3, 7 },
-            { 2, 3, 6, 2 },
-            { 9, 7, 8, 3 },
-            { 1, 5, 9, 4 }
-        };
-
-        System.out.println("The maximum coins collected is " + getMaxCoins(mat));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to check whether (i, x) and (i, y) are valid matrix coordinates
-def isValid(i, x, y, M, N):
-    return i < M and 0 <= x < N and 0 <= y < N
-
-# Collect maximum coins from cell (i, x) to cell (M-1, 0) and from
-# cell (i, y) to cell (M-1, N-1)
-def getMaxCoins(mat, i, x, y):
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # return if either (i, x) or (i, y) is invalid
-    if not isValid(i, x, y, M, N):
-        return -sys.maxsize
-
-    # current row is the last row
-    if i == M - 1:
-        # destination reached
-        if x == 0 and y == N - 1:
-            return mat[i][x] if (x == y) else mat[i][x] + mat[i][y]
-
-        # destination not reached
-        return -sys.maxsize
-
-    # stores the max number of coins
-    coins = -sys.maxsize
-
-    '''
-      Recur for all possible ways:
-        (i, x) —> (i+1, x-1) or (i+1, x) or (i+1, x+1)
-        (i, y) —> (i+1, y-1) or (i+1, y) or (i+1, y+1)
-    '''
-
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y - 1))
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y))
-    coins = max(coins, getMaxCoins(mat, i + 1, x - 1, y + 1))
-
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y - 1))
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y))
-    coins = max(coins, getMaxCoins(mat, i + 1, x, y + 1))
-
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y - 1))
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y))
-    coins = max(coins, getMaxCoins(mat, i + 1, x + 1, y + 1))
-
-    # update max number of coins with current cell coins before returning
-    if x == y:
-        return mat[i][x] + coins
-    else:
-        return (mat[i][x] + mat[i][y]) + coins
-
-def getMaxCoins(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    N = len(mat[0])
-
-    # start with cell (0, 0) and (0, N-1)
-    return getMaxCoins(mat, 0, 0, N - 1)
-
-if __name__ == '__main__':
-
-    mat = [
-        [0, 2, 4, 1],
-        [4, 8, 3, 7],
-        [2, 3, 6, 2],
-        [9, 7, 8, 3],
-        [1, 5, 9, 4]
-    ]
-
-    print('The maximum coins collected is', getMaxCoins(mat))
-```
 
 The time complexity of the proposed solution is exponential since it recomputes the same subproblems repeatedly. We can easily optimize the code to run in O(M × N2) time using [dynamic programming](https://techiedelight.com/introduction-dynamic-programming/). The idea is to store the results of function calls and use the cached result when the same input occurs again. The dynamic programming solution is left as an exercise to the readers.
 

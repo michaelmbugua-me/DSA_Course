@@ -4,9 +4,9 @@
 
 A stack is a [linear data structure](https://en.wikipedia.org/wiki/Linear_data_structure "Linear data structure") that serves as a container of objects that are inserted and removed according to the LIFO (Last–In, First–Out) rule.
 
-The stack has three main operations: `push`, `pop`, and `peek`. We have discussed these operations in the previous post and covered [array](https://techiedelight.com/stack-implementation/) and [linked list implementation of stack data structure](https://techiedelight.com/stack-implementation-using-linked-list/) in C. In this article, C++ implementation of stack data structure is discussed using a class.
+The stack has three main operations: `push`, `pop`, and `peek`. We have discussed these operations in the previous post and covered [array](https://techiedelight.com/stack-implementation/) and [linked list implementation of stack data structure](https://techiedelight.com/stack-implementation-using-linked-list/) in C. In this article, a TypeScript implementation of the stack data structure is discussed using a class.
 
-Following is the stack implementation in C++ which covers the following operations:
+Following is the stack implementation in TypeScript which covers the following operations:
 
   1. push: Inserts a new element at the top of the stack, above its current top element.
   2. pop: Removes the top element on the stack, thereby decrementing its size by one.
@@ -19,127 +19,87 @@ Following is the stack implementation in C++ which covers the following operatio
 
 Stack Implementation using an array:
 
-```
-#include <iostream>
-#include <cstdlib>
-using namespace std;
-
-// Define the default capacity of the stack
-#define SIZE 10
-
+```ts
 // A class to represent a stack
-class Stack
-{
-    int *arr;
-    int top;
-    int capacity;
+class Stack {
+    private arr: number[];
+    private top: number;
+    private capacity: number;
 
-public:
-    Stack(int size = SIZE);         // constructor
-    ~Stack();                       // destructor
-
-    void push(int);
-    int pop();
-    int peek();
-
-    int size();
-    bool isEmpty();
-    bool isFull();
-};
-
-// Constructor to initialize the stack
-Stack::Stack(int size)
-{
-    arr = new int[size];
-    capacity = size;
-    top = -1;
-}
-
-// Destructor to free memory allocated to the stack
-Stack::~Stack() {
-    delete[] arr;
-}
-
-// Utility function to add an element `x` to the stack
-void Stack::push(int x)
-{
-    if (isFull())
-    {
-        cout << "Overflow\nProgram Terminated\n";
-        exit(EXIT_FAILURE);
+    // Constructor to initialize the stack
+    constructor(size = 10) {
+        this.arr = new Array(size);
+        this.capacity = size;
+        this.top = -1;
     }
 
-    cout << "Inserting " << x << endl;
-    arr[++top] = x;
-}
+    // Utility function to add an element `x` to the stack
+    push(x: number): void {
+        if (this.isFull()) {
+            throw new Error('Overflow\nProgram Terminated');
+        }
 
-// Utility function to pop a top element from the stack
-int Stack::pop()
-{
-    // check for stack underflow
-    if (isEmpty())
-    {
-        cout << "Underflow\nProgram Terminated\n";
-        exit(EXIT_FAILURE);
+        console.log(`Inserting ${x}`);
+        this.arr[++this.top] = x;
     }
 
-    cout << "Removing " << peek() << endl;
+    // Utility function to pop a top element from the stack
+    pop(): number {
+        // check for stack underflow
+        if (this.isEmpty()) {
+            throw new Error('Underflow\nProgram Terminated');
+        }
 
-    // decrease stack size by 1 and (optionally) return the popped element
-    return arr[top--];
-}
+        console.log(`Removing ${this.peek()}`);
 
-// Utility function to return the top element of the stack
-int Stack::peek()
-{
-    if (!isEmpty()) {
-        return arr[top];
+        // decrease stack size by 1 and (optionally) return the popped element
+        return this.arr[this.top--];
     }
-    else {
-        exit(EXIT_FAILURE);
+
+    // Utility function to return the top element of the stack
+    peek(): number {
+        if (this.isEmpty()) {
+            throw new Error('Program Terminated');
+        }
+        return this.arr[this.top];
+    }
+
+    // Utility function to return the size of the stack
+    size(): number {
+        return this.top + 1;
+    }
+
+    // Utility function to check if the stack is empty or not
+    isEmpty(): boolean {
+        return this.top === -1;             // or return this.size() === 0;
+    }
+
+    // Utility function to check if the stack is full or not
+    isFull(): boolean {
+        return this.top === this.capacity - 1;  // or return this.size() === this.capacity;
     }
 }
 
-// Utility function to return the size of the stack
-int Stack::size() {
-    return top + 1;
+const pt = new Stack(3);
+
+pt.push(1);
+pt.push(2);
+
+pt.pop();
+pt.pop();
+
+pt.push(3);
+
+console.log(`The top element is ${pt.peek()}`);
+console.log(`The stack size is ${pt.size()}`);
+
+pt.pop();
+
+if (pt.isEmpty()) {
+    console.log('The stack is empty');
 }
-
-// Utility function to check if the stack is empty or not
-bool Stack::isEmpty() {
-    return top == -1;               // or return size() == 0;
-}
-
-// Utility function to check if the stack is full or not
-bool Stack::isFull() {
-    return top == capacity - 1;     // or return size() == capacity;
-}
-
-int main()
-{
-    Stack pt(3);
-
-    pt.push(1);
-    pt.push(2);
-
-    pt.pop();
-    pt.pop();
-
-    pt.push(3);
-
-    cout << "The top element is " << pt.peek() << endl;
-    cout << "The stack size is " << pt.size() << endl;
-
-    pt.pop();
-
-    if (pt.isEmpty()) {
-        cout << "The stack is empty\n";
-    }
-    else {
-        cout << "The stack is not empty\n";
-    }
-
-    return 0;
+else {
+    console.log('The stack is not empty');
 }
 ```
 
@@ -147,85 +107,67 @@ int main()
 
 The time complexity of all stack operations is constant, i.e., O(1).
 
-Using STL:
+Using the built-in array:
 
-Several of the C++ Standard Library container types have `push_back` and `pop_back` operations with LIFO semantics like [std::stack](https://cplusplus.com/reference/list/list/), [std::list](https://cplusplus.com/reference/stack/stack/).
+JavaScript arrays have `push` and `pop` operations with LIFO semantics like a [stack](https://cplusplus.com/reference/stack/stack/), and `unshift` and `shift` operations like a [list](https://cplusplus.com/reference/list/list/).
 
-```std::stack
-#include <iostream>
-#include <stack>
-using namespace std;
+```ts
+// Stack implementation in TypeScript using a plain array
+const s: string[] = [];
 
-// Stack implementation in C++ using `std::stack`
-int main()
-{
-    stack<string> s;
+s.push('A');    // Insert `A` into the stack
+s.push('B');    // Insert `B` into the stack
+s.push('C');    // Insert `C` into the stack
+s.push('D');    // Insert `D` into the stack
 
-    s.push("A");    // Insert `A` into the stack
-    s.push("B");    // Insert `B` into the stack
-    s.push("C");    // Insert `C` into the stack
-    s.push("D");    // Insert `D` into the stack
+// returns the total number of elements present in the stack
+console.log(`The stack size is ${s.length}`);
 
-    // returns the total number of elements present in the stack
-    cout << "The stack size is " << s.size() << endl;
+// prints the top of the stack (`D`)
+console.log(`The top element is ${s[s.length - 1]}`);
 
-    // prints the top of the stack (`D`)
-    cout << "The top element is " << s.top() << endl;
+s.pop();        // removing the top element (`D`)
+s.pop();        // removing the next top (`C`)
 
-    s.pop();        // removing the top element (`D`)
-    s.pop();        // removing the next top (`C`)
+console.log(`The stack size is ${s.length}`);
 
-    cout << "The stack size is " << s.size() << endl;
-
-    // check if the stack is empty
-    if (s.empty()) {
-        cout << "The stack is empty\n";
-    }
-    else {
-        cout << "The stack is not empty\n";
-    }
-
-    return 0;
+// check if the stack is empty
+if (s.length === 0) {
+    console.log('The stack is empty');
+}
+else {
+    console.log('The stack is not empty');
 }
 ```
 
-##
+**Output:** The stack size is 4 The top element is D The stack size is 2 The stack is not empty
 
-```std::list
-#include <iostream>
-#include <list>
-using namespace std;
+```ts
+// Stack implementation in TypeScript using array front operations
+const s: string[] = [];
 
-// Stack implementation in C++ using `std::list`
-int main()
-{
-    list<string> s;
+s.unshift('A');     // Insert `A` into the stack
+s.unshift('B');     // Insert `B` into the stack
+s.unshift('C');     // Insert `C` into the stack
+s.unshift('D');     // Insert `D` into the stack
 
-    s.push_front("A");        // Insert `A` into the stack
-    s.push_front("B");        // Insert `B` into the stack
-    s.push_front("C");        // Insert `C` into the stack
-    s.push_front("D");        // Insert `D` into the stack
+// returns the total number of elements present in the stack
+console.log(`The stack size is ${s.length}`);
 
-    // returns the total number of elements present in the stack
-    cout << "The stack size is " << s.size() << endl;
+// prints the top of the stack (`D`)
+console.log(`The top element is ${s[0]}`);
 
-    // prints the top of the stack (`D`)
-    cout << "The top element is " << s.front() << endl;
+s.shift();          // removing the top element (`D`)
+s.shift();          // removing the next top (`C`)
 
-    s.pop_front();          // removing the top element (`D`)
-    s.pop_front();          // removing the next top (`C`)
+console.log(`The stack size is ${s.length}`);
 
-    cout << "The stack size is " << s.size() << endl;
-
-    // check if the stack is empty
-    if (s.empty()) {
-        cout << "The stack is empty\n";
-    }
-    else {
-        cout << "The stack is not empty\n";
-    }
-
-    return 0;
+// check if the stack is empty
+if (s.length === 0) {
+    console.log('The stack is empty');
+}
+else {
+    console.log('The stack is not empty');
 }
 ```
 

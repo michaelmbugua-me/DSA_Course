@@ -14,61 +14,50 @@ For example,
 
 We have discussed a naive solution and Brian Kernighan’s algorithm to count the total number of set bits in the [previous post](https://techiedelight.com/brian-kernighans-algorithm-count-set-bits-integer/). Both solutions have the worst-case time complexity of O(log(n)). In this post, an O(1) time solution is discussed.
 
-The idea is to use a lookup table to return the total number of set bits in constant time. An integer in C/C++ usually takes 4 bytes for storage. That means the maximum number it can store is `232-1`. A lookup table for all `232-1` integers will be infeasible (Not to forget, we have negative numbers too).
+The idea is to use a lookup table to return the total number of set bits in constant time. An integer usually takes 4 bytes for storage. That means the maximum number it can store is `232-1`. A lookup table for all `232-1` integers will be infeasible (Not to forget, we have negative numbers too).
 
 The trick is to create an `8–bit (1 byte)` version of the table, then iterate over each byte in the integer to be checked and summing the table lookup results. 1 byte with all its bits set is 255 in decimal (`11111111` in binary), and all bits unset is 0 in decimal (`00000000` in binary). So, the lookup table should be of size 256 `(0-255)`.
 
-The following C++ solution uses the macros to generate the lookup table. The lookup table will be generated at compile time by the preprocessor.
+The following TypeScript solution builds the lookup table programmatically at startup.
 
 The first and last few numbers of the sequence will be: { 0, 1, 1, 2, 1, … , 7, 6, 7, 7, 8 } since 0 has 0 bits 1 has 1 bit 2 has 1 bit 3 has 2 bits 4 has 1 bit … … 251 has 7 bits 252 has 6 bits 253 has 7 bits 254 has 7 bits 255 has 8 bits
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
-
-// Macros to generate the lookup table (at compile-time)
-#define B2(n) n, n + 1, n + 1, n + 2
-#define B4(n) B2(n), B2(n + 1), B2(n + 1), B2(n + 2)
-#define B6(n) B4(n), B4(n + 1), B4(n + 1), B4(n + 2)
-#define COUNT_BITS B6(0), B6(1), B6(1), B6(2)
-
+```ts
 // Lookup table to store the total number of bits set for each index
-// in the table. The macro `COUNT_BITS` generates the table.
-unsigned int lookup[256] = { COUNT_BITS };
+// in the table. The table is generated at startup.
+const lookup: number[] = Array.from({ length: 256 }, (_, i) => {
+    let bits = 0;
+    let v = i;
+    while (v > 0) {
+        bits += v & 1;
+        v >>= 1;
+    }
+    return bits;
+});
 
 // Function to count the total number of set bits in `n` using a lookup table
-int countSetBits(int n)
-{
+function countSetBits(n: number): number {
     // print lookup table (number of bits set for integer `i`)
 
     /*
-    for (int i = 0; i < 256; i++) {
-        cout << i << " has " << lookup[i] << " bits\n";
+    for (let i = 0; i < 256; i++) {
+        console.log(`${i} has ${lookup[i]} bits`);
     }
     */
 
     // Assuming a 32–bit (4 bytes) integer, break the integer into 8–bit chunks.
     // Note that mask used `0xff` is `11111111` in binary
-
-    int count = lookup[n & 0xff] +      // consider the first 8 bits
-        lookup[(n >> 8) & 0xff] +       // consider the next 8 bits
-        lookup[(n >> 16) & 0xff] +      // consider the next 8 bits
-        lookup[(n >> 24) & 0xff];       // consider last 8 bits
+    const count = lookup[n & 0xff] +          // consider the first 8 bits
+        lookup[(n >> 8) & 0xff] +             // consider the next 8 bits
+        lookup[(n >> 16) & 0xff] +            // consider the next 8 bits
+        lookup[(n >>> 24) & 0xff];            // consider last 8 bits
 
     return count;
 }
 
-int main()
-{
-    int n = -1;
-
-    cout << n << " in binary is " << bitset<32>(n) << endl;
-    cout << "The total number of set bits in " << n << " is "
-         << countSetBits(n) << endl;
-
-    return 0;
-}
+const n = -1;
+console.log(`${n} in binary is ${(n >>> 0).toString(2).padStart(32, '0')}`);
+console.log(`The total number of set bits in ${n} is ${countSetBits(n)}`);
 ```
 
 **Output:** -1 in binary is 11111111111111111111111111111111 The total number of set bits in -1 is 32

@@ -14,226 +14,73 @@ A simple solution would be to calculate the height of the left and right subtree
 
 We can solve this problem in linear time by doing a [postorder traversal](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/) on the tree. Instead of calculating the height of the left and right subtree for every tree node, we can get the height in constant time. The idea is to start from the bottom of the tree and return the height of the subtree rooted at the given node to its parent. The height of a subtree rooted at any node is one more than the maximum height of the left subtree or the right subtree.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <utility>
-#include <cmath>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Recursive function to check if a given binary tree is height-balanced or not
-int isHeightBalanced(Node* root, bool &isBalanced)
-{
+const isHeightBalanced = (root: TreeNode | null, isBalanced: { value: boolean }): number => {
+
     // base case: tree is empty or not balanced
-    if (root == nullptr || !isBalanced) {
+    if (root === null || !isBalanced.value) {
         return 0;
     }
 
     // get the height of the left subtree
-    int left_height = isHeightBalanced(root->left, isBalanced);
+    const left_height = isHeightBalanced(root.left, isBalanced);
 
     // get the height of the right subtree
-    int right_height = isHeightBalanced(root->right, isBalanced);
+    const right_height = isHeightBalanced(root.right, isBalanced);
 
     // tree is unbalanced if the absolute difference between the height of
     // its left and right subtree is more than 1
-    if (abs(left_height - right_height) > 1) {
-        isBalanced = false;
+    if (Math.abs(left_height - right_height) > 1) {
+        isBalanced.value = false;
     }
 
     // return height of subtree rooted at the current node
-    return max(left_height, right_height) + 1;
-}
+    return Math.max(left_height, right_height) + 1;
+};
 
 // The main function to check if a given binary tree is height-balanced or not
-bool isHeightBalanced(Node* root)
-{
-    bool isBalanced = true;
+const checkHeightBalanced = (root: TreeNode | null): boolean => {
+    const isBalanced = { value: true };
     isHeightBalanced(root, isBalanced);
 
-    return isBalanced;
+    return isBalanced.value;
+};
+
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     / \     /
+    4   5   6
+*/
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+
+if (checkHeightBalanced(root)) {
+    console.log('Binary tree is balanced');
 }
-
-int main()
-{
-    /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     /
-        4   5   6
-    */
-
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-
-    if (isHeightBalanced(root)) {
-        cout << "Binary tree is balanced";
-    }
-    else {
-        cout << "Binary tree is not balanced";
-    }
-
-    return 0;
+else {
+    console.log('Binary tree is not balanced');
 }
 ```
 
 **Output:** Binary tree is balanced
-
-##
-
-```java
-import java.util.concurrent.atomic.AtomicBoolean;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to check if a given binary tree is height-balanced or not
-    public static int isHeightBalanced(Node root, AtomicBoolean isBalanced)
-    {
-        // base case: tree is empty or not balanced
-        if (root == null || !isBalanced.get()) {
-            return 0;
-        }
-
-        // get the height of the left subtree
-        int left_height = isHeightBalanced(root.left, isBalanced);
-
-        // get the height of the right subtree
-        int right_height = isHeightBalanced(root.right, isBalanced);
-
-        // tree is unbalanced if the absolute difference between the height of
-        // its left and right subtree is more than 1
-        if (Math.abs(left_height - right_height) > 1) {
-            isBalanced.set(false);
-        }
-
-        // return height of subtree rooted at the current node
-        return Math.max(left_height, right_height) + 1;
-    }
-
-    // The main function to check if a given binary tree is height-balanced or not
-    public static boolean isHeightBalanced(Node root)
-    {
-        // use `AtomicBoolean` to get the result since `Boolean` is passed by value
-        // in Java
-        AtomicBoolean isBalanced = new AtomicBoolean(true);
-        isHeightBalanced(root, isBalanced);
-
-        return isBalanced.get();
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             / \     /
-            4   5   6
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-
-        if (isHeightBalanced(root)) {
-            System.out.println("Binary tree is balanced");
-        }
-        else {
-            System.out.println("Binary tree is not balanced");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Recursive function to check if a given binary tree is height-balanced or not
-def isHeightBalanced(root, isBalanced=True):
-
-    # base case: tree is empty or not balanced
-    if root is None or not isBalanced:
-        return 0, isBalanced
-
-    # get the height of the left subtree
-    left_height, isBalanced = isHeightBalanced(root.left, isBalanced)
-
-    # get the height of the right subtree
-    right_height, isBalanced = isHeightBalanced(root.right, isBalanced)
-
-    # tree is unbalanced if the absolute difference between the height of
-    # its left and right subtree is more than 1
-    if abs(left_height - right_height) > 1:
-        isBalanced = False
-
-    # return height of subtree rooted at the current node
-    return max(left_height, right_height) + 1, isBalanced
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     /
-        4   5   6
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-
-    if isHeightBalanced(root)[1]:
-        print('Binary tree is balanced')
-    else:
-        print('Binary tree is not balanced')
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(h) for call stack, where `h` is the height of the tree.
 

@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/implement-ternary-operator-without-using-conditional-statements/
 
-This post will implement a ternary-like operator in C without using conditional expressions like ternary operator, if–else expression, or switch-case statements.
+This post will implement a ternary-like operator in TypeScript without using conditional expressions like ternary operator, if–else expression, or switch-case statements.
 
 The solution should implement the condition `x ? a : b`.
 
@@ -19,26 +19,19 @@ Let’s consider the first expression `x × a + !x × b`:
   * For `x = 1`, the expression reduces to `(1 × a) + (!1 × b) = a`.
   * For `x = 0`, the expression reduces to `(0 × a) + (!0 × b) = b`.
 
-The following C program demonstrates it:
+The following TypeScript program demonstrates it:
 
-```
-#include <stdio.h>
-
+```ts
 // Function to return the result of the expression (x ? a : b)
-int ternary(int x, int a, int b) {
-    return x * a + !x * b;
+function ternary(x: number, a: number, b: number): number {
+    return x * a + Number(!x) * b;
 }
 
 // Implement a ternary operator without using conditional expressions
-int main(void)
-{
-    int a = 10, b = 20;
+const a = 10, b = 20;
 
-    printf ("%d\n", ternary(0, a, b));
-    printf ("%d\n", ternary(1, a, b));
-
-    return 0;
-}
+console.log(ternary(0, a, b));
+console.log(ternary(1, a, b));
 ```
 
 **Output:** 20 10
@@ -47,72 +40,56 @@ int main(void)
 
 Another plausible way is to construct an array of size 2 in such a manner that index 0 of the array holds the value of `b` and index 1 holds the value of `a`, as shown below:
 
-`int arr[] = { b, a };`
+`int arr[] = { b, a };` → `const arr: number[] = [b, a];`
 
 Then we can return the value present at index 0 or 1 depending upon the value of `x`.
 
   * For `x = 1`, the expression `arr[x]` reduces to `arr[1] = a`.
   * For `x = 0`, the expression `arr[x]` reduces to `arr[0] = b`.
 
-This is demonstrated below in C. Please note that this approach doesn’t use any operators in C, such as arithmetic, relational, logical, conditional, etc.
+This is demonstrated below in TypeScript. Please note that this approach doesn’t use any operators, such as arithmetic, relational, logical, conditional, etc.
 
-```
-#include <stdio.h>
-
+```ts
 // Function to return the result of the expression (x ? a : b)
-int ternary(int x, int a, int b)
-{
-    int arr[] = { b, a };
+function ternary(x: number, a: number, b: number): number {
+    const arr: number[] = [b, a];
 
     return arr[x];
 }
 
 // Implement a ternary operator without using conditional expressions
-int main(void)
-{
-    int a = 10, b = 20;
+const a = 10, b = 20;
 
-    printf ("%d\n", ternary(0, a, b));
-    printf ("%d\n", ternary(1, a, b));
-
-    return 0;
-}
+console.log(ternary(0, a, b));
+console.log(ternary(1, a, b));
 ```
 
 **Output:** 20 10
 
 ## 3\. Using Short Circuiting
 
-Another approach is to use [short-circuiting](https://en.wikipedia.org/wiki/Short-circuit_evaluation) in boolean expressions. For `AND` operations in C such as `x && y`, `y` is evaluated only if `x` is true. Similarly, for `OR` operation like `x || y`, `y` is only evaluated if `x` is false. We can apply this logic to solve this problem. Consider the following code snippet:
+Another approach is to use [short-circuiting](https://en.wikipedia.org/wiki/Short-circuit_evaluation) in boolean expressions. For `AND` operations in TypeScript such as `x && y`, `y` is evaluated only if `x` is true. Similarly, for `OR` operation like `x || y`, `y` is only evaluated if `x` is false. We can apply this logic to solve this problem. Consider the following code snippet:
 
 `x && ((result = a) || !a) || (result = b)`
 
 Initially, we check whether `x` is 1 or 0. If `x = 1`, the result is set to `a` and `result = b` subexpression won’t get executed. If `x = 0`, the `(result = a) || !a` subexpression won’t be executed and the result is set to `b`. Please note that `!a` is added to handle the case when `a = 0`.
 
-This approach is demonstrated below in C:
+This approach is demonstrated below in TypeScript:
 
-```
-#include <stdio.h>
-
+```ts
 // Function to return the result of the expression `x ? a : b`
-int ternary(int x, int a, int b)
-{
-    int result;
+function ternary(x: number, a: number, b: number): number {
+    let result: number;
     x && ((result = a) || !a) || (result = b);
 
     return result;
 }
 
 // Implement a ternary operator without using conditional expressions
-int main(void)
-{
-    int a = 10, b = 20;
+const a = 10, b = 20;
 
-    printf ("%d\n", ternary(0, a, b));
-    printf ("%d\n", ternary(1, a, b));
-
-    return 0;
-}
+console.log(ternary(0, a, b));
+console.log(ternary(1, a, b));
 ```
 
 **Output:** 20 10

@@ -22,121 +22,92 @@ There are several efficient implementations of FIFO queues. A (bounded) queue ca
 
 Since fixed-length arrays have limited capacity, we need to convert the array into a closed circle. If `n` is the array’s size, then computing indices modulo `n` will turn the array into a circle. Now, `front` and `rear` can drift around endlessly in that circle, making it unnecessary to move items stored in the array.
 
-Following is the C program that demonstrates it:
+Following is a TypeScript program that demonstrates it:
 
-```
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // Data structure to represent a queue
-struct queue
-{
-    int *items;     // array to store queue elements
-    int maxsize;    // maximum capacity of the queue
-    int front;      // front points to the front element in the queue (if any)
-    int rear;       // rear points to the last element in the queue
-    int size;       // current capacity of the queue
-};
+class Queue {
+    items: number[];    // array to store queue elements
+    maxsize: number;    // maximum capacity of the queue
+    front = 0;          // front points to the front element in the queue (if any)
+    rear = -1;          // rear points to the last element in the queue
+    size = 0;           // current capacity of the queue
 
-// Utility function to initialize a queue
-struct queue* newQueue(int size)
-{
-    struct queue *pt = NULL;
-    pt = (struct queue*)malloc(sizeof(struct queue));
-
-    pt->items = (int*)malloc(size * sizeof(int));
-    pt->maxsize = size;
-    pt->front = 0;
-    pt->rear = -1;
-    pt->size = 0;
-
-    return pt;
-}
-
-// Utility function to return the size of the queue
-int size(struct queue *pt) {
-    return pt->size;
-}
-
-// Utility function to check if the queue is empty or not
-int isEmpty(struct queue *pt) {
-    return !size(pt);
-}
-
-// Utility function to return the front element of the queue
-int front(struct queue *pt)
-{
-    if (isEmpty(pt))
-    {
-        printf("Underflow\nProgram Terminated\n");
-        exit(EXIT_FAILURE);
+    // Utility function to initialize a queue
+    constructor(maxsize: number) {
+        this.maxsize = maxsize;
+        this.items = new Array<number>(maxsize);
     }
 
-    return pt->items[pt->front];
+    // Utility function to check if the queue is empty or not
+    isEmpty(): boolean {
+        return this.size === 0;
+    }
+
+    // Utility function to return the front element of the queue
+    getFront(): number {
+        if (this.isEmpty()) {
+            console.log("Underflow\nProgram Terminated\n");
+            process.exit(1);
+        }
+
+        return this.items[this.front];
+    }
+
+    // Utility function to add an element `x` to the queue
+    enqueue(x: number): void {
+        if (this.size === this.maxsize) {
+            console.log("Overflow\nProgram Terminated\n");
+            process.exit(1);
+        }
+
+        console.log(`Inserting ${x}\t`);
+
+        this.rear = (this.rear + 1) % this.maxsize;      // circular queue
+        this.items[this.rear] = x;
+        this.size++;
+
+        console.log(`front = ${this.front}, rear = ${this.rear}`);
+    }
+
+    // Utility function to dequeue the front element
+    dequeue(): void {
+        if (this.isEmpty()) {   // front == rear
+            console.log("Underflow\nProgram Terminated\n");
+            process.exit(1);
+        }
+
+        console.log(`Removing ${this.getFront()}\t`);
+
+        this.front = (this.front + 1) % this.maxsize;   // circular queue
+        this.size--;
+
+        console.log(`front = ${this.front}, rear = ${this.rear}`);
+    }
 }
 
-// Utility function to add an element `x` to the queue
-void enqueue(struct queue *pt, int x)
-{
-    if (size(pt) == pt->maxsize)
-    {
-        printf("Overflow\nProgram Terminated\n");
-        exit(EXIT_FAILURE);
-    }
+const pt = new Queue(5);
 
-    printf("Inserting %d\t", x);
+pt.enqueue(1);
+pt.enqueue(2);
+pt.enqueue(3);
+pt.enqueue(4);
 
-    pt->rear = (pt->rear + 1) % pt->maxsize;    // circular queue
-    pt->items[pt->rear] = x;
-    pt->size++;
+pt.dequeue();
+pt.dequeue();
+pt.dequeue();
+pt.dequeue();
 
-    printf("front = %d, rear = %d\n", pt->front, pt->rear);
+pt.enqueue(5);
+pt.enqueue(6);
+
+console.log(`size = ${pt.size}`);
+
+if (pt.isEmpty()) {
+    console.log("The queue is empty");
 }
-
-// Utility function to dequeue the front element
-void dequeue(struct queue *pt)
-{
-    if (isEmpty(pt))    // front == rear
-    {
-        printf("Underflow\nProgram Terminated\n");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Removing %d\t", front(pt));
-
-    pt->front = (pt->front + 1) % pt->maxsize;  // circular queue
-    pt->size--;
-
-    printf("front = %d, rear = %d\n", pt->front, pt->rear);
-}
-
-int main()
-{
-    struct queue *pt = newQueue(5);
-
-    enqueue(pt, 1);
-    enqueue(pt, 2);
-    enqueue(pt, 3);
-    enqueue(pt, 4);
-
-    dequeue(pt);
-    dequeue(pt);
-    dequeue(pt);
-    dequeue(pt);
-
-    enqueue(pt, 5);
-    enqueue(pt, 6);
-
-    printf("size = %d\n", size(pt));
-
-    if (isEmpty(pt)) {
-        printf("The queue is empty");
-    }
-    else {
-        printf("The queue is not empty");
-    }
-
-    return 0;
+else {
+    console.log("The queue is not empty");
 }
 ```
 
@@ -144,7 +115,7 @@ int main()
 
 The time complexity of `enqueue()`, `dequeue()`, `front()`, `isEmpty()` and `size()` operations is O(1).
 
-It is possible to implement a queue that can grow or shrink as much as needed using a dynamic array. For example, using [std::vector](https://en.cppreference.com/w/cpp/container/vector) in C++ or [ArrayList](https://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html) in Java.
+It is possible to implement a queue that can grow or shrink as much as needed using a dynamic array, which a plain TypeScript array already provides.
 
 Applications of a Queue:
 

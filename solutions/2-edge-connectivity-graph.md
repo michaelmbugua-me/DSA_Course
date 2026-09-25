@@ -30,90 +30,78 @@ We can modify DFS such that `DFS(v)` returns the smallest arrival time to which 
 
 Suppose four edges are going out of a subtree rooted at `v` to vertex `a`, `b`, `c` and `d`, with arrival time `A(a)`, `A(b)`, `A(c)` and `A(d)`, respectively. We look at their four arrival times and consider the smallest among them, that will be the value returned by `DFS(v)`, i.e., `DFS(v)` returns the minimum `min` of `A(a)`, `A(b)`, `A(c)`, and `A(d)`. But before returning, we have to check that `min` is less than the `A(v)`. If `min` is less than the `A(v)`, then that means that at least one back-edge is going out of the subtree rooted at `v`. If not, we can say that `(parent[v], v)` is a bridge.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <set>
-using namespace std;
+```ts
+// A class to represent a graph object
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
-typedef pair<int, int> Edge;
-
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
-
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    // Constructor
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph
-        for (auto &edge: edges)
-        {
-            adjList[edge.first].push_back(edge.second);
-            adjList[edge.second].push_back(edge.first);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
+            this.adjList[dest].push(src);
         }
     }
-};
+}
 
 // Perform DFS on the graph starting from vertex `v` and find
 // all bridges in the process
-int DFS(Graph const &graph, int v, vector<bool> visited, vector<int> &arrival,
-        int parent, int &time, auto &bridges)
-{
+function DFS(graph: Graph, v: number, visited: boolean[], arrival: number[],
+    parent: number, time: number, bridges: Set<string>): number {
     // set the arrival time of vertex `v`
-    arrival[v] = ++time;
+    time = time + 1;
+    arrival[v] = time;
 
     // mark vertex as visited
     visited[v] = true;
 
     // initialize `t` with the arrival time of vertex `v`
-    int t = arrival[v];
+    let t = arrival[v];
 
     // (v, w) forms an edge
-    for (int w: graph.adjList[v])
-    {
+    for (const w of graph.adjList[v]) {
         // if `w` is not visited
         if (!visited[w]) {
-            t = min(t, DFS(graph, w, visited, arrival, v, time, bridges));
+            t = Math.min(t, DFS(graph, w, visited, arrival, v, time, bridges));
         }
         // if `w` is visited, and `w` is not a parent of `v`
-        else if (w != parent)
-        {
-            // If vertex `w` is already visited, there is a back edge starting
-            // from `v`. Note that as visited[u] is already
-            // true, arrival[u] is already defined
-            t = min(t, arrival[w]);
+        else if (w !== parent) {
+            // If vertex `w` is already visited, there
+            // is a back edge starting from `v`. Note that as `visited[u]`
+            // is already true, arrival[u] is already defined
+            t = Math.min(t, arrival[w]);
         }
     }
 
     // if the value of `t` remains unchanged, i.e., it is equal
     // to the arrival time of vertex `v`, and if `v` is not the root node,
     // then (parent[v] —> v) forms a bridge
-    if (t == arrival[v] && parent != -1) {
-        bridges.insert({parent, v});
+    if (t === arrival[v] && parent !== -1) {
+        bridges.add(`(${parent}, ${v})`);
     }
 
     // return the minimum arrival time
     return t;
 }
 
-set<Edge> findBridges(Graph const &graph, int n)
-{
+function findBridges(graph: Graph, n: number): Set<string> {
     // to keep track of whether a vertex is visited or not
-    vector<bool> visited(n);
+    const visited: boolean[] = new Array(n).fill(false);
 
     // stores arrival time of a node in DFS
-    vector<int> arrival(n);
+    const arrival: number[] = new Array(n).fill(0);
 
-    int start = 0, parent = -1, time = 0;
+    const start = 0;
+    const parent = -1;
+    const time = 0;
 
-    set<Edge> bridges;
+    const bridges = new Set<string>();
 
     // As the given graph is connected, DFS will cover every node
     DFS(graph, start, visited, arrival, parent, time, bridges);
@@ -121,269 +109,24 @@ set<Edge> findBridges(Graph const &graph, int n)
     return bridges;
 }
 
-void printEdges(auto const &edges)
-{
-    for (auto const &edge: edges) {
-        cout << '(' << edge.first << ", " << edge.second << ") ";
-    }
-}
+// (u, v) triplet represent undirected edge from vertex `u` to vertex `v`
+const edges: [number, number][] = [[0, 2], [1, 2], [2, 3], [2, 4], [3, 4], [3, 5]];
 
-// 2–edge connectivity in a graph
-int main()
-{
-    // vector of graph edges
-    vector<Edge> edges = {
-        {0, 2}, {1, 2}, {2, 3}, {2, 4}, {3, 4}, {3, 5}
-    };
+// total number of nodes in the graph (0 to 6)
+const n = 6;
 
-    // total number of nodes in the graph (0 to 6)
-    int n = 10;
+// construct graph
+const graph = new Graph(edges, n);
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
-
-    // find and print bridges
-    auto bridges = findBridges(graph, n);
-
-    if (bridges.size() != 0) {
-        cout << "Bridges are "; printEdges(bridges);
-    } else {
-        cout << "Graph is 2– Connected";
-    }
-
-    return 0;
+const bridges = findBridges(graph, n);
+if (bridges.size !== 0) {
+    console.log(`Bridges are ${[...bridges].join(' ')}`);
+} else {
+    console.log('Graph is 2–Edge Connected');
 }
 ```
 
 **Output:** Bridges are (0, 2) (2, 1) (3, 5)
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest) {
-        this.source = source;
-        this.dest = dest;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + source + ", " + dest + ')';
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // Perform DFS on the graph starting from vertex `v` and find
-    // all bridges in the process
-    public static int DFS(Graph graph, int v, boolean[] visited, int[] arrival,
-            int parent, int time, Set<Edge> bridges)
-    {
-        // set the arrival time of vertex `v`
-        arrival[v] = ++time;
-
-        // mark vertex as visited
-        visited[v] = true;
-
-        // initialize `t` with the arrival time of vertex `v`
-        int t = arrival[v];
-
-        // (v, w) forms an edge
-        for (int w: graph.adjList.get(v))
-        {
-            // if `w` is not visited
-            if (!visited[w]) {
-                t = Integer.min(t, DFS(graph, w, visited, arrival, v, time, bridges));
-            }
-            // if `w` is visited, and `w` is not a parent of `v`
-            else if (w != parent)
-            {
-                // If vertex `w` is already visited, there is a back edge starting
-                // from `v`. Note that as visited[u] is already
-                // true, arrival[u] is already defined
-                t = Integer.min(t, arrival[w]);
-            }
-        }
-
-        // if the value of `t` remains unchanged, i.e., it is equal
-        // to the arrival time of vertex `v`, and if `v` is not the root node,
-        // then (parent[v] —> v) forms a bridge
-        if (t == arrival[v] && parent != -1) {
-            bridges.add(new Edge(parent, v));
-        }
-
-        // return the minimum arrival time
-        return t;
-    }
-
-    public static Set<Edge> findBridges(Graph graph, int n)
-    {
-        // to keep track of whether a vertex is visited or not
-        boolean[] visited = new boolean[n];
-
-        // stores arrival time of a node in DFS
-        int[] arrival = new int[n];
-
-        int start = 0, parent = -1, time = 0;
-
-        Set<Edge> bridges = new HashSet<>();
-
-        // As the given graph is connected, DFS will cover every node
-        DFS(graph, start, visited, arrival, parent, time, bridges);
-
-        return bridges;
-    }
-
-    public static void main(String[] args)
-    {
-        // (u, v) triplet represent undirected edge from vertex `u` to vertex `v`
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 2), new Edge(1, 2), new Edge(2, 3),
-                new Edge(2, 4), new Edge(3, 4), new Edge(3, 5)
-        );
-
-        // total number of nodes in the graph (0 to 6)
-        int n = 6;
-
-        // construct graph
-        Graph graph = new Graph(edges, n);
-
-        // find and print bridges
-        Set<Edge> bridges = findBridges(graph, n);
-
-        if (bridges.size() != 0) {
-            System.out.println("Bridges are " + bridges);
-        } else {
-            System.out.println("Graph is 2–Edge Connected");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges, n):
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-# Perform DFS on the graph starting from vertex `v` and find
-# all bridges in the process
-def DFS(graph, v, visited, arrival, parent, time, bridges):
-    # set the arrival time of vertex `v`
-    time = time + 1
-    arrival[v] = time
-
-    # mark vertex as visited
-    visited[v] = True
-
-    # initialize `t` with the arrival time of vertex `v`
-    t = arrival[v]
-
-    # (v, w) forms an edge
-    for w in graph.adjList[v]:
-
-        # if `w` is not visited
-        if not visited[w]:
-            t = min(t, DFS(graph, w, visited, arrival, v, time, bridges))
-
-        # if `w` is visited, and `w` is not a parent of `v`
-        elif w != parent:
-            # If vertex `w` is already visited, there
-            # is a back edge starting from `v`. Note that as `visited[u]`
-            # is already true, arrival[u] is already defined
-            t = min(t, arrival[w])
-
-    # if the value of `t` remains unchanged, i.e., it is equal
-    # to the arrival time of vertex `v`, and if `v` is not the root node,
-    # then (parent[v] —> v) forms a bridge
-    if t == arrival[v] and parent != -1:
-        bridges.add((parent, v))
-
-    # return the minimum arrival time
-    return t
-
-def findBridges(graph, n):
-
-    # to keep track of whether a vertex is visited or not
-    visited = [False] * n
-
-    # stores arrival time of a node in DFS
-    arrival = [None] * n
-
-    start = 0
-    parent = -1
-    time = 0
-
-    bridges = set()
-
-    # As the given graph is connected, DFS will cover every node
-    DFS(graph, start, visited, arrival, parent, time, bridges)
-
-    return bridges
-
-if __name__ == '__main__':
-
-    # (u, v) triplet represent undirected edge from vertex `u` to vertex `v`
-    edges = [(0, 2), (1, 2), (2, 3), (2, 4), (3, 4), (3, 5)]
-
-    # total number of nodes in the graph (0 to 6)
-    n = 6
-
-    # construct graph
-    graph = Graph(edges, n)
-
-    bridges = findBridges(graph, n)
-    if bridges:
-        print('Bridges are', bridges)
-    else:
-        print('Graph is 2–Edge Connected')
-```
 
 The time complexity of the above solution is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively.
 

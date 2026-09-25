@@ -38,112 +38,35 @@ For example,
 
 SCS(ABCBD, BDCAB) = minimum (SCS(ABCB, BDCAB) + D, SCS(ABCBD, BDCA) + B)
 
-The following solution in C++, Java, and Python find the shortest common supersequence of sequences `X[0…m-1]` and `Y[0…n-1]` recursively using the optimal substructure property of the SCS problem:
+The following solution in TypeScript finds the shortest common supersequence of sequences `X[0…m-1]` and `Y[0…n-1]` recursively using the optimal substructure property of the SCS problem:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the length of the shortest common supersequence of
 // sequences `X[0…m-1]` and `Y[0…n-1]`
-int SCSLength(string X, string Y, int m, int n)
-{
+function SCSLength(X: string, Y: string, m: number, n: number): number {
     // if the end of either sequence is reached, return
     // the length of another sequence
-    if (m == 0 || n == 0) {
+    if (m === 0 || n === 0) {
         return n + m;
     }
 
     // if the last character of `X` and `Y` matches
-    if (X[m - 1] == Y[n - 1]) {
+    if (X[m - 1] === Y[n - 1]) {
         return SCSLength(X, Y, m - 1, n - 1) + 1;
     }
-    else {
-        // otherwise, if the last character of `X` and `Y` don't match
-        return min(SCSLength(X, Y, m, n - 1) + 1,
-                    SCSLength(X, Y, m - 1, n) + 1);
-    }
+
+    // last character of `X` and `Y` don't match
+    return Math.min(SCSLength(X, Y, m, n - 1) + 1, SCSLength(X, Y, m - 1, n) + 1);
 }
 
-int main()
-{
-    string X = "ABCBDAB", Y = "BDCABA";
-    int m = X.length(), n = Y.length();
+// demo
+const X = 'ABCBDAB';
+const Y = 'BDCABA';
 
-    cout << "The length of the shortest common supersequence is "
-         << SCSLength(X, Y, m, n);
+const m = X.length;
+const n = Y.length;
 
-    return 0;
-}
-```
-
-**Output:** The length of the shortest common supersequence is 9
-
-##
-
-```java
-class Main
-{
-    // Function to find the length of the shortest common supersequence of
-    // sequences `X[0…m-1]` and `Y[0…n-1]`
-    public static int SCSLength(String X, String Y, int m, int n)
-    {
-        // if the end of either sequence is reached, return
-        // the length of another sequence
-        if (m == 0 || n == 0) {
-            return n + m;
-        }
-
-        // if the last character of `X` and `Y` matches
-        if (X.charAt(m - 1) == Y.charAt(n - 1)) {
-            return SCSLength(X, Y, m - 1, n - 1) + 1;
-        }
-
-        // last character of `X` and `Y` don't match
-        return Integer.min(SCSLength(X, Y, m, n - 1) + 1,
-                        SCSLength(X, Y, m - 1, n) + 1);
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABCBDAB", Y = "BDCABA";
-        int m = X.length(), n = Y.length();
-
-        System.out.print("The length of the shortest common supersequence is "
-                        + SCSLength(X, Y, m, n));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the shortest common supersequence of
-# sequences `X[0…m-1]` and `Y[0…n-1]`
-def SCSLength(X, Y, m, n):
-
-    # if the end of either sequence is reached, return
-    # the length of another sequence
-    if m == 0 or n == 0:
-        return n + m
-
-    # if the last character of `X` and `Y` matches
-    if X[m - 1] == Y[n - 1]:
-        return SCSLength(X, Y, m - 1, n - 1) + 1
-
-    # last character of `X` and `Y` don't match
-    return min(SCSLength(X, Y, m, n - 1) + 1, SCSLength(X, Y, m - 1, n) + 1)
-
-if __name__ == '__main__':
-
-    X = 'ABCBDAB'
-    Y = 'BDCABA'
-
-    m = len(X)
-    n = len(Y)
-
-    print('The length of the shortest common supersequence is', SCSLength(X, Y, m, n))
+console.log('The length of the shortest common supersequence is', SCSLength(X, Y, m, n));
 ```
 
 The worst-case time complexity of the above solution is O(2(m+n)) and occupies space in the call stack where `m` is the length of the first string and `n` is the length of the second string. The worst case happens when there is no common character present in `X` and `Y` (i.e., SCS length is `m+n`), and each recursive call will end up in two recursive calls.
@@ -152,159 +75,47 @@ The SCS problem exhibits [overlapping subproblems](https://techiedelight.com/int
 
 The problems having optimal substructure and overlapping subproblems can be solved by dynamic programming, in which subproblem solutions are memoized rather than computed repeatedly. Following is a _memo_ ized version that follows the top-down approach, as we first break the problem into subproblems and then calculate and store values:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to find the length of the shortest common supersequence of
 // sequences `X[0…m-1]` and `Y[0…n-1]`
-int SCSLength(string X, string Y, int m, int n, auto &lookup)
-{
+function SCSLength(X: string, Y: string, m: number, n: number, lookup: Map<string, number>): number {
     // if the end of either sequence is reached, return
     // the length of another sequence
-    if (m == 0 || n == 0) {
+    if (m === 0 || n === 0) {
         return n + m;
     }
 
-    // construct a unique map key from dynamic elements of the input
-    string key = to_string(m) + "|" + to_string(n);
+    // construct a unique key from dynamic elements of the input
+    const key = `${m}|${n}`;
 
     // if the subproblem is seen for the first time, solve it and
     // store its result in a map
-    if (lookup.find(key) == lookup.end())
-    {
+    if (!lookup.has(key)) {
         // if the last character of `X` and `Y` matches
-        if (X[m - 1] == Y[n - 1]) {
-            lookup[key] = SCSLength(X, Y, m - 1, n - 1, lookup) + 1;
+        if (X[m - 1] === Y[n - 1]) {
+            lookup.set(key, SCSLength(X, Y, m - 1, n - 1, lookup) + 1);
         }
+
+        // otherwise, if the last character of `X` and `Y` don't match
         else {
-            // otherwise, if the last character of `X` and `Y` don't match
-            lookup[key] = min (SCSLength(X, Y, m, n - 1, lookup) + 1,
-                                SCSLength(X, Y, m - 1, n, lookup) + 1);
+            lookup.set(key, Math.min(SCSLength(X, Y, m, n - 1, lookup),
+                            SCSLength(X, Y, m - 1, n, lookup)) + 1);
         }
     }
 
     // return the subproblem solution from the map
-    return lookup[key];
+    return lookup.get(key)!;
 }
 
-int main()
-{
-    string X = "ABCBDAB", Y = "BDCABA";
-    int m = X.length(), n = Y.length();
+// demo
+const X = 'ABCBDAB';
+const Y = 'BDCABA';
 
-    // create a map to store solutions to subproblems;
-    // we can also use an array instead of a map
-    unordered_map<string, int> lookup;
+// create a map to store solutions to subproblems
+const lookup = new Map<string, number>();
 
-    cout << "The length of the shortest common supersequence is "
-         << SCSLength(X, Y, m, n, lookup);
-
-    return 0;
-}
-```
-
-**Output:** The length of the shortest common supersequence is 9
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to find the length of the shortest common supersequence of
-    // sequences `X[0…m-1]` and `Y[0…n-1]`
-    public static int SCSLength(String X, String Y, int m, int n,
-                                Map<String, Integer> lookup)
-    {
-        // if the end of either sequence is reached, return
-        // the length of another sequence
-        if (m == 0 || n == 0) {
-            return n + m;
-        }
-
-        // construct a unique map key from dynamic elements of the input
-        String key = m + "|" + n;
-
-        // if the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (!lookup.containsKey(key))
-        {
-            // if the last character of `X` and `Y` matches
-            if (X.charAt(m - 1) == Y.charAt(n - 1)) {
-                lookup.put(key, SCSLength(X, Y, m - 1, n - 1, lookup) + 1);
-            }
-            else {
-                // otherwise, if the last character of `X` and `Y` don't match
-                int min = Integer.min(SCSLength(X, Y, m, n - 1, lookup) + 1,
-                                    SCSLength(X, Y, m - 1, n, lookup) + 1);
-                lookup.put(key, min);
-            }
-        }
-
-        // return the subproblem solution from the map
-        return lookup.get(key);
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABCBDAB", Y = "BDCABA";
-
-        // create a map to store solutions to subproblems;
-        // we can also use an array instead of a map
-        Map<String, Integer> lookup = new HashMap<>();
-
-        System.out.print("The length of the shortest common supersequence is "
-                + SCSLength(X, Y, X.length(), Y.length(), lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the shortest common supersequence of
-# sequences `X[0…m-1]` and `Y[0…n-1]`
-def SCSLength(X, Y, m, n, lookup):
-
-    # if the end of either sequence is reached, return
-    # the length of another sequence
-    if m == 0 or n == 0:
-        return n + m
-
-    # construct a unique key from dynamic elements of the input
-    key = (m, n)
-
-    # if the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        # if the last character of `X` and `Y` matches
-        if X[m - 1] == Y[n - 1]:
-            lookup[key] = SCSLength(X, Y, m - 1, n - 1, lookup) + 1
-
-        # otherwise, if the last character of `X` and `Y` don't match
-        else:
-            lookup[key] = min(SCSLength(X, Y, m, n - 1, lookup),
-                            SCSLength(X, Y, m - 1, n, lookup)) + 1
-
-    # return the subproblem solution from the dictionary
-    return lookup[key]
-
-if __name__ == '__main__':
-
-    X = 'ABCBDAB'
-    Y = 'BDCABA'
-
-    # create a dictionary to store solutions to subproblems
-    lookup = {}
-
-    print('The length of the shortest common supersequence is',
-        SCSLength(X, Y, len(X), len(Y), lookup))
+console.log('The length of the shortest common supersequence is',
+    SCSLength(X, Y, X.length, Y.length, lookup));
 ```
 
 The time complexity of the above solution is O(m.n) and requires O(m.n) extra space, where `m` is the length of the first string and `n` is the length of the second string.
@@ -313,46 +124,40 @@ We can also solve this problem in a bottom-up manner. In the bottom-up approach,
 
 | j (if i == 0) | i (if j == 0) SCS[i][j] = | SCS[i-1][j-1] + 1 (if X[i-1] == Y[j-1]) | min (SCS[i-1][j] + 1, SCS[i][j-1] + 1) (if X[i-1] != Y[j-1])
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the length of the shortest common supersequence of
 // sequences `X[0…m-1]` and `Y[0…n-1]`
-int SCSLength(string X, string Y)
-{
-    int m = X.length(), n = Y.length();
+function SCSLength(X: string, Y: string): number {
+    const m = X.length;
+    const n = Y.length;
 
     // lookup table stores solution to already computed subproblems
     // i.e., `lookup[i][j]` stores the length of SCS of substring
     // `X[0…i-1]` and `Y[0…j-1]`
-    int lookup[m + 1][n + 1];
+    const lookup: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
 
     // initialize the first column of the lookup table
-    for (int i = 0; i <= m; i++) {
+    for (let i = 0; i <= m; i++) {
         lookup[i][0] = i;
     }
 
     // initialize the first row of the lookup table
-    for (int j = 0; j <= n; j++) {
+    for (let j = 0; j <= n; j++) {
         lookup[0][j] = j;
     }
 
     // fill the lookup table in a bottom-up manner
-    for (int i = 1; i <= m; i++)
-    {
-        for (int j = 1; j <= n; j++)
-        {
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
             // if the current character of `X` and `Y` matches
-            if (X[i - 1] == Y[j - 1]) {
+            if (X[i - 1] === Y[j - 1]) {
                 lookup[i][j] = lookup[i - 1][j - 1] + 1;
             }
             // otherwise, if the current character of `X` and `Y` don't match
             else {
-                lookup[i][j] = min(lookup[i - 1][j] + 1, lookup[i][j - 1] + 1);
+                lookup[i][j] = Math.min(lookup[i - 1][j] + 1, lookup[i][j - 1] + 1);
             }
         }
     }
@@ -361,15 +166,11 @@ int SCSLength(string X, string Y)
     return lookup[m][n];
 }
 
-int main()
-{
-    string X = "ABCBDAB", Y = "BDCABA";
+// demo
+const X = 'ABCBDAB';
+const Y = 'BDCABA';
 
-    cout << "The length of the shortest common supersequence is "
-         << SCSLength(X, Y);
-
-    return 0;
-}
+console.log('The length of the shortest common supersequence is', SCSLength(X, Y));
 ```
 
 **Output:** The length of the shortest common supersequence is 9

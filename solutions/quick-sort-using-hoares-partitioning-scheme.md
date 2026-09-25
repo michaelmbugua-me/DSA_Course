@@ -16,203 +16,70 @@ Note that in this scheme, the pivot’s final location is not necessarily at the
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <ctime>
-#include <cstdlib>
-using namespace std;
-
-#define N 15
+```ts
+function swap(A: number[], i: number, j: number): void {
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
 
 // Partition using Hoare's Partitioning scheme
-int partition(int a[], int low, int high)
-{
-    int pivot = a[low];
-    int i = low - 1;
-    int j = high + 1;
-    while (1)
-    {
-        do {
-            i++;
-        } while (a[i] < pivot);
+function partition(a: number[], low: number, high: number): number {
 
-        do {
-            j--;
-        } while (a[j] > pivot);
+    const pivot = a[low];
+    let i = low - 1;
+    let j = high + 1;
+
+    while (true) {
+
+        while (true) {
+            i = i + 1;
+            if (a[i] >= pivot) {
+                break;
+            }
+        }
+
+        while (true) {
+            j = j - 1;
+            if (a[j] <= pivot) {
+                break;
+            }
+        }
 
         if (i >= j) {
             return j;
         }
 
-        swap(a[i], a[j]);
+        swap(a, i, j);
     }
 }
 
 // Quicksort routine
-void quicksort(int a[], int low, int high)
-{
+function quicksort(a: number[], low: number, high: number): void {
+
     // base condition
     if (low >= high) {
         return;
     }
 
     // rearrange elements across pivot
-    int pivot = partition(a, low, high);
+    const pivot = partition(a, low, high);
 
-    // recur on subarray containing elements that are less than the pivot
+    // recur on sublist containing elements less than the pivot
     quicksort(a, low, pivot);
 
-    // recur on subarray containing elements that are more than the pivot
+    // recur on sublist containing elements more than the pivot
     quicksort(a, pivot + 1, high);
 }
 
-int main()
-{
-    int arr[N];
-    srand(time(NULL));
+const a = [9, -3, 5, 2, 6, 8, -6, 1, 3];
 
-    // generate random input of integers
-    for (int i = 0; i < N; i++) {
-        arr[i] = (rand() % 100) - 50;
-    }
+quicksort(a, 0, a.length - 1);
 
-    quicksort(arr, 0, N - 1);
-
-    for (int i = 0; i < N; i++) {
-        cout << arr[i] << " ";
-    }
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    public static void swap (int[] arr, int i, int j)
-    {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    // Partition using Hoare's Partitioning scheme
-    public static int partition(int[] a, int low, int high)
-    {
-        int pivot = a[low];
-        int i = low - 1;
-        int j = high + 1;
-
-        while (true)
-        {
-            do {
-                i++;
-            } while (a[i] < pivot);
-
-            do {
-                j--;
-            } while (a[j] > pivot);
-
-            if (i >= j) {
-                return j;
-            }
-
-            swap(a, i, j);
-        }
-    }
-
-    // Quicksort routine
-    public static void quicksort(int[] a, int low, int high)
-    {
-        // base condition
-        if (low >= high) {
-            return;
-        }
-
-        // rearrange elements across pivot
-        int pivot = partition(a, low, high);
-
-        // recur on subarray containing elements less than the pivot
-        quicksort(a, low, pivot);
-
-        // recur on subarray containing elements more than the pivot
-        quicksort(a, pivot + 1, high);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] a = { 9, -3, 5, 2, 6, 8, -6, 1, 3 };
-
-        quicksort(a, 0, a.length - 1);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(a));
-    }
-}
-```
-
-##
-
-```python3
-def swap(A, i, j):
-
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-# Partition using Hoare's Partitioning scheme
-def partition(a, low, high):
-
-    pivot = a[low]
-    (i, j) = (low - 1, high + 1)
-
-    while True:
-
-        while True:
-            i = i + 1
-            if a[i] >= pivot:
-                break
-
-        while True:
-            j = j - 1
-            if a[j] <= pivot:
-                break
-
-        if i >= j:
-            return j
-
-        swap(a, i, j)
-
-# Quicksort routine
-def quicksort(a, low, high):
-
-    # base condition
-    if low >= high:
-        return
-
-    # rearrange elements across pivot
-    pivot = partition(a, low, high)
-
-    # recur on sublist containing elements less than the pivot
-    quicksort(a, low, pivot)
-
-    # recur on sublist containing elements more than the pivot
-    quicksort(a, pivot + 1, high)
-
-if __name__ == '__main__':
-
-    a = [9, -3, 5, 2, 6, 8, -6, 1, 3]
-
-    quicksort(a, 0, len(a) - 1)
-
-    # print the sorted list
-    print(a)
+// print the sorted list
+console.log(a);
 ```
 
 **References:** <https://en.wikipedia.org/wiki/Quicksort>

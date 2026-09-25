@@ -26,20 +26,15 @@ We can start by calculating the sum of all `St` in the set. If `St` is not divis
 
 The base case of the recursion would be when no items are left. We return true when 3 subsets, each with zero-sum, are found. We can optimize our code by calling case 2 only if case 1 doesn’t result in a solution, and case 3 only if case 1 and 2 don’t result in any solution.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <numeric>
-using namespace std;
-
+```ts
 // Helper function for solving 3 partition problem.
-// It returns true if there exist three subsets with a given sum
-bool subsetSum(vector<int> const &S, int n, int a, int b, int c)
-{
+// It returns true if there exist three subsets with the given sum
+function subsetSum(S: number[], n: number, a: number, b: number, c: number): boolean {
+
     // return true if the subset is found
-    if (a == 0 && b == 0 && c == 0) {
+    if (a === 0 && b === 0 && c === 0) {
         return true;
     }
 
@@ -49,216 +44,68 @@ bool subsetSum(vector<int> const &S, int n, int a, int b, int c)
     }
 
     // Case 1. The current item becomes part of the first subset
-    bool A = false;
+    let A = false;
     if (a - S[n] >= 0) {
         A = subsetSum(S, n - 1, a - S[n], b, c);
     }
 
     // Case 2. The current item becomes part of the second subset
-    bool B = false;
+    let B = false;
     if (!A && (b - S[n] >= 0)) {
         B = subsetSum(S, n - 1, a, b - S[n], c);
     }
 
     // Case 3. The current item becomes part of the third subset
-    bool C = false;
+    let C = false;
     if ((!A && !B) && (c - S[n] >= 0)) {
         C = subsetSum(S, n - 1, a, b, c - S[n]);
     }
 
-    // return true if we get a solution
+    // return true if we get the solution
     return A || B || C;
 }
 
 // Function for solving the 3–partition problem. It returns true if the given
 // set `S[0…n-1]` can be divided into three subsets with an equal sum.
-bool partition(vector<int> const &S)
-{
-    // total number of items in `S`
-    int n = S.size();
+function partition(S: number[]): boolean {
 
-    // base case
-    if (n < 3) {
+    if (S.length < 3) {
         return false;
     }
 
     // get the sum of all elements in the set
-    int sum = accumulate(S.begin(), S.end(), 0);
+    const total = S.reduce((x, y) => x + y, 0);
 
     // return true if the sum is divisible by 3 and the set `S` can
     // be divided into three subsets with an equal sum
-    return !(sum % 3) && subsetSum(S, n - 1, sum/3, sum/3, sum/3);
+    return (total % 3) === 0 && subsetSum(S, S.length - 1, total / 3, total / 3, total / 3);
 }
 
-int main()
-{
-    // Input: a set of integers
-    vector<int> S = { 7, 3, 2, 1, 5, 4, 8 };
+// Input: a set of integers
+const S = [7, 3, 2, 1, 5, 4, 8];
 
-    if (partition(S)) {
-        cout << "Set can be partitioned";
-    }
-    else {
-        cout << "Set cannot be partitioned";
-    }
-
-    return 0;
+if (partition(S)) {
+    console.log('Set can be partitioned');
+} else {
+    console.log('Set cannot be partitioned');
 }
 ```
 
 **Output:** Set can be partitioned
 
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Helper function for solving 3 partition problem.
-    // It returns true if there exist three subsets with the given sum
-    public static boolean subsetSum(int[] S, int n, int a, int b, int c)
-    {
-        // return true if the subset is found
-        if (a == 0 && b == 0 && c == 0) {
-            return true;
-        }
-
-        // base case: no items left
-        if (n < 0) {
-            return false;
-        }
-
-        // Case 1. The current item becomes part of the first subset
-        boolean A = false;
-        if (a - S[n] >= 0) {
-            A = subsetSum(S, n - 1, a - S[n], b, c);
-        }
-
-        // Case 2. The current item becomes part of the second subset
-        boolean B = false;
-        if (!A && (b - S[n] >= 0)) {
-            B = subsetSum(S, n - 1, a, b - S[n], c);
-        }
-
-        // Case 3. The current item becomes part of the third subset
-        boolean C = false;
-        if ((!A && !B) && (c - S[n] >= 0)) {
-            C = subsetSum(S, n - 1, a, b, c - S[n]);
-        }
-
-        // return true if we get a solution
-        return A || B || C;
-    }
-
-    // Function for solving the 3–partition problem. It returns true if the given
-    // set `S[0…n-1]` can be divided into three subsets with an equal sum.
-    public static boolean partition(int[] S)
-    {
-        if (S.length < 3) {
-            return false;
-        }
-
-        // get the sum of all elements in the set
-        int sum = Arrays.stream(S).sum();
-
-        // return true if the sum is divisible by 3 and the set `S` can
-        // be divided into three subsets with an equal sum
-        return (sum % 3) == 0 && subsetSum(S, S.length - 1, sum/3, sum/3, sum/3);
-    }
-
-    public static void main(String[] args)
-    {
-        // Input: a set of integers
-        int[] S = { 7, 3, 2, 1, 5, 4, 8 };
-
-        if (partition(S)) {
-            System.out.println("Set can be partitioned");
-        }
-        else {
-            System.out.println("Set cannot be partitioned");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Helper function for solving 3 partition problem.
-# It returns true if there exist three subsets with the given sum
-def subsetSum(S, n, a, b, c):
-
-    # return true if the subset is found
-    if a == 0 and b == 0 and c == 0:
-        return True
-
-    # base case: no items left
-    if n < 0:
-        return False
-
-    # Case 1. The current item becomes part of the first subset
-    A = False
-    if a - S[n] >= 0:
-        A = subsetSum(S, n - 1, a - S[n], b, c)
-
-    # Case 2. The current item becomes part of the second subset
-    B = False
-    if not A and (b - S[n] >= 0):
-        B = subsetSum(S, n - 1, a, b - S[n], c)
-
-    # Case 3. The current item becomes part of the third subset
-    C = False
-    if (not A and not B) and (c - S[n] >= 0):
-        C = subsetSum(S, n - 1, a, b, c - S[n])
-
-    # return true if we get the solution
-    return A or B or C
-
-# Function for solving the 3–partition problem. It returns true if the given
-# set `S[0…n-1]` can be divided into three subsets with an equal sum.
-def partition(S):
-
-    if len(S) < 3:
-        return False
-
-    # get the sum of all elements in the set
-    total = sum(S)
-
-    # return true if the sum is divisible by 3 and the set `S` can
-    # be divided into three subsets with an equal sum
-    return (sum(S) % 3) == 0 and subsetSum(S, len(S) - 1, total//3, total//3, total//3)
-
-if __name__ == '__main__':
-
-    # Input: a set of integers
-    S = [7, 3, 2, 1, 5, 4, 8]
-
-    if partition(S):
-        print('Set can be partitioned')
-    else:
-        print('Set cannot be partitioned')
-```
-
 The time complexity of the above solution is exponential and requires additional space for the recursion (call stack).
 
 The problem has an [optimal substructure](https://techiedelight.com/introduction-dynamic-programming/#optimal-substructure) and also exhibits an [overlapping subproblems](https://techiedelight.com/introduction-dynamic-programming/#overlapping-subproblems), i.e., the problem can be split into smaller subproblems, and the same subproblem will get computed again and again. We can easily prove this by drawing a recursion tree of the above code for a huge input.
 
-[Dynamic programming](https://techiedelight.com/dynamic-programming-interview-questions/) can solve this problem by saving subproblem solutions in memory rather than computing them again and again. The following implementation in C++, Java, and Python demonstrates the top-down approach:
+[Dynamic programming](https://techiedelight.com/dynamic-programming-interview-questions/) can solve this problem by saving subproblem solutions in memory rather than computing them again and again. The following implementation in TypeScript demonstrates the top-down approach:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <unordered_map>
-using namespace std;
-
-// Helper function for solving 3 partition problem.
+```ts
+// Function for solving the 3–partition problem.
 // It returns true if there exist three subsets with the given sum
-bool subsetSum(vector<int> const &S, int n, int a, int b, int c, auto &lookup)
-{
+function subsetSum(S: number[], n: number, a: number, b: number, c: number, lookup: Map<string, boolean>): boolean {
+
     // return true if the subset is found
-    if (a == 0 && b == 0 && c == 0) {
+    if (a === 0 && b === 0 && c === 0) {
         return true;
     }
 
@@ -267,244 +114,69 @@ bool subsetSum(vector<int> const &S, int n, int a, int b, int c, auto &lookup)
         return false;
     }
 
-    // construct a unique map key from dynamic elements of the input
-    string key = to_string(a) + "|" + to_string(b) + "|" + to_string(c) +
-                "|" + to_string(n);
+    // construct a unique key from dynamic elements of the input
+    const key = `${a}|${b}|${c}|${n}`;
 
     // if the subproblem is seen for the first time, solve it and
-    // store its result in a map
-    if (lookup.find(key) == lookup.end())
-    {
+    // store its result in a dictionary
+    if (!lookup.has(key)) {
         // Case 1. The current item becomes part of the first subset
-        bool A = false;
+        let A = false;
         if (a - S[n] >= 0) {
             A = subsetSum(S, n - 1, a - S[n], b, c, lookup);
         }
 
         // Case 2. The current item becomes part of the second subset
-        bool B = false;
+        let B = false;
         if (!A && (b - S[n] >= 0)) {
             B = subsetSum(S, n - 1, a, b - S[n], c, lookup);
         }
 
         // Case 3. The current item becomes part of the third subset
-        bool C = false;
+        let C = false;
         if ((!A && !B) && (c - S[n] >= 0)) {
             C = subsetSum(S, n - 1, a, b, c - S[n], lookup);
         }
 
         // return true if we get a solution
-        lookup[key] = A || B || C;
+        lookup.set(key, A || B || C);
     }
 
-    // return the subproblem solution from the map
-    return lookup[key];
+    // return the subproblem solution from the dictionary
+    return lookup.get(key)!;
 }
 
 // Function for solving the 3–partition problem. It returns true if the given
-// set `S[0…n-1]` can be divided into three subsets with an equal sum.
-bool partition(vector<int> const &S)
-{
-    // total number of items in `S`
-    int n = S.size();
+// set `S` can be divided into three subsets with an equal sum
+function partition(S: number[]): boolean {
 
-    // base case
-    if (n < 3) {
+    if (S.length < 3) {
         return false;
     }
 
-    // create a map to store solutions to a subproblem
-    unordered_map<string, bool> lookup;
+    // create a dictionary to store solutions to a subproblem
+    const lookup = new Map<string, boolean>();
 
     // get the sum of all elements in the set
-    int sum = accumulate(S.begin(), S.end(), 0);
+    const total = S.reduce((x, y) => x + y, 0);
 
     // return true if the sum is divisible by 3 and the set `S` can
     // be divided into three subsets with an equal sum
-    return !(sum % 3) && subsetSum(S, n - 1, sum/3, sum/3, sum/3, lookup);
+    return (total % 3) === 0 &&
+        subsetSum(S, S.length - 1, Math.floor(total / 3), Math.floor(total / 3), Math.floor(total / 3), lookup);
 }
 
-int main()
-{
-    // Input: a set of integers
-    vector<int> S = { 7, 3, 2, 1, 5, 4, 8 };
+// Input: a set of integers
+const S = [7, 3, 2, 1, 5, 4, 8];
 
-    if (partition(S)) {
-        cout << "Set can be partitioned";
-    }
-    else {
-        cout << "Set cannot be partitioned";
-    }
-
-    return 0;
+if (partition(S)) {
+    console.log('Set can be partitioned');
+} else {
+    console.log('Set cannot be partitioned');
 }
 ```
 
 **Output:** Set can be partitioned
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Helper function for solving 3 partition problem.
-    // It returns true if there exist three subsets with the given sum
-    public static boolean subsetSum(int[] S, int n, int a, int b, int c,
-                                    Map<String, Boolean> lookup)
-    {
-        // return true if the subset is found
-        if (a == 0 && b == 0 && c == 0) {
-            return true;
-        }
-
-        // base case: no items left
-        if (n < 0) {
-            return false;
-        }
-
-        // construct a unique map key from dynamic elements of the input
-        String key = a + "|" + b + "|" + c + "|" + n;
-
-        // if the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (!lookup.containsKey(key))
-        {
-            // Case 1. The current item becomes part of the first subset
-            boolean A = false;
-            if (a - S[n] >= 0) {
-                A = subsetSum(S, n - 1, a - S[n], b, c, lookup);
-            }
-
-            // Case 2. The current item becomes part of the second subset
-            boolean B = false;
-            if (!A && (b - S[n] >= 0)) {
-                B = subsetSum(S, n - 1, a, b - S[n], c, lookup);
-            }
-
-            // Case 3. The current item becomes part of the third subset
-            boolean C = false;
-            if ((!A && !B) && (c - S[n] >= 0)) {
-                C = subsetSum(S, n - 1, a, b, c - S[n], lookup);
-            }
-
-            // return true if we get a solution
-            lookup.put(key, A || B || C);
-        }
-
-        // return the subproblem solution from the map
-        return lookup.get(key);
-    }
-
-    // Function for solving the 3–partition problem. It returns true if the given
-    // set `S` can be divided into three subsets with an equal sum
-    public static boolean partition(int[] S)
-    {
-        if (S.length < 3) {
-            return false;
-        }
-
-        // create a map to store solutions to a subproblem
-        Map<String, Boolean> lookup = new HashMap<>();
-
-        // get the sum of all elements in the set
-        int sum = Arrays.stream(S).sum();
-
-        // return true if the sum is divisible by 3 and the set `S` can
-        // be divided into three subsets with an equal sum
-        return (sum % 3) == 0 && subsetSum(S, S.length - 1, sum/3,
-                        sum/3, sum/3, lookup);
-    }
-
-    public static void main(String[] args)
-    {
-        // Input: a set of integers
-        int[] S = { 7, 3, 2, 1, 5, 4, 8 };
-
-        if (partition(S)) {
-            System.out.println("Set can be partitioned");
-        }
-        else {
-            System.out.println("Set cannot be partitioned");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function for solving the 3–partition problem.
-# It returns true if there exist three subsets with the given sum
-def subsetSum(S, n, a, b, c, lookup):
-
-    # return true if the subset is found
-    if a == 0 and b == 0 and c == 0:
-        return True
-
-    # base case: no items left
-    if n < 0:
-        return False
-
-    # construct a unique key from dynamic elements of the input
-    key = (a, b, c, n)
-
-    # if the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        # Case 1. The current item becomes part of the first subset
-        A = False
-        if a - S[n] >= 0:
-            A = subsetSum(S, n - 1, a - S[n], b, c, lookup)
-
-        # Case 2. The current item becomes part of the second subset
-        B = False
-        if not A and (b - S[n] >= 0):
-            B = subsetSum(S, n - 1, a, b - S[n], c, lookup)
-
-        # Case 3. The current item becomes part of the third subset
-        C = False
-        if (not A and not B) and (c - S[n] >= 0):
-            C = subsetSum(S, n - 1, a, b, c - S[n], lookup)
-
-        # return true if we get a solution
-        lookup[key] = A or B or C
-
-    # return the subproblem solution from the dictionary
-    return lookup[key]
-
-# Function for solving the 3–partition problem. It returns true if the given
-# set `S` can be divided into three subsets with an equal sum
-def partition(S):
-
-    if len(S) < 3:
-        return False
-
-    # create a dictionary to store solutions to a subproblem
-    lookup = {}
-
-    # get the sum of all elements in the set
-    total = sum(S)
-
-    # return true if the sum is divisible by 3 and the set `S` can
-    # be divided into three subsets with an equal sum
-    return (total % 3) == 0 and \
-        subsetSum(S, len(S) - 1, total//3, total//3, total//3, lookup)
-
-if __name__ == '__main__':
-
-    # Input: a set of integers
-    S = [7, 3, 2, 1, 5, 4, 8]
-
-    if partition(S):
-        print('Set can be partitioned')
-    else:
-        print('Set cannot be partitioned')
-```
 
 The time complexity of the above top-up solution is O(n × sum3) and requires O(n × sum3) extra space, where `n` is the size of the input and `sum` is the sum of all elements in the input.
 

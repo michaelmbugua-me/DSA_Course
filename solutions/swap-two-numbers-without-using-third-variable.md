@@ -6,149 +6,109 @@ Given two integers, swap them without using any third variable.
 
 ## Method 1: Using addition and subtraction operator
 
-```
-#include <iostream>
-using namespace std;
-
-// Swap using references in C++
-void swap(int &x, int &y)
+```ts
+// Swap the two elements of an array (TypeScript passes the array by reference)
+function swap(a: number[]): void
 {
-    // return if both variables' data is the same, as we can't check for the
-    // address of a reference
-    if (x == y) {
+    // return if both variables' data is the same
+    if (a[0] === a[1]) {
         return;
     }
 
-    x = x + y;          // Note: overflow might happen
-    y = x - y;
-    x = x - y;
+    a[0] = a[0] + a[1];          // Note: overflow might happen
+    a[1] = a[0] - a[1];
+    a[0] = a[0] - a[1];
 }
 
-int main()
-{
-    int x = 3, y = 4;
-    swap(x, y);
+const nums = [3, 4];
+swap(nums);
 
-    cout << x << " " << y;
-
-    return 0;
-}
+console.log(`${nums[0]} ${nums[1]}`);
 ```
 
-Note that a copy of the actual parameter address is passed in a pass by reference, and any changes made to these variables in the function will affect the original. This can also be achieved using pointers in C, as demonstrated below.
+Note that the two numbers are passed inside an array, which is passed by reference, so any changes made to its elements in the function will affect the original. The same swap can also be written by operating on the array elements directly, as demonstrated below.
 
-```
-#include <stdio.h>
-
-// Swap using pointers to a function
-void swap(int *x, int *y)
+```ts
+// Swap using array elements passed by reference
+function swap(a: number[]): void
 {
-    if (*x == *y) {     // Check if the two addresses are the same
+    if (a[0] === a[1]) {     // Check if the two values are the same
         return;
     }
 
-    *x = *x + *y;       // overflow might happen
-    *y = *x - *y;
-    *x = *x - *y;
+    a[0] = a[0] + a[1];       // overflow might happen
+    a[1] = a[0] - a[1];
+    a[0] = a[0] - a[1];
 }
 
-int main()
-{
-    int x = 3, y = 4;
-    swap(&x, &y);
+const nums = [3, 4];
+swap(nums);
 
-    printf("%d %d", x, y);
-
-    return 0;
-}
+console.log(`${nums[0]} ${nums[1]}`);
 ```
 
 ## Method 2: Using multiplication and division operator
 
-```
-#include <iostream>
-using namespace std;
-
-void swap(int &x, int &y)
+```ts
+function swap(a: number[]): void
 {
-    if (y && x != y)
+    if (a[1] !== 0 && a[0] !== a[1])
     {
-        x = x * y;      // overflow can happen
-        y = x / y;
-        x = x / y;
+        a[0] = a[0] * a[1];      // overflow can happen
+        a[1] = a[0] / a[1];
+        a[0] = a[0] / a[1];
     }
 }
 
-int main()
-{
-    int x = 3, y = 4;
-    swap(x, y);
+const nums = [3, 4];
+swap(nums);
 
-    cout << x << " " << y;
-
-    return 0;
-}
+console.log(`${nums[0]} ${nums[1]}`);
 ```
 
 ## Method 3: Using Bitwise XOR operator
 
-```
-#include <iostream>
-using namespace std;
-
-void swap(int &x, int &y)
+```ts
+function swap(a: number[]): void
 {
-    if (x != y)
+    if (a[0] !== a[1])
     {
-        x = x ^ y;
-        y = x ^ y;
-        x = x ^ y;
+        a[0] = a[0] ^ a[1];
+        a[1] = a[0] ^ a[1];
+        a[0] = a[0] ^ a[1];
     }
 
     // in a single line
-    // (x == y) || ((x ^= y), (y ^= x), (x ^= y));
+    // (x === y) || ((x ^= y), (y ^= x), (x ^= y));
 }
 
-int main()
-{
-    int x = 3, y = 4;
-    swap(x, y);
+const nums = [3, 4];
+swap(nums);
 
-    cout << x << " " << y;
-
-    return 0;
-}
+console.log(`${nums[0]} ${nums[1]}`);
 ```
 
 ## Method 4: Using difference between two values
 
-```
-#include <iostream>
-using namespace std;
-
-void swap(int &x, int &y)
+```ts
+function swap(a: number[]): void
 {
-    if (x != y)
+    if (a[0] !== a[1])
     {
-        x = x - y;
-        y = y + x;
-        x = y - x;
+        a[0] = a[0] - a[1];
+        a[1] = a[1] + a[0];
+        a[0] = a[1] - a[0];
     }
 
     // in a single line
-    // (x == y) || ((x -= y), (y += x), (x = y - x));
+    // (x === y) || ((x -= y), (y += x), (x = y - x));
 }
 
-int main()
-{
-    int x = 3, y = 4;
+const nums = [3, 4];
 
-    cout << "Before swap: x = " << x << " and y = " << y;
-    swap(x, y);
-    cout << "\nAfter swap: x = " << x << " and y = " << y;
-
-    return 0;
-}
+console.log("Before swap: x = " + nums[0] + " and y = " + nums[1]);
+swap(nums);
+console.log("\nAfter swap: x = " + nums[0] + " and y = " + nums[1]);
 ```
 
 ## Method 5: Using single line expressions
@@ -159,28 +119,25 @@ We can also use any of the following expressions to swap two variables in a sing
   * x = x + y – (y = x);
   * x = (x × y) / (y = x);
 
-The following C++ program demonstrates it:
+The following TypeScript program demonstrates it:
 
-```
-#include <iostream>
-using namespace std;
-
-void swap(int &x, int &y)
+```ts
+function swap(a: number[]): void
 {
+    let x = a[0], y = a[1];
+
     // x = x ^ y ^ (y = x);
     // x = x + y - (y = x);
     x = (x * y) / (y = x);
+
+    a[0] = x;
+    a[1] = y;
 }
 
-int main()
-{
-    int x = 3, y = 4;
-    swap(x, y);
+const nums = [3, 4];
+swap(nums);
 
-    cout << x << " " << y;
-
-    return 0;
-}
+console.log(`${nums[0]} ${nums[1]}`);
 ```
 
 Rate this post

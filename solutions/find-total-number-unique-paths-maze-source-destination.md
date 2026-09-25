@@ -20,290 +20,96 @@ We have to find the total number of unique paths from source to destination. The
 
 The robot should search for a path from the starting position to the goal position until it finds one or until it exhausts all possibilities. We can easily achieve this with the help of [Backtracking](https://techiedelight.com/backtracking-interview-questions/). We start from the given source cell in the matrix and explore all four paths possible and recursively check if they will lead to the destination or not. We update the unique path count whenever the destination cell is reached. If a path doesn’t reach the destination or explored all possible routes from the current cell, we backtrack. To make sure that the path is simple and doesn’t contain any cycles, keep track of cells involved in the current path in a matrix, and before exploring any cell, ignore the cell if it is already covered in the current path.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cstring>
-using namespace std;
-
+```ts
 // Check if cell (x, y) is valid or not
-bool isValidCell(int x, int y, int N) {
-    return !(x < 0 || y < 0 || x >= N || y >= N);
-}
+const isValidCell = (x: number, y: number, N: number): boolean =>
+    !(x < 0 || y < 0 || x >= N || y >= N);
 
-void countPaths(vector<vector<int>> const &maze, int x, int y, pair<int, int> &dest,
-            vector<vector<bool>> &visited, int& count)
-{
-    // if destination is found, increment the path count
-    if (x == dest.first && y == dest.second)
-    {
-        count++;
-        return;
+const countPaths = (maze: number[][], i: number, j: number, dest: [number, number], visited: boolean[][]): number => {
+    // `N × N` matrix
+    const N = maze.length;
+
+    // if destination (x, y) is found, return 1
+    if (i === dest[0] && j === dest[1]) {
+        return 1;
     }
 
+    // stores number of unique paths from source to destination
+    let count = 0;
+
     // mark the current cell as visited
-    visited[x][y] = 1;
+    visited[i][j] = true;
 
-    // `N × N` matrix
-    int N = maze.size();
-
-    // if the current cell is a valid and open cell,
-    if (isValidCell(x, y, N) && maze[x][y])
-    {
-        // go down (x, y) ——> (x + 1, y)
-        if (x + 1 < N && !visited[x + 1][y]) {
-            countPaths(maze, x + 1, y, dest, visited, count);
+    // if the current cell is a valid and open cell
+    if (isValidCell(i, j, N) && maze[i][j] === 1) {
+        // go down (i, j) ——> (i + 1, j)
+        if (i + 1 < N && !visited[i + 1][j]) {
+            count += countPaths(maze, i + 1, j, dest, visited);
         }
 
-        // go up (x, y) ——> (x - 1, y)
-        if (x - 1 >= 0 && !visited[x - 1][y]) {
-            countPaths(maze, x - 1, y, dest, visited, count);
+        // go up (i, j) ——> (i - 1, j)
+        if (i - 1 >= 0 && !visited[i - 1][j]) {
+            count += countPaths(maze, i - 1, j, dest, visited);
         }
 
-        // go right (x, y) ——> (x, y + 1)
-        if (y + 1 < N && !visited[x][y + 1]) {
-            countPaths(maze, x, y + 1, dest, visited, count);
+        // go right (i, j) ——> (i, j + 1)
+        if (j + 1 < N && !visited[i][j + 1]) {
+            count += countPaths(maze, i, j + 1, dest, visited);
         }
 
-        // go left (x, y) ——> (x, y - 1)
-        if (y - 1 >= 0 && !visited[x][y - 1]) {
-            countPaths(maze, x, y - 1, dest, visited, count);
+        // go left (i, j) ——> (i, j - 1)
+        if (j - 1 >= 0 && !visited[i][j - 1]) {
+            count += countPaths(maze, i, j - 1, dest, visited);
         }
     }
 
     // backtrack from the current cell and remove it from the current path
-    visited[x][y] = 0;
-}
+    visited[i][j] = false;
 
-// Wrapper over countPaths()
-int findCount(vector<vector<int>> const &maze, pair<int, int> &src,
-        pair<int, int> &dest)
-{
-    // `N × N` matrix
-    int N = maze.size();
+    return count;
+};
 
-    // base case
-    if (N == 0 || maze[src.first][src.second] == 0 ||
-            maze[dest.first][dest.second] == 0) {
+const findCount = (maze: number[][], src: [number, number], dest: [number, number]): number => {
+    // get source cell (i, j)
+    const [i, j] = src;
+
+    // get destination cell (x, y)
+    const [x, y] = dest;
+
+    // base case: invalid input
+    if (!maze || maze.length === 0 || maze[i][j] === 0 || maze[x][y] === 0) {
         return 0;
     }
 
-    // stores number of unique paths from source to destination
-    int count = 0;
+    // `N × N` matrix
+    const N = maze.length;
 
     // 2D matrix to keep track of cells involved in the current path
-    vector<vector<bool>> visited;
-    visited.resize(N, vector<bool>(N));
+    const visited = Array.from({ length: N }, () => new Array<boolean>(N).fill(false));
 
-    // start from source cell
-    countPaths(maze, src.first, src.second, dest, visited, count);
+    // start from source cell (i, j)
+    return countPaths(maze, i, j, dest, visited);
+};
 
-    return count;
-}
+const maze = [
+    [1, 1, 1, 1],
+    [1, 1, 0, 1],
+    [0, 1, 0, 1],
+    [1, 1, 1, 1]
+];
 
-int main()
-{
-    // input matrix
-    vector<vector<int>> maze =
-    {
-        { 1, 1, 1, 1 },
-        { 1, 1, 0, 1 },
-        { 0, 1, 0, 1 },
-        { 1, 1, 1, 1 }
-    };
+// source cell
+const src: [number, number] = [0, 0];
 
-    // source cell
-    pair<int,int> src = make_pair(0, 0);
+// destination cell
+const dest: [number, number] = [3, 3];
 
-    // destination cell
-    pair<int,int> dest = make_pair(3, 3);
-
-    cout << "The total number of unique paths are " << findCount(maze, src, dest);
-
-    return 0;
-}
+console.log('The total number of unique paths are', findCount(maze, src, dest));
 ```
 
 **Output:** The total number of unique paths are 4
-
-##
-
-```java
-class Main
-{
-    // Check if cell (x, y) is valid or not
-    private static boolean isValidCell(int x, int y, int N) {
-        return !(x < 0 || y < 0 || x >= N || y >= N);
-    }
-
-    private static int countPaths(int[][] maze, int i, int j, int x, int y,
-                                  boolean visited[][])
-    {
-        // if destination (x, y) is found, return 1
-        if (i == x && j == y) {
-            return 1;
-        }
-
-        // stores number of unique paths from source to destination
-        int count = 0;
-
-        // mark the current cell as visited
-        visited[i][j] = true;
-
-        // `N × N` matrix
-        int N = maze.length;
-
-        // if the current cell is a valid and open cell
-        if (isValidCell(i, j, N) && maze[i][j] == 1)
-        {
-            // go down (i, j) ——> (i + 1, j)
-            if (i + 1 < N && !visited[i + 1][j]) {
-                count += countPaths(maze, i + 1, j, x, y, visited);
-            }
-
-            // go up (i, j) ——> (i - 1, j)
-            if (i - 1 >= 0 && !visited[i - 1][j]) {
-                count += countPaths(maze, i - 1, j, x, y, visited);
-            }
-
-            // go right (i, j) ——> (i, j + 1)
-            if (j + 1 < N && !visited[i][j + 1]) {
-                count += countPaths(maze, i, j + 1, x, y, visited);
-            }
-
-            // go left (i, j) ——> (i, j - 1)
-            if (j - 1 >= 0 && !visited[i][j - 1]) {
-                count += countPaths(maze, i, j - 1, x, y, visited);
-            }
-        }
-
-        // backtrack from the current cell and remove it from the current path
-        visited[i][j] = false;
-
-        return count;
-    }
-
-    public static int findCount(int[][] maze, int i, int j, int x, int y)
-    {
-        // base case: invalid input
-        if (maze == null || maze.length == 0 || maze[i][j] == 0 || maze[x][y] == 0) {
-            return 0;
-        }
-
-        // `N × N` matrix
-        int N = maze.length;
-
-        // 2D matrix to keep track of cells involved in the current path
-        boolean[][] visited = new boolean[N][N];
-
-        // start from source cell (i, j)
-        return countPaths(maze, i, j, x, y, visited);
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] maze =
-        {
-            { 1, 1, 1, 1 },
-            { 1, 1, 0, 1 },
-            { 0, 1, 0, 1 },
-            { 1, 1, 1, 1 }
-        };
-
-        // source cell (0, 0), destination cell (3, 3)
-        int count = findCount(maze, 0, 0, 3, 3);
-
-        System.out.println("The total number of unique paths are " + count);
-    }
-}
-```
-
-##
-
-```python3
-# Check if cell (x, y) is valid or not
-def isValidCell(x, y, N):
-    return not (x < 0 or y < 0 or x >= N or y >= N)
-
-def countPaths(maze, i, j, dest, visited):
-
-    # `N × N` matrix
-    N = len(maze)
-
-    # if destination (x, y) is found, return 1
-    if (i, j) == dest:
-        return 1
-
-    # stores number of unique paths from source to destination
-    count = 0
-
-    # mark the current cell as visited
-    visited[i][j] = True
-
-    # if the current cell is a valid and open cell
-    if isValidCell(i, j, N) and maze[i][j] == 1:
-
-        # go down (i, j) ——> (i + 1, j)
-        if i + 1 < N and not visited[i + 1][j]:
-            count += countPaths(maze, i + 1, j, dest, visited)
-
-        # go up (i, j) ——> (i - 1, j)
-        if i - 1 >= 0 and not visited[i - 1][j]:
-            count += countPaths(maze, i - 1, j, dest, visited)
-
-        # go right (i, j) ——> (i, j + 1)
-        if j + 1 < N and not visited[i][j + 1]:
-            count += countPaths(maze, i, j + 1, dest, visited)
-
-        # go left (i, j) ——> (i, j - 1)
-        if j - 1 >= 0 and not visited[i][j - 1]:
-            count += countPaths(maze, i, j - 1, dest, visited)
-
-    # backtrack from the current cell and remove it from the current path
-    visited[i][j] = False
-
-    return count
-
-def findCount(maze, src, dest):
-
-    # get source cell (i, j)
-    i, j = src
-
-    # get destination cell (x, y)
-    x, y = dest
-
-    # base case: invalid input
-    if not maze or not len(maze) or not maze[i][j] or not maze[x][y]:
-        return 0
-
-    # `N × N` matrix
-    N = len(maze)
-
-    # 2D matrix to keep track of cells involved in the current path
-    visited = [[False for x in range(N)] for y in range(N)]
-
-    # start from source cell (i, j)
-    return countPaths(maze, i, j, dest, visited)
-
-if __name__ == '__main__':
-
-    maze = [
-        [1, 1, 1, 1],
-        [1, 1, 0, 1],
-        [0, 1, 0, 1],
-        [1, 1, 1, 1]
-    ]
-
-    # source cell
-    src = (0, 0)
-
-    # destination cell
-    dest = (3, 3)
-
-    print("The total number of unique paths are", findCount(maze, src, dest))
-```
 
 The time complexity of the above solution is exponential and requires additional space for the recursion (call stack).
 

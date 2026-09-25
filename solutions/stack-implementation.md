@@ -22,116 +22,97 @@ A (bounded) stack can be easily implemented using an array. The first element of
 
 **structure stack:** maxsize : integer top : integer items : array of item
 
-The stack can be implemented as follows in C:
+The stack can be implemented as follows in TypeScript:
 
-```
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // Data structure to represent a stack
-struct stack
-{
-    int maxsize;    // define max capacity of the stack
-    int top;
-    int *items;
-};
+class Stack {
+    maxsize: number;    // define max capacity of the stack
+    top: number;
+    items: number[];
 
-// Utility function to initialize the stack
-struct stack* newStack(int capacity)
-{
-    struct stack *pt = (struct stack*)malloc(sizeof(struct stack));
-
-    pt->maxsize = capacity;
-    pt->top = -1;
-    pt->items = (int*)malloc(sizeof(int) * capacity);
-
-    return pt;
-}
-
-// Utility function to return the size of the stack
-int size(struct stack *pt) {
-    return pt->top + 1;
-}
-
-// Utility function to check if the stack is empty or not
-int isEmpty(struct stack *pt) {
-    return pt->top == -1;                   // or return size(pt) == 0;
-}
-
-// Utility function to check if the stack is full or not
-int isFull(struct stack *pt) {
-    return pt->top == pt->maxsize - 1;      // or return size(pt) == pt->maxsize;
-}
-
-// Utility function to add an element `x` to the stack
-void push(struct stack *pt, int x)
-{
-    // check if the stack is already full. Then inserting an element would
-    // lead to stack overflow
-    if (isFull(pt))
-    {
-        printf("Overflow\nProgram Terminated\n");
-        exit(EXIT_FAILURE);
+    // Utility function to initialize the stack
+    constructor(capacity: number) {
+        this.maxsize = capacity;
+        this.top = -1;
+        this.items = new Array<number>(capacity);
     }
 
-    printf("Inserting %d\n", x);
+    // Utility function to return the size of the stack
+    size(): number {
+        return this.top + 1;
+    }
 
-    // add an element and increment the top's index
-    pt->items[++pt->top] = x;
+    // Utility function to check if the stack is empty or not
+    isEmpty(): boolean {
+        return this.top === -1;                   // or return this.size() === 0;
+    }
+
+    // Utility function to check if the stack is full or not
+    isFull(): boolean {
+        return this.top === this.maxsize - 1;      // or return this.size() === this.maxsize;
+    }
+
+    // Utility function to add an element `x` to the stack
+    push(x: number): void {
+        // check if the stack is already full. Then inserting an element would
+        // lead to stack overflow
+        if (this.isFull()) {
+            console.log("Overflow\nProgram Terminated\n");
+            process.exit(-1);
+        }
+
+        console.log(`Inserting ${x}`);
+
+        // add an element and increment the top's index
+        this.items[++this.top] = x;
+    }
+
+    // Utility function to return the top element of the stack
+    peek(): number {
+        // check for an empty stack
+        if (!this.isEmpty()) {
+            return this.items[this.top];
+        }
+        else {
+            process.exit(-1);
+        }
+    }
+
+    // Utility function to pop a top element from the stack
+    pop(): number {
+        // check for stack underflow
+        if (this.isEmpty()) {
+            console.log("Underflow\nProgram Terminated\n");
+            process.exit(-1);
+        }
+
+        console.log(`Removing ${this.peek()}`);
+
+        // decrement stack size by 1 and (optionally) return the popped element
+        return this.items[this.top--];
+    }
 }
 
-// Utility function to return the top element of the stack
-int peek(struct stack *pt)
-{
-    // check for an empty stack
-    if (!isEmpty(pt)) {
-        return pt->items[pt->top];
-    }
-    else {
-        exit(EXIT_FAILURE);
-    }
+// create a stack of capacity 5
+const pt = new Stack(5);
+
+pt.push(1);
+pt.push(2);
+pt.push(3);
+
+console.log(`The top element is ${pt.peek()}`);
+console.log(`The stack size is ${pt.size()}`);
+
+pt.pop();
+pt.pop();
+pt.pop();
+
+if (pt.isEmpty()) {
+    console.log("The stack is empty");
 }
-
-// Utility function to pop a top element from the stack
-int pop(struct stack *pt)
-{
-    // check for stack underflow
-    if (isEmpty(pt))
-    {
-        printf("Underflow\nProgram Terminated\n");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Removing %d\n", peek(pt));
-
-    // decrement stack size by 1 and (optionally) return the popped element
-    return pt->items[pt->top--];
-}
-
-int main()
-{
-    // create a stack of capacity 5
-    struct stack *pt = newStack(5);
-
-    push(pt, 1);
-    push(pt, 2);
-    push(pt, 3);
-
-    printf("The top element is %d\n", peek(pt));
-    printf("The stack size is %d\n", size(pt));
-
-    pop(pt);
-    pop(pt);
-    pop(pt);
-
-    if (isEmpty(pt)) {
-        printf("The stack is empty");
-    }
-    else {
-        printf("The stack is not empty");
-    }
-
-    return 0;
+else {
+    console.log("The stack is not empty");
 }
 ```
 
@@ -139,7 +120,7 @@ int main()
 
 The time complexity of `push()`, `pop()`, `peek()`, `isEmpty()`, `isFull()` and `size()` operations is O(1).
 
-It is possible to implement a stack that can grow or shrink as much as needed using a dynamic array such as C++’s [std::vector](https://en.cppreference.com/w/cpp/container/vector) or [ArrayList](https://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html) in Java. The stack’s size is simply the size of the dynamic array, which is a very efficient implementation of a stack since adding items to or removing items from the end of a dynamic array requires amortized O(1) time.
+It is possible to implement a stack that can grow or shrink as much as needed using a dynamic array. The stack’s size is simply the size of the dynamic array, which is a very efficient implementation of a stack since adding items to or removing items from the end of a dynamic array requires amortized O(1) time.
 
 Applications of a stack:
 

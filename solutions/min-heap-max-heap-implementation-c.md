@@ -2,162 +2,144 @@
 
 > Source: https://www.techiedelight.com/min-heap-max-heap-implementation-c/
 
-Implement a heap data structure in C++.
+Implement a heap data structure in TypeScript.
 
 **Prerequisite:**
 
 > [Introduction to Priority Queues using Binary Heaps](https://techiedelight.com/introduction-priority-queues-using-binary-heaps/)
 
-We have introduced the heap data structure in the above post and discussed `heapify-up`, `push`, `heapify-down`, and `pop` operations. In this post, the implementation of the max-heap and min-heap data structure is provided. Their implementation is somewhat similar to [std::priority_queue](https://cplusplus.com/reference/queue/priority_queue/).
+We have introduced the heap data structure in the above post and discussed `heapify-up`, `push`, `heapify-down`, and `pop` operations. In this post, the implementation of the max-heap and min-heap data structure is provided. Their implementation is somewhat similar to a [priority queue](https://cplusplus.com/reference/queue/priority_queue/).
 
-Max Heap implementation in C++:
+Max Heap implementation in TypeScript:
 
-```
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <stdexcept>
-using namespace std;
-
+```ts
 // Data structure to store a max-heap node
-struct PriorityQueue
-{
-private:
-    // vector to store heap elements
-    vector<int> A;
+class PriorityQueue {
+    // array to store heap elements
+    private A: number[] = [];
 
     // return parent of `A[i]`
     // don't call this function if `i` is already a root node
-    int PARENT(int i) {
-        return (i - 1) / 2;
+    private PARENT(i: number): number {
+        return Math.floor((i - 1) / 2);
     }
 
     // return left child of `A[i]`
-    int LEFT(int i) {
+    private LEFT(i: number): number {
         return (2*i + 1);
     }
 
     // return right child of `A[i]`
-    int RIGHT(int i) {
+    private RIGHT(i: number): number {
         return (2*i + 2);
     }
 
     // Recursive heapify-down algorithm.
     // The node at index `i` and its two direct children
     // violates the heap property
-    void heapify_down(int i)
-    {
+    private heapify_down(i: number): void {
         // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
+        const left = this.LEFT(i);
+        const right = this.RIGHT(i);
 
-        int largest = i;
+        let largest = i;
 
         // compare `A[i]` with its left and right child
         // and find the largest value
-        if (left < size() && A[left] > A[i]) {
+        if (left < this.size() && this.A[left] > this.A[i]) {
             largest = left;
         }
 
-        if (right < size() && A[right] > A[largest]) {
+        if (right < this.size() && this.A[right] > this.A[largest]) {
             largest = right;
         }
 
         // swap with a child having greater value and
         // call heapify-down on the child
-        if (largest != i)
-        {
-            swap(A[i], A[largest]);
-            heapify_down(largest);
+        if (largest !== i) {
+            [this.A[i], this.A[largest]] = [this.A[largest], this.A[i]];
+            this.heapify_down(largest);
         }
     }
 
     // Recursive heapify-up algorithm
-    void heapify_up(int i)
-    {
+    private heapify_up(i: number): void {
         // check if the node at index `i` and its parent violate the heap property
-        if (i && A[PARENT(i)] < A[i])
-        {
+        if (i > 0 && this.A[this.PARENT(i)] < this.A[i]) {
             // swap the two if heap property is violated
-            swap(A[i], A[PARENT(i)]);
+            [this.A[i], this.A[this.PARENT(i)]] = [this.A[this.PARENT(i)], this.A[i]];
 
             // call heapify-up on the parent
-            heapify_up(PARENT(i));
+            this.heapify_up(this.PARENT(i));
         }
     }
 
-public:
     // return size of the heap
-    unsigned int size() {
-        return A.size();
+    public size(): number {
+        return this.A.length;
     }
 
     // Function to check if the heap is empty or not
-    bool empty() {
-        return size() == 0;
+    public empty(): boolean {
+        return this.size() === 0;
     }
 
     // insert key into the heap
-    void push(int key)
-    {
-        // insert a new element at the end of the vector
-        A.push_back(key);
+    public push(key: number): void {
+        // insert a new element at the end of the array
+        this.A.push(key);
 
         // get element index and call heapify-up procedure
-        int index = size() - 1;
-        heapify_up(index);
+        const index = this.size() - 1;
+        this.heapify_up(index);
     }
 
     // Function to remove an element with the highest priority (present at the root)
-    void pop()
-    {
+    public pop(): void {
         try {
             // if the heap has no elements, throw an exception
-            if (size() == 0)
+            if (this.size() === 0)
             {
-                throw out_of_range("Vector<X>::at() : "
+                throw new RangeError("Vector<X>::at() : " +
                         "index is out of range(Heap underflow)");
             }
 
             // replace the root of the heap with the last element
-            // of the vector
-            A[0] = A.back();
-            A.pop_back();
+            // of the array
+            this.A[0] = this.A[this.A.length - 1];
+            this.A.pop();
 
             // call heapify-down on the root node
-            heapify_down(0);
+            this.heapify_down(0);
         }
         // catch and print the exception
-        catch (const out_of_range &oor) {
-            cout << endl << oor.what();
+        catch (oor) {
+            console.log("\n" + (oor as RangeError).message);
         }
     }
 
     // Function to return an element with the highest priority (present at the root)
-    int top()
-    {
+    public top(): number | undefined {
         try {
             // if the heap has no elements, throw an exception
-            if (size() == 0)
+            if (this.size() === 0)
             {
-                throw out_of_range("Vector<X>::at() : "
+                throw new RangeError("Vector<X>::at() : " +
                         "index is out of range(Heap underflow)");
             }
 
             // otherwise, return the top (first) element
-            return A.at(0);        // or return A[0];
+            return this.A[0];
         }
         // catch and print the exception
-        catch (const out_of_range &oor) {
-            cout << endl << oor.what();
+        catch (oor) {
+            console.log("\n" + (oor as RangeError).message);
         }
     }
-};
+}
 
-// Max Heap implementation in C++
-int main()
-{
-    PriorityQueue pq;
+(function main() {
+    const pq = new PriorityQueue();
 
     // Note: The element's value decides priority
 
@@ -165,193 +147,173 @@ int main()
     pq.push(2);
     pq.push(15);
 
-    cout << "Size is " << pq.size() << endl;
+    console.log("Size is " + pq.size());
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
     pq.push(5);
     pq.push(4);
     pq.push(45);
 
-    cout << endl << "Size is " << pq.size() << endl;
+    console.log("\nSize is " + pq.size());
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << endl << boolalpha << pq.empty();
+    console.log("\n" + pq.empty());
 
     pq.top();    // top operation on an empty heap
     pq.pop();    // pop operation on an empty heap
-
-    return 0;
-}
+})();
 ```
 
 **Output:** Size is 3 15 3 Size is 4 45 5 4 2 true Vector::at() : index is out of range(Heap underflow) Vector::at() : index is out of range(Heap underflow)
 
-Min Heap implementation in C++:
+Min Heap implementation in TypeScript:
 
-Following is the implementation min-heap data structure in C++, which is very similar to the max-heap implementation discussed above. The highlighted portion marks its differences with the max-heap implementation.
+Following is the implementation min-heap data structure in TypeScript, which is very similar to the max-heap implementation discussed above. The highlighted portion marks its differences with the max-heap implementation.
 
-```
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <stdexcept>
-using namespace std;
-
+```ts
 // Data structure to store a min-heap node
-struct PriorityQueue
-{
-private:
-    // vector to store heap elements
-    vector<int> A;
+class PriorityQueue {
+    // array to store heap elements
+    private A: number[] = [];
 
     // return parent of `A[i]`
     // don't call this function if `i` is already a root node
-    int PARENT(int i) {
-        return (i - 1) / 2;
+    private PARENT(i: number): number {
+        return Math.floor((i - 1) / 2);
     }
 
     // return left child of `A[i]`
-    int LEFT(int i) {
+    private LEFT(i: number): number {
         return (2*i + 1);
     }
 
     // return right child of `A[i]`
-    int RIGHT(int i) {
+    private RIGHT(i: number): number {
         return (2*i + 2);
     }
 
     // Recursive heapify-down algorithm.
     // The node at index `i` and its two direct children
     // violates the heap property
-    void heapify_down(int i)
-    {
+    private heapify_down(i: number): void {
         // get left and right child of node at index `i`
-        int left = LEFT(i);
-        int right = RIGHT(i);
+        const left = this.LEFT(i);
+        const right = this.RIGHT(i);
 
-        int smallest = i;
+        let smallest = i;
 
         // compare `A[i]` with its left and right child
         // and find the smallest value
-        if (left < size() && A[left] < A[i]) {
+        if (left < this.size() && this.A[left] < this.A[i]) {
             smallest = left;
         }
 
-        if (right < size() && A[right] < A[smallest]) {
+        if (right < this.size() && this.A[right] < this.A[smallest]) {
             smallest = right;
         }
 
         // swap with a child having lesser value and
         // call heapify-down on the child
-        if (smallest != i)
-        {
-            swap(A[i], A[smallest]);
-            heapify_down(smallest);
+        if (smallest !== i) {
+            [this.A[i], this.A[smallest]] = [this.A[smallest], this.A[i]];
+            this.heapify_down(smallest);
         }
     }
 
     // Recursive heapify-up algorithm
-    void heapify_up(int i)
-    {
+    private heapify_up(i: number): void {
         // check if the node at index `i` and its parent violate the heap property
-        if (i && A[PARENT(i)] > A[i])
-        {
+        if (i > 0 && this.A[this.PARENT(i)] > this.A[i]) {
             // swap the two if heap property is violated
-            swap(A[i], A[PARENT(i)]);
+            [this.A[i], this.A[this.PARENT(i)]] = [this.A[this.PARENT(i)], this.A[i]];
 
             // call heapify-up on the parent
-            heapify_up(PARENT(i));
+            this.heapify_up(this.PARENT(i));
         }
     }
 
-public:
     // return size of the heap
-    unsigned int size() {
-        return A.size();
+    public size(): number {
+        return this.A.length;
     }
 
     // Function to check if the heap is empty or not
-    bool empty() {
-        return size() == 0;
+    public empty(): boolean {
+        return this.size() === 0;
     }
 
     // insert key into the heap
-    void push(int key)
-    {
-        // insert a new element at the end of the vector
-        A.push_back(key);
+    public push(key: number): void {
+        // insert a new element at the end of the array
+        this.A.push(key);
 
         // get element index and call heapify-up procedure
-        int index = size() - 1;
-        heapify_up(index);
+        const index = this.size() - 1;
+        this.heapify_up(index);
     }
 
     // Function to remove an element with the lowest priority (present at the root)
-    void pop()
-    {
+    public pop(): void {
         try {
             // if the heap has no elements, throw an exception
-            if (size() == 0)
+            if (this.size() === 0)
             {
-                throw out_of_range("Vector<X>::at() : "
+                throw new RangeError("Vector<X>::at() : " +
                         "index is out of range(Heap underflow)");
             }
 
             // replace the root of the heap with the last element
-            // of the vector
-            A[0] = A.back();
-            A.pop_back();
+            // of the array
+            this.A[0] = this.A[this.A.length - 1];
+            this.A.pop();
 
             // call heapify-down on the root node
-            heapify_down(0);
+            this.heapify_down(0);
         }
         // catch and print the exception
-        catch (const out_of_range &oor) {
-            cout << endl << oor.what();
+        catch (oor) {
+            console.log("\n" + (oor as RangeError).message);
         }
     }
 
     // Function to return an element with the lowest priority (present at the root)
-    int top()
-    {
+    public top(): number | undefined {
         try {
             // if the heap has no elements, throw an exception
-            if (size() == 0)
+            if (this.size() === 0)
             {
-                throw out_of_range("Vector<X>::at() : "
+                throw new RangeError("Vector<X>::at() : " +
                         "index is out of range(Heap underflow)");
             }
 
             // otherwise, return the top (first) element
-            return A.at(0);        // or return A[0];
+            return this.A[0];
         }
         // catch and print the exception
-        catch (const out_of_range &oor) {
-            cout << endl << oor.what();
+        catch (oor) {
+            console.log("\n" + (oor as RangeError).message);
         }
     }
-};
+}
 
-// Min Heap implementation in C++
-int main()
-{
-    PriorityQueue pq;
+(function main() {
+    const pq = new PriorityQueue();
 
     // Note: The element's value decides priority
 
@@ -359,39 +321,37 @@ int main()
     pq.push(2);
     pq.push(15);
 
-    cout << "Size is " << pq.size() << endl;
+    console.log("Size is " + pq.size());
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
     pq.push(5);
     pq.push(4);
     pq.push(45);
 
-    cout << endl << "Size is " << pq.size() << endl;
+    console.log("\nSize is " + pq.size());
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << pq.top() << " ";
+    process.stdout.write(`${pq.top()} `);
     pq.pop();
 
-    cout << endl << boolalpha << pq.empty();
+    console.log("\n" + pq.empty());
 
     pq.top();    // top operation on an empty heap
     pq.pop();    // pop operation on an empty heap
-
-    return 0;
-}
+})();
 ```
 
 **Output:** Size is 3 2 3 Size is 4 4 5 15 45 true Vector::at() : index is out of range(Heap underflow) Vector::at() : index is out of range(Heap underflow)
@@ -401,7 +361,7 @@ Following is the time complexity of implemented heap operations:
   1. `push()` and `pop()` takes O(log(n)) time.
   2. `peek()` and `size()` and `isEmpty()` takes O(1) time.
 
-**Exercise:** Convert above code to use array instead of vector (check simple solution [here](https://techiedelight.com/compiler/?run=2UNCN3)).
+**Exercise:** Convert above code to use a fixed-size array instead of a dynamic array (check simple solution [here](https://techiedelight.com/compiler/?run=2UNCN3)).
 
 **Also See:**
 

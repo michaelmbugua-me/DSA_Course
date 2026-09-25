@@ -14,241 +14,74 @@ For example, consider the following list:
 
 The idea is to traverse the given list, skip the first `m` nodes, delete the next `n` nodes, and recur for the remaining nodes. The solution is simple, but we need to ensure that all boundary conditions are handled properly in the code.
 
-The implementation can be seen below in C, Java, and Python:
+The implementation can be seen below in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to create a new node with the given data and
-// pushes it onto the list's front
-void push(struct Node** head, int data)
-{
-    // create a new linked list node from the heap
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-
-    newNode->data = data;
-    newNode->next = *head;
-    *head = newNode;
+class Node {
+    constructor(public data: number, public next: Node | null = null) {}
 }
 
 // Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
+function printList(head: Node | null): void {
+    let ptr = head;
+    let out = '';
+    while (ptr) {
+        out += `${ptr.data} —> `;
+        ptr = ptr.next;
     }
-
-    printf("NULL");
+    console.log(out + 'None');
 }
 
 // Recursive function to delete every `n` nodes in a linked list after
 // skipping `m` nodes
-void deleteNodes(struct Node *head, int m, int n)
-{
+function deleteNodes(head: Node | null, m: number, n: number): Node | null {
     // base case
-    if (head == NULL || head->next == NULL) {
-        return;
-    }
-
-    struct Node *prev = NULL, *next = NULL;
-    struct Node* curr = head;
-
-    // skip `m` nodes
-    for (int i = 1; curr && i <= m; i++)
-    {
-        prev = curr;
-        curr = curr->next;
-    }
-
-    // delete next `n` nodes
-    for (int i = 1; curr && i <= n; i++)
-    {
-        next = curr->next;
-        free(curr);
-        curr = next;
-    }
-
-    // link remaining nodes with the last node
-    prev->next = curr;
-
-    // recur for remaining nodes
-    deleteNodes(curr, m, n);
-}
-
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    int n = sizeof(keys) / sizeof(keys[0]);
-
-    struct Node* head = NULL;
-    for (int i = n - 1; i >= 0; i--) {
-        push(&head, keys[i]);
-    }
-
-    deleteNodes(head, 1, 3);
-    printList(head);
-
-    return 0;
-}
-```
-
-**Output:** 1 —> 5 —> 9 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Recursive function to delete every `n` nodes in a linked list after
-    // skipping `m` nodes
-    public static Node deleteNodes(Node head, int m, int n)
-    {
-        // base case
-        if (head == null || head.next == null) {
-            return head;
-        }
-
-        Node prev = null, next;
-        Node curr = head;
-
-        // skip `m` nodes
-        for (int i = 1; curr != null && i <= m; i++)
-        {
-            prev = curr;
-            curr = curr.next;
-        }
-
-        // delete next `n` nodes
-        for (int i = 1; curr != null && i <= n; i++)
-        {
-            next = curr.next;
-            curr = next;
-        }
-
-        // link remaining nodes with the last node
-        prev.next = curr;
-
-        // recur for remaining nodes
-        deleteNodes(curr, m, n);
-
+    if (head === null || head.next === null) {
         return head;
     }
 
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    let prev: Node | null = null;
+    let curr: Node | null = head;
 
-        Node head = null;
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
+    // skip `m` nodes
+    for (let i = 1; i <= m; i++) {
+        prev = curr;
+        curr = curr!.next;
+
+        // return if we have reached end of the list
+        if (!curr) {
+            return head;
         }
-
-        head = deleteNodes(head, 1, 3);
-        printList(head);
     }
+
+    // delete next `n` nodes
+    for (let i = 1; i <= n; i++) {
+        if (curr) {
+            const next = curr.next;
+            curr = next;
+        }
+    }
+
+    // link remaining nodes with the last node
+    prev!.next = curr;
+
+    // recur for remaining nodes
+    deleteNodes(curr, m, n);
+
+    return head;
 }
+
+let head: Node | null = null;
+for (let i = 9; i >= 0; i--) {
+    head = new Node(i + 1, head);
+}
+
+head = deleteNodes(head, 1, 3);
+printList(head);
 ```
 
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
-
-# Recursive function to delete every `n` nodes in a linked list after
-# skipping `m` nodes
-def deleteNodes(head, m, n):
-
-    # base case
-    if head is None or head.next is None:
-        return head
-
-    prev = None
-    curr = head
-
-    # skip `m` nodes
-    for i in range(1, m + 1):
-        prev = curr
-        curr = curr.next
-
-        # return if we have reached end of the list
-        if not curr:
-            return head
-
-    # delete next `n` nodes
-    for i in range(1, n + 1):
-        if curr:
-            next = curr.next
-            curr = next
-
-    # link remaining nodes with the last node
-    prev.next = curr
-
-    # recur for remaining nodes
-    deleteNodes(curr, m, n)
-
-    return head
-
-if __name__ == '__main__':
-
-    head = None
-    for i in reversed(range(10)):
-        head = Node(i + 1, head)
-
-    head = deleteNodes(head, 1, 3)
-    printList(head)
-```
+**Output:** 1 —> 5 —> 9 —> NULL
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.
 

@@ -16,71 +16,59 @@ A simple solution would be to store the path from root to `x` and the path from 
 
 We can recursively find the lowest common ancestor of nodes `x` and `y` present in the binary tree. The trick is to find the node in a binary tree with one key present in its left subtree and the other key present in the right subtree. If any such node is present in the tree, then it is LCA; if `y` lies in the subtree rooted at node `x`, then `x` is the LCA; otherwise, if `x` lies in the subtree rooted at node `y`, then `y` is the LCA.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Function to check if a given node is present in a binary tree or not
-bool isNodePresent(Node* root, Node* node)
-{
+function isNodePresent(root: TreeNode, node: TreeNode): boolean {
+
     // base case
-    if (root == nullptr) {
+    if (root === null) {
         return false;
     }
 
     // if the node is found, return true
-    if (root == node) {
+    if (root === node) {
         return true;
     }
 
     // return true if a given node is found in the left or right subtree
-    return isNodePresent(root->left, node) || isNodePresent(root->right, node);
+    return isNodePresent(root.left, node) || isNodePresent(root.right, node);
 }
 
 // Function to find the lowest common ancestor of given nodes `x` and `y`, where
 // both `x` and `y` are present in a binary tree.
 // The function returns true if `x` or `y` is found in a subtree rooted at the root.
-// `lca` —> stores `LCA(x, y)`, and it is passed by reference to the function
-bool findLCA(Node* root, Node* &lca, Node* x, Node* y)
-{
+// `lca` —> stores `LCA(x, y)`
+function findlca(root: TreeNode, lca: { node: TreeNode }, x: TreeNode, y: TreeNode): boolean {
+
     // base case 1: return false if the tree is empty
-    if (root == nullptr) {
+    if (root === null) {
         return false;
     }
 
     // base case 2: return true if either `x` or `y` is found
-    if (root == x || root == y)
-    {
-        // set lca to the current node
-        lca = root;
+    // with lca set to the current node
+    if (root === x || root === y) {
+        lca.node = root;
         return true;
     }
 
     // recursively check if `x` or `y` exists in the left subtree
-    bool left = findLCA(root->left, lca, x, y);
+    const left = findlca(root.left, lca, x, y);
 
     // recursively check if `x` or `y` exists in the right subtree
-    bool right = findLCA(root->right, lca, x, y);
+    const right = findlca(root.right, lca, x, y);
 
     // if `x` is found in one subtree and `y` is found in the other subtree,
     // update lca to the current node
     if (left && right) {
-        lca = root;
+        lca.node = root;
     }
 
     // return true if `x` or `y` is found in either left or right subtree
@@ -88,289 +76,53 @@ bool findLCA(Node* root, Node* &lca, Node* x, Node* y)
 }
 
 // Function to find the lowest common ancestor of nodes `x` and `y`
-void findLCA(Node* root, Node* x, Node* y)
-{
+function findLCA(root: TreeNode, x: TreeNode, y: TreeNode): void {
+
     // `lca` stores the lowest common ancestor
-    Node* lca = nullptr;
+    const lca: { node: TreeNode } = { node: null };
 
     // call LCA procedure only if both `x` and `y` are present in the tree
     if (isNodePresent(root, y) && isNodePresent(root, x)) {
-        findLCA(root, lca, x, y);
+        findlca(root, lca, x, y);
     }
 
     // if LCA exists, print it
-    if (lca != nullptr) {
-        cout << "LCA is " << lca->data << endl;
+    if (lca.node) {
+        console.log('LCA is', lca.node.data);
     }
     else {
-        cout << "LCA does not exist\n";
+        console.log('LCA does not exist');
     }
 }
 
-int main()
-{
-    /* Construct the following tree
-          1
-        /   \
-       /     \
-      2       3
-       \     / \
-        4   5   6
-           / \
-          7   8
-    */
+/* Construct the following tree
+      1
+    /   \
+   /     \
+  2       3
+   \     / \
+    4   5   6
+       / \
+      7   8
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->right = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.right = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    findLCA(root, root->right->left->left, root->right->right);
-    findLCA(root, root->right->left->left, new Node(10));
-    findLCA(root, root->right->left->left, root->right->left->left);
-    findLCA(root, root->right->left->left, root->right->left);
-    findLCA(root, root->left, root->right->left);
-
-    return 0;
-}
+findLCA(root, root.right.left.left, root.right.right);
+findLCA(root, root.right.left.left, new TreeNode(10));
+findLCA(root, root.right.left.left, root.right.left.left);
+findLCA(root, root.right.left.left, root.right.left);
+findLCA(root, root.left, root.right.left);
 ```
 
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Wrapper over `Node` class
-    static class NodeWrapper
-    {
-        public Node node;
-
-        NodeWrapper(Node node) {
-            this.node = node;
-        }
-    }
-
-    // Function to check if a given node is present in a binary tree or not
-    public static boolean isNodePresent(Node root, Node node)
-    {
-        // base case
-        if (root == null) {
-            return false;
-        }
-
-        // if the node is found, return true
-        if (root == node) {
-            return true;
-        }
-
-        // return true if a given node is found in the left or right subtree
-        return isNodePresent(root.left, node) || isNodePresent(root.right, node);
-    }
-
-    // Function to find the lowest common ancestor of given nodes `x` and `y`, where
-    // both `x` and `y` are present in the binary tree.
-    // The function returns true if `x` or `y` is found in a subtree rooted at the root
-    // `lca` —> stores `LCA(x, y)`
-    public static boolean findLCA(Node root, NodeWrapper lca, Node x, Node y)
-    {
-        // base case 1: return false if the tree is empty
-        if (root == null) {
-            return false;
-        }
-
-        // base case 2: return true if either `x` or `y` is found
-        if (root == x || root == y)
-        {
-            // set lca to the current node
-            lca.node = root;
-            return true;
-        }
-
-        // recursively check if `x` or `y` exists in the left subtree
-        boolean left = findLCA(root.left, lca, x, y);
-
-        // recursively check if `x` or `y` exists in the right subtree
-        boolean right = findLCA(root.right, lca, x, y);
-
-        // if `x` is found in one subtree and `y` is found in the other subtree,
-        // update lca to the current node
-        if (left && right) {
-            lca.node = root;
-        }
-
-        // return true if `x` or `y` is found in either left or right subtree
-        return left || right;
-    }
-
-    // Function to find the lowest common ancestor of nodes `x` and `y`
-    public static void findLCA(Node root, Node x, Node y)
-    {
-        // `lca` stores the lowest common ancestor
-        Node lca = null;
-
-        // Wrap the `lca` node, so its reference can be changed inside the
-        // `findLCA()` method
-        NodeWrapper LCA = new NodeWrapper(lca);
-
-        // call LCA procedure only if both `x` and `y` are present in the tree
-        if (isNodePresent(root, y) && isNodePresent(root, x))
-        {
-            findLCA(root, LCA, x, y);
-            lca = LCA.node;
-        }
-
-        // if LCA exists, print it
-        if (lca != null) {
-            System.out.println("LCA is " + lca.data);
-        }
-        else {
-            System.out.println("LCA does not exist");
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-           \     / \
-            4   5   6
-               / \
-              7   8
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.right = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        findLCA(root, root.right.left.left, root.right.right);
-        findLCA(root, root.right.left.left, new Node(10));
-        findLCA(root, root.right.left.left, root.right.left.left);
-        findLCA(root, root.right.left.left, root.right.left);
-        findLCA(root, root.left, root.right.left);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to check if a given node is present in a binary tree or not
-def isNodePresent(root, node):
-
-    # base case
-    if root is None:
-        return False
-
-    # if the node is found, return true
-    if root == node:
-        return True
-
-    # return true if a given node is found in the left or right subtree
-    return isNodePresent(root.left, node) or isNodePresent(root.right, node)
-
-# Function to find the lowest common ancestor of given nodes `x` and `y`, where
-# both `x` and `y` are present in a binary tree.
-# The function returns true if `x` or `y` is found in a subtree rooted at the root.
-# `lca` —> stores `LCA(x, y)`
-def findlca(root, lca, x, y):
-
-    # base case 1: return false if the tree is empty
-    if root is None:
-        return False, lca
-
-    # base case 2: return true if either `x` or `y` is found
-    # with lca set to the current node
-    if root == x or root == y:
-        return True, root
-
-    # recursively check if `x` or `y` exists in the left subtree
-    left, lca = findlca(root.left, lca, x, y)
-
-    # recursively check if `x` or `y` exists in the right subtree
-    right, lca = findlca(root.right, lca, x, y)
-
-    # if `x` is found in one subtree and `y` is found in the other subtree,
-    # update lca to the current node
-    if left and right:
-        lca = root
-
-    # return true if `x` or `y` is found in either left or right subtree
-    return (left or right), lca
-
-# Function to find the lowest common ancestor of nodes `x` and `y`
-def findLCA(root, x, y):
-
-    # `lca` stores the lowest common ancestor
-    lca = None
-
-    # call LCA procedure only if both `x` and `y` are present in the tree
-    if isNodePresent(root, y) and isNodePresent(root, x):
-        lca = findlca(root, lca, x, y)[1]
-
-    # if LCA exists, print it
-    if lca:
-        print('LCA is', lca.data)
-    else:
-        print('LCA does not exist')
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-          1
-        /   \
-       /     \
-      2       3
-       \     / \
-        4   5   6
-           / \
-          7   8
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.right = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    findLCA(root, root.right.left.left, root.right.right)
-    findLCA(root, root.right.left.left, Node(10))
-    findLCA(root, root.right.left.left, root.right.left.left)
-    findLCA(root, root.right.left.left, root.right.left)
-    findLCA(root, root.left, root.right.left)
-```
+**Output:** LCA is 3 LCA does not exist LCA is 7 LCA is 5 LCA is 1
 
 **Output:** LCA is 3 LCA does not exist LCA is 7 LCA is 5 LCA is 1
 

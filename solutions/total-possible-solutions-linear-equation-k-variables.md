@@ -23,331 +23,108 @@ That is, for each coefficient of a variable.
 
 Finally, return total ways by including or excluding the current coefficient. The recursion’s base case is when the solution is found (i.e., rhs becomes 0), or the solution doesn’t exist (when no coefficients are left, or rhs becomes negative).
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Function to count the total number of possible solutions to a
 // linear equation of `k` variables
-int count(int coeff[], int k, int rhs)
-{
-    // if rhs become 0, return 1 (solution found)
-    if (rhs == 0) {
+function count(coeff: number[], k: number, rhs: number): number {
+    // if rhs become 0, a solution is found
+    if (rhs === 0) {
         return 1;
     }
 
-    // return 0 (solution does not exist) if rhs becomes negative or
-    // no coefficient is left
+    // return 0 if rhs becomes negative or no coefficient is left
     if (rhs < 0 || k < 0) {
         return 0;
     }
 
     // Case 1. Include current coefficient `coeff[k]` in solution and
     // recur with remaining value `rhs-coeff[k]`
-
-    int include = count(coeff, k, rhs - coeff[k]);
+    const include = count(coeff, k, rhs - coeff[k]);
 
     // Case 2. Exclude current coefficient `coeff[k]` from solution and
     // recur for remaining coefficients `k-1`
-
-    int exclude = count(coeff, k - 1, rhs);
+    const exclude = count(coeff, k - 1, rhs);
 
     // return total ways by including or excluding the current coefficient
     return include + exclude;
 }
 
-int main()
-{
-    // `k` coefficients of the given equation
-    int coeff[] = { 1, 2, 3 };
-    int k = sizeof(coeff) / sizeof(coeff[0]);
+// `k` coefficients of the given equation
+const coeff = [1, 2, 3];
+const k = coeff.length;
 
-    int rhs = 4;
-
-    cout << "The total number of solutions is " << count(coeff, k - 1, rhs);
-
-    return 0;
-}
-```
-
-**Output:** The total number of solutions is 4
-
-##
-
-```java
-class Main
-{
-    // Function to count the total number of possible solutions to a
-    // linear equation of `k` variables
-    public static int count(int[] coeff, int k, int rhs)
-    {
-        // if rhs become 0, a solution is found
-        if (rhs == 0) {
-            return 1;
-        }
-
-        // return 0 if rhs becomes negative or no coefficient is left
-        if (rhs < 0 || k < 0) {
-            return 0;
-        }
-
-        // Case 1. Include current coefficient `coeff[k]` in solution and
-        // recur with remaining value `rhs-coeff[k]`
-        int include = count(coeff, k, rhs - coeff[k]);
-
-        // Case 2. Exclude current coefficient `coeff[k]` from solution and
-        // recur for remaining coefficients `k-1`
-        int exclude = count(coeff, k - 1, rhs);
-
-        // return total ways by including or excluding the current coefficient
-        return include + exclude;
-    }
-
-    public static void main (String[] args)
-    {
-        // `k` coefficients of the given equation
-        int[] coeff = { 1, 2, 3 };
-        int k = coeff.length;
-
-        int rhs = 4;
-
-        System.out.println("The total number of solutions is " +
-            count(coeff, k - 1, rhs));
-    }
-}
-```
-
-##
-
-```python3
-# Function to count the total number of possible solutions to a
-# linear equation of `k` variables
-def count(coeff, k, rhs):
-
-    # if rhs become 0, a solution is found
-    if rhs == 0:
-        return 1
-
-    # return 0 if rhs becomes negative or no coefficient is left
-    if rhs < 0 or k < 0:
-        return 0
-
-    # Case 1. Include current coefficient `coeff[k]` in solution and
-    # recur with remaining value `rhs-coeff[k]`
-    include = count(coeff, k, rhs - coeff[k])
-
-    # Case 2. Exclude current coefficient `coeff[k]` from solution and
-    # recur for remaining coefficients `k-1`
-    exclude = count(coeff, k - 1, rhs)
-
-    # return total ways by including or excluding the current coefficient
-    return include + exclude
-
-if __name__ == '__main__':
-
-    # `k` coefficients of the given equation
-    coeff = [1, 2, 3]
-    k = len(coeff)
-
-    rhs = 4
-    print('The total number of solutions is', count(coeff, k - 1, rhs))
+const rhs = 4;
+console.log('The total number of solutions is', count(coeff, k - 1, rhs));
 ```
 
 The time complexity of the above solution is exponential and occupies space in the call stack.
 
 The above solution has an [optimal substructure](https://techiedelight.com/introduction-dynamic-programming/#optimal-substructure) as it can be broken down into smaller subproblems. It also clearly displays [overlapping subproblems](https://techiedelight.com/introduction-dynamic-programming/#overlapping-subproblems), and we might end up solving the same subproblem repeatedly. The repeated subproblems can be seen by drawing the recursion tree for higher values of the desired change.
 
-The problems having optimal substructure and overlapping subproblem can be solved using dynamic programming in which subproblem solutions are _memo_ ized rather than computed repeatedly. Following is the C++, Java, and Python program that demonstrates it:
+The problems having optimal substructure and overlapping subproblem can be solved using dynamic programming in which subproblem solutions are _memo_ ized rather than computed repeatedly. Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to count the total number of possible solutions to a
 // linear equation of `k` variables
-int count(int coeff[], int k, int rhs, auto &lookup)
-{
-    // if rhs become 0, return 1 (solution found)
-    if (rhs == 0) {
+function count(coeff: number[], k: number, rhs: number, lookup: Map<string, number>): number {
+    // if rhs become 0, a solution is found
+    if (rhs === 0) {
         return 1;
     }
 
-    // return 0 (solution does not exist) if rhs becomes negative or
-    // no coefficient is left
+    // return 0 if rhs becomes negative or no coefficient is left
     if (rhs < 0 || k < 0) {
         return 0;
     }
 
-    // construct a unique map key from dynamic elements of the input
-    string key = to_string(k) + "|" + to_string(rhs);
+    // construct a unique key from dynamic elements of the input
+    const key = `${k}|${rhs}`;
 
     // if the subproblem is seen for the first time, solve it and
     // store its result in a map
+    if (!lookup.has(key)) {
+        const include = count(coeff, k, rhs - coeff[k], lookup);  // Case 1
+        const exclude = count(coeff, k - 1, rhs, lookup);         // Case 2
 
-    if (lookup.find(key) == lookup.end())
-    {
-        int include = count(coeff, k, rhs - coeff[k], lookup);  // case 1
-
-        int exclude = count(coeff, k - 1, rhs, lookup);         // case 2
-
-        // assign total ways by including or excluding the current coefficient
-        lookup[key] = include + exclude;
+        // return total ways by including or excluding the current coefficient
+        lookup.set(key, include + exclude);
     }
 
     // return solution to the current subproblem
-    return lookup[key];
+    return lookup.get(key);
 }
 
-int main()
-{
-    // `k` coefficients of the given equation
-    int coeff[] = { 1, 2, 3 };
-    int k = sizeof(coeff) / sizeof(coeff[0]);
+// `k` coefficients of the given equation
+const coeff = [1, 2, 3];
+const k = coeff.length;
 
-    int rhs = 4;
+const rhs = 4;
 
-    // create a map to store solutions to a subproblem
-    unordered_map<string, int> lookup;
+// create a map to store solutions to a subproblem
+const lookup = new Map<string, number>();
 
-    cout << "The total number of solutions is " << count(coeff, k - 1, rhs, lookup);
-
-    return 0;
-}
-```
-
-**Output:** The total number of solutions is 4
-
-##
-
-```java
-import java.util.Map;
-import java.util.HashMap;
-
-class Main
-{
-    // Function to count the total number of possible solutions to a
-    // linear equation of `k` variables
-    public static int count(int[] coeff, int k, int rhs, Map<String, Integer> lookup)
-    {
-        // if rhs become 0, a solution is found
-        if (rhs == 0) {
-            return 1;
-        }
-
-        // return 0 if rhs becomes negative or no coefficient is left
-        if (rhs < 0 || k < 0) {
-            return 0;
-        }
-
-        // construct a unique map key from dynamic elements of the input
-        String key = k + "|" + rhs;
-
-        // if the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (lookup.get(key) == null)
-        {
-            int include = count(coeff, k, rhs - coeff[k], lookup);  // Case 1
-
-            int exclude = count(coeff, k - 1, rhs, lookup);         // Case 2
-
-            // return total ways by including or excluding the current coefficient
-            lookup.put(key, include + exclude);
-        }
-
-        // return solution to the current subproblem
-        return lookup.get(key);
-    }
-
-    public static void main (String[] args)
-    {
-        // `k` coefficients of the given equation
-        int[] coeff = { 1, 2, 3 };
-        int k = coeff.length;
-
-        int rhs = 4;
-
-        // create a map to store solutions to a subproblem
-        Map<String, Integer> lookup = new HashMap<>();
-
-        System.out.println("The total number of solutions is " +
-                count(coeff, k - 1, rhs, lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Function to count the total number of possible solutions to a
-# linear equation of `k` variables
-def count(coeff, k, rhs, lookup):
-
-    # if rhs become 0, a solution is found
-    if rhs == 0:
-        return 1
-
-    # return 0 if rhs becomes negative or no coefficient is left
-    if rhs < 0 or k < 0:
-        return 0
-
-    # construct a unique key from dynamic elements of the input
-    key = (k, rhs)
-
-    # if the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        include = count(coeff, k, rhs - coeff[k], lookup)   # Case 1
-        exclude = count(coeff, k - 1, rhs, lookup)          # Case 2
-
-        # return total ways by including or excluding the current coefficient
-        lookup[key] = include + exclude
-
-    # return solution to the current subproblem
-    return lookup[key]
-
-if __name__ == '__main__':
-
-    # `k` coefficients of the given equation
-    coeff = [1, 2, 3]
-    k = len(coeff)
-
-    rhs = 4
-
-    # create a dictionary to store solutions to a subproblem
-    lookup = {}
-
-    print('The total number of solutions is', count(coeff, k - 1, rhs, lookup))
+console.log('The total number of solutions is', count(coeff, k - 1, rhs, lookup));
 ```
 
 The time complexity of the above solution is O(k × rhs), and the auxiliary space used by the program is O(k × rhs).
 
-We can even write a bottom-up version of the above memoized solution. The following code shows how to implement this in C, Java, and Python:
+We can even write a bottom-up version of the above memoized solution. The following code shows how to implement this in TypeScript:
 
-```c
-#include <stdio.h>
+```ts
+function count(coeff: number[], k: number, rhs: number): number {
+    const T: number[][] = Array.from({ length: k + 1 }, () => new Array(rhs + 1));
 
-int count(int coeff[], int k, int rhs)
-{
-    int T[k + 1][rhs + 1];
-
-    for (int i = 0; i <= k; i++)
-    {
-        for (int j = 0; j <= rhs; j++)
-        {
-            if (i == 0) {
+    for (let i = 0; i <= k; i++) {
+        for (let j = 0; j <= rhs; j++) {
+            if (i === 0) {
                 T[i][j] = 0;
-            }
-            else if (j == 0) {
+            } else if (j === 0) {
                 T[i][j] = 1;
-            }
-            else if (coeff[i - 1] > j) {
+            } else if (coeff[i - 1] > j) {
                 T[i][j] = T[i - 1][j];
-            }
-            else {
+            } else {
                 T[i][j] = T[i - 1][j] + T[i][j - coeff[i - 1]];
             }
         }
@@ -356,17 +133,12 @@ int count(int coeff[], int k, int rhs)
     return T[k][rhs];
 }
 
-int main(void)
-{
-    int coeff[] = {1, 3, 5, 7};
-    int rhs = 8;
+const coeff = [1, 3, 5, 7];
+const rhs = 8;
 
-    int k = sizeof(coeff) / sizeof(coeff[0]);
+const k = coeff.length;
 
-    printf("The total number of solutions is %d", count(coeff, k, rhs));
-
-    return 0;
-}
+console.log(`The total number of solutions is ${count(coeff, k, rhs)}`);
 ```
 
 **Output:** The total number of solutions is 6

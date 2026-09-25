@@ -14,40 +14,37 @@ For example, consider the following binary array `A`:
 
 We can solve this problem by using the [sliding window technique](https://techiedelight.com/sliding-window-problems/). The idea is to maintain a window containing at most `k` zeros at any point. Add elements to the window from the right until it becomes unstable. The window becomes unstable if the total number of zeros in it becomes more than `k`. If the window becomes unstable, remove elements from its left till it becomes stable again (by removing leftmost zero). If the window is stable and the current window length is more than the maximum window found so far, set the maximum window size to the current window size.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
+**Output:** The longest sequence has length 10 from index 0 to 9
 
+```ts
 // Function to find the maximum sequence of continuous 1's by replacing
 // at most `k` zeros by 1 using sliding window technique
-void findLongestSequence(int arr[], int n, int k)
-{
-    int left = 0;       // represents the current window's starting index
+function findLongestSequence(A: number[], k: number): void {
 
-    int count = 0;      // stores the total number of zeros in the current window
-
-    int window = 0;     // stores the maximum number of continuous 1's found
+    let left = 0;       // represents the current window's starting index
+    let count = 0;      // stores the total number of zeros in the current window
+    let window = 0;     // stores the maximum number of continuous 1's found
                         // so far (including `k` zeros)
 
-    int leftIndex = 0;  // stores the left index of maximum window found so far
+    let leftIndex = 0;  // stores the left index of maximum window found so far
 
     // maintain a window `[left…right]` containing at most `k` zeros
-    for (int right = 0; right < n; right++)
-    {
+    for (let right = 0; right < A.length; right++) {
+
         // if the current element is 0, increase the count of zeros in the
         // current window by 1
-        if (arr[right] == 0) {
+        if (A[right] === 0) {
             count++;
         }
 
         // the window becomes unstable if the total number of zeros in it becomes
         // more than `k`
-        while (count > k)
-        {
+        while (count > k) {
             // if we have found zero, decrement the number of zeros in the
             // current window by 1
-            if (arr[left] == 0) {
+            if (A[left] === 0) {
                 count--;
             }
 
@@ -59,164 +56,25 @@ void findLongestSequence(int arr[], int n, int k)
         // when we reach here, window `[left…right]` contains at most
         // `k` zeros, and we update max window size and leftmost index
         // of the window
-        if (right - left + 1 > window)
-        {
+        if (right - left + 1 > window) {
             window = right - left + 1;
             leftIndex = left;
         }
     }
 
     // no sequence found
-    if (window == 0) {
+    if (window === 0) {
         return;
     }
 
     // print the maximum sequence of continuous 1's
-    printf("The longest sequence has length %d from index %d to %d",
-            window, leftIndex, (leftIndex + window - 1));
+    console.log(`The longest sequence has length ${window} from index ${leftIndex} to ${leftIndex + window - 1}`);
 }
 
-int main()
-{
-    int arr[] = { 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0 };
-    int k = 2;
+const A = [1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0];
+const k = 2;
 
-    int n = sizeof(arr) / sizeof(arr[0]);
-
-    findLongestSequence(arr, n, k);
-
-    return 0;
-}
-```
-
-**Output:** The longest sequence has length 10 from index 0 to 9
-
-##
-
-```java
-class Main
-{
-    // Function to find the maximum sequence of continuous 1's by replacing
-    // at most `k` zeros by 1 using sliding window technique
-    public static void findLongestSequence(int[] A, int k)
-    {
-        int left = 0;   // represents the current window's starting index
-        int count = 0;  // stores the total number of zeros in the current window
-        int window = 0; // stores the maximum number of continuous 1's found
-        // so far (including `k` zeros)
-
-        // store left index of max window found so far
-        int leftIndex = 0;
-
-        // maintain a window `[left…right]` containing at most `k` zeros
-        for (int right = 0; right < A.length; right++)
-        {
-            // if the current element is 0, increase the count of zeros in the
-            // current window by 1
-            if (A[right] == 0) {
-                count++;
-            }
-
-            // the window becomes unstable if the total number of zeros in it becomes
-            // more than `k`
-            while (count > k)
-            {
-                // if we have found zero, decrement the number of zeros in the
-                // current window by 1
-                if (A[left] == 0) {
-                    count--;
-                }
-
-                // remove elements from the window's left side till the window
-                // becomes stable again
-                left++;
-            }
-
-            // when we reach here, window `[left…right]` contains at most
-            // `k` zeros, and we update max window size and leftmost index
-            // of the window
-            if (right - left + 1 > window)
-            {
-                window = right - left + 1;
-                leftIndex = left;
-            }
-        }
-
-        // no sequence found
-        if (window == 0) {
-            return;
-        }
-
-        // print the maximum sequence of continuous 1's
-        System.out.println("The longest sequence has length " + window +
-                " from index " + leftIndex + " to " + (leftIndex + window - 1));
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0 };
-        int k = 2;
-
-        findLongestSequence(A, k);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the maximum sequence of continuous 1's by replacing
-# at most `k` zeros by 1 using sliding window technique
-def findLongestSequence(A, k):
-
-    left = 0        # represents the current window's starting index
-    count = 0       # stores the total number of zeros in the current window
-    window = 0      # stores the maximum number of continuous 1's found
-                    # so far (including `k` zeros)
-
-    leftIndex = 0   # stores the left index of maximum window found so far
-
-    # maintain a window `[left…right]` containing at most `k` zeros
-    for right in range(len(A)):
-
-        # if the current element is 0, increase the count of zeros in the
-        # current window by 1
-        if A[right] == 0:
-            count = count + 1
-
-        # the window becomes unstable if the total number of zeros in it becomes
-        # more than `k`
-        while count > k:
-            # if we have found zero, decrement the number of zeros in the
-            # current window by 1
-            if A[left] == 0:
-                count = count - 1
-
-            # remove elements from the window's left side till the window
-            # becomes stable again
-            left = left + 1
-
-        # when we reach here, window `[left…right]` contains at most
-        # `k` zeros, and we update max window size and leftmost index
-        # of the window
-        if right - left + 1 > window:
-            window = right - left + 1
-            leftIndex = left
-
-    # no sequence found
-    if window == 0:
-        return
-
-    # print the maximum sequence of continuous 1's
-    print("The longest sequence has length", window, "from index",
-        leftIndex, "to", (leftIndex + window - 1))
-
-if __name__ == '__main__':
-
-    A = [1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0]
-    k = 2
-
-    findLongestSequence(A, k)
+findLongestSequence(A, k);
 ```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the given sequence.

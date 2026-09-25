@@ -52,94 +52,72 @@ How does this works?
 
 The Floyd–Warshall algorithm iteratively revises path lengths between all pairs of vertices `(i, j)`, including where `i = j`. Initially, the size of the path `(i, i)` is zero. A path `[i, k…i]` can only improve upon this if it has a length less than zero, i.e., denotes a negative cycle. Thus, after the algorithm, `(i, i)` will be negative if there exists a negative-length path from `i` back to `i`.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-#include <iomanip>
-using namespace std;
-
-// Recursive function to print path of given vertex `u` from source vertex `v`
-void printPath(vector<vector<int>> const &path, int v, int u)
-{
-    if (path[v][u] == v) {
+```ts
+// Recursive function to print the path of given vertex `u` from source vertex `v`
+function printPath(path: number[][], v: number, u: number, route: number[]): void {
+    if (path[v][u] === v) {
         return;
     }
-    printPath(path, v, path[v][u]);
-    cout << path[v][u] << ", ";
+    printPath(path, v, path[v][u], route);
+    route.push(path[v][u]);
 }
 
-// Function to print the shortest cost with path information between
-// all pairs of vertices
-void printSolution(vector<vector<int>> const &cost, vector<vector<int>> const &path)
-{
-    int n = cost.size();
-    for (int v = 0; v < n; v++)
-    {
-        for (int u = 0; u < n; u++)
-        {
-            if (u != v && path[v][u] != -1)
-            {
-                cout << "The shortest path from " << v << " —> " << u << " is ["
-                    << v << ", ";
-                printPath(path, v, u);
-                cout << u << "]" << endl;
+// Function to print the shortest cost with path
+// information between all pairs of vertices
+function printSolution(path: number[][], n: number): void {
+    for (let v = 0; v < n; v++) {
+        for (let u = 0; u < n; u++) {
+            if (u !== v && path[v][u] !== -1) {
+                const route: number[] = [v];
+                printPath(path, v, u, route);
+                route.push(u);
+                console.log(`The shortest path from ${v} —> ${u} is`, route);
             }
         }
     }
 }
 
 // Function to run the Floyd–Warshall algorithm
-void floydWarshall(vector<vector<int>> const &adjMatrix)
-{
-    // total number of vertices in the `adjMatrix`
-    int n = adjMatrix.size();
+function floydWarshall(adjMatrix: number[][]): void {
 
     // base case
-    if (n == 0) {
+    if (!adjMatrix.length) {
         return;
     }
 
-    // cost[] and path[] stores shortest path
+    // total number of vertices in the `adjMatrix`
+    const n = adjMatrix.length;
+
+    // cost and path matrix stores shortest path
     // (shortest cost/shortest route) information
-    vector<vector<int>> cost(n, vector<int>(n));
-    vector<vector<int>> path(n, vector<int>(n));
 
-    // initialize cost[] and path[]
-    for (int v = 0; v < n; v++)
-    {
-        for (int u = 0; u < n; u++)
-        {
-            // initially, cost would be the same as the weight of the edge
-            cost[v][u] = adjMatrix[v][u];
+    // initially, cost would be the same as the weight of an edge
+    const cost: number[][] = adjMatrix.map(row => row.slice());
+    const path: number[][] = Array.from({ length: n }, () => new Array(n).fill(-1));
 
-            if (v == u) {
+    // initialize cost and path
+    for (let v = 0; v < n; v++) {
+        for (let u = 0; u < n; u++) {
+            if (v === u) {
                 path[v][u] = 0;
-            }
-            else if (cost[v][u] != INT_MAX) {
+            } else if (cost[v][u] !== Number.MAX_VALUE) {
                 path[v][u] = v;
-            }
-            else {
+            } else {
                 path[v][u] = -1;
             }
         }
     }
 
     // run Floyd–Warshall
-    for (int k = 0; k < n; k++)
-    {
-        for (int v = 0; v < n; v++)
-        {
-            for (int u = 0; u < n; u++)
-            {
+    for (let k = 0; k < n; k++) {
+        for (let v = 0; v < n; v++) {
+            for (let u = 0; u < n; u++) {
                 // If vertex `k` is on the shortest path from `v` to `u`,
                 // then update the value of cost[v][u] and path[v][u]
-
-                if (cost[v][k] != INT_MAX && cost[k][u] != INT_MAX
-                    && cost[v][k] + cost[k][u] < cost[v][u])
-                {
+                if (cost[v][k] !== Number.MAX_VALUE && cost[k][u] !== Number.MAX_VALUE
+                        && (cost[v][k] + cost[k][u] < cost[v][u])) {
                     cost[v][u] = cost[v][k] + cost[k][u];
                     path[v][u] = path[k][u];
                 }
@@ -147,250 +125,30 @@ void floydWarshall(vector<vector<int>> const &adjMatrix)
 
             // if diagonal elements become negative, the
             // graph contains a negative-weight cycle
-            if (cost[v][v] < 0)
-            {
-                cout << "Negative-weight cycle found!!";
+            if (cost[v][v] < 0) {
+                console.log('Negative-weight cycle found');
                 return;
             }
         }
     }
 
     // Print the shortest path between all pairs of vertices
-    printSolution(cost, path);
+    printSolution(path, n);
 }
 
-int main()
-{
-    // define infinity
-    int I = INT_MAX;
+// define infinity
+const I = Number.MAX_VALUE;
 
-    // given adjacency representation of the matrix
-    vector<vector<int>> adjMatrix =
-    {
-        { 0, I, -2, I },
-        { 4, 0, 3, I },
-        { I, I, 0, 2 },
-        { I, -1, I, 0 }
-    };
+// given adjacency representation of the matrix
+const adjMatrix = [
+    [0, I, -2, I],
+    [4, 0, 3, I],
+    [I, I, 0, 2],
+    [I, -1, I, 0]
+];
 
-    // Run Floyd–Warshall algorithm
-    floydWarshall(adjMatrix);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-
-class Main
-{
-    // Recursive function to print path of given vertex `u` from source vertex `v`
-    private static void printPath(int[][] path, int v, int u, List<Integer> route)
-    {
-        if (path[v][u] == v) {
-            return;
-        }
-        printPath(path, v, path[v][u], route);
-        route.add(path[v][u]);
-    }
-
-    // Function to print the shortest cost with path information between
-    // all pairs of vertices
-    private static void printSolution(int[][] path, int n)
-    {
-        for (int v = 0; v < n; v++)
-        {
-            for (int u = 0; u < n; u++)
-            {
-                if (u != v && path[v][u] != -1)
-                {
-                    List<Integer> route = new ArrayList<>();
-                    route.add(v);
-                    printPath(path, v, u, route);
-                    route.add(u);
-                    System.out.printf("The shortest path from %d —> %d is %s\n",
-                        v, u, route);
-                }
-            }
-        }
-    }
-
-    // Function to run the Floyd–Warshall algorithm
-    public static void floydWarshall(int[][] adjMatrix)
-    {
-        // base case
-        if (adjMatrix ==null || adjMatrix.length == 0) {
-            return;
-        }
-
-        // total number of vertices in the `adjMatrix`
-        int n = adjMatrix.length;
-
-        // cost[] and path[] stores shortest path
-        // (shortest cost/shortest route) information
-        int[][] cost = new int[n][n];
-        int[][] path = new int[n][n];
-
-        // initialize cost[] and path[]
-        for (int v = 0; v < n; v++)
-        {
-            for (int u = 0; u < n; u++)
-            {
-                // initially, cost would be the same as the weight of the edge
-                cost[v][u] = adjMatrix[v][u];
-
-                if (v == u) {
-                    path[v][u] = 0;
-                }
-                else if (cost[v][u] != Integer.MAX_VALUE) {
-                    path[v][u] = v;
-                }
-                else {
-                    path[v][u] = -1;
-                }
-            }
-        }
-
-        // run Floyd–Warshall
-        for (int k = 0; k < n; k++)
-        {
-            for (int v = 0; v < n; v++)
-            {
-                for (int u = 0; u < n; u++)
-                {
-                    // If vertex `k` is on the shortest path from `v` to `u`,
-                    // then update the value of cost[v][u] and path[v][u]
-
-                    if (cost[v][k] != Integer.MAX_VALUE
-                            && cost[k][u] != Integer.MAX_VALUE
-                            && (cost[v][k] + cost[k][u] < cost[v][u]))
-                    {
-                        cost[v][u] = cost[v][k] + cost[k][u];
-                        path[v][u] = path[k][u];
-                    }
-                }
-
-                // if diagonal elements become negative, the
-                // graph contains a negative-weight cycle
-                if (cost[v][v] < 0)
-                {
-                    System.out.println("Negative-weight cycle found!!");
-                    return;
-                }
-            }
-        }
-
-        // Print the shortest path between all pairs of vertices
-        printSolution(path, n);
-    }
-
-    public static void main(String[] args)
-    {
-        // define infinity
-        int I = Integer.MAX_VALUE;
-
-        // given adjacency representation of the matrix
-        int[][] adjMatrix = new int[][]
-        {
-            { 0, I, -2, I },
-            { 4, 0, 3, I },
-            { I, I, 0, 2 },
-            { I, -1, I, 0 }
-        };
-
-        // Run Floyd–Warshall algorithm
-        floydWarshall(adjMatrix);
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to print the path of given vertex `u` from source vertex `v`
-def printPath(path, v, u, route):
-    if path[v][u] == v:
-        return
-    printPath(path, v, path[v][u], route)
-    route.append(path[v][u])
-
-# Function to print the shortest cost with path
-# information between all pairs of vertices
-def printSolution(path, n):
-    for v in range(n):
-        for u in range(n):
-            if u != v and path[v][u] != -1:
-                route = [v]
-                printPath(path, v, u, route)
-                route.append(u)
-                print(f'The shortest path from {v} —> {u} is', route)
-
-# Function to run the Floyd–Warshall algorithm
-def floydWarshall(adjMatrix):
-
-    # base case
-    if not adjMatrix:
-        return
-
-    # total number of vertices in the `adjMatrix`
-    n = len(adjMatrix)
-
-    # cost and path matrix stores shortest path
-    # (shortest cost/shortest route) information
-
-    # initially, cost would be the same as the weight of an edge
-    cost = adjMatrix.copy()
-    path = [[None for x in range(n)] for y in range(n)]
-
-    # initialize cost and path
-    for v in range(n):
-        for u in range(n):
-            if v == u:
-                path[v][u] = 0
-            elif cost[v][u] != float('inf'):
-                path[v][u] = v
-            else:
-                path[v][u] = -1
-
-    # run Floyd–Warshall
-    for k in range(n):
-        for v in range(n):
-            for u in range(n):
-                # If vertex `k` is on the shortest path from `v` to `u`,
-                # then update the value of cost[v][u] and path[v][u]
-                if cost[v][k] != float('inf') and cost[k][u] != float('inf') \
-                        and (cost[v][k] + cost[k][u] < cost[v][u]):
-                    cost[v][u] = cost[v][k] + cost[k][u]
-                    path[v][u] = path[k][u]
-
-            # if diagonal elements become negative, the
-            # graph contains a negative-weight cycle
-            if cost[v][v] < 0:
-                print('Negative-weight cycle found')
-                return
-
-    # Print the shortest path between all pairs of vertices
-    printSolution(path, n)
-
-if __name__ == '__main__':
-
-    # define infinity
-    I = float('inf')
-
-    # given adjacency representation of the matrix
-    adjMatrix = [
-        [0, I, -2, I],
-        [4, 0, 3, I],
-        [I, I, 0, 2],
-        [I, -1, I, 0]
-    ]
-
-    # Run Floyd–Warshall algorithm
-    floydWarshall(adjMatrix)
+// Run Floyd–Warshall algorithm
+floydWarshall(adjMatrix);
 ```
 
 **Output:** The shortest path from 0 —> 1 is [0, 2, 3, 1] The shortest path from 0 —> 2 is [0, 2] The shortest path from 0 —> 3 is [0, 2, 3] The shortest path from 1 —> 0 is [1, 0] The shortest path from 1 —> 2 is [1, 0, 2] The shortest path from 1 —> 3 is [1, 0, 2, 3] The shortest path from 2 —> 0 is [2, 3, 1, 0] The shortest path from 2 —> 1 is [2, 3, 1] The shortest path from 2 —> 3 is [2, 3] The shortest path from 3 —> 0 is [3, 1, 0] The shortest path from 3 —> 1 is [3, 1] The shortest path from 3 —> 2 is [3, 1, 0, 2]

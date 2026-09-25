@@ -19,147 +19,48 @@ We can use [recursion](https://techiedelight.com/recursion-practice-problems-wit
 
 If the desired length `n` is reached and the output string contains all balanced parenthesis, print it. Return if we cannot close all open parentheses with left characters. Also, if the total number of characters is odd and there are no open parentheses, we cannot form the balanced parentheses.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find all strings of length `n` containing balanced parentheses
-void balParenthesis(int n, string str, int open)
-{
+function balParenthesis(n: number, s: string, open: number): void {
+
     // if `n` is odd with no open parentheses, balanced parentheses
     // cannot be formed
-    if ((n & 1) && !open) {
+    if ((n & 1) === 1 && open === 0) {
         return;
     }
 
     // base case: length `n` is reached
-    if (n == 0)
-    {
+    if (n === 0) {
         // if the output string contains all balanced parenthesis, print it
-        if (open == 0) {
-            cout << str << endl;
+        if (open === 0) {
+            console.log(s);
         }
         return;
     }
 
-    // Optimization: return if we cannot close all open parentheses with
-    // left characters
+    // Optimization: return if we cannot close all open parentheses
+    // with left characters
     if (open > n) {
         return;
     }
 
     // recur with open parentheses
-    balParenthesis(n - 1, str + "(", open + 1);
+    balParenthesis(n - 1, s + '(', open + 1);
 
-    // recur with closed parentheses only if the output string has at least
-    // one unclosed parentheses
+    // recur with closed parentheses only if the output string has
+    // at least one unclosed parentheses
     if (open > 0) {
-        balParenthesis(n - 1, str + ")", open - 1);
+        balParenthesis(n - 1, s + ')', open - 1);
     }
 }
 
-int main()
-{
-    int n = 6;
-
-    balParenthesis(n, "", 0);
-
-    return 0;
-}
+const n = 6;
+balParenthesis(n, '', 0);
 ```
 
 **Output:** ((())) (()()) (())() ()(()) ()()()
-
-##
-
-```java
-class Main
-{
-    // Function to find all strings of length `n` containing balanced parentheses
-    public static void balParenthesis(int n, String str, int open)
-    {
-        // if `n` is odd with no open parentheses, balanced parentheses
-        // cannot be formed
-        if ((n & 1) == 1 && open == 0) {
-            return;
-        }
-
-        // base case: length `n` is reached
-        if (n == 0)
-        {
-            // if the output string contains all balanced parenthesis, print it
-            if (open == 0) {
-                System.out.println(str);
-            }
-            return;
-        }
-
-        // Optimization: return if we cannot close all open parentheses
-        // with left characters
-        if (open > n) {
-            return;
-        }
-
-        // recur with open parentheses
-        balParenthesis(n - 1, str + "(", open + 1);
-
-        // recur with closed parentheses only if the output string has
-        // at least one unclosed parentheses
-        if (open > 0) {
-            balParenthesis(n - 1, str + ")", open - 1);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 6;
-        balParenthesis(n, "", 0);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find all strings of length `n` containing balanced parentheses
-def balParenthesis(n, result=set(), open=0, s=''):
-    # if `n` is odd with no open parentheses, balanced parentheses
-    # cannot be formed
-    if n & 1 and not open:
-        return result
-
-    # base case: length `n` is reached
-    if n == 0:
-        # if the output string contains all balanced parenthesis, print it
-        if not open:
-            result.add(s)
-        return result
-
-    # Optimization: return if we cannot close all open parentheses with
-    # left characters
-    if open > n:
-        return result
-
-    # recur with open parentheses
-    result = balParenthesis(n - 1, result, open + 1, s + '(')
-
-    # recur with closed parentheses only if the output string has at least
-    # one unclosed parentheses
-    if open > 0:
-        result = balParenthesis(n - 1, result, open - 1, s + ')')
-
-    return result
-
-if __name__ == '__main__':
-
-    n = 6
-
-    result = balParenthesis(n)
-    print(result)
-```
 
 The time complexity of the above solution is exponential as there are exactly `2n-1` combinations, where `n` is the length of the input string. It also requires additional space for the recursion (call stack).
 

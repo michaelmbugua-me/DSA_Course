@@ -26,73 +26,27 @@ We know that in `2's` complement notation, a negative number is represented by f
 
 -n = ~n + 1 n = ~(-n – 1)
 
-The idea is same here – we subtract a mask `-1` from the given negative number and flip its bits by taking its bitwise `XOR` with the mask. Following is the C++, Java, and Python program that demonstrates the idea:
+The idea is same here – we subtract a mask `-1` from the given negative number and flip its bits by taking its bitwise `XOR` with the mask. Following is the TypeScript program that demonstrates the idea:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
+```ts
+const SIZE = 32;
+const n = -6;
 
-int main()
-{
-    int n = -6;
-    int const mask = n >> sizeof(int) * 8 - 1;
+const mask = n >> (SIZE * 8 - 1);
 
-    cout << "n (" << n << ") in binary is " << bitset<8>(n) << endl;
+const toBinaryString = (n: number): string =>
+    (n >>> 0).toString(2).padStart(8, '0');
 
-    cout << "mask (" << mask << ") in binary is " << bitset<8>(mask) << endl;
+console.log(`n ${n} in binary is ${toBinaryString(n)}`);
 
-    cout << "(n + mask) in binary is " << bitset<8>(n + mask) << endl;
+console.log(`mask ${mask} in binary is ${toBinaryString(mask)}`);
 
-    cout << "abs(" << n << ") is " << ((n + mask) ^ mask) << endl;
+console.log(`n + mask ${n + mask} in binary is ${toBinaryString(n + mask)}`);
 
-    return 0;
-}
+console.log(`abs(${n}) is ${(n + mask) ^ mask}`);
 ```
 
 **Output:** n (-6) in binary is 11111010 mask (-1) in binary is 11111111 (n + mask) in binary is 11111001 abs(-6) is 6
-
-##
-
-```java
-class Main
-{
-    public static void main(String[] args)
-    {
-        int n = -6;
-        final int mask = n >> Integer.SIZE * 8 - 1;
-
-        System.out.println("n (" + n + ") in binary is " + Integer.toBinaryString(n));
-
-        System.out.println("mask (" + mask + ") in binary is " +
-                    Integer.toBinaryString(mask));
-
-        System.out.println("n + mask (" + n + mask + ") in binary is " +
-                    Integer.toBinaryString(n + mask));
-
-        System.out.println("abs(" + n + ") is " + ((n + mask) ^ mask));
-    }
-}
-```
-
-##
-
-```python3
-if __name__ == '__main__':
-
-    SIZE = 32
-    n = -6
-
-    mask = n >> SIZE * 8 - 1
-
-    print(f'n {n} in binary is', bin(n))
-
-    print(f'mask {mask} in binary is', bin(mask))
-
-    print(f'n + mask {n + mask} in binary is', bin(n + mask))
-
-    print(f'abs({n}) is', (n + mask) ^ mask)
-```
 
 ## Alternate Solution
 

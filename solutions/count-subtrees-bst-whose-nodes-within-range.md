@@ -18,41 +18,28 @@ A simple solution would be to traverse the tree and, for each encountered node, 
 
 The idea is to perform a [postorder traversal](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/) on the given BST. Then for any node, if both its left and right subtrees are within the range along with the node itself, we can say that the subtree rooted with this node is also within the range.
 
-The algorithm can be implemented as follows in C++, Java, and Python. In C++ solution, we maintain a reference variable to store the subtrees count. In Java code, the `AtomicInteger` class is used to return multiple values from the function. And in the python code, tuples are being used for the same.
+The algorithm can be implemented as follows in TypeScript, where a tuple is used to return multiple values from the function.
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a BST node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a BST node
+class Node {
+    constructor(public data: number, public left: Node | null = null, public right: Node | null = null) {}
+}
 
 // Recursive function to insert a key into a BST
-Node* insert(Node* root, int key)
-{
+function insert(root: Node | null, key: number): Node {
     // if the root is null, create a new node and return it
-    if (root == nullptr) {
+    if (root === null) {
         return new Node(key);
     }
 
     // if the given key is less than the root node, recur for the left subtree
-    if (key < root->data) {
-        root->left = insert(root->left, key);
+    if (key < root.data) {
+        root.left = insert(root.left, key);
     }
-
     // otherwise, recur for the right subtree
     else {
-        root->right = insert(root->right, key);
+        root.right = insert(root.right, key);
     }
 
     // return root node
@@ -61,205 +48,42 @@ Node* insert(Node* root, int key)
 
 // Function to count subtrees in a BST whose nodes lie within a given range.
 // It returns true if the whole subtree rooted at the given node is within range
-bool findSubTrees(Node* root, int low, int high, int &count)
-{
+function findSubTrees(root: Node | null, low: number, high: number, count = 0): [boolean, number] {
     // base case
-    if (root == nullptr) {
-        return true;
+    if (root === null) {
+        return [true, count];
     }
-
-    bool left = findSubTrees(root->left, low, high, count);
-    bool right = findSubTrees(root->right, low, high, count);
 
     // increment the subtree count by 1 and return true if the root node,
     // both left and right subtrees are within the range
-    if (left && right && (root->data >= low && root->data <= high))
-    {
-        count++;
-        return true;
+    const [left, leftCount] = findSubTrees(root.left, low, high, count);
+    const [right, rightCount] = findSubTrees(root.right, low, high, leftCount);
+
+    if (left && right && low <= root.data && root.data <= high) {
+        return [true, rightCount + 1];
     }
 
-    return false;
+    return [false, rightCount];
 }
 
-int main()
-{
-    // input range
-    int low = 5, high = 20;
+// input range
+const low = 5, high = 20;
 
-    // BST keys to construct BST shown in the diagram
-    int keys[] = { 15, 25, 20, 22, 30, 18, 10, 8, 9, 12, 6 };
+// BST keys to construct BST shown in the diagram
+const keys = [15, 25, 20, 22, 30, 18, 10, 8, 9, 12, 6];
 
-    // construct BST
-    Node* root = nullptr;
-    for (int key: keys) {
-        root = insert(root, key);
-    }
-
-    // get count of subtrees
-    int count = 0;
-    findSubTrees(root, low, high, count);
-    cout << "The total number of subtrees is " << count;
-
-    return 0;
+// construct BST
+let root: Node | null = null;
+for (const key of keys) {
+    root = insert(root, key);
 }
+
+// get count of subtrees
+const [, count] = findSubTrees(root, low, high);
+console.log('The total number of subtrees is', count);
 ```
 
 **Output:** The total number of subtrees is 6
-
-##
-
-```java
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a BST node
-class Node
-{
-    int data;
-    Node left, right;
-
-    Node(int data)
-    {
-        this.data = data;
-        this.left = this.right = null;
-    }
-}
-
-class Main
-{
-    // Recursive function to insert a key into a BST
-    public static Node insert(Node root, int key)
-    {
-        // if the root is null, create a new node and return it
-        if (root == null) {
-            return new Node(key);
-        }
-
-        // if the given key is less than the root node, recur for the left subtree
-        if (key < root.data) {
-            root.left = insert(root.left, key);
-        }
-        // otherwise, recur for the right subtree
-        else {
-            root.right = insert(root.right, key);
-        }
-
-        // return root node
-        return root;
-    }
-
-    // Function to count subtrees in the BST whose nodes lie within a given range.
-    // It returns true if the whole subtree rooted at the given node is within range
-    public static boolean findSubTrees(Node root, int low, int high,
-                                    AtomicInteger count)
-    {
-        // base case
-        if (root == null) {
-            return true;
-        }
-
-        boolean left = findSubTrees(root.left, low, high, count);
-        boolean right = findSubTrees(root.right, low, high, count);
-
-        // increment the subtree count by 1 and return true if the root node,
-        // both left and right subtrees are within the range
-        if (left && right && (root.data >= low && root.data <= high))
-        {
-            count.incrementAndGet();
-            return true;
-        }
-
-        return false;
-    }
-
-    public static void main(String[] args)
-    {
-        // input range
-        int low = 5, high = 20;
-
-        // BST keys to construct BST shown in the diagram
-        int[] keys = { 15, 25, 20, 22, 30, 18, 10, 8, 9, 12, 6 };
-
-        // construct BST
-        Node root = null;
-        for (int key: keys) {
-            root = insert(root, key);
-        }
-
-        // `AtomicInteger` is used here since `Integer` is passed by value in Java
-        AtomicInteger count = new AtomicInteger(0);
-
-        // get count of subtrees
-        findSubTrees(root, low, high, count);
-        System.out.println("The total number of subtrees is " + count);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a BST node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to insert a key into a BST
-def insert(root, key):
-
-    # if the root is None, create a new node and return it
-    if root is None:
-        return Node(key)
-
-    # if the given key is less than the root node, recur for the left subtree
-    if key < root.data:
-        root.left = insert(root.left, key)
-
-    # otherwise, recur for the right subtree
-    else:
-        root.right = insert(root.right, key)
-
-    # return root node
-    return root
-
-# Function to count subtrees in a BST whose nodes lie within a given range.
-# It returns true if the whole subtree rooted at the given node is within range
-def findSubTrees(root, low, high, count=0):
-
-    # base case
-    if root is None:
-        return True, count
-
-    # increment the subtree count by 1 and return true if the root node,
-    # both left and right subtrees are within the range
-    left, count = findSubTrees(root.left, low, high, count)
-    right, count = findSubTrees(root.right, low, high, count)
-
-    if left and right and (low <= root.data <= high):
-        return True, count + 1
-
-    return False, count
-
-if __name__ == '__main__':
-
-    # input range
-    low, high = 5, 20
-
-    # BST keys to construct BST shown in the diagram
-    keys = [15, 25, 20, 22, 30, 18, 10, 8, 9, 12, 6]
-
-    # construct BST
-    root = None
-    for key in keys:
-        root = insert(root, key)
-
-    # get count of subtrees
-    val, count = findSubTrees(root, low, high)
-
-    print('The total number of subtrees is', count)
-```
 
 The time complexity of the above solution is O(n), where `n` is the size of the BST, and requires space proportional to the tree’s height for the call stack.
 

@@ -16,118 +16,35 @@ We can use [recursion](https://techiedelight.com/recursion-practice-problems-wit
 
 The following diagram represents a recursion tree for string `abc`. In each tree node, the processed part is shown by the green color, and the red color shows the unprocessed string.
 
-Following is the C++, Java, and Python implementation based on the above idea:
+Following is the TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
+```ts
+const OPEN_BRACKET = '{';
+const CLOSED_BRACKET = '}';
+const EMPTY_STRING = '';
 
 // Function to break a string into all possible combinations of
 // non-overlapping substrings enclosed within parenthesis
-void recur(string s, int i, string result)
-{
-    int n = s.length();
-    if (i == n) {
-        cout << result << endl;
+function recur(s: string, i: number = 0, out: string = EMPTY_STRING): void {
+    if (i === s.length) {
+        console.log(out);
     }
 
     // consider each substring S[i, j]
-    for (int j = n - 1; j >= i; j--)
-    {
-        // substr(pos, n) returns a substring of length `n` that starts at
-        // position pos of the current string
-        string substr = "{" + s.substr(i, j - i + 1) + "}";
+    for (let j = s.length - 1; j >= i; j--) {
+        const substr = OPEN_BRACKET + s.slice(i, j + 1) + CLOSED_BRACKET;
 
         // append the substring to the result and recur with an index of the
         // next character to be processed and the result string
-        recur(s, j + 1, result + substr);
+        recur(s, j + 1, out + substr);
     }
 }
 
-int main()
-{
-    // input string
-    string s = "ABCD";
-
-    int starting_index = 0;
-    string empty_string = "";
-
-    recur(s, starting_index, empty_string);
-
-    return 0;
-}
+const s = 'ABCD';    // input string
+recur(s);
 ```
 
-##
-
-```java
-class Main
-{
-    private static final String OPEN_BRACKET = "{";
-    private static final String CLOSED_BRACKET = "}";
-    private static final String EMPTY_STRING = "";
-
-    // Function to break a string into all possible combinations of
-    // non-overlapping substrings enclosed within parenthesis
-    public static void recur(String s, int i, String out)
-    {
-        // base case
-        if (s == null || s.length() == 0) {
-            return;
-        }
-
-        if (i == s.length()) {
-            System.out.println(out);
-        }
-
-        // consider each substring S[i, j]
-        for (int j = s.length() - 1; j >= i; j--)
-        {
-            String substr = OPEN_BRACKET + s.substring(i, j + 1) + CLOSED_BRACKET;
-
-            // append the substring to the result and recur with an index of
-            // the next character to be processed and the result string
-            recur(s, j + 1, out + substr);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // input string
-        String s = "ABCD";
-
-        int starting_index = 0;
-        recur(s, starting_index, EMPTY_STRING);
-    }
-}
-```
-
-##
-
-```python3
-OPEN_BRACKET = '{'
-CLOSED_BRACKET = '}'
-EMPTY_STRING = ''
-
-# Function to break a string into all possible combinations of
-# non-overlapping substrings enclosed within parenthesis
-def recur(s, i=0, out=EMPTY_STRING):
-    if i == len(s):
-        print(out)
-
-    # consider each substring S[i, j]
-    for j in reversed(range(i, len(s))):
-        substr = OPEN_BRACKET + s[i:j+1] + CLOSED_BRACKET
-
-        # append the substring to the result and recur with an index of the
-        # next character to be processed and the result string
-        recur(s, j + 1, out + substr)
-
-if __name__ == '__main__':
-    s = 'ABCD'    # input string
-    recur(s)
-```
+**Output:** {ABCD} {ABC}{D} {AB}{CD} {AB}{C}{D} {A}{BCD} {A}{BC}{D} {A}{B}{CD} {A}{B}{C}{D}
 
 **Output:** {ABCD} {ABC}{D} {AB}{CD} {AB}{C}{D} {A}{BCD} {A}{BC}{D} {A}{B}{CD} {A}{B}{C}{D}
 

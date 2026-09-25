@@ -16,234 +16,70 @@ In the below post, we have discussed a solution using the divide-and-conquer tec
 
 Since all descendants of a Trie node have a common prefix of the string associated with that node, Trie (Prefix Tree) is the best data structure for this problem. We start by inserting all keys into the Trie. Then traverse the Trie until we find a leaf node or node with more than one child. All characters in the Trie path form the longest common prefix. For example,
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a Trie node
-struct Trie
-{
-    bool isLeaf;    // set when the node is a leaf node
-    unordered_map<char, Trie*> character;
-
-    // Constructor
-    Trie() {
-        isLeaf = false;
-    }
-};
+```ts
+// A class to store a Trie node
+class TrieNode {
+  isLeaf = false;    // set when the node is a leaf node
+  character = new Map<string, TrieNode>();
+}
 
 // Iterative function to insert a string into a Trie
-void insert(Trie* const &head, string const &str)
-{
-    // start from the root node
-    Trie* curr = head;
+function insert(head: TrieNode, s: string): void {
+  // start from the root node
+  let curr = head;
 
-    for (char ch: str)
-    {
-        // create a new node if the path doesn't exist
-        if (curr->character.find(ch) == curr->character.end()) {
-            curr->character[ch] = new Trie();
-        }
-
-        // go to the next node
-        curr = curr->character[ch];
+  for (const c of s) {
+    // go to the next node and create a new node if the path doesn't exist
+    if (!curr.character.has(c)) {
+      curr.character.set(c, new TrieNode());
     }
+    curr = curr.character.get(c)!;
+  }
 
-    curr->isLeaf = true;
+  curr.isLeaf = true;
 }
 
 // Function to find the longest common prefix
-string findLCP(vector<string> const &dict)
-{
-    // insert all keys into a Trie
-    Trie* head = new Trie();
-    for (string s: dict) {
-        insert(head, s);
+function findLCP(words: string[]): string {
+  // insert all keys into a Trie
+  const head = new TrieNode();
+  for (const s of words) {
+    insert(head, s);
+  }
+
+  // traverse the Trie and find the longest common prefix
+
+  let lcp = '';
+  let curr = head;
+
+  // loop until we find a leaf node or a node has more than 1 child
+  while (curr && !curr.isLeaf && curr.character.size === 1) {
+    for (const [k, v] of curr.character) {
+      // append current char to LCP
+      lcp += k;
+
+      // update `curr` pointer to the child node
+      curr = v;
     }
+  }
 
-    // traverse the Trie and find the longest common prefix
-
-    string lcp;
-    Trie* curr = head;
-
-    // loop until we find a leaf node or a node has more than 1 child
-    while (curr && !curr->isLeaf && (curr->character.size() == 1))
-    {
-        // get an iterator to the only child
-        auto it = curr->character.begin();
-
-        // append current char to LCP
-        lcp += it->first;
-
-        // update `curr` pointer to the child node
-        curr = it->second;
-    }
-
-    return lcp;
+  return lcp;
 }
 
-int main()
-{
-    // given set of keys
-    vector<string> dict =
-    {
-        "code", "coder", "coding", "codable", "codec", "codecs", "coded",
-        "codeless", "codependence", "codependency", "codependent",
-        "codependents", "codes", "codesign", "codesigned", "codeveloped",
-        "codeveloper", "codex", "codify", "codiscovered", "codrive"
-    };
+// given set of keys
+const words = [
+  'code', 'coder', 'coding', 'codable', 'codec', 'codecs', 'coded',
+  'codeless', 'codependence', 'codependency', 'codependent',
+  'codependents', 'codes', 'codesign', 'codesigned', 'codeveloped',
+  'codeveloper', 'codex', 'codify', 'codiscovered', 'codrive'
+];
 
-    cout << "The longest common prefix is " << findLCP(dict);
-
-    return 0;
-}
+console.log('The longest common prefix is', findLCP(words));
 ```
 
 **Output:** The longest common prefix is cod
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-// A class to store a Trie node
-class TrieNode
-{
-    boolean isLeaf = false;    // set when the node is a leaf node
-    Map<Character, TrieNode> character = new HashMap<>();
-}
-
-class Main
-{
-    // Iterative function to insert a string into a Trie
-    private static void insert(TrieNode head, String str)
-    {
-        // start from the root node
-        TrieNode curr = head;
-
-        for (char c: str.toCharArray())
-        {
-            // create a new node if the path doesn't exist
-            curr.character.putIfAbsent(c, new TrieNode());
-
-            // go to the next node
-            curr = curr.character.get(c);
-        }
-
-        curr.isLeaf = true;
-    }
-
-    // Function to find the longest common prefix
-    public static String findLCP(List<String> dict)
-    {
-        // insert all keys into a Trie
-        TrieNode head = new TrieNode();
-        for (String s: dict) {
-            insert(head, s);
-        }
-
-        // traverse the Trie and find the longest common prefix
-
-        StringBuilder lcp = new StringBuilder();
-        TrieNode curr = head;
-
-        // loop until we find a leaf node or a node has more than 1 child
-        while (curr != null && !curr.isLeaf && (curr.character.size() == 1))
-        {
-            for (var entry: curr.character.entrySet())
-            {
-                // append current char to LCP
-                lcp.append(entry.getKey());
-
-                // update `curr` pointer to the child node
-                curr = entry.getValue();
-            }
-        }
-
-        return lcp.toString();
-    }
-
-    public static void main (String[] args)
-    {
-        // given set of keys
-        List<String> dict = Arrays.asList(
-                "code", "coder", "coding", "codable", "codec", "codecs", "coded",
-                "codeless", "codependence", "codependency", "codependent",
-                "codependents", "codes", "codesign", "codesigned", "codeveloped",
-                "codeveloper", "codex", "codify", "codiscovered", "codrive"
-        );
-
-        System.out.println("The longest common prefix is " + findLCP(dict));
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a Trie node
-class TrieNode:
-    def __init__(self):
-        self.isLeaf = False        # set when the node is a leaf node
-        self.character = {}
-
-# Iterative function to insert a string into a Trie
-def insert(head, s):
-
-    # start from the root node
-    curr = head
-
-    for c in s:
-        # go to the next node and create a new node if the path doesn't exist
-        curr = curr.character.setdefault(c, TrieNode())
-
-    curr.isLeaf = True
-
-# Function to find the longest common prefix
-def findLCP(words):
-
-    # insert all keys into a Trie
-    head = TrieNode()
-    for s in words:
-        insert(head, s)
-
-    # traverse the Trie and find the longest common prefix
-
-    lcp = ''
-    curr = head
-
-    # loop until we find a leaf node or a node has more than 1 child
-    while curr and not curr.isLeaf and len(curr.character) == 1:
-
-        for k, v in curr.character.items():
-            # append current char to LCP
-            lcp += k
-
-            # update `curr` pointer to the child node
-            curr = v
-
-    return lcp
-
-if __name__ == '__main__':
-
-    # given set of keys
-    words = [
-        'code', 'coder', 'coding', 'codable', 'codec', 'codecs', 'coded',
-        'codeless', 'codependence', 'codependency', 'codependent',
-        'codependents', 'codes', 'codesign', 'codesigned', 'codeveloped',
-        'codeveloper', 'codex', 'codify', 'codiscovered', 'codrive'
-    ]
-
-    print('longest common prefix is:', findLCP(words))
-```
 
 The time complexity of the above solution is O(N.M), where `N` is the total number of given words and `M` is the maximum word length. The auxiliary space required by the program is O(N × M).
 

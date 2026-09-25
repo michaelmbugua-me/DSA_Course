@@ -19,185 +19,53 @@ We can use [dynamic programming](https://techiedelight.com/introduction-dynamic-
   * `third[]` stores the maximum value of `A[s] - A[r] + A[q]`.
   * `fourth[]` stores the maximum value of `A[s] - A[r] + A[q] - A[p]`.
 
-The maximum value would then be present in index 0 of `fourth[]`, which is our required answer. The implementation can be seen below in C++, Java, and Python:
+The maximum value would then be present in index 0 of `fourth[]`, which is our required answer. The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-using namespace std;
-
-// Function to print an array
-void printArray(vector<int> const &A)
-{
-    for (int i: A) {
-        cout << i << " ";
-    }
-    cout << endl;
-}
-
+```ts
 // Function to find the maximum value of the expression
-// (A[s] - A[r] + A[q] - A[p]), where s > r > q > p
-int maximizeExpression(vector<int> const &A)
-{
-    int n = A.size();
+// (A[l] - A[k] + A[j] - A[i]), where l > k > j > i
+function maximizeExpression(A: number[]): number {
 
     // input should have at least 4 elements
-    if (n < 4) {
-        exit(-1);
+    if (A.length < 4) {
+        process.exit(-1);
     }
 
-    // create 4 lookup tables and initialize them to `INT_MIN`
-    int first[n + 1], second[n], third[n - 1], fourth[n - 2];
+    // create 4 lookup tables and initialize them to `-Infinity`
+    const first: number[] = Array(A.length + 1).fill(Number.NEGATIVE_INFINITY);
+    const second: number[] = Array(A.length).fill(Number.NEGATIVE_INFINITY);
+    const third: number[] = Array(A.length - 1).fill(Number.NEGATIVE_INFINITY);
+    const fourth: number[] = Array(A.length - 2).fill(Number.NEGATIVE_INFINITY);
 
-    for (int i = 0; i <= n - 3; i++) {
-        first[i] = second[i] = third[i] = fourth[i] = INT_MIN;
+    // `first` stores the maximum value of `A[l]`
+    for (let i = A.length - 1; i >= 0; i--) {
+        first[i] = Math.max(first[i + 1], A[i]);
     }
 
-    first[n - 2] = second[n - 2] = third[n - 2] = INT_MIN;
-    first[n - 1] = second[n - 1] = first[n] = INT_MIN;
-
-    // `first[]` stores the maximum value of `A[l]`
-    for (int i = n - 1; i >= 0; i--) {
-        first[i] = max(first[i + 1], A[i]);
+    // `second` stores the maximum value of `A[l] - A[k]`
+    for (let i = A.length - 2; i >= 0; i--) {
+        second[i] = Math.max(second[i + 1], first[i + 1] - A[i]);
     }
 
-    // `second[]` stores the maximum value of `A[l] - A[k]`
-    for (int i = n - 2; i >= 0; i--) {
-        second[i] = max(second[i + 1], first[i + 1] - A[i]);
+    // `third` stores the maximum value of `A[l] - A[k] + A[j]`
+    for (let i = A.length - 3; i >= 0; i--) {
+        third[i] = Math.max(third[i + 1], second[i + 1] + A[i]);
     }
 
-    // `third[]` stores the maximum value of `A[l] - A[k] + A[j]`
-    for (int i = n - 3; i >= 0; i--) {
-        third[i] = max(third[i + 1], second[i + 1] + A[i]);
-    }
-
-    // `fourth[]` stores the maximum value of `A[l] - A[k] + A[j] - A[i]`
-    for (int i = n - 4; i >= 0; i--) {
-        fourth[i] = max(fourth[i + 1], third[i + 1] - A[i]);
+    // `fourth` stores the maximum value of `A[l] - A[k] + A[j] - A[i]`
+    for (let i = A.length - 4; i >= 0; i--) {
+        fourth[i] = Math.max(fourth[i + 1], third[i + 1] - A[i]);
     }
 
     // maximum value would be present at `fourth[0]`
     return fourth[0];
 }
 
-int main()
-{
-    vector<int> A = { 3, 9, 10, 1, 30, 40 };
-
-    cout << maximizeExpression(A);
-
-    return 0;
-}
+const A = [3, 9, 10, 1, 30, 40];
+console.log(maximizeExpression(A));
 ```
 
 **Output:** 46
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Function to find the maximum value of the expression
-    // (A[l] - A[k] + A[j] - A[i]), where l > k > j > i
-    public static int maximizeExpression(int[] A)
-    {
-        // input should have at least 4 elements
-        if (A.length < 4) {
-            System.exit(-1);
-        }
-
-        // create 4 lookup tables and initialize them to `Integer.MIN_VALUE`
-        int[] first = new int[A.length + 1];
-        Arrays.fill(first, Integer.MIN_VALUE);
-
-        int[] second = new int[A.length];
-        Arrays.fill(second, Integer.MIN_VALUE);
-
-        int[] third = new int[A.length - 1];
-        Arrays.fill(third, Integer.MIN_VALUE);
-
-        int[] fourth = new int[A.length - 2];
-        Arrays.fill(fourth, Integer.MIN_VALUE);
-
-        // `first[]` stores the maximum value of `A[l]`
-        for (int i = A.length - 1; i >= 0; i--) {
-            first[i] = Integer.max(first[i + 1], A[i]);
-        }
-
-        // `second[]` stores the maximum value of `A[l] - A[k]`
-        for (int i = A.length - 2; i >= 0; i--) {
-            second[i] = Integer.max(second[i + 1], first[i + 1] - A[i]);
-        }
-
-        // `third[]` stores the maximum value of `A[l] - A[k] + A[j]`
-        for (int i = A.length - 3; i >= 0; i--) {
-            third[i] = Integer.max(third[i + 1], second[i + 1] + A[i]);
-        }
-
-        // `fourth[]` stores the maximum value of `A[l] - A[k] + A[j] - A[i]`
-        for (int i = A.length - 4; i >= 0; i--) {
-            fourth[i] = Integer.max(fourth[i + 1], third[i + 1] - A[i]);
-        }
-
-        // maximum value would be present at `fourth[0]`
-        return fourth[0];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 3, 9, 10, 1, 30, 40 };
-
-        System.out.println(maximizeExpression(A));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to find the maximum value of the expression
-# (A[l] - A[k] + A[j] - A[i]), where l > k > j > i
-def maximizeExpression(A):
-
-    # input should have at least 4 elements
-    if len(A) < 4:
-        exit(-1)
-
-    # create 4 lookup tables and initialize them to `-sys.maxsize`
-    first = [-sys.maxsize] * (len(A) + 1)
-    second = [-sys.maxsize] * len(A)
-    third = [-sys.maxsize] * (len(A) - 1)
-    fourth = [-sys.maxsize] * (len(A) - 2)
-
-    # `first` stores the maximum value of `A[l]`
-    for i in reversed(range(len(A))):
-        first[i] = max(first[i + 1], A[i])
-
-    # `second` stores the maximum value of `A[l] - A[k]`
-    for i in reversed(range(len(A) - 1)):
-        second[i] = max(second[i + 1], first[i + 1] - A[i])
-
-    # `third` stores the maximum value of `A[l] - A[k] + A[j]`
-    for i in reversed(range(len(A) - 2)):
-        third[i] = max(third[i + 1], second[i + 1] + A[i])
-
-    # `fourth` stores the maximum value of `A[l] - A[k] + A[j] - A[i]`
-    for i in reversed(range(len(A) - 3)):
-        fourth[i] = max(fourth[i + 1], third[i + 1] - A[i])
-
-    # maximum value would be present at `fourth[0]`
-    return fourth[0]
-
-if __name__ == '__main__':
-
-    A = [3, 9, 10, 1, 30, 40]
-    print(maximizeExpression(A))
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space.
 

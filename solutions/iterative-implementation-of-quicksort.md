@@ -14,288 +14,86 @@ Instead of using recursion, the idea is to use a stack to store subarray’s sta
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-The iterative Quicksort implementation can be seen below in C++, Java, and Python:
+The iterative Quicksort implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <stack>
-#include <vector>
-#include <algorithm>
-using namespace std;
+```ts
+function swap(A: number[], i: number, j: number): void {
+    const temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
 
-int partition(int a[], int start, int end)
-{
+function partition(a: number[], start: number, end: number): number {
+
     // Pick the rightmost element as a pivot from the array
-    int pivot = a[end];
+    const pivot = a[end];
 
-    // elements less than the pivot goes to the left of `pIndex`
-    // elements more than the pivot goes to the right of `pIndex`
+    // elements less than the pivot will go to the left of `pIndex`
+    // elements more than the pivot will go to the right of `pIndex`
     // equal elements can go either way
-    int pIndex = start;
+    let pIndex = start;
 
-    // each time we find an element less than or equal to the pivot, `pIndex`
-    // is incremented, and that element would be placed before the pivot.
-    for (int i = start; i < end; i++)
-    {
-        if (a[i] <= pivot)
-        {
-            swap(a[i], a[pIndex]);
-            pIndex++;
+    // each time we find an element less than or equal to the pivot,
+    // `pIndex` is incremented, and that element would be placed
+    // before the pivot.
+    for (let i = start; i < end; i++) {
+        if (a[i] <= pivot) {
+            swap(a, i, pIndex);
+            pIndex = pIndex + 1;
         }
     }
 
     // swap `pIndex` with pivot
-    swap (a[pIndex], a[end]);
+    swap(a, pIndex, end);
 
     // return `pIndex` (index of the pivot element)
     return pIndex;
 }
 
 // Iterative Quicksort routine
-void iterativeQuicksort(int a[], int n)
-{
-    // create a stack of `std::pairs` for storing subarray start and end index
-    stack<pair<int, int>> s;
+function iterativeQuicksort(a: number[]): void {
 
-    // get the starting and ending index of the given array
-    int start = 0;
-    int end = n - 1;
+    // create a stack for storing sublist start and end index
+    const stack: number[][] = [];
+
+    // get the starting and ending index of a given array
+    let start = 0;
+    let end = a.length - 1;
 
     // push the start and end index of the array into the stack
-    s.push(make_pair(start, end));
+    stack.push([start, end]);
 
     // loop till stack is empty
-    while (!s.empty())
-    {
-        // remove top pair from the list and get subarray starting
+    while (stack.length > 0) {
+
+        // remove top pair from the list and get sublist starting
         // and ending indices
-        start = s.top().first, end = s.top().second;
-        s.pop();
+        [start, end] = stack.pop()!;
 
         // rearrange elements across pivot
-        int pivot = partition(a, start, end);
+        const pivot = partition(a, start, end);
 
-        // push subarray indices containing elements that are
+        // push sublist indices containing elements that are
         // less than the current pivot to stack
         if (pivot - 1 > start) {
-            s.push(make_pair(start, pivot - 1));
+            stack.push([start, pivot - 1]);
         }
 
-        // push subarray indices containing elements that are
+        // push sublist indices containing elements that are
         // more than the current pivot to stack
         if (pivot + 1 < end) {
-            s.push(make_pair(pivot + 1, end));
+            stack.push([pivot + 1, end]);
         }
     }
 }
 
 // Iterative Implementation of Quicksort
-int main()
-{
-    int a[] = { 6, -3, 5, 1, 9, 8, 3, 2, -6 };
-    int n = sizeof(a) / sizeof(a[0]);
+const a = [9, -3, 5, 2, 6, 8, -6, 1, 3];
 
-    iterativeQuicksort(a, n);
+iterativeQuicksort(a);
 
-    // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << a[i] << " ";
-    }
-
-    return 0;
-}
-```
-
-**Output:** -6 -3 1 2 3 5 6 8 9
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.Stack;
-
-// A simple pair class in Java
-class Pair
-{
-    private final int x;
-    private final int y;
-
-    Pair(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() { return x; }
-    public int getY() { return y; }
-}
-
-class Main
-{
-    public static void swap (int[] arr, int i, int j)
-    {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    public static int partition(int a[], int start, int end)
-    {
-        // Pick the rightmost element as a pivot from the array
-        int pivot = a[end];
-
-        // elements less than the pivot will go to the left of `pIndex`
-        // elements more than the pivot will go to the right of `pIndex`
-        // equal elements can go either way
-        int pIndex = start;
-
-        // each time we find an element less than or equal to the pivot,
-        // `pIndex` is incremented, and that element would be placed
-        // before the pivot.
-        for (int i = start; i < end; i++)
-        {
-            if (a[i] <= pivot)
-            {
-                swap(a, i, pIndex);
-                pIndex++;
-            }
-        }
-
-        // swap `pIndex` with pivot
-        swap (a, pIndex, end);
-
-        // return `pIndex` (index of the pivot element)
-        return pIndex;
-    }
-
-    // Iterative Quicksort routine
-    public static void iterativeQuicksort(int[] a)
-    {
-        // create a stack for storing subarray start and end index
-        Stack<Pair> stack = new Stack<>();
-
-        // get the starting and ending index of the given array
-        int start = 0;
-        int end = a.length - 1;
-
-        // push the start and end index of the array into the stack
-        stack.push(new Pair(start, end));
-
-        // loop till stack is empty
-        while (!stack.empty())
-        {
-            // remove top pair from the list and get subarray starting
-            // and ending indices
-            start = stack.peek().getX();
-            end = stack.peek().getY();
-            stack.pop();
-
-            // rearrange elements across pivot
-            int pivot = partition(a, start, end);
-
-            // push subarray indices containing elements that are
-            // less than the current pivot to stack
-            if (pivot - 1 > start) {
-                stack.push(new Pair(start, pivot - 1));
-            }
-
-            // push subarray indices containing elements that are
-            // more than the current pivot to stack
-            if (pivot + 1 < end) {
-                stack.push(new Pair(pivot + 1, end));
-            }
-        }
-    }
-
-    // Iterative Implementation of Quicksort
-    public static void main(String[] args)
-    {
-        int a[] = { 9, -3, 5, 2, 6, 8, -6, 1, 3 };
-
-        iterativeQuicksort(a);
-
-        // print the sorted array
-        System.out.println(Arrays.toString(a));
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-def swap (A, i, j):
-    temp = A[i]
-    A[i] = A[j]
-    A[j] = temp
-
-def partition(a, start, end):
-
-    # Pick the rightmost element as a pivot from the list
-    pivot = a[end]
-
-    # elements less than the pivot will go to the left of `pIndex`
-    # elements more than the pivot will go to the right of `pIndex`
-    # equal elements can go either way
-    pIndex = start
-
-    # each time we find an element less than or equal to the pivot,
-    # `pIndex` is incremented, and that element would be placed
-    # before the pivot.
-    for i in range(start, end):
-        if a[i] <= pivot:
-            swap(a, i, pIndex)
-            pIndex = pIndex + 1
-
-    # swap `pIndex` with pivot
-    swap(a, pIndex, end)
-
-    # return `pIndex` (index of the pivot element)
-    return pIndex
-
-# Iterative Quicksort routine
-def iterativeQuicksort(a):
-
-    # create a stack for storing sublist start and end index
-    stack = deque()
-
-    # get the starting and ending index of a given list
-    start = 0
-    end = len(a) - 1
-
-    # push the start and end index of the array into the stack
-    stack.append((start, end))
-
-    # loop till stack is empty
-    while stack:
-
-        # remove top pair from the list and get sublist starting
-        # and ending indices
-        start, end = stack.pop()
-
-        # rearrange elements across pivot
-        pivot = partition(a, start, end)
-
-        # push sublist indices containing elements that are
-        # less than the current pivot to stack
-        if pivot - 1 > start:
-            stack.append((start, pivot - 1))
-
-        # push sublist indices containing elements that are
-        # more than the current pivot to stack
-        if pivot + 1 < end:
-            stack.append((pivot + 1, end))
-
-# Iterative Implementation of Quicksort
-if __name__ == '__main__':
-
-    a = [9, -3, 5, 2, 6, 8, -6, 1, 3]
-
-    iterativeQuicksort(a)
-
-    # print the sorted list
-    print(a)
+// print the sorted list
+console.log(a);
 ```
 
 **Exercise:** Modify above code to print in descending order.

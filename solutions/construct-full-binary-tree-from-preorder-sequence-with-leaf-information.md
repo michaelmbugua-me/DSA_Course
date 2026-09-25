@@ -14,282 +14,87 @@ For example,
 
 The idea is first to construct the full binary tree’s root node using the first key in the preorder sequence and then using the given boolean array, check if the root node is an internal node or a leaf node. If the root node is an internal node, recursively construct its left and right subtrees.
 
-To construct the complete full binary tree, recursively repeat the above steps with subsequent keys in the preorder sequence. Following is the implementation of this approach in C++, Java, and Python:
+To construct the complete full binary tree, recursively repeat the above steps with subsequent keys in the preorder sequence. Following is a TypeScript implementation of this approach:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <climits>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Function to print the preorder traversal on a given binary tree
-void preorderTraversal(Node* root)
-{
-    if (root == nullptr) {
+function preorderTraversal(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
 
-    cout << root->data << ' ';
-    preorderTraversal(root->left);
-    preorderTraversal(root->right);
+    output.push(root.data);
+    preorderTraversal(root.left, output);
+    preorderTraversal(root.right, output);
 }
 
 // Recursive function to construct a full binary tree from a given
 // preorder sequence with extra information about leaf nodes
-Node *construct(vector<int> const &preorder, vector<bool> const &isLeaf, int &pIndex)
-{
+function construct(preorder: number[], isLeaf: number[], pIndex: number): [Node | null, number] {
+
     // base case
-    if (pIndex == preorder.size()) {
-        return nullptr;
+    if (pIndex === preorder.length) {
+        return [null, pIndex];
     }
 
     // construct the current node, check if it is an internal node,
     // and increment `pIndex`
-    Node* node = new Node(preorder[pIndex]);
-    bool isInternalNode = !isLeaf[pIndex];
-    pIndex++;
+    const node = new Node(preorder[pIndex]);
+    const isInternalNode = (isLeaf[pIndex] === 0);
+    pIndex = pIndex + 1;
 
     // if the current node is an internal node, construct its 2 children
-    if (isInternalNode)
-    {
-        node->left = construct(preorder, isLeaf, pIndex);
-        node->right = construct(preorder, isLeaf, pIndex);
+    if (isInternalNode) {
+        [node.left, pIndex] = construct(preorder, isLeaf, pIndex);
+        [node.right, pIndex] = construct(preorder, isLeaf, pIndex);
     }
 
     // return current node
-    return node;
+    return [node, pIndex];
 }
 
-// Construct a full binary tree from the preorder sequence with
-// leaf node information
-Node* constructTree(vector<int> const &preorder,
-                vector<bool> const &isLeaf)
-{
+// Construct a full binary tree from the preorder sequence with leaf node information
+function constructTree(preorder: number[], isLeaf: number[]): Node | null {
+
     // `pIndex` stores the index of the next unprocessed key in a preorder sequence;
     // start with the root node (at 0th index).
-    int pIndex = 0;
-
-    return construct(preorder, isLeaf, pIndex);
+    const pIndex = 0;
+    return construct(preorder, isLeaf, pIndex)[0];
 }
 
-int main()
-{
-    /* Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          / \     / \
-         /   \   /   \
-        4     5 6     7
-               / \
-              /   \
-             8     9
+/* Construct the following tree
+           1
+         /   \
+        /     \
+       2       3
+      / \     / \
+     /   \   /   \
+    4     5 6     7
+           / \
+          /   \
+         8     9
     */
 
-    // preorder traversal
-    vector<int> preorder = { 1, 2, 4, 5, 3, 6, 8, 9, 7 };
+const preorder = [1, 2, 4, 5, 3, 6, 8, 9, 7];
+const isLeaf = [0, 0, 1, 1, 0, 0, 1, 1, 1];
 
-    // 1 represents a leaf node, and 0 represents an internal node
-    // in the preorder traversal
-    vector<bool> isLeaf = { 0, 0, 1, 1, 0, 0, 1, 1, 1 };
+// construct the tree
+const root = constructTree(preorder, isLeaf);
 
-    // construct the tree
-    Node* root = constructTree(preorder, isLeaf);
-
-    // print the tree in a preorder fashion
-    cout << "Preorder traversal of the constructed tree is ";
-    preorderTraversal(root);
-
-    return 0;
-}
+// print the tree in a preorder fashion
+const output: number[] = [];
+preorderTraversal(root, output);
+console.log(`Preorder traversal of the constructed tree is ${output.join(' ')}`);
 ```
 
 **Output:** Preorder traversal of the constructed tree is 1 2 4 5 3 6 8 9 7
-
-##
-
-```java
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to print the preorder traversal on a given binary tree
-    public static void preorderTraversal(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.data + " ");
-        preorderTraversal(root.left);
-        preorderTraversal(root.right);
-    }
-
-    // Recursive function to construct a full binary tree from a given
-    // preorder sequence with extra information about leaf nodes
-    public static Node construct(int[] preorder, int[] isLeaf, AtomicInteger pIndex)
-    {
-        // base case
-        if (pIndex.get() == preorder.length) {
-            return null;
-        }
-
-        // construct the current node, check if it is an internal node,
-        // and increment `pIndex`
-        Node node = new Node(preorder[pIndex.get()]);
-        boolean isInternalNode = (isLeaf[pIndex.get()] == 0);
-        pIndex.incrementAndGet();
-
-        // if the current node is an internal node, construct its 2 children
-        if (isInternalNode)
-        {
-            node.left = construct(preorder, isLeaf, pIndex);
-            node.right = construct(preorder, isLeaf, pIndex);
-        }
-
-        // return current node
-        return node;
-    }
-
-    // Construct a full binary tree from the preorder sequence with leaf node
-    // information
-    public static Node constructTree(int[] preorder, int[] isLeaf)
-    {
-        // `pIndex` stores the index of the next unprocessed key in a preorder
-        // sequence; We start with the root node (at 0th index). `AtomicInteger`
-        // is used here since `Integer` is passed by value in Java.
-
-        AtomicInteger pIndex = new AtomicInteger(0);
-        return construct(preorder, isLeaf, pIndex);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                   1
-                 /   \
-                /     \
-               2       3
-              / \     / \
-             /   \   /   \
-            4     5 6     7
-                   / \
-                  /   \
-                 8     9
-        */
-
-        int[] preorder = { 1, 2, 4, 5, 3, 6, 8, 9, 7 };
-        int[] isLeaf    = { 0, 0, 1, 1, 0, 0, 1, 1, 1 };
-
-        // construct the tree
-        Node root = constructTree(preorder, isLeaf);
-
-        // print the tree in a preorder fashion
-        System.out.print("Preorder traversal of the constructed tree is ");
-        preorderTraversal(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to print the preorder traversal on a given binary tree
-def preorderTraversal(root):
-    if root is None:
-        return
-
-    print(root.data, end=' ')
-    preorderTraversal(root.left)
-    preorderTraversal(root.right)
-
-# Recursive function to construct a full binary tree from a given
-# preorder sequence with extra information about leaf nodes
-def construct(preorder, isLeaf, pIndex):
-
-    # base case
-    if pIndex == len(preorder):
-        return None, pIndex
-
-    # construct the current node, check if it is an internal node,
-    # and increment `pIndex`
-    node = Node(preorder[pIndex])
-    isInternalNode = (isLeaf[pIndex] == 0)
-    pIndex = pIndex + 1
-
-    # if the current node is an internal node, construct its 2 children
-    if isInternalNode:
-        node.left, pIndex = construct(preorder, isLeaf, pIndex)
-        node.right, pIndex = construct(preorder, isLeaf, pIndex)
-
-    # return current node
-    return node, pIndex
-
-# Construct a full binary tree from the preorder sequence with leaf node information
-def constructTree(preorder, isLeaf):
-
-    # `pIndex` stores the index of the next unprocessed key in a preorder sequence;
-    # start with the root node (at 0th index).
-    pIndex = 0
-    return construct(preorder, isLeaf, pIndex)[0]
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          / \     / \
-         /   \   /   \
-        4     5 6     7
-               / \
-              /   \
-             8     9
-    '''
-
-    preorder = [1, 2, 4, 5, 3, 6, 8, 9, 7]
-    isLeaf    = [0, 0, 1, 1, 0, 0, 1, 1, 1]
-
-    # construct the tree
-    root = constructTree(preorder, isLeaf)
-
-    # print the tree in a preorder fashion
-    print('Preorder traversal of the constructed tree is', end=' ')
-    preorderTraversal(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(h) for the call stack, where `h` is the height of the tree.
 

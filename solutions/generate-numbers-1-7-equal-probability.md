@@ -14,149 +14,53 @@ Since `random()` returns random numbers from 1 to 5 with equal probability, `R =
 
 If R = 0, R + random() can be any of 1, 2, 3, 4, 5 If R = 5, R + random() can be any of 6, 7, 8, 9, 10 If R = 10, R + random() can be any of 11, 12, 13, 14, 15 If R = 15, R + random() can be any of 15, 16, 17, 18, 19, 20 If R = 20, R + random() can be any of 21, 22, 23, 24, 25
 
-So, the expression uniformly distributes the numbers in the range `[1–25]`. Following is the C, Java, and Python implementation of the idea:
+So, the expression uniformly distributes the numbers in the range `[1–25]`. Following is the TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-
-// Function to generate a random number from 1 to 5 with equal probability
-int getRandom() {
-    return (rand() % 5) + 1;
+```ts
+// Generates a pseudo-random integer in range `[min, max]`
+function rand(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // Function to generate a random number from 1 to 7 with equal probability
 // by using the specified function
-int generate()
-{
-    int r;
+function generate(): number {
+
+    let r: number;
     do {
-        r = 5 * (getRandom() - 1) + getRandom();
+        const x = rand(1, 5);
+        const y = rand(1, 5);
+
+        r = 5 * (x - 1) + y;
     } while (r > 7);
 
     return r;
 }
 
-int main(void)
-{
-    // initialize srand with a distinctive value
-    srand(time(NULL));
+// count list to validate the results
+const count = new Array(8).fill(0);
 
-    // count array to validate the results
-    int count[8];
-    memset(count, 0, sizeof count);
-
-    // make 1000000 calls to the `generate()` function and store the results
-    for (int i = 1; i <= 1000000; i++)
-    {
-        int val = generate();
-        count[val]++;
-    }
-
-    // print the results
-    for (int i = 1; i <= 7; i++) {
-        printf("%d ~ %0.2f%\n", i, count[i]/10000.0);
-    }
-
-    return 0;
+// make 1000000 calls to the `generate()` function and store the results
+for (let i = 0; i < 1000000; i++) {
+    const val = generate();
+    count[val]++;
 }
-```
 
-##
-
-```java
-import java.util.Random;
-
-class Main
-{
-    // Generates a pseudo-random integer in range `[min, max]`
-    public static int rand(int min, int max)
-    {
-        if (min > max || (max - min + 1 > Integer.MAX_VALUE)) {
-            throw new IllegalArgumentException("Invalid range");
-        }
-
-        return new Random().nextInt(max - min + 1) + min;
-    }
-
-    // Function to generate a random number from 1 to 7 with equal probability
-    // by using the specified function
-    public static int generate()
-    {
-        int r;
-        do {
-            r = 5 * (rand(1, 5) - 1) + rand(1, 5);
-        } while (r > 7);
-
-        return r;
-    }
-
-    public static void main(String[] args)
-    {
-        // count array to validate the results
-        int[] count = new int[8];
-
-        // make 1000000 calls to the `generate()` function and store the results
-        for (int i = 1; i <= 1000000; i++)
-        {
-            int val = generate();
-            count[val]++;
-        }
-
-        // print the results
-        for (int i = 1; i <= 7; i++) {
-            System.out.println(i + " ~ " + (count[i] / 10000.0) + "%");
-        }
-    }
+// print the results
+for (let i = 1; i <= 7; i++) {
+    console.log(`${i} ~ ${(count[i] / 10000).toFixed(2)}%`);
 }
-```
-
-##
-
-```python3
-from random import randint
-
-# Function to generate a random number from 1 to 7 with equal probability
-# by using the specified function
-def generate():
-
-    while True:
-        x = randint(1, 5)
-        y = randint(1, 5)
-
-        r = 5 * (x - 1) + y
-        if r <= 7:
-            break
-
-    return r
-
-if __name__ == '__main__':
-
-    # count list to validate the results
-    count = [0] * 8
-
-    # make 1000000 calls to the `generate()` function and store the results
-    for i in range(1000000):
-        val = generate()
-        count[val] = count[val] + 1
-
-    # print the results
-    for i in range(1, 8):
-        print(f'{i}~{count[i]/10000}%')
 ```
 
 **Output (will vary):** 1 ~ 14.29% 2 ~ 14.25% 3 ~ 14.33% 4 ~ 14.27% 5 ~ 14.26% 6 ~ 14.31% 7 ~ 14.29%
 
 To minimize the total number of calls to the `random()` function, stop the while loop at `r <= 21` and use the modulo operator, as shown below:
 
-```
-int generate()
-{
-    int r;
+```ts
+function generate(): number {
+    let r: number;
     do {
-        r = 5 * (random() - 1) + random();
+        r = 5 * (rand(1, 5) - 1) + rand(1, 5);
     } while (r > 21);
 
     return (r % 7) + 1;

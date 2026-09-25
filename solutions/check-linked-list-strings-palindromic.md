@@ -12,240 +12,69 @@ For example,
 
 The idea is to traverse till the end of the linked list using [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) and construct a string that contains a concatenation of all values in the linked list nodes (in encountered order). When the recursion unfolds, we build another string containing a concatenation of all strings in reverse order. This time, the encountered order of linked list nodes is the opposite, i.e., from the last node towards the head node.
 
-Now the problem reduces to just validating if both constructed strings are equal or not. If both strings are the same, we can say that the linked list is palindromic. The algorithm can be implemented as follows in C++, Java, and Python:
+Now the problem reduces to just validating if both constructed strings are equal or not. If both strings are the same, we can say that the linked list is palindromic. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
+```ts
 // A Linked List Node
-struct Node
-{
-    string data;
-    Node* next;
-
-    // Constructor
-    Node(string str)
-    {
-        this->data = str;
-        this->next = nullptr;
-    }
-};
+class ListNode {
+    constructor(public data: string, public next: ListNode | null = null) {}
+}
 
 // Function to print a linked list
-void printList(Node* node)
-{
-    while (node)
-    {
-        cout << node->data << " —> ";
-        node = node->next;
+const printList = (node: ListNode | null): void => {
+
+    let output = '';
+    while (node !== null) {
+        output += node.data + ' —> ';
+        node = node.next;
     }
-
-    cout << "nullptr";
-}
-
-// Function to reverse a string
-string reverse(string const &s)
-{
-    string rev = "";
-    for_each(s.rbegin(), s.rend(),
-                [&rev] (char const &c) {
-                    rev = rev.append(1, c);
-                });
-    return rev;
-}
+    output += 'None';
+    process.stdout.write(output);
+};
 
 // Construct string 'x' and 'y' out of the given linked list with consecutive
 // list elements in the forward and backward direction
-void construct(Node* &head, string &x, string &y)
-{
-    // base case
-    if (head == nullptr) {
-        return;
+const construct = (head: ListNode | null, x = '', y = ''): [string, string] => {
+
+    if (head === null) {        // base case
+        return [x, y];
     }
 
-    x += head->data;
-    construct(head->next, x, y);
-    y += reverse(head->data);
-}
+    x += head.data;
+    [x, y] = construct(head.next, x, y);
+    y += head.data.split('').reverse().join('');
+    return [x, y];
+};
 
 // Function to check if a given linked list of strings is palindromic
-bool isPalindromic(Node* head)
-{
+const isPalindromic = (head: ListNode | null): boolean => {
+
     // construct string 'x' with consecutive elements of the linked list
     // construct string 'y' by reversing consecutive elements of the
     // linked list, starting from the end
-
-    string x, y;
-    construct(head, x, y);
+    const [x, y] = construct(head);
 
     // check if the linked list is palindromic
-    return x == y;
+    return x === y;
+};
+
+// demo
+
+let head = new ListNode('AA');
+head.next = new ListNode('XYZ');
+head.next.next = new ListNode('CD');
+head.next.next.next = new ListNode('C');
+head.next.next.next.next = new ListNode('ZYX');
+head.next.next.next.next.next = new ListNode('AA');
+
+process.stdout.write('Linked List [');
+printList(head);
+
+if (isPalindromic(head)) {
+    process.stdout.write('] is a palindrome');
+} else {
+    process.stdout.write('] is not a palindrome');
 }
-
-int main()
-{
-    Node* head = new Node("AA");
-    head->next = new Node("XYZ");
-    head->next->next = new Node("CD");
-    head->next->next->next = new Node("C");
-    head->next->next->next->next = new Node("ZYX");
-    head->next->next->next->next->next = new Node("AA");
-
-    cout << "Linked List [";
-    printList(head);
-
-    if (isPalindromic(head)) {
-        cout << "] is a palindrome.";
-    }
-    else {
-        cout << "] is not a palindrome.";
-    }
-
-    return 0;
-}
-```
-
-**Output:** Linked List [AA —> XYZ —> CD —> C —> ZYX —> AA —> nullptr] is a palindrome.
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    String data;
-    Node next;
-
-    // Constructor
-    Node(String str)
-    {
-        this.data = str;
-        this.next = null;
-    }
-}
-
-class Main
-{
-    // Function to print a linked list
-    public static void printList(Node node)
-    {
-        while (node != null)
-        {
-            System.out.print(node.data + " —> ");
-            node = node.next;
-        }
-        System.out.print("null");
-    }
-
-    // Construct string 'x' and 'y' out of the given linked list with consecutive
-    // list elements in the forward and backward direction
-    public static void construct(Node head, StringBuilder x, StringBuilder y)
-    {
-        // base case
-        if (head == null) {
-            return;
-        }
-
-        x.append(head.data);
-        construct(head.next, x, y);
-        y.append(new StringBuilder(head.data).reverse().toString());
-    }
-
-    // Function to check if a given linked list of strings is palindromic
-    public static boolean isPalindromic(Node head)
-    {
-        // construct string 'x' with consecutive elements of the linked list
-        // construct string 'y' by reversing consecutive elements of the
-        // linked list, starting from the end
-
-        StringBuilder x = new StringBuilder(), y = new StringBuilder();
-        construct(head, x, y);
-
-        // check if the linked list is palindromic
-        return x.toString().equals(y.toString());
-    }
-
-    public static void main(String[] args)
-    {
-        Node head = new Node("AA");
-        head.next = new Node("XYZ");
-        head.next.next = new Node("CD");
-        head.next.next.next = new Node("C");
-        head.next.next.next.next = new Node("ZYX");
-        head.next.next.next.next.next = new Node("AA");
-
-        System.out.print("Linked List [");
-        printList(head);
-
-        if (isPalindromic(head)) {
-            System.out.print("] is a palindrome.");
-        }
-        else {
-            System.out.print("] is not a palindrome.");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, s):
-        self.data = s
-        self.next = None
-
-# Function to print a linked list
-def printList(node):
-
-    while node:
-        print(node.data, end=' —> ')
-        node = node.next
-    print('None', end='')
-
-# Construct string 'x' and 'y' out of the given linked list with consecutive
-# list elements in the forward and backward direction
-def construct(head, x='', y=''):
-
-    if head is None:        # base case
-        return x, y
-
-    x += head.data
-    x, y = construct(head.next, x, y)
-    y += head.data[::-1]
-    return x, y
-
-# Function to check if a given linked list of strings is palindromic
-def isPalindromic(head):
-
-    # construct string 'x' with consecutive elements of the linked list
-    # construct string 'y' by reversing consecutive elements of the
-    # linked list, starting from the end
-    x, y = construct(head)
-
-    # check if the linked list is palindromic
-    return x == y
-
-if __name__ == '__main__':
-
-    head = Node('AA')
-    head.next = Node('XYZ')
-    head.next.next = Node('CD')
-    head.next.next.next = Node('C')
-    head.next.next.next.next = Node('ZYX')
-    head.next.next.next.next.next = Node('AA')
-
-    print('Linked List [', end='');
-    printList(head)
-
-    if isPalindromic(head):
-        print('] is a palindrome', end='')
-    else:
-        print('] is not a palindrome', end='')
 ```
 
 The time complexity of the above solution is O(N.M), where `N` is the length of the linked list and `M` is the maximum word length. The auxiliary space required by the program for the call stack is proportional to the lists’ length.

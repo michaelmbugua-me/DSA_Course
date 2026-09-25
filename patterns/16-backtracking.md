@@ -13,20 +13,23 @@ Systematically build candidate solutions one choice at a time; at each step, **c
 - Choice tree where making and undoing a choice is cheap
 - Classic cast: N-Queens, Sudoku, word search, Hamiltonian paths, Knight's tour, generating subsets/permutations
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def backtrack(path, choices):
-    if is_complete(path):
-        solutions.append(path[:])    # copy!
-        return
-    for choice in choices:
-        if not is_valid(choice, path):
-            continue                 # prune
-        path.append(choice)          # choose
-        backtrack(path, next_choices(choice))  # explore
-        path.pop()                   # un-choose (backtrack)
-```
+```ts
+function backtrack(path: Choice[], choices: Choice[]): void {
+    if (isComplete(path)) {
+        solutions.push([...path]);      // copy!
+        return;
+    }
+    for (const choice of choices) {
+        if (!isValid(choice, path)) {
+            continue;                   // prune
+        }
+        path.push(choice);              // choose
+        backtrack(path, nextChoices(choice)); // explore
+        path.pop();                     // un-choose (backtrack)
+    }
+}
 
 ## Complexity
 

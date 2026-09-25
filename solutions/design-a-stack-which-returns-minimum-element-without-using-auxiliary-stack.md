@@ -12,225 +12,68 @@ Suppose we will push a number value into a stack with a minimum number, `min`. I
 
 Now let’s demonstrate its correctness of this solution. Since the value is greater than or equal to `min`, it is pushed into stack direct without updating `min`. Therefore, when we find that the top of the stack is greater than or equal to `min`, we can pop directly without updating `min`. However, if we find the value is less than `min`, push `2×value-min`. We should notice that `2×value-min` should be less than the value. Then we update the current `min` as value. Therefore, the new top of the stack is less than the current `min`. Therefore, when we find that the top of the stack is less than `min`, the real top (real pushed number value) is stored in `min`. After we pop the top of the stack, we have to restore the previous minimum number. Since `top=2×value-previous-min` and value is current `min`, previous `min` is `2×current-min-top`.
 
-This is demonstrated below in C++, Java, and Python:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <stack>
-using namespace std;
+```ts
+class MinStack {
+  // main stack to store elements
+  private s: number[] = [];
 
-class MinStack
-{
-    // main stack to store elements
-    stack<int> s;
+  // variable to store the minimum element
+  private min: number | null = null;
 
-    // variable to store the minimum element
-    int min;
+  // Inserts a given element on top of the stack
+  push(val: number): void {
+    if (this.s.length === 0) {
+      this.s.push(val);
+      this.min = val;
+    } else if (val > this.min!) {
+      this.s.push(val);
+    } else {
+      this.s.push(2 * val - this.min!);
+      this.min = val;
+    }
+  }
 
-public:
-
-    // Inserts a given element on top of the stack
-    void push(int val)
-    {
-        if (s.empty())
-        {
-            s.push(val);
-            min = val;
-        }
-        else if (val > min) {
-            s.push(val);
-        }
-        else {
-            s.push(2*val - min);
-            min = val;
-        }
+  // Removes the top element from the stack
+  pop(): void {
+    if (this.s.length === 0) {
+      console.log("Stack underflow!!");
+      process.exit(-1);
     }
 
-    // Removes the top element from the stack
-    void pop()
-    {
-        if (s.empty()) {
-            cout << "Stack underflow!!" << endl;
-            exit(-1);
-        }
-
-        int top = s.top();
-        if (top < min) {
-            min = 2*min - top;
-        }
-        s.pop();
+    const top = this.s[this.s.length - 1];
+    if (top < this.min!) {
+      this.min = 2 * this.min! - top;
     }
+    this.s.pop();
+  }
 
-    // Returns the minimum element from the stack in constant time
-    int getMin() {
-        return min;
-    }
-};
-
-int main()
-{
-    MinStack s;
-
-    s.push(6);
-    cout << s.getMin() << endl;
-
-    s.push(7);
-    cout << s.getMin() << endl;
-
-    s.push(5);
-    cout << s.getMin() << endl;
-
-    s.push(3);
-    cout << s.getMin() << endl;
-
-    s.pop();
-    cout << s.getMin() << endl;
-
-    s.pop();
-    cout << s.getMin() << endl;
-
-    return 0;
-}
-```
-
-**Output:** 6 6 5 3 5 6
-
-##
-
-```java
-import java.util.Stack;
-
-class MinStack
-{
-    // main stack to store elements
-    private Stack<Integer> s = new Stack<>();
-
-    // variable to store the minimum element
-    private int min;
-
-    // Inserts a given element on top of the stack
-    public void push(int val)
-    {
-        if (s.empty())
-        {
-            s.push(val);
-            min = val;
-        }
-        else if (val > min) {
-            s.push(val);
-        }
-        else {
-            s.push(2*val - min);
-            min = val;
-        }
-    }
-
-    // Removes the top element from the stack
-    public void pop()
-    {
-        if (s.empty()) {
-            System.out.println("Stack underflow!!");
-            System.exit(-1);
-        }
-
-        int top = s.peek();
-        if (top < min) {
-            min = 2*min - top;
-        }
-        s.pop();
-    }
-
-    // Returns the minimum element from the stack in constant time
-    public int getMin() {
-        return min;
-    }
+  // Returns the minimum element from the stack in constant time
+  getMin(): number | null {
+    return this.min;
+  }
 }
 
-class Main
-{
-    public static void main (String[] args)
-    {
-        MinStack s = new MinStack();
+const s = new MinStack();
 
-        s.push(6);
-        System.out.println(s.getMin());
+s.push(6);
+console.log(s.getMin());
 
-        s.push(7);
-        System.out.println(s.getMin());
+s.push(7);
+console.log(s.getMin());
 
-        s.push(5);
-        System.out.println(s.getMin());
+s.push(5);
+console.log(s.getMin());
 
-        s.push(3);
-        System.out.println(s.getMin());
+s.push(3);
+console.log(s.getMin());
 
-        s.pop();
-        System.out.println(s.getMin());
+s.pop();
+console.log(s.getMin());
 
-        s.pop();
-        System.out.println(s.getMin());
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-class MinStack:
-    def __init__(self):
-        # main stack to store elements
-        self.s = deque()
-        # variable to store the minimum element
-        self.min = None
-
-    # Inserts a given element on top of the stack
-    def push(self, val):
-        if not self.s:
-            self.s.append(val)
-            self.min = val
-        elif val > self.min:
-            self.s.append(val)
-        else:
-            self.s.append(2*val - self.min)
-            self.min = val
-
-    # Removes the top element from the stack
-    def pop(self):
-        if not self.s:
-            self.print('Stack underflow!!')
-            exit(-1)
-        top = self.s[-1]
-        if top < self.min:
-            self.min = 2*self.min - top
-        self.s.pop()
-
-    # Returns the minimum element from the stack in constant time
-    def getMin(self):
-        return self.min
-
-if __name__ == '__main__':
-
-    s = MinStack()
-
-    s.push(6)
-    print(s.getMin())
-
-    s.push(7)
-    print(s.getMin())
-
-    s.push(5)
-    print(s.getMin())
-
-    s.push(3)
-    print(s.getMin())
-
-    s.pop()
-    print(s.getMin())
-
-    s.pop()
-    print(s.getMin())
+s.pop();
+console.log(s.getMin());
 ```
 
 **Reference:** [Coding Interview Questions: No. 02 – Stack with Function min()](https://codercareer.blogspot.com/2011/09/no-02-stack-with-function-min.html)

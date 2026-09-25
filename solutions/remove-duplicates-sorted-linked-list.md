@@ -12,222 +12,64 @@ For example, the list `{1, 2, 2, 2, 3, 4, 4, 5}` should be converted into the li
 
 Since the list is sorted, we can proceed down the list and compare adjacent nodes. When adjacent nodes are the same, remove the second one. There’s a tricky case where the node after the next node needs to be noted before the deletion.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
-    }
-
-    printf("NULL");
+class ListNode {
+    constructor(public val: number, public next: ListNode | null = null) {}
 }
 
-// Helper function to insert a new node at the beginning of the linked list
-void push(struct Node** head, int data)
-{
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = *head;
-    *head = newNode;
+// Helper function to print a given linked list
+function printList(head: ListNode | null): void {
+    let ptr: ListNode | null = head;
+    while (ptr) {
+        console.log(ptr.val + ' —> ');
+        ptr = ptr.next;
+    }
+    console.log('null');
 }
 
 // Remove duplicates from a sorted list
-void removeDuplicates(struct Node* head)
-{
+function removeDuplicates(head: ListNode | null): ListNode | null {
     // do nothing if the list is empty
-    if (head == NULL) {
-        return;
+    if (head === null) {
+        return null;
     }
 
-    struct Node* current = head;
+    let current: ListNode = head;
 
     // compare the current node with the next node
-    while (current->next != NULL)
-    {
-        if (current->data == current->next->data)
-        {
-            struct Node* nextNext = current->next->next;
-            free(current->next);
-            current->next = nextNext;
+    while (current.next !== null) {
+        if (current.val === current.next.val) {
+            current.next = current.next.next;
         }
         else {
-            current = current->next;    // only advance if no deletion
+            current = current.next;    // only advance if no deletion
         }
     }
+
+    return head;
 }
 
-int main(void)
-{
-    // input keys
-    int keys[] = {1, 2, 2, 2, 3, 4, 4, 5};
-    int n = sizeof(keys)/sizeof(keys[0]);
+// input keys
+const keys = [1, 2, 2, 2, 3, 4, 4, 5];
 
-    // points to the head node of the linked list
-    struct Node* head = NULL;
-
-    // construct a linked list
-    for (int i = n-1; i >= 0; i--) {
-        push(&head, keys[i]);
-    }
-
-    removeDuplicates(head);
-
-    // print linked list
-    printList(head);
-
-    return 0;
+// construct a linked list
+let head: ListNode | null = null;
+for (let i = keys.length - 1; i >= 0; i--) {
+    head = new ListNode(keys[i], head);
 }
+
+head = removeDuplicates(head);
+
+// print linked list
+printList(head);
 ```
 
 **Output:** 1 —> 2 —> 3 —> 4 —> 5 —> NULL
 
-##
 
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Remove duplicates from a sorted list
-    public static Node removeDuplicates(Node head)
-    {
-        // do nothing if the list is empty
-        if (head == null) {
-            return null;
-        }
-
-        Node current = head;
-
-        // compare the current node with the next node
-        while (current.next != null)
-        {
-            if (current.data == current.next.data)
-            {
-                Node nextNext = current.next.next;
-                current.next = nextNext;
-            }
-            else {
-                current = current.next;    // only advance if no deletion
-            }
-        }
-
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = {1, 2, 2, 2, 3, 4, 4, 5};
-
-        // points to the head node of the linked list
-        Node head = null;
-
-        // construct a linked list
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
-        }
-
-        head = removeDuplicates(head);
-
-        // print linked list
-        printList(head);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Helper function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-
-    print('None')
-
-# Remove duplicates from a sorted list
-def removeDuplicates(head):
-
-    # do nothing if the list is empty
-    if head is None:
-        return None
-
-    current = head
-
-    # compare the current node with the next node
-    while current.next:
-        if current.data == current.next.data:
-            nextNext = current.next.next
-            current.next = nextNext
-        else:
-            current = current.next        # only advance if no deletion
-
-    return head
-
-if __name__ == '__main__':
-
-    # input keys
-    keys = [1, 2, 2, 2, 3, 4, 4, 5]
-
-    # construct a linked list
-    head = None
-    for i in reversed(range(len(keys))):
-        head = Node(keys[i], head)
-
-    head = removeDuplicates(head)
-
-    # print linked list
-    printList(head)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.
 

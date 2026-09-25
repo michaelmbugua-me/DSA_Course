@@ -36,103 +36,33 @@ The LCS of these two sequences either ends with `B` (the last element of the seq
 
 LCS(ABCBDAB, BDCABA) = maximum (LCS(ABCBDA, BDCABA), LCS(ABCBDAB, BDCAB)) LCS(ABCBDA, BDCABA) = LCS(ABCBD, BDCAB) + A LCS(ABCBDAB, BDCAB) = LCS(ABCBDA, BDCA) + B LCS(ABCBD, BDCAB) = maximum (LCS(ABCB, BDCAB), LCS(ABCBD, BDCA)) LCS(ABCBDA, BDCA) = LCS(ABCBD, BDC) + A And so on…
 
-The following solution in C++, Java, and Python find the length of LCS of sequences `X[0…m-1]` and `Y[0…n-1]` recursively using the LCS problem’s optimal substructure property:
+The following solution in TypeScript find the length of LCS of sequences `X[0…m-1]` and `Y[0…n-1]` recursively using the LCS problem’s optimal substructure property:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the length of the longest common subsequence of
 // sequences `X[0…m-1]` and `Y[0…n-1]`
-int LCSLength(string X, string Y, int m, int n)
-{
-    // return if the end of either sequence is reached
-    if (m == 0 || n == 0) {
-        return 0;
-    }
-
-    // if the last character of `X` and `Y` matches
-    if (X[m - 1] == Y[n - 1]) {
-        return LCSLength(X, Y, m - 1, n - 1) + 1;
-    }
-
-    // otherwise, if the last character of `X` and `Y` don't match
-    return max(LCSLength(X, Y, m, n - 1), LCSLength(X, Y, m - 1, n));
-}
-
-int main()
-{
-    string X = "ABCBDAB", Y = "BDCABA";
-
-    cout << "The length of the LCS is " <<
-            LCSLength(X, Y, X.length(), Y.length());
-
+function LCSLength(X: string, Y: string, m: number, n: number): number {
+  // return if the end of either sequence is reached
+  if (m === 0 || n === 0) {
     return 0;
+  }
+
+  // if the last character of `X` and `Y` matches
+  if (X[m - 1] === Y[n - 1]) {
+    return LCSLength(X, Y, m - 1, n - 1) + 1;
+  }
+
+  // otherwise, if the last character of `X` and `Y` don't match
+  return Math.max(LCSLength(X, Y, m, n - 1), LCSLength(X, Y, m - 1, n));
 }
+
+const X = 'ABCBDAB';
+const Y = 'BDCABA';
+
+console.log('The length of the LCS is', LCSLength(X, Y, X.length, Y.length));
 ```
 
 **Output:** The length of the LCS is 4
-
-##
-
-```java
-class Main
-{
-    // Function to find the length of the longest common subsequence of
-    // sequences `X[0…m-1]` and `Y[0…n-1]`
-    public static int LCSLength(String X, String Y, int m, int n)
-    {
-        // return if the end of either sequence is reached
-        if (m == 0 || n == 0) {
-            return 0;
-        }
-
-        // if the last character of `X` and `Y` matches
-        if (X.charAt(m - 1) == Y.charAt(n - 1)) {
-            return LCSLength(X, Y, m - 1, n - 1) + 1;
-        }
-
-        // otherwise, if the last character of `X` and `Y` don't match
-        return Integer.max(LCSLength(X, Y, m, n - 1),
-                        LCSLength(X, Y, m - 1, n));
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABCBDAB", Y = "BDCABA";
-
-        System.out.println("The length of the LCS is "
-                + LCSLength(X, Y, X.length(), Y.length()));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the longest common subsequence of
-# sequences `X[0…m-1]` and `Y[0…n-1]`
-def LCSLength(X, Y, m, n):
-
-    # return if the end of either sequence is reached
-    if m == 0 or n == 0:
-        return 0
-
-    # if the last character of `X` and `Y` matches
-    if X[m - 1] == Y[n - 1]:
-        return LCSLength(X, Y, m - 1, n - 1) + 1
-
-    # otherwise, if the last character of `X` and `Y` don't match
-    return max(LCSLength(X, Y, m, n - 1), LCSLength(X, Y, m - 1, n))
-
-if __name__ == '__main__':
-
-    X = 'ABCBDAB'
-    Y = 'BDCABA'
-
-    print('The length of the LCS is', LCSLength(X, Y, len(X), len(Y)))
-```
 
 The worst-case time complexity of the above solution is O(2(m+n)) and occupies space in the call stack, where `m` and `n` are the length of the strings `X` and `Y`. The worst case happens when there is no common subsequence present in `X` and `Y` (i.e., LCS is 0), and each recursive call will end up in two recursive calls.
 
@@ -140,154 +70,47 @@ The LCS problem exhibits [overlapping subproblems](https://techiedelight.com/int
 
 Let’s consider the recursion tree for two sequences of length 6 and 8 whose LCS is 0.
 
-As we can see, the same subproblems (highlighted in the same color) are getting computed repeatedly. We know that problems having optimal substructure and overlapping subproblems can be solved by dynamic programming, in which subproblem solutions are memoized rather than computed repeatedly. This method is demonstrated below in C++, Java, and Python:
+As we can see, the same subproblems (highlighted in the same color) are getting computed repeatedly. We know that problems having optimal substructure and overlapping subproblems can be solved by dynamic programming, in which subproblem solutions are memoized rather than computed repeatedly. This method is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to find the length of the longest common subsequence of substring
 // `X[0…m-1]` and `Y[0…n-1]`
-int LCSLength(string X, string Y, int m, int n, auto &lookup)
-{
-    // return if the end of either string is reached
-    if (m == 0 || n == 0) {
-        return 0;
-    }
-
-    // construct a unique map key from dynamic elements of the input
-    string key = to_string(m) + "|" + to_string(n);
-
-    // if the subproblem is seen for the first time, solve it and
-    // store its result in a map
-    if (lookup.find(key) == lookup.end())
-    {
-        // if the last character of `X` and `Y` matches
-        if (X[m - 1] == Y[n - 1]) {
-            lookup[key] = LCSLength(X, Y, m - 1, n - 1, lookup) + 1;
-        }
-        else {
-            // otherwise, if the last character of `X` and `Y` don't match
-            lookup[key] = max(LCSLength(X, Y, m, n - 1, lookup),
-                            LCSLength(X, Y, m - 1, n, lookup));
-        }
-    }
-
-    // return the subproblem solution from the map
-    return lookup[key];
-}
-
-int main()
-{
-    string X = "ABCBDAB", Y = "BDCABA";
-
-    // create a map to store solutions to subproblems
-    unordered_map<string, int> lookup;
-
-    cout << "The length of the LCS is "
-         << LCSLength(X, Y, X.length(), Y.length(), lookup);
-
+function LCSLength(X: string, Y: string, m: number, n: number, lookup: Map<string, number>): number {
+  // return if the end of either string is reached
+  if (m === 0 || n === 0) {
     return 0;
+  }
+
+  // construct a unique map key from dynamic elements of the input
+  const key = `${m}|${n}`;
+
+  // if the subproblem is seen for the first time, solve it and
+  // store its result in a map
+  if (!lookup.has(key)) {
+    // if the last character of `X` and `Y` matches
+    if (X[m - 1] === Y[n - 1]) {
+      lookup.set(key, LCSLength(X, Y, m - 1, n - 1, lookup) + 1);
+    } else {
+      // otherwise, if the last character of `X` and `Y` don't match
+      lookup.set(key, Math.max(LCSLength(X, Y, m, n - 1, lookup),
+        LCSLength(X, Y, m - 1, n, lookup)));
+    }
+  }
+
+  // return the subproblem solution from the map
+  return lookup.get(key)!;
 }
+
+const X = 'ABCBDAB';
+const Y = 'BDCABA';
+
+// create a map to store solutions to subproblems
+const lookup = new Map<string, number>();
+
+console.log('The length of the LCS is', LCSLength(X, Y, X.length, Y.length, lookup));
 ```
 
 **Output:** The length of the LCS is 4
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to find the length of the longest common subsequence of substring
-    // `X[0…m-1]` and `Y[0…n-1]`
-    public static int LCSLength(String X, String Y, int m, int n,
-                                Map<String, Integer> lookup)
-    {
-        // return if the end of either string is reached
-        if (m == 0 || n == 0) {
-            return 0;
-        }
-
-        // construct a unique map key from dynamic elements of the input
-        String key = m + "|" + n;
-
-        // if the subproblem is seen for the first time, solve it and
-        // store its result in a map
-        if (!lookup.containsKey(key))
-        {
-            // if the last character of `X` and `Y` matches
-            if (X.charAt(m - 1) == Y.charAt(n - 1)) {
-                lookup.put(key, LCSLength(X, Y, m - 1, n - 1, lookup) + 1);
-            }
-            else {
-                // otherwise, if the last character of `X` and `Y` don't match
-                lookup.put(key, Integer.max(LCSLength(X, Y, m, n-1, lookup),
-                        LCSLength(X, Y, m - 1, n, lookup)));
-            }
-        }
-
-        // return the subproblem solution from the map
-        return lookup.get(key);
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABCBDAB", Y = "BDCABA";
-
-        // create a map to store solutions to subproblems
-        Map<String, Integer> lookup = new HashMap<>();
-
-        System.out.println("The length of the LCS is "
-                + LCSLength(X, Y, X.length(), Y.length(), lookup));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the length of the longest common subsequence of substring
-# `X[0…m-1]` and `Y[0…n-1]`
-def LCSLength(X, Y, m, n, lookup):
-
-    # return if the end of either string is reached
-    if m == 0 or n == 0:
-        return 0
-
-    # construct a unique key from dynamic elements of the input
-    key = (m, n)
-
-    # if the subproblem is seen for the first time, solve it and
-    # store its result in a dictionary
-    if key not in lookup:
-
-        # if the last character of `X` and `Y` matches
-        if X[m - 1] == Y[n - 1]:
-            lookup[key] = LCSLength(X, Y, m - 1, n - 1, lookup) + 1
-
-        else:
-            # otherwise, if the last character of `X` and `Y` don't match
-            lookup[key] = max(LCSLength(X, Y, m, n - 1, lookup),
-                            LCSLength(X, Y, m - 1, n, lookup))
-
-    # return the subproblem solution from the dictionary
-    return lookup[key]
-
-if __name__ == '__main__':
-
-    X = 'ABCBDAB'
-    Y = 'BDCABA'
-
-    # create a dictionary to store solutions to subproblems
-    lookup = {}
-
-    print('The length of the LCS is', LCSLength(X, Y, len(X), len(Y), lookup))
-```
 
 The time complexity of the above top-down solution is O(m.n) and requires O(m.n) extra space, where `m` and `n` are the length of the strings `X` and `Y`. Note that we can also use an array instead of a map. Check implementation [here](https://techiedelight.com/compiler/?run=rZTKVS).
 
@@ -297,62 +120,40 @@ The above _memo_ ized version follows the top-down approach since we first break
 
 Let `X` be `XMJYAUZ`, and `Y` be `MZJAWXU`. The longest common subsequence between `X` and `Y` is `MJAU`. The following table is generated by the function `LCSLength()`, which shows the LCS’s length between prefixes of `X` and `Y`. The `i'th` row and `j'th` column show the LCS’s length of substring `X[0…i-1]` and `Y[0…j-1]`.
 
-This is demonstrated below in C++, Java, and Python:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
+```ts
 // Function to find the length of the longest common subsequence of substring
 // `X[0…m-1]` and `Y[0…n-1]`
-int LCSLength(string X, string Y)
-{
-    int m = X.length(), n = Y.length();
+function LCSLength(X: string, Y: string): number {
+  const m = X.length, n = Y.length;
 
-    // lookup table stores solution to already computed subproblems;
-    // i.e., `lookup[i][j]` stores the length of LCS of substring
-    // `X[0…i-1]` and `Y[0…j-1]`
-    int lookup[m + 1][n + 1];
+  // lookup table stores solution to already computed subproblems;
+  // i.e., `lookup[i][j]` stores the length of LCS of substring
+  // `X[0…i-1]` and `Y[0…j-1]`
+  const lookup: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
 
-    // first column of the lookup table will be all 0s
-    for (int i = 0; i <= m; i++) {
-        lookup[i][0] = 0;
+  // fill the lookup table in a bottom-up manner
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      // if the current character of `X` and `Y` matches
+      if (X[i - 1] === Y[j - 1]) {
+        lookup[i][j] = lookup[i - 1][j - 1] + 1;
+      }
+      // otherwise, if the current character of `X` and `Y` don't match
+      else {
+        lookup[i][j] = Math.max(lookup[i - 1][j], lookup[i][j - 1]);
+      }
     }
+  }
 
-    // first row of the lookup table will be all 0s
-    for (int j = 0; j <= n; j++) {
-        lookup[0][j] = 0;
-    }
-
-    // fill the lookup table in a bottom-up manner
-    for (int i = 1; i <= m; i++)
-    {
-        for (int j = 1; j <= n; j++)
-        {
-            // if the current character of `X` and `Y` matches
-            if (X[i - 1] == Y[j - 1]) {
-                lookup[i][j] = lookup[i - 1][j - 1] + 1;
-            }
-            // otherwise, if the current character of `X` and `Y` don't match
-            else  {
-                lookup[i][j] = max(lookup[i - 1][j], lookup[i][j - 1]);
-            }
-        }
-    }
-
-    // LCS will be the last entry in the lookup table
-    return lookup[m][n];
+  // LCS will be the last entry in the lookup table
+  return lookup[m][n];
 }
 
-int main()
-{
-    string X = "XMJYAUZ", Y = "MZJAWXU";
+const X = 'XMJYAUZ', Y = 'MZJAWXU';
 
-    cout << "The length of the LCS is " << LCSLength(X, Y);
-
-    return 0;
-}
+console.log('The length of the LCS is', LCSLength(X, Y));
 ```
 
 **Output:** The length of the LCS is 4

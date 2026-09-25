@@ -22,102 +22,79 @@ Complete Algorithm:
 
 1\. Create disjoint sets for each vertex of the graph. 2\. For every edge u, v in the graph i) Find the root of the sets to which elements u and v belongs. ii) If both u and v have the same root in disjoint sets, a cycle is found.
 
-Following is the implementation of the above algorithm in C++, Java, and Python:
+Following is a TypeScript implementation of the above algorithm:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph (add each edge once only to avoid
         // detecting cycles among the same edges, say x -> y and y -> x)
-        for (auto &edge: edges) {
-            adjList[edge.src].push_back(edge.dest);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
         }
     }
-};
+}
 
 // A class to represent a disjoint set
-class DisjointSet
-{
-    unordered_map<int, int> parent;
-public:
+class DisjointSet {
+    private parent = new Map<number, number>();
+
     // perform MakeSet operation
-    void MakeSet(int n)
-    {
+    makeSet(n: number): void {
         // create `n` disjoint sets (one for each vertex)
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
+        for (let i = 0; i < n; i++) {
+            this.parent.set(i, i);
         }
     }
 
     // Find the root of the set in which element `k` belongs
-    int Find(int k)
-    {
+    find(k: number): number {
         // if `k` is root
-        if (parent[k] == k) {
+        if (this.parent.get(k) === k) {
             return k;
         }
 
         // recur for the parent until we find the root
-        return Find(parent[k]);
+        return this.find(this.parent.get(k));
     }
 
     // Perform Union of two subsets
-    void Union(int a, int b)
-    {
+    union(a: number, b: number): void {
         // find the root of the sets in which elements `x` and `y` belongs
-        int x = Find(a);
-        int y = Find(b);
+        const x = this.find(a);
+        const y = this.find(b);
 
-        parent[x] = y;
+        this.parent.set(x, y);
     }
-};
+}
 
 // Returns true if the graph has a cycle
-bool findCycle(Graph const &graph, int n)
-{
-    // initialize Main class
-    DisjointSet ds;
+function findCycle(graph: Graph, n: number): boolean {
+    // initialize `DisjointSet` class
+    const ds = new DisjointSet();
 
     // create a singleton set for each element of the universe
-    ds.MakeSet(n);
+    ds.makeSet(n);
 
     // consider every edge (u, v)
-    for (int u = 0; u < n; u++)
-    {
+    for (let u = 0; u < n; u++) {
         // Recur for all adjacent vertices
-        for (int v: graph.adjList[u])
-        {
+        for (const v of graph.adjList[u]) {
             // find the root of the sets to which elements `u` and `v` belongs
-            int x = ds.Find(u);
-            int y = ds.Find(v);
+            const x = ds.find(u);
+            const y = ds.find(v);
 
             // if both `u` and `v` have the same parent, the cycle is found
-            if (x == y) {
+            if (x === y) {
                 return true;
-            }
-            else {
-                ds.Union(x, y);
+            } else {
+                ds.union(x, y);
             }
         }
     }
@@ -125,266 +102,24 @@ bool findCycle(Graph const &graph, int n)
     return false;
 }
 
-// Union–find algorithm for cycle detection in a graph
-int main()
-{
-    // vector of graph edges
-    vector<Edge> edges =
-    {
-        {0, 1}, {0, 6}, {0, 7}, {1, 2}, {1, 5}, {2, 3},
-        {2, 4}, {7, 8}, {7, 11}, {8, 9}, {8, 10}, {10, 11}
-        // edge (10, 11) introduces a cycle in the graph
-    };
+// List of graph edges
+const edges: [number, number][] = [
+    [0, 1], [0, 6], [0, 7], [1, 2], [1, 5], [2, 3],
+    [2, 4], [7, 8], [7, 11], [8, 9], [8, 10], [10, 11]
+    // edge (10, 11) introduces a cycle in the graph
+];
 
-    // total number of nodes in the graph (labelled from 0 to 11)
-    int n = 12;
+// total number of nodes in the graph (labelled from 0 to 11)
+const n = 12;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// construct graph
+const graph = new Graph(edges, n);
 
-    if (findCycle(graph, n)) {
-        cout << "Cycle Found";
-    }
-    else {
-        cout << "No Cycle Found";
-    }
-
-    return 0;
+if (findCycle(graph, n)) {
+    console.log('Cycle Found');
+} else {
+    console.log('No Cycle is Found');
 }
-```
-
-**Output:** Cycle Found
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph (add each edge once only to avoid
-        // detecting cycles among the same edges, say x -> y and y -> x)
-        for (Edge edge: edges) {
-            adjList.get(edge.source).add(edge.dest);
-        }
-    }
-}
-
-// A class to represent a disjoint set
-class DisjointSet
-{
-    private Map<Integer, Integer> parent = new HashMap<>();
-
-    // perform MakeSet operation
-    public void makeSet(int n)
-    {
-        // create `n` disjoint sets (one for each vertex)
-        for (int i = 0; i < n; i++) {
-            parent.put(i, i);
-        }
-    }
-
-    // Find the root of the set in which element `k` belongs
-    public int find(int k)
-    {
-        // if `k` is root
-        if (parent.get(k) == k) {
-            return k;
-        }
-
-        // recur for the parent until we find the root
-        return find(parent.get(k));
-    }
-
-    // Perform Union of two subsets
-    public void union(int a, int b)
-    {
-        // find the root of the sets in which elements `x` and `y` belongs
-        int x = find(a);
-        int y = find(b);
-
-        parent.put(x, y);
-    }
-}
-
-class Main
-{
-    // Returns true if the graph has a cycle
-    public static boolean findCycle(Graph graph, int n)
-    {
-        // initialize `DisjointSet` class
-        DisjointSet ds = new DisjointSet();
-
-        // create a singleton set for each element of the universe
-        ds.makeSet(n);
-
-        // consider every edge (u, v)
-        for (int u = 0; u < n; u++)
-        {
-            // Recur for all adjacent vertices
-            for (int v: graph.adjList.get(u))
-            {
-                // find the root of the sets to which elements `u` and `v` belongs
-                int x = ds.find(u);
-                int y = ds.find(v);
-
-                // if both `u` and `v` have the same parent, the cycle is found
-                if (x == y) {
-                    return true;
-                }
-                else {
-                    ds.union(x, y);
-                }
-            }
-        }
-
-        return false;
-    }
-
-    // Union–find algorithm for cycle detection in a graph
-    public static void main(String[] args)
-    {
-        // List of graph edges
-        List<Edge> edges = Arrays.asList(
-                        new Edge(0, 1), new Edge(0, 6), new Edge(0, 7),
-                        new Edge(1, 2), new Edge(1, 5), new Edge(2, 3),
-                        new Edge(2, 4), new Edge(7, 8), new Edge(7, 11),
-                        new Edge(8, 9), new Edge(8, 10), new Edge(10, 11)
-                        // edge (10, 11) introduces a cycle in the graph
-                    );
-
-        // total number of nodes in the graph (labelled from 0 to 11)
-        int n = 12;
-
-        // construct graph
-        Graph graph = new Graph(edges, n);
-
-        if (findCycle(graph, n)) {
-            System.out.println("Cycle Found");
-        }
-        else {
-            System.out.println("No Cycle is Found");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges, n):
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph (add each edge once only to avoid
-        # detecting cycles among the same edges, say x -> y and y -> x)
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-
-# A class to represent a disjoint set
-class DisjointSet:
-
-    parent = {}
-
-    # perform MakeSet operation
-    def makeSet(self, n):
-
-        # create `n` disjoint sets (one for each vertex)
-        for i in range(n):
-            self.parent[i] = i
-
-    # Find the root of the set in which element `k` belongs
-    def find(self, k):
-
-        # if `k` is root
-        if self.parent[k] == k:
-            return k
-
-        # recur for the parent until we find the root
-        return self.find(self.parent[k])
-
-    # Perform Union of two subsets
-    def union(self, a, b):
-
-        # find the root of the sets in which elements `x` and `y` belongs
-        x = self.find(a)
-        y = self.find(b)
-
-        self.parent[x] = y
-
-# Returns true if the graph has a cycle
-def findCycle(graph, n):
-
-    # initialize `DisjointSet` class
-    ds = DisjointSet()
-
-    # create a singleton set for each element of the universe
-    ds.makeSet(n)
-
-    # consider every edge (u, v)
-    for u in range(n):
-
-        # Recur for all adjacent vertices
-        for v in graph.adjList[u]:
-
-            # find the root of the sets to which elements `u` and `v` belongs
-            x = ds.find(u)
-            y = ds.find(v)
-
-            # if both `u` and `v` have the same parent, the cycle is found
-            if x == y:
-                return True
-            else:
-                ds.union(x, y)
-
-    return False
-
-# Union–find algorithm for cycle detection in a graph
-if __name__ == '__main__':
-
-    edges = [
-        (0, 1), (0, 6), (0, 7), (1, 2), (1, 5), (2, 3),
-        (2, 4), (7, 8), (7, 11), (8, 9), (8, 10), (10, 11)
-        # edge (10, 11) introduces a cycle in the graph
-    ]
-
-    # total number of nodes in the graph (labelled from 0 to 11)
-    n = 12
-
-    # construct graph
-    graph = Graph(edges, n)
-
-    if findCycle(graph, n):
-        print('Cycle Found')
-    else:
-        print('No Cycle is Found')
 ```
 
 The time complexity of the Union and Find operation is O(n) in the worst case, where `n` is the total number of vertices in the graph. Please refer to the implementation of Find and Union discussed in the [original post](https://techiedelight.com/disjoint-set-data-structure-union-find-algorithm/) for improving the overall time complexity of the algorithm.

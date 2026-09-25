@@ -14,162 +14,57 @@ For example,
 
 The idea is to start from each cell of the first column of the matrix to print `/` diagonal for the matrix’s upper-left half. Similarly, after the upper-left half, start from each cell of the last row to print the `/` diagonal for the matrix’s lower-right half.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+```ts
+function printMatrixDiagonally(mat: number[][]): void {
 
-void printMatrixDiagonally(vector<vector<int>> const &mat)
-{
     // base case
-    if (mat.size() == 0) {
+    if (!mat || mat.length === 0) {
         return;
     }
 
-    // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length;
+    const N = mat[0].length;
 
-    // print `/` diagonal for the upper-left half of the matrix.
-    for (int r = 0; r < M; r++)
-    {
+    // print `/` diagonal for the upper-left half of the matrix
+    for (let r = 0; r < M; r++) {
         // start from each cell of the first column
-        for (int i = r, j = 0; j < N && i >= 0; i--, j++) {
-            cout << mat[i][j] << " ";
+        let i = r;
+        let j = 0;
+        while (j < N && i >= 0) {
+            process.stdout.write(mat[i][j] + ' ');
+            i = i - 1;
+            j = j + 1;
         }
-        cout << endl;
+
+        console.log();
     }
 
     // print `/` diagonal for the lower-right half of the matrix
-    for (int c = 1; c < N; c++)
-    {
+    for (let c = 1; c < N; c++) {
         // start from each cell of the last row
-        for (int i = M - 1, j = c; j < N && i >= 0; i--, j++) {
-            cout << mat[i][j] << " ";
+        let i = M - 1;
+        let j = c;
+        while (j < N && i >= 0) {
+            process.stdout.write(mat[i][j] + ' ');
+            i = i - 1;
+            j = j + 1;
         }
-        cout << endl;
+
+        console.log();
     }
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 1, 2, 3, 4, 5 },
-        { 2, 3, 4, 5, 6 },
-        { 3, 4, 5, 6, 7 },
-        { 4, 5, 6, 7, 8 },
-        { 5, 6, 7, 8, 9 }
-    };
+const mat = [
+    [1, 2, 3, 4, 5],
+    [2, 3, 4, 5, 6],
+    [3, 4, 5, 6, 7],
+    [4, 5, 6, 7, 8],
+    [5, 6, 7, 8, 9]
+];
 
-    printMatrixDiagonally(mat);
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    public static void printMatrixDiagonally(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return;
-        }
-
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // print `/` diagonal for the upper-left half of the matrix
-        for (int r = 0; r < M; r++)
-        {
-            // start from each cell of the first column
-            for (int i = r, j = 0; j < N && i >= 0; i--, j++) {
-                System.out.print(mat[i][j] + " ");
-            }
-
-            System.out.print(System.lineSeparator());
-        }
-
-        // print `/` diagonal for the lower-right half of the matrix
-        for (int c = 1; c < N; c++)
-        {
-            // start from each cell of the last row
-            for (int i = M - 1, j = c; j < N && i >= 0; i--, j++) {
-                System.out.print(mat[i][j] + " ");
-            }
-
-            System.out.print(System.lineSeparator());
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 1, 2, 3, 4, 5 },
-            { 2, 3, 4, 5, 6 },
-            { 3, 4, 5, 6, 7 },
-            { 4, 5, 6, 7, 8 },
-            { 5, 6, 7, 8, 9 }
-        };
-
-        printMatrixDiagonally(mat);
-    }
-}
-```
-
-##
-
-```python3
-def printMatrixDiagonally(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return
-
-    (M, N) = (len(mat), len(mat[0]))
-
-    # print `/` diagonal for the upper-left half of the matrix
-    for r in range(M):
-        # start from each cell of the first column
-        i = r
-        j = 0
-        while j < N and i >= 0:
-            print(mat[i][j], end=' ')
-            i = i - 1
-            j = j + 1
-
-        print()
-
-    # print `/` diagonal for the lower-right half of the matrix
-    for c in range(1, N):
-        # start from each cell of the last row
-        i = M - 1
-        j = c
-        while j < N and i >= 0:
-            print(mat[i][j], end=' ')
-            i = i - 1
-            j = j + 1
-
-        print()
-
-if __name__ == '__main__':
-
-    mat = [
-        [1, 2, 3, 4, 5],
-        [2, 3, 4, 5, 6],
-        [3, 4, 5, 6, 7],
-        [4, 5, 6, 7, 8],
-        [5, 6, 7, 8, 9]
-    ]
-
-    printMatrixDiagonally(mat)
+printMatrixDiagonally(mat);
 ```
 
 **Output:** 1 2 2 3 3 3 4 4 4 4 5 5 5 5 5 6 6 6 6 7 7 7 8 8 9

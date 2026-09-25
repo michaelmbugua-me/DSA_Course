@@ -18,27 +18,30 @@ Keep the sizes balanced (max-heap allowed one extra element). The median is then
 - Scheduling where you pair the most-demanding task with the most available resource
 - Sliding-window variants: "median of every window of size k"
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-import heapq
+```ts
+// JS has no builtin heap: use a min-heap helper for larger_half,
+// and a max-heap helper (or negated values) for smaller_half
+const smallerHalf: number[] = []; // max-heap
+const largerHalf: number[] = [];  // min-heap
 
-# python has only min-heaps: negate values to simulate a max-heap
-smaller_half = []  # max-heap (negated)
-larger_half = []   # min-heap
+function add(num: number): void {
+    maxHeapPush(smallerHalf, num);
+    // balance: move the max of the small half to the large half
+    minHeapPush(largerHalf, maxHeapPop(smallerHalf));
+    // keep |smaller| >= |larger|, differing by at most 1
+    if (largerHalf.length > smallerHalf.length) {
+        maxHeapPush(smallerHalf, minHeapPop(largerHalf));
+    }
+}
 
-def add(num):
-    heapq.heappush(smaller_half, -num)
-    # balance: move the max of the small half to the large half
-    heapq.heappush(larger_half, -heapq.heappop(smaller_half))
-    # keep |smaller| >= |larger|, differing by at most 1
-    if len(larger_half) > len(smaller_half):
-        heapq.heappush(smaller_half, -heapq.heappop(larger_half))
-
-def median():
-    if len(smaller_half) > len(larger_half):
-        return -smaller_half[0]
-    return (-smaller_half[0] + larger_half[0]) / 2
+function median(): number {
+    if (smallerHalf.length > largerHalf.length) {
+        return smallerHalf[0];
+    }
+    return (smallerHalf[0] + largerHalf[0]) / 2;
+}
 ```
 
 ## Complexity
@@ -49,7 +52,7 @@ def median():
 ## Common pitfalls
 
 - Getting the balance rule backwards (which heap may hold the extra element)
-- Forgetting to negate for the max-heap in Python
+- Forgetting to invert the comparison for the max-heap (JS has no builtin heap — see the helpers above)
 - Rebalancing only in one direction — you need the "move if size violated" step after every insert
 - Float vs int division when the count is even
 

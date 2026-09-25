@@ -2,24 +2,20 @@
 
 > Source: https://www.techiedelight.com/linked-list-implementation-python/
 
-This post provides an overview of several methods to implement a linked list in Python.
+This post provides an overview of several methods to implement a linked list in TypeScript.
 
 A Linked List node consists of a data field and a reference to the next node in the list. We can use a constructor to initialize the data and the next field for a node allocated in the memory during runtime.
 
-```
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        # Set data
-        self.data = data
-
-        # set the next field to point to a given node of the list
-        self.next = next
+```ts
+// A Linked List Node
+class Node {
+    constructor(public data: number = 0, public next: Node | null = null) {}
+}
 ```
 
 > 
 
-There are several ways to construct a singly linked list in Python:
+There are several ways to construct a singly linked list in TypeScript:
 
 ## 1\. Standard Solution
 
@@ -27,43 +23,46 @@ The standard solution adds a single node to the `head` end of the list, making a
 
 This is demonstrated below where the head node is updated in the caller.
 
-```
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
+```ts
+// A Linked List Node
+class Node {
+    constructor(public data: number, public next: Node | null) {}
+}
 
-# Function to print a given linked list
-def printList(head):
-    ptr = head
-    while ptr is not None:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
+// Function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
+    }
 
-    print('None')
+    console.log('null');
+}
 
-# Function to construct a linked list from a given set of keys
-def construct(keys):
-    head = None
+// Function to construct a linked list from a given set of keys
+function construct(keys: number[]): Node | null {
+    let head: Node | null = null;
 
-    # start from the end of the list
-    for i in reversed(range(len(keys))):
-        # allocate a new node in a heap and set its data
-        head = Node(keys[i], head)
+    // start from the end of the list
+    for (let i = keys.length - 1; i >= 0; i--) {
+        // allocate a new node and set its data
+        head = new Node(keys[i], head);
+    }
 
-    return head
+    return head;
+}
 
-if __name__ == '__main__':
+(function main() {
+    // input keys
+    const keys = [1, 2, 3, 4];
 
-    # input keys
-    keys = [1, 2, 3, 4]
+    // points to the head node of the linked list
+    const head = construct(keys);
 
-    # points to the head node of the linked list
-    head = construct(keys)
-
-    # print linked list
-    printList(head)
+    // print linked list
+    printList(head);
+})();
 ```
 
 ## 2\. Naive method
@@ -72,77 +71,80 @@ A simple solution would be to allocate memory for all individual nodes of the li
 
 Here’s what the code would look like:
 
-```
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
+```ts
+// A Linked List Node
+class Node {
+    constructor(public data: number, public next: Node | null) {}
+}
 
-# Function to print a given linked list
-def printList(head):
-    ptr = head
-    while ptr is not None:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-    print('None')
+// Function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
+    }
+    console.log('null');
+}
 
-# Naive function for linked list implementation containing three nodes
-def construct():
+// Naive function for linked list implementation containing three nodes
+function construct(): Node {
+    // construct individual linked list nodes
+    const first = new Node(1, null);
+    const second = new Node(2, null);
+    const third = new Node(3, null);
+    const fourth = new Node(4, null);
 
-    # construct individual linked list nodes
-    first = Node(1)
-    second = Node(2)
-    third = Node(3)
-    fourth = Node(4)
+    // rearrange the references to construct a list
+    const head = first;
+    first.next = second;
+    second.next = third;
+    third.next = fourth;
 
-    # rearrange the references to construct a list
-    head = first
-    first.next = second
-    second.next = third
-    third.next = fourth
+    // return first node in the list
+    return head;
+}
 
-    # return first node in the list
-    return head
+(function main() {
+    // `head` points to the head node of the linked list
+    const head = construct();
 
-if __name__ == '__main__':
-
-    # `head` points to the head node of the linked list
-    head = construct()
-
-    # print linked list
-    printList(head)
+    // print linked list
+    printList(head);
+})();
 ```
 
 We can write the above code in a single line by passing the next node as an argument to the `Node` constructor:
 
-```
-# A Linked List Node
-class Node:
-    def __init__(self, data, next_node):
-        self.data = data
-        self.next = next_node
+```ts
+// A Linked List Node
+class Node {
+    constructor(public data: number, public next_node: Node | null) {}
+}
 
-# Function to print a given linked list
-def printList(head):
-    ptr = head
-    while ptr is not None:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
+// Function to print a given linked list
+function printList(head: Node | null): void {
+    let ptr = head;
+    while (ptr !== null) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
+    }
 
-    print('None')
+    console.log('null');
+}
 
-# Function for linked list implementation containing four nodes
-def construct():
-    return Node(1, Node(2, Node(3, Node(4, None))))
+// Function for linked list implementation containing four nodes
+function construct(): Node {
+    return new Node(1, new Node(2, new Node(3, new Node(4, null))));
+}
 
-if __name__ == '__main__':
+(function main() {
+    // `head` points to the head node of the linked list
+    const head = construct();
 
-    # `head` points to the head node of the linked list
-    head = construct()
-
-    # print linked list
-    printList(head)
+    // print linked list
+    printList(head);
+})();
 ```
 
 **References:** <http://cslibrary.stanford.edu/103/LinkedListBasics.pdf>

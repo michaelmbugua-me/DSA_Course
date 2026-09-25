@@ -12,16 +12,12 @@ The idea is to take advantage of [short-circuiting](https://en.wikipedia.org/wik
 
 The idea is to apply this principle to the following code. Initially, `max` is `a`. If `max < b` is true, then that means `b` is greater than `a`, so the second subexpression `max = b` is evaluated, and `max` is set to `b`. If, however, `max < b` is false, then the second subexpression is not evaluated, and `max` will remain `a` (greater than `b`). Similarly, the second expression is evaluated.
 
-We can implement the minimum function as well, in a similar fashion, as demonstrated below in C++:
+We can implement the minimum function as well, in a similar fashion, as demonstrated below in TypeScript:
 
-```
-#include <iostream>
-using namespace std;
-
-int maximum(int a, int b, int c)
-{
+```ts
+function maximum(a: number, b: number, c: number): number {
     // initialize `max` with `a`
-    int max = a;
+    let max = a;
 
     // set `max` to `b` if and only if `max` is less than `b`
     (max < b) && (max = b);    // these are not conditional statements
@@ -32,10 +28,9 @@ int maximum(int a, int b, int c)
     return max;
 }
 
-int minimum(int a, int b, int c)
-{
+function minimum(a: number, b: number, c: number): number {
     // initialize `min` with `a`
-    int min = a;
+    let min = a;
 
     // set `min` to `b` if and only if `min` is more than `b`
     (min > b) && (min = b);
@@ -46,113 +41,76 @@ int minimum(int a, int b, int c)
     return min;
 }
 
-int main()
-{
-    cout << maximum(7, 9, 4) << endl;
-    cout << minimum(6, 3, 9) << endl;
-
-    return 0;
-}
+console.log(maximum(7, 9, 4));
+console.log(minimum(6, 3, 9));
 ```
 
 ## Approach 2: Using array index
 
-```
-#include <iostream>
-using namespace std;
-
-int maximum(int a, int b, int c)
-{
+```ts
+function maximum(a: number, b: number, c: number): number {
     // `first` will contain the first two elements
-    int first[] = { a, b };
+    const first: number[] = [a, b];
 
     // `second` will contain the maximum of the first two elements at
     // the 0th index and the third element at index 1
-    int second[] = { first[a < b], c };
+    const second: number[] = [first[Number(a < b)], c];
 
     // finally, return the maximum element
-    return second[second[0] < c];
+    return second[Number(second[0] < c)];
 }
 
-int minimum(int a, int b, int c)
-{
+function minimum(a: number, b: number, c: number): number {
     // `first` will contain the first two elements
-    int first[] = { a, b };
+    const first: number[] = [a, b];
 
     // `second` will contain the minimum of the first two elements at the
     // 0th index and the third element at index 1
-    int second[] = { first[a > b], c };
+    const second: number[] = [first[Number(a > b)], c];
 
     // finally, return the minimum element
-    return second[second[0] > c];
+    return second[Number(second[0] > c)];
 }
 
-int main()
-{
-    cout << maximum(6, 3, 9) << endl;
-    cout << minimum(6, 3, 9) << endl;
-
-    return 0;
-}
+console.log(maximum(6, 3, 9));
+console.log(minimum(6, 3, 9));
 ```
 
-We can simplify the above approach by breaking the problem into finding the maximum/minimum of two numbers. The following C++ program demonstrates it:
+We can simplify the above approach by breaking the problem into finding the maximum/minimum of two numbers. The following TypeScript program demonstrates it:
 
-```
-#include <iostream>
-using namespace std;
-
-int maximum(int a, int b)
-{
-    int lookup[] = {a, b};
-    return lookup[a < b];
+```ts
+function maximum(a: number, b: number): number {
+    const lookup: number[] = [a, b];
+    return lookup[Number(a < b)];
 }
 
-int maximum (int a, int b, int c) {
+function maximumOf(a: number, b: number, c: number): number {
     return maximum(a, maximum(b, c));
 }
 
-int main()
-{
-    cout << maximum(6, 3, 9) << endl;
-
-    return 0;
-}
+console.log(maximumOf(6, 3, 9));
 ```
 
-We can implement the minimum function, in a similar fashion, as demonstrated below in C++:
+We can implement the minimum function, in a similar fashion, as demonstrated below in TypeScript:
 
-```
-#include <iostream>
-using namespace std;
-
-int minimum(int a, int b)
-{
-    int lookup[] = {a, b};
-    return lookup[a > b];
+```ts
+function minimum(a: number, b: number): number {
+    const lookup: number[] = [a, b];
+    return lookup[Number(a > b)];
 }
 
-int minimum(int a, int b, int c) {
+function minimumOf(a: number, b: number, c: number): number {
     return minimum(a, minimum(b, c));
 }
 
-int main()
-{
-    cout << minimum(6, 3, 9) << endl;
-
-    return 0;
-}
+console.log(minimumOf(6, 3, 9));
 ```
 
 ## Approach 3: Using repeated subtraction
 
-```
-#include <iostream>
-using namespace std;
-
-int minimum (int a, int b, int c)
-{
-    int min = 0;
+```ts
+function minimum(a: number, b: number, c: number): number {
+    let min = 0;
     while (a && b && c) {
         a--, b--, c--, min++;
     }
@@ -160,9 +118,8 @@ int minimum (int a, int b, int c)
     return min;
 }
 
-int maximum (int a, int b, int c)
-{
-    int max = 0;
+function maximum(a: number, b: number, c: number): number {
+    let max = 0;
     while (a > 0 || b > 0 || c > 0) {
         a--, b--, c--, max++;
     }
@@ -170,13 +127,8 @@ int maximum (int a, int b, int c)
     return max;
 }
 
-int main()
-{
-    cout << maximum(6, 3, 9) << endl;
-    cout << minimum(6, 3, 9) << endl;
-
-    return 0;
-}
+console.log(maximum(6, 3, 9));
+console.log(minimum(6, 3, 9));
 ```
 
 **References:** <https://stackoverflow.com/questions/7074010/find-maximum-of-three-number-in-c-without-using-conditional-statement-and-ternar>

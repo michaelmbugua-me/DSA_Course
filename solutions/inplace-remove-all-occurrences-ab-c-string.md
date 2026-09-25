@@ -14,197 +14,53 @@ For example,
 
 The main challenge lies with doing the conversion in a single traversal of the string. The problem demands the removal of all adjacent, as well as non-adjacent occurrences of string `AB`, i.e., for a given string, say `ADAABCB`, after removing the first adjacent occurrence of `AB` (and `C` of-course), we get string `ADAB` which again needs to be processed for adjacent `AB` (No `C` this time, think!). Therefore, the final output string will be `AD`.
 
-Following is the C, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to remove all occurrences of 'AB' and 'C' from the string
-void removeAllOccurrences(char* str)
-{
+function remove(s: string): string {
+
+    const chars = [...s];
+
     // `i` maintains the position of the current char in the input string.
+    let i = 0;
+
     // `k` maintains the next free position in the output string.
-    int i = 0, k = 0;
+    let k = 0;
 
     // do till the end of the string is reached
-    while (str[i])
-    {
-        // if the current is 'B' and previous (need not be adjacent) was 'A',
+    while (i < chars.length) {
+
+        // if the current character is 'B' and previous (need not be adjacent) was 'A',
         // increment `i` and decrement `k`
-        if (str[i] == 'B' && (k > 0 && str[k - 1] == 'A')) {
-            --k, ++i;
+        if (chars[i] === 'B' && k > 0 && chars[k - 1] === 'A') {
+            k = k - 1;
+            i = i + 1;
         }
 
-        // if the current char is 'C', increment `i`
-        else if (str[i] == 'C') {
-            ++i;
+        // if the current character is 'C', increment `i`
+        else if (chars[i] === 'C') {
+            i = i + 1;
         }
 
+        // for any other character, increment both `i` and `k`
         else {
-            // for any other character, increment both `i` and `k`
-            str[k++] = str[i++];
+            chars[k] = chars[i];
+            k = k + 1;
+            i = i + 1;
         }
     }
 
-    // null-terminate the string
-    str[k] = '\0';
+    return chars.slice(0, k).join('');
 }
 
-int main(void)
-{
-    char str[] = "ABCACBCAABB";
+let s = 'ABCACBCAABB';
 
-    removeAllOccurrences(str);
-    printf("The string after removal of 'AB' and 'C' is '%s'", str);
-
-    return 0;
-}
+s = remove(s);
+console.log(`The string after removal of 'AB' and 'C' is '${s}'`);
 ```
 
 **Output:** `The string after removal of 'AB' and 'C' is ''`
-
-##
-
-```cpp
-#include <iostream>
-#include <string>
-using namespace std;
-
-// Function to remove all occurrences of 'AB' and 'C' from the string
-string remove(string str)
-{
-    // `i` maintains the position of the current char in the input string.
-    // `k` maintains the next free position in the output string.
-    int i = 0, k = 0;
-
-    // do till the end of the string is reached
-    while (i < str.size())
-    {
-        // if the current is 'B' and previous (need not be adjacent) was 'A',
-        // increment `i` and decrement `k`
-        if (str[i] == 'B' && (k > 0 && str[k - 1] == 'A')) {
-            --k, ++i;
-        }
-
-        // if the current char is 'C', increment `i`
-        else if (str[i] == 'C') {
-            ++i;
-        }
-
-        else {
-            // for any other character, increment both `i` and `k`
-            str[k++] = str[i++];
-        }
-    }
-
-    return str.substr(0, k);
-}
-
-int main()
-{
-    string str = "ABCACBCAABB";
-
-    str = remove(str);
-    cout << "The string after removal of 'AB' and 'C' is '" << str << "'\n";
-
-    return 0;
-}
-```
-
-##
-
-```java
-class Main
-{
-    // Function to remove all occurrences of 'AB' and 'C' from the string
-    public static String remove(String str)
-    {
-        // base case
-        if (str == null) {
-            return null;
-        }
-
-        char[] chars = str.toCharArray();
-
-        // `i` maintains the position of the current char in the input string.
-        // `k` maintains the next free position in the output string.
-        int i = 0, k = 0;
-
-        // do till the end of the string is reached
-        while (i < str.length())
-        {
-            // if the current character is 'B' and previous (need not be adjacent)
-            // was 'A', increment `i` and decrement `k`
-            if (chars[i] == 'B' && (k > 0 && chars[k - 1] == 'A'))
-            {
-                --k;
-                ++i;
-            }
-            // if the current character is 'C', increment `i`
-            else if (chars[i] == 'C') {
-                ++i;
-            }
-            // for any other character, increment both `i` and `k`
-            else {
-                chars[k++] = chars[i++];
-            }
-        }
-
-        return new String(chars).substring(0, k);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "ABCACBCAABB";
-
-        str = remove(str);
-        System.out.printf("The string after removal of 'AB' and 'C' is '%s'", str);
-    }
-}
-```
-
-##
-
-```python3
-# Function to remove all occurrences of 'AB' and 'C' from the string
-def remove(s):
-
-    chars = list(s)
-
-    # `i` maintains the position of the current char in the input string.
-    i = 0
-
-    # `k` maintains the next free position in the output string.
-    k = 0
-
-    # do till the end of the string is reached
-    while i < len(chars):
-
-        # if the current character is 'B' and previous (need not be adjacent) was 'A',
-        # increment `i` and decrement `k`
-        if chars[i] == 'B' and (k > 0 and chars[k - 1] == 'A'):
-            k = k - 1
-            i = i + 1
-
-        # if the current character is 'C', increment `i`
-        elif chars[i] == 'C':
-            i = i + 1
-
-        # for any other character, increment both `i` and `k`
-        else:
-            chars[k] = chars[i]
-            k = k + 1
-            i = i + 1
-
-    return ''.join(chars[:k])
-
-if __name__ == '__main__':
-
-    s = 'ABCACBCAABB'
-
-    s = remove(s)
-    print(f"The string after removal of 'AB' and 'C' is '{s}'")
-```
 
 The time complexity of the above solution is O(n), where `n` is the length of the input string and doesn’t require any extra space.
 

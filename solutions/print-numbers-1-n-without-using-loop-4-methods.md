@@ -10,155 +10,127 @@ Write a program to print all numbers between 1 and `N` without using a loop.
 
 The idea is to call the `main()` function recursively, and with each call, print the next element from the series. To store information about the previous element printed, we use a static variable (Note that a global variable will also work fine).
 
-The following C++ program demonstrates it:
+The following TypeScript program demonstrates it:
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
-int main()
-{
-    static int i = 1;
-    if (i <= N && cout << i++ << " ") {
-        main();
-    }
+// emulate a static variable in the recursive main using a closure
+const main = (() => {
+    let i = 1;
+    return function main(): void {
+        if (i <= N && process.stdout.write(`${i++} `)) {
+            main();
+        }
+    };
+})();
 
-    return 0;
-}
+main();
 ```
 
 OR
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
-int main()
-{
-    static int i = 0;
-    if (i++ < N)
-    {
-        cout << i << " ";
-        main();
-    }
+// emulate a static variable in the recursive main using a closure
+const main = (() => {
+    let i = 0;
+    return function main(): void {
+        if (i++ < N) {
+            process.stdout.write(`${i} `);
+            main();
+        }
+    };
+})();
 
-    return 0;
-}
+main();
 ```
 
 ## Method 2: Using Recursion by implementing a separate method
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
-void print(int n)
-{
+function print(n: number): void {
     if (n <= 0) {
         return;
     }
 
     print(n - 1);
-    cout << n << " ";
+    process.stdout.write(`${n} `);
 }
 
-int main()
-{
-    print(N);
-    return 0;
-}
+print(N);
 ```
 
 OR
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
 // Short–circuiting (not a conditional statement)
-void print(int n) {
-    n && (print(n - 1), cout << n << " ");
-}
+const print = (n: number): void =>
+    n > 0 && (print(n - 1), process.stdout.write(`${n} `));
 
-int main()
-{
-    print(N);
-    return 0;
-}
+print(N);
 ```
 
 ## Method 3: Using a MACRO
 
-```
-#include <iostream>
-using namespace std;
+```ts
+// TypeScript has no macros — emulate the 10×10 unrolled macro expansion
+// with nested function calls (no loop keywords used)
+const cout = (i: { v: number }): void => {
+    process.stdout.write(`${i.v++} `);
+};
 
-#define COUT(i) cout << i++ << " ";
-#define LEVEL(N) N N N N N N N N N N
-#define PRINT(i) LEVEL(LEVEL(COUT(i)));        // 100 = 10×10
+const LEVEL = (i: { v: number }): void => {
+    cout(i); cout(i); cout(i); cout(i); cout(i);
+    cout(i); cout(i); cout(i); cout(i); cout(i);
+};
 
-int main()
-{
-    int i = 1;
+const PRINT = (i: { v: number }): void => {
+    LEVEL(i); LEVEL(i); LEVEL(i); LEVEL(i); LEVEL(i);
+    LEVEL(i); LEVEL(i); LEVEL(i); LEVEL(i); LEVEL(i);
+};
 
-    // prints numbers from 1 to 100
-    PRINT(i);
+const i = { v: 1 };
 
-    return 0;
-}
+// prints numbers from 1 to 100
+PRINT(i);
 ```
 
 ## Method 4: Without Recursion using struct/class with static field
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
-struct X
-{
-    static int i;
-    X() {
-        cout << ++i << " ";
+class X {
+    static i = 0;
+    constructor() {
+        console.log(++X.i);
     }
-};
-
-int X::i = 0;
-
-int main()
-{
-    X ob[N];
-    return 0;
 }
+
+// instantiate N objects, each printing the next number
+const ob = Array.from({ length: N }, () => new X());
 ```
 
-We can also use the C++ class replacing struct.
+We can also use the class replacing struct.
 
-```
-#include <iostream>
-using namespace std;
-#define N 100
+```ts
+const N = 100;
 
-class X
-{
-    static int i;
-public:
-    X() {
-        cout << ++i << " ";
+class X {
+    static i = 0;
+    constructor() {
+        console.log(++X.i);
     }
-};
-
-int X::i = 0;
-
-int main()
-{
-    X ob[N];
-    return 0;
 }
+
+// instantiate N objects, each printing the next number
+const ob = Array.from({ length: N }, () => new X());
 ```
 
 **Exercise:** Extend method 3 to print numbers from 1 to 1000

@@ -12,92 +12,30 @@ Given a positive number, check if it is a power of 8 or not.
 
 A simple solution is to calculate `log8n` for a given number `n`. If it returns an integral value, then we can say that the number is a power of 8.
 
-The implementation can be seen below in C++, Java, and Python:
+A TypeScript implementation can be seen below:
 
-```cpp
-#include <iostream>
-#include <cmath>
-using namespace std;
-
+```ts
 // Returns true if `n` is a power of 8
-bool checkPowerOf8(unsigned n)
-{
+const checkPowerOf8 = (n: number): boolean => {
+
     // find `log8(n)`
-    double i = log(n) / log(8);
+    const i = Math.log(n) / Math.log(8);
 
     // return true if `log8(n)` is an integer
-    return i - trunc(i) < 0.000001;
-}
+    return i - Math.floor(i) < 0.000001;
+};
 
-int main()
-{
-    unsigned n = 512 * 64;
+// demo
+const n = 512 * 64;
 
-    if (checkPowerOf8(n)) {
-        cout << n << " is a power of 8";
-    }
-    else {
-        cout << n << " is not a power of 8";
-    }
-
-    return 0;
+if (checkPowerOf8(n)) {
+    console.log(`${n} is a power of 8`);
+} else {
+    console.log(`${n} is not a power of 8`);
 }
 ```
 
 **Output:** 32768 is a power of 8
-
-##
-
-```java
-class Main
-{
-    // Returns true if `n` is a power of 8
-    public static boolean checkPowerOf8(int n)
-    {
-        // find `log8(n)`
-        double i = Math.log(n) / Math.log(8);
-
-        // return true if `log8(n)` is an integer
-        return i - Math.floor(i) < 0.000001;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 512*64;
-
-        if (checkPowerOf8(n)) {
-            System.out.println(n + " is a power of 8");
-        }
-        else {
-            System.out.println(n + " is not a power of 8");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from math import floor, log
-
-# Returns true if `n` is a power of 8
-def checkPowerOf8(n):
-
-    # find `log8(n)`
-    i = log(n) / log(8)
-
-    # return true if `log8(n)` is an integer
-    return i - floor(i) < 0.000001
-
-if __name__ == '__main__':
-
-    n = 512*64
-
-    if checkPowerOf8(n):
-        print(n, 'is a power of 8')
-    else:
-        print(n, 'is not a power of 8')
-```
 
 ## Approach 2
 
@@ -115,82 +53,25 @@ To check the position of its set bit, we can use `0xB6DB6DB6` as a mask. The mas
 
 (0xB6DB6DB6)16 = (10110110110110110110110110110110)2
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Returns true if `n` is a power of 8
-bool checkPowerOf8(unsigned n)
-{
+const checkPowerOf8 = (n: number): boolean => {
+
     // return true if `n` is a power of 2, and its only
     // set bit is present at (0, 3, 6, … ) position
-    return n && !(n & (n - 1)) && !(n & 0xB6DB6DB6);
+    return n !== 0 && (n & (n - 1)) === 0 && (n & 0xB6DB6DB6) === 0;
+};
+
+// demo
+const n = 512;
+
+if (checkPowerOf8(n)) {
+    console.log(`${n} is a power of 8`);
+} else {
+    console.log(`${n} is not a power of 8`);
 }
-
-int main()
-{
-    unsigned n = 512;
-
-    if (checkPowerOf8(n)) {
-        cout << n << " is a power of 8";
-    }
-    else {
-        cout << n << " is not a power of 8";
-    }
-
-    return 0;
-}
-```
-
-**Output:** 512 is a power of 8
-
-##
-
-```java
-class Main
-{
-    // Returns true if `n` is a power of 8
-    public static boolean checkPowerOf8(int n)
-    {
-        // return true if `n` is a power of 2, and its only
-        // set bit is present at (0, 3, 6, … ) position
-        return n != 0 && (n & (n - 1)) == 0 && (n & 0xB6DB6DB6) == 0;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 512;
-
-        if (checkPowerOf8(n)) {
-            System.out.println(n + " is a power of 8");
-        }
-        else {
-            System.out.println(n + " is not a power of 8");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Returns true if `n` is a power of 8
-def checkPowerOf8(n):
-
-    # return true if `n` is a power of 2, and its only
-    # set bit is present at (0, 3, 6, … ) position
-    return n and not (n & (n - 1)) and not (n & 0xB6DB6DB6)
-
-if __name__ == '__main__':
-
-    n = 512
-
-    if checkPowerOf8(n):
-        print(n, 'is a power of 8')
-    else:
-        print(n, 'is not a power of 8')
 ```
 
 **Exercise:** Check if the number is a power of 4 or 16 or not. (Hint – Check the bit pattern)

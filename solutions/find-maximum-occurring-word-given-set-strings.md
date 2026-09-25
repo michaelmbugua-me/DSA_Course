@@ -12,275 +12,85 @@ For example,
 
 The idea is to use [Trie (Prefix Tree)](https://techiedelight.com/trie-implementation-insert-search-delete/) to solve this problem. We start by inserting each key into the Trie and store its count so far (along with the key itself) in the leaf nodes. After all nodes are inserted into the Trie, perform its [preorder traversal](https://techiedelight.com/preorder-tree-traversal-iterative-recursive/) ([DFS](https://techiedelight.com/depth-first-search/)), and find the maximum frequency word by comparing the count present at leaf nodes. Note that we can also use a map to solve this problem.
 
-Following is the C++, Java, and Python implementation of the idea:
-
-```cpp
-#include <iostream>
-#include <unordered_map>
-#include <string>
-using namespace std;
-
-// Data structure to store a Trie node
-struct Trie
-{
-    // `count` and `key` is only set for leaf nodes
-    // `key` stores the string, and `count` stores its frequency so far
-    string key;
-    int count = 0;
-
-    // each node stores a map to its child nodes
-    unordered_map<char, Trie*> character;
-};
-
-// Iterative function to insert a string into a Trie
-void insert(Trie* const &head, string const &str)
-{
-    // start from the root node
-    Trie* curr = head;
-
-    for (char ch: str)
-    {
-        // create a new node if the path doesn't exist
-        if (curr->character.find(ch) == curr->character.end()) {
-            curr->character[ch] = new Trie();
-        }
-
-        // go to the next node
-        curr = curr->character[ch];
-    }
-
-    // store key and its count in leaf nodes
-    curr->key = str;
-    curr->count += 1;
-}
-
-// Function to perform preorder traversal on given Trie
-// and find a word with the maximum frequency
-void preorder(Trie* const curr, int &max_count, string &key)
-{
-    // base condition
-    if (curr == nullptr) {
-        return;
-    }
-
-    for (auto pair: curr->character)
-    {
-        // leaf nodes have a non-zero count
-        if (max_count < pair.second->count )
-        {
-            key = pair.second->key;
-            max_count = pair.second->count;
-        }
-
-        // recur for current node's children
-        preorder(pair.second, max_count, key);
-    }
-}
-
-int main()
-{
-    // given set of keys
-    string words[] =
-    {
-        "code", "coder", "coding", "codable", "codec", "codecs", "coded",
-        "codeless", "codec", "codecs", "codependence", "codex", "codify",
-        "codependents", "codes", "code", "coder", "codesign", "codec",
-        "codeveloper", "codrive", "codec", "codecs", "codiscovered"
-    };
-
-    // insert all keys into a Trie
-    Trie* head = new Trie();
-    for (string word: words) {
-        insert(head, word);
-    }
-
-    int count = 0;
-    string key;
-
-    // perform preorder traversal on a Trie and find the key
-    // with maximum frequency
-    preorder(head, count, key);
-
-    cout << "Word : " << key << endl;
-    cout << "Count: " << count << endl;
-
-    return 0;
-}
-```
+Following is a TypeScript implementation of the idea:
 
 **Output:** Word : codec Count: 4
 
-##
-
-```java
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+```ts
 // A class to store a Trie node
-class TrieNode
-{
-    // `count` and `key` is only set for leaf nodes
+class TrieNode {
+    // `count` and `key` are only set for leaf nodes
     // `key` stores the string, and `count` stores its frequency so far
-    String key;
-    int count;
+    key: string | null = null;
+    count = 0;
 
     // each node stores a map to its child nodes
-    Map<Character, TrieNode> character = null;
-
-    // Constructor
-    TrieNode() {
-        character = new HashMap<>();
-    }
+    character = new Map<string, TrieNode>();
 }
 
-class Main
-{
-    // Iterative function to insert a string into a Trie
-    public static void insert(TrieNode head, String str)
-    {
-        // start from the root node
-        TrieNode curr = head;
+// Iterative function to insert a string into a Trie
+function insert(head: TrieNode, s: string): void {
 
-        for (char c: str.toCharArray())
-        {
-            // create a new node if the path doesn't exist
-            curr.character.putIfAbsent(c, new TrieNode());
+    // start from the root node
+    let curr = head;
 
-            // go to the next node
-            curr = curr.character.get(c);
+    for (const c of s) {
+        // go to the next node and create a new node if the path doesn't exist
+        if (!curr.character.has(c)) {
+            curr.character.set(c, new TrieNode());
         }
-
-        // store key and its count in leaf nodes
-        curr.key = str;
-        curr.count += 1;
+        curr = curr.character.get(c);
     }
 
-    // Function to perform preorder traversal on a Trie and
-    // find a word with the maximum frequency
-    public static int preorder(TrieNode curr, int maxCount, StringBuilder key)
-    {
-        // return false if Trie is empty
-        if (curr == null) {
-            return maxCount;
-        }
-
-        for (var entry: curr.character.entrySet())
-        {
-            // leaf nodes have a non-zero count
-            if (maxCount < entry.getValue().count)
-            {
-                key.replace(0, key.length(), entry.getValue().key);
-                maxCount = entry.getValue().count;
-            }
-
-            // recur for current node's children
-            maxCount = preorder(entry.getValue(), maxCount, key);
-        }
-
-        return maxCount;
-    }
-
-    public static void main(String[] args)
-    {
-        // given set of keys
-        List<String> words = Arrays.asList(
-                "code", "coder", "coding", "codable", "codec", "codecs", "coded",
-                "codeless", "codec", "codecs", "codependence", "codex", "codify",
-                "codependents", "codes", "code", "coder", "codesign", "codec",
-                "codeveloper", "codrive", "codec", "codecs", "codiscovered"
-        );
-
-        // Insert all keys into a Trie
-        TrieNode head = new TrieNode();
-        for (String word: words) {
-            insert(head, word);
-        }
-
-        int count = 0;
-        StringBuilder key = new StringBuilder();
-
-        // perform preorder traversal on a Trie and find the key
-        // with maximum frequency
-        count = preorder(head, count, key);
-
-        System.out.println("Word : " + key);
-        System.out.println("Count: " + count);
-    }
+    // store key and its count in leaf nodes
+    curr.key = s;
+    curr.count += 1;
 }
-```
 
-##
+// Function to perform preorder traversal on a Trie and
+// find a word with the maximum frequency
+function preorder(curr: TrieNode, key = '', max_count = 0): [string, number] {
 
-```python3
-# A class to store a Trie node
-class TrieNode:
-    def __init__(self):
+    // return false if Trie is empty
+    if (curr === null) {
+        return [key, max_count];
+    }
 
-        # `count` and `key` is only set for leaf nodes
-        # `key` stores the string, and `count` stores its frequency so far
-        self.key = None
-        self.count = 0
+    for (const v of curr.character.values()) {
 
-        # each node stores a dictionary to its child nodes
-        self.character = {}
+        // leaf node has a non-zero count
+        if (max_count < v.count) {
+            key = v.key;
+            max_count = v.count;
+        }
 
-# Iterative function to insert a string into a Trie
-def insert(head, s):
+        // recur for current node's children
+        [key, max_count] = preorder(v, key, max_count);
+    }
 
-    # start from the root node
-    curr = head
+    return [key, max_count];
+}
 
-    for c in s:
-        # go to the next node and create a new node if the path doesn't exist
-        curr = curr.character.setdefault(c, TrieNode())
+// given set of keys
+const words = [
+    'code', 'coder', 'coding', 'codable', 'codec', 'codecs', 'coded',
+    'codeless', 'codec', 'codecs', 'codependence', 'codex', 'codify',
+    'codependents', 'codes', 'code', 'coder', 'codesign', 'codec',
+    'codeveloper', 'codrive', 'codec', 'codecs', 'codiscovered'
+];
 
-    # store key and its count in leaf nodes
-    curr.key = s
-    curr.count += 1
+// Insert all keys into a Trie
+const head = new TrieNode();
+for (const word of words) {
+    insert(head, word);
+}
 
-# Function to perform preorder traversal on a Trie and
-# find a word with the maximum frequency
-def preorder(curr, key='', max_count=0):
+// perform preorder traversal on a Trie and find the key
+// with a maximum frequency
+const [key, count] = preorder(head);
 
-    # return false if Trie is empty
-    if curr is None:
-        return key, max_count
-
-    for (k, v) in curr.character.items():
-
-        # leaf node has a non-zero count
-        if max_count < v.count:
-            key = v.key
-            max_count = v.count
-
-        # recur for current node's children
-        key, max_count = preorder(v, key, max_count)
-
-    return key, max_count
-
-if __name__ == '__main__':
-
-    # given set of keys
-    words = [
-        'code', 'coder', 'coding', 'codable', 'codec', 'codecs', 'coded',
-        'codeless', 'codec', 'codecs', 'codependence', 'codex', 'codify',
-        'codependents', 'codes', 'code', 'coder', 'codesign', 'codec',
-        'codeveloper', 'codrive', 'codec', 'codecs', 'codiscovered'
-    ]
-
-    # Insert all keys into a Trie
-    head = TrieNode()
-    for word in words:
-        insert(head, word)
-
-    # perform preorder traversal on a Trie and find the key
-    # with a maximum frequency
-    key, count = preorder(head)
-
-    print('Word :', key)
-    print('Count:', count)
+console.log(`Word : ${key}`);
+console.log(`Count: ${count}`);
 ```
 
 The time complexity of the above solution is O(N.M), where `N` is the total number of given words and `M` is the maximum word length. The auxiliary space required by the program is O(N × M).

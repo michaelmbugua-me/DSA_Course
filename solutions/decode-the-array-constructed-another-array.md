@@ -30,158 +30,48 @@ Note that if `m` is the size of the given array and `n` is the size of the origi
 
 Solving the above equation, we get `n = (sqrt(8×m+1)+1)/2`. Refer to this [link](https://www.wolframalpha.com/input/?i=y%5E2-y-2x) for proof of correctness of the above equation.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <cmath>
-using namespace std;
-
-// Function to decode given array to get back the original array elements
-void decode(int inp[], int m)
-{
+```ts
+// Function to decode a given array to get back the original array elements
+function decode(inp: number[]): void {
     // base case
-    if (m == 0 || m == 2) {
+    const m = inp.length;
+    if (m === 0 || m === 2) {
         return;
     }
 
     // calculate the size of the original array
-    int n = (sqrt(8*m + 1) + 1) / 2;
+    const n = Math.floor((Math.sqrt(8 * m + 1) + 1) / 2);
 
-    // create an auxiliary array of size `n` to store elements
+    // create an auxiliary space of size `n` to store elements
     // of the original array
-    int A[n];
+    const A = new Array(n).fill(0);
 
     // calculate the first element of the original array
-    if (n == 1 || m == 1) {
+    if (n === 1 || m === 1) {
         A[0] = inp[0];
-    }
-    else if (n == 2) {
+    } else if (n === 2) {
         A[0] = inp[0] - inp[1];
-    }
-    else {
-        A[0] = (inp[0] + inp[1] - inp[n - 1]) / 2;
+    } else {
+        A[0] = Math.floor((inp[0] + inp[1] - inp[n - 1]) / 2);
     }
 
     // calculate the remaining elements of the original array using
     // the first element
-    for (int i = 1; i < n; i++) {
+    for (let i = 1; i < n; i++) {
         A[i] = inp[i - 1] - A[0];
     }
 
     // print the original array
-    for (int i = 0; i < n; i++) {
-        cout << A[i] << " ";
-    }
+    console.log(A);
 }
 
-int main()
-{
-    int inp[] = { 3, 4, 5, 6, 5, 6, 7, 7, 8, 9 };
-    int m = sizeof(inp)/sizeof(inp[0]);
-
-    decode(inp, m);
-
-    return 0;
-}
+const inp = [3, 4, 5, 6, 5, 6, 7, 7, 8, 9];
+decode(inp);
 ```
 
 **Output:** 1 2 3 4 5
-
-##
-
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Function to decode given array to get back the original array elements
-    public static void decode(int[] inp)
-    {
-        int m = inp.length;
-
-        // base case
-        if (m == 0 || m == 2) {
-            return;
-        }
-
-        // calculate the size of the original array
-        int n = (int)(Math.sqrt(8 * m + 1) + 1) / 2;
-
-        // create an auxiliary array of size `n` to store elements
-        // of the original array
-        int[] A = new int[n];
-
-        // calculate the first element of the original array
-        if (n == 1 || m == 1) {
-            A[0] = inp[0];
-        }
-        else if (n == 2) {
-            A[0] = inp[0] - inp[1];
-        }
-        else {
-            A[0] = (inp[0] + inp[1] - inp[n - 1]) / 2;
-        }
-
-        // calculate the remaining elements of the original array using
-        // the first element
-        for (int i = 1; i < n; i++) {
-            A[i] = inp[i - 1] - A[0];
-        }
-
-        // print the original array
-        System.out.print(Arrays.toString(A));
-    }
-
-    public static void main(String[] args)
-    {
-        int[] inp = { 3, 4, 5, 6, 5, 6, 7, 7, 8, 9 };
-        decode(inp);
-    }
-}
-```
-
-##
-
-```python3
-from math import sqrt
-
-# Function to decode a given list to get back the original list elements
-def decode(inp):
-
-    # base case
-    m = len(inp)
-    if m in (0, 2):
-        return
-
-    # calculate the size of the original list
-    n = int((sqrt(8 * m + 1) + 1) / 2)
-
-    # create an auxiliary space of size `n` to store elements
-    # of the original list
-    A = [0] * n
-
-    # calculate the first element of the original list
-    if n == 1 or m == 1:
-        A[0] = inp[0]
-    elif n == 2:
-        A[0] = inp[0] - inp[1]
-    else:
-        A[0] = (inp[0] + inp[1] - inp[n - 1]) // 2
-
-    # calculate the remaining elements of the original list using
-    # the first element
-    for i in range(1, n):
-        A[i] = inp[i - 1] - A[0]
-
-    # print the original list
-    print(A)
-
-if __name__ == '__main__':
-
-    inp = [3, 4, 5, 6, 5, 6, 7, 7, 8, 9]
-    decode(inp)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space.
 

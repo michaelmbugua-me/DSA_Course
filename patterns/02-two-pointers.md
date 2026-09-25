@@ -17,20 +17,23 @@ Common variants:
 - Need to compare elements while scanning in both directions
 - Asked to do something **in-place** with O(1) space (segregate, remove, dedupe)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def two_pointers(nums, target):        # sorted nums
-    left, right = 0, len(nums) - 1
-    while left < right:
-        s = nums[left] + nums[right]
-        if s == target:
-            return (left, right)
-        if s < target:
-            left += 1      # need a bigger sum
-        else:
-            right -= 1     # need a smaller sum
-    return None
+```ts
+function twoPointers(nums: number[], target: number): [number, number] | null { // sorted nums
+  let left = 0;
+  let right = nums.length - 1;
+  while (left < right) {
+    const s = nums[left] + nums[right];
+    if (s === target) return [left, right];
+    if (s < target) {
+      left++;       // need a bigger sum
+    } else {
+      right--;      // need a smaller sum
+    }
+  }
+  return null;
+}
 ```
 
 ## Complexity

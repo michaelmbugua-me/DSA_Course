@@ -12,21 +12,28 @@ Given **K sorted lists** (or a sorted matrix), merge them or traverse them in so
 - "Merge K sorted lists", "K-th smallest in a sorted matrix", "smallest range covering K lists"
 - External sorting (data too big for memory, sorted in chunks)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-import heapq
+```ts
+type Entry = [number, number, number]; // (value, list_index, element_index)
 
-def merge_k_sorted(lists):
-    heap = [(lst[0], i, 0) for i, lst in enumerate(lists) if lst]
-    heapq.heapify(heap)              # (value, list_index, element_index)
-    merged = []
-    while heap:
-        val, li, ei = heapq.heappop(heap)
-        merged.append(val)
-        if ei + 1 < len(lists[li]):
-            heapq.heappush(heap, (lists[li][ei + 1], li, ei + 1))
-    return merged
+// JS has no builtin heap: use min-heap helpers (minHeapify, minHeapPush, minHeapPop)
+function mergeKSorted(lists: number[][]): number[] {
+  const heap: Entry[] = [];
+  for (let i = 0; i < lists.length; i++) {
+    if (lists[i].length > 0) heap.push([lists[i][0], i, 0]);
+  }
+  minHeapify(heap);
+  const merged: number[] = [];
+  while (heap.length > 0) {
+    const [val, li, ei] = minHeapPop(heap);
+    merged.push(val);
+    if (ei + 1 < lists[li].length) {
+      minHeapPush(heap, [lists[li][ei + 1], li, ei + 1]);
+    }
+  }
+  return merged;
+}
 ```
 
 ## Complexity

@@ -18,26 +18,23 @@ Degree(hh) = H×(360/12) + (M×360)/(12×60) Degree(mm) = M×(360/60)
 
 Here, `H` is the hour, and `M` is the minutes past the hour. The angle should be in degrees and measured clockwise from the 12 o’clock position of the clock. If the angle is greater than `180°`, take its difference with 360.
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Function to compute the angle between the hour and minute hand
-int findAngle(int hh, int mm)
-{
+function findAngle(hh: number, mm: number): number {
+
     // handle 24-hour notation
     hh = hh % 12;
 
     // find the position of the hour's hand
-    int h = (hh * 360) / 12 + (mm * 360) / (12 * 60);
+    const h = (hh * 360) / 12 + (mm * 360) / (12 * 60);
 
     // find the position of the minute's hand
-    int m = (mm * 360) / (60);
+    const m = (mm * 360) / (60);
 
     // calculate the angle difference
-    int angle = abs(h - m);
+    let angle = Math.abs(h - m);
 
     // consider the shorter angle and return it
     if (angle > 180) {
@@ -48,90 +45,13 @@ int findAngle(int hh, int mm)
 }
 
 // Clock Angle Problem
-int main()
-{
-    int hh = 5;
-    int mm = 30;
+const hh = 5;
+const mm = 30;
 
-    cout << findAngle(hh, mm);
-
-    return 0;
-}
+console.log(findAngle(hh, mm));
 ```
 
 **Output:** 15
-
-##
-
-```java
-class Main
-{
-    // Function to compute the angle between the hour and minute hand
-    public static int findAngle(int hh, int mm)
-    {
-        // handle 24-hour notation
-        hh = hh % 12;
-
-        // find the position of the hour's hand
-        int h = (hh * 360) / 12 + (mm * 360) / (12 * 60);
-
-        // find the position of the minute's hand
-        int m = (mm * 360) / (60);
-
-        // calculate the angle difference
-        int angle = Math.abs(h - m);
-
-        // consider the shorter angle and return it
-        if (angle > 180) {
-            angle = 360 - angle;
-        }
-
-        return angle;
-    }
-
-    // Clock Angle Problem
-    public static void main(String[] args)
-    {
-        int hh = 5;
-        int mm = 30;
-
-        System.out.println(findAngle(hh, mm));
-    }
-}
-```
-
-##
-
-```python3
-# Function to compute the angle between the hour and minute hand
-def findAngle(hh, mm):
-
-    # handle 24-hour notation
-    hh = hh % 12
-
-    # find the position of the hour's hand
-    h = (hh * 360) // 12 + (mm * 360) // (12 * 60)
-
-    # find the position of the minute's hand
-    m = (mm * 360) // (60)
-
-    # calculate the angle difference
-    angle = abs(h - m)
-
-    # consider the shorter angle and return it
-    if angle > 180:
-        angle = 360 - angle
-
-    return angle
-
-# Clock Angle Problem
-if __name__ == '__main__':
-
-    hh = 5
-    mm = 30
-
-    print(findAngle(hh, mm))
-```
 
 **References:** [Clock Angle Problem – Wikipedia](https://en.wikipedia.org/wiki/Clock_angle_problem)
 

@@ -22,266 +22,84 @@ So, mapping from the given word to the given pattern is good. Now let’s check 
 
 (n, m) —> As n is seen for the first time, map n to m. (o, o) —> As o is seen for the first time, map o to o. (o, o) —> As o is seen before, and it is already mapped to o, which is the same as current character in pattern o. (n, n) —> As n is seen before, and it is already mapped to m, which is different from the current character in pattern n.
 
-So, mapping from the given pattern to the given word fails, and we can say that the pattern doesn’t match the word. The algorithm can be implemented as follows in C++, Java, and Python:
+So, mapping from the given pattern to the given word fails, and we can say that the pattern doesn’t match the word. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <string>
-using namespace std;
-
+```ts
 // Function to print all words that follows the same order of
 // characters as the given pattern
-void patternMatch(vector<string> const &words, string pattern)
-{
+const patternMatch = (words: string[], pattern: string): void => {
     // invalid input
-    int n = words.size();
-    if (n == 0) {
+    if (!words || !pattern) {
         return;
     }
 
-    // `len` stores the length of the pattern
-    int len = pattern.length();
-
     // check each word in the input list
-    for (string word: words)
-    {
-        // `map1` stores the mapping from word to the pattern
-        // `map2` stores the mapping from pattern to word
-        unordered_map<char, char> map1, map2;
+    for (const word of words) {
+        // dict1 the stores mapping from word to pattern
+        const dict1 = new Map<string, string>();
+
+        // dict2 the stores mapping from pattern to word
+        const dict2 = new Map<string, string>();
 
         // proceed only when the length of the pattern and word is the same
-        if (word.length() == len)
-        {
-            int i;
-
+        if (word.length === pattern.length) {
             // process each character in both word and pattern
-            for (i = 0; i < len; i++)
-            {
+            let i = 0;
+            while (i < pattern.length) {
                 // `w` stores the current character of the current word
-                char w = word[i];
+                const w = word[i];
 
                 // `p` stores the current character of the pattern
-                char p = pattern[i];
+                const p = pattern[i];
 
-                /* Check mapping from the current word to the given pattern */
+                /* check mapping from the current word to the given pattern */
 
-                // if `w` is seen for the first time, store its mapping
-                // to `p` in `map1`
-                if (map1.find(w) == map1.end()) {
-                    map1[w] = p;
+                // if `w` is seen for the first time, store its mapping to `p`
+                // in `dict1`
+                if (!dict1.has(w)) {
+                    dict1.set(w, p);
                 }
 
                 // if `w` is seen before, its mapped character should be `p`
-                else if (map1[w] != p) {
+                else if (dict1.get(w) !== p) {
                     break;
                 }
 
-                /* Check mapping from the given pattern to the current word */
+                /* check mapping from the given pattern to the current word */
 
-                // if `p` is seen for the first time, store its mapping to
-                // `w` in `map2`
-                if (map2.find(p) == map2.end()) {
-                    map2[p] = w;
+                // if `p` is seen for the first time, store its mapping to `w`
+                // in `dict2`
+                if (!dict2.has(p)) {
+                    dict2.set(p, w);
                 }
 
                 // if `p` is seen before, its mapped character should be `w`
-                else if (map2[p] != w) {
+                else if (dict2.get(p) !== w) {
                     break;
                 }
+
+                i = i + 1;
             }
 
             // if the current word matches the pattern, print it
-            if (i == len) {
-                cout << word << " ";
+            if (i === pattern.length) {
+                console.log(word);
             }
         }
     }
-}
+};
 
-int main()
-{
-    // list of words
-    vector<string> list =
-    {
-        "leet", "abcd", "loot", "geek", "cool", "for", "peer",
-        "dear", "seed", "meet", "noon", "otto", "mess", "loss"
-    };
+// a list of words
+const words = ['leet', 'abcd', 'loot', 'geek', 'cool', 'for', 'peer', 'dear', 'seed',
+    'meet', 'noon', 'otto', 'mess', 'loss'];
 
-    // given pattern
-    string pattern = "moon";
+// given pattern
+const pattern = 'moon';
 
-    patternMatch(list, pattern);
-
-    return 0;
-}
+patternMatch(words, pattern);
 ```
 
 **Output:** leet loot geek cool peer seed meet
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-class Main
-{
-    // Function to print all words that follows the same order of
-    // characters as the given pattern
-    public static void patternMatch(List<String> words, String pattern)
-    {
-        // invalid input
-        if (words == null || pattern == null) {
-            return;
-        }
-
-        // `len` stores the length of the pattern
-        int len = pattern.length();
-
-        // check each word in the input list
-        for (String word: words)
-        {
-            // `map1` stores the mapping from word to the pattern
-            Map<Character, Character> map1 = new HashMap<>();
-
-            // `map2` stores the mapping from pattern to word
-            Map<Character, Character> map2 = new HashMap<>();
-
-            // proceed only when the length of the pattern and word is the same
-            if (word.length() == len)
-            {
-                int i;
-
-                // process each character in both word and pattern
-                for (i = 0; i < len; i++)
-                {
-                    // `w` stores the current character of the current word
-                    char w = word.charAt(i);
-
-                    // `p` stores the current character of the pattern
-                    char p = pattern.charAt(i);
-
-                    /* Check mapping from the current word to the given pattern */
-
-                    // if `w` is seen for the first time, store its mapping to `p`
-                    // in `map1`
-                    var prev = map1.putIfAbsent(w, p);
-
-                    // if `w` is seen before, its mapped character should be `p`
-                    if (prev != null && map1.get(w) != p) {
-                        break;
-                    }
-
-                    /* Check mapping from the given pattern to the current word */
-
-                    // if `p` is seen for the first time, store its mapping to `w`
-                    // in `map2`
-                    prev = map2.putIfAbsent(p, w);
-
-                    // if `p` is seen before, its mapped character should be `w`
-                    if (prev != null && map2.get(p) != w) {
-                        break;
-                    }
-                }
-
-                // if the current word matches the pattern, print it
-                if (i == len) {
-                    System.out.println(word);
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // list of words
-        List<String> words = Arrays.asList("leet", "abcd", "loot", "geek",
-                "cool", "for", "peer", "dear", "seed",
-                "meet", "noon", "otto", "mess", "loss");
-
-        // given pattern
-        String pattern = "moon";
-
-        patternMatch(words, pattern);
-    }
-}
-```
-
-##
-
-```python3
-# Function to print all words that follows the same order of
-# characters as the given pattern
-def patternMatch(words, pattern):
-
-    # invalid input
-    if not words or not pattern:
-        return
-
-    # check each word in the input list
-    for word in words:
-
-        # dict1 the stores mapping from word to pattern
-        dict1 = {}
-
-        # dict2 the stores mapping from pattern to word
-        dict2 = {}
-
-        # proceed only when the length of the pattern and word is the same
-        if len(word) == len(pattern):
-
-            # process each character in both word and pattern
-            i = 0
-            while i < len(pattern):
-                # `w` stores the current character of the current word
-                w = word[i]
-
-                # `p` stores the current character of the pattern
-                p = pattern[i]
-
-                ''' check mapping from the current word to the given pattern '''
-
-                # if `w` is seen for the first time, store its mapping to `p`
-                # in `dict1`
-                if w not in dict1:
-                    dict1[w] = p
-                else:
-                    # if `w` is seen before, its mapped character should be `p`
-                    if dict1[w] != p:
-                        break
-
-                ''' check mapping from the given pattern to the current word '''
-
-                # if `p` is seen for the first time, store its mapping to `w`
-                # in `dict2`
-                if p not in dict2:
-                    dict2[p] = w
-                else:
-                    # if `p` is seen before, its mapped character should be `w`
-                    if dict2[p] != w:
-                        break
-
-                i = i + 1
-
-            # if the current word matches the pattern, print it
-            if i == len(pattern):
-                print(word, end=' ')
-
-if __name__ == '__main__':
-
-    # a list of words
-    words = ['leet', 'abcd', 'loot', 'geek', 'cool', 'for', 'peer', 'dear', 'seed',
-            'meet', 'noon', 'otto', 'mess', 'loss']
-
-    # given pattern
-    pattern = 'moon'
-
-    patternMatch(words, pattern)
-```
 
 The time complexity of the above solution is O(n.m), where `n` is the total number of words and `m` is the pattern’s length.
 

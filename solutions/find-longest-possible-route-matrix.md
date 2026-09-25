@@ -12,329 +12,110 @@ For example, the longest path from source cell `(0, 0)` to destination cell `(5,
 
 We can use [backtracking](https://techiedelight.com/backtracking-interview-questions/) to solve this problem. We start from the given source cell in the matrix and explore all four paths possible and recursively check if they will lead to the destination or not. We have to keep track of the current cell’s distance from the source and update the value of the longest path found so far on reaching the destination cell. If a path doesn’t reach the destination or explored all possible routes from the current cell, backtrack. To make sure that the path is simple and doesn’t contain any cycles, keep track of cells involved in the current path in a matrix, and before exploring any cell, ignore the cell if it is already covered in the current path.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cstring>
-using namespace std;
-
+```ts
 // Check if it is possible to go to position (x, y) from
 // the current position. The function returns false if the cell
-// has a value 0, or it is already visited.
-bool isSafe(vector<vector<int>> &mat, vector<vector<bool>> &visited, int x, int y)
-{
-    return (x >= 0 && x < mat.size() && y >= 0 && y < mat[0].size()) &&
-            mat[x][y] == 1 && !visited[x][y];
+// is invalid, has a value 0, or it is already visited.
+function isSafe(mat: number[][], visited: boolean[][], x: number, y: number): boolean {
+    return (x >= 0 && x < mat.length && y >= 0 && y < mat[0].length) &&
+            mat[x][y] === 1 && !visited[x][y];
 }
 
 // Find the longest possible route in a matrix `mat` from the source cell
 // (i, j) to destination cell (x, y).
 // `max_dist` —> keep track of the length of the longest path from source to
-// destination. It is passed by reference.
+// destination.
 // `dist` —> length of the path from the source cell to the current cell (i, j).
-void findLongestPath(vector<vector<int>> &mat, vector<vector<bool>> &visited,
-                int i, int j, int x, int y, int &max_dist, int dist)
-{
+function findLongestPath(mat: number[][], visited: boolean[][], i: number, j: number,
+                          x: number, y: number, max_dist: number, dist: number): number {
+
     // if the destination is not possible from the current cell
-    if (mat[i][j] == 0) {
-        return;
+    if (mat[i][j] === 0) {
+        return 0;
     }
 
     // if the destination is found, update `max_dist`
-    if (i == x && j == y)
-    {
-        max_dist = max(dist, max_dist);
-        return;
+    if (i === x && j === y) {
+        return Math.max(dist, max_dist);
     }
 
     // set (i, j) cell as visited
-    visited[i][j] = 1;
+    visited[i][j] = true;
 
     // go to the bottom cell
     if (isSafe(mat, visited, i + 1, j)) {
-        findLongestPath(mat, visited, i + 1, j, x, y, max_dist, dist + 1);
+        max_dist = findLongestPath(mat, visited, i + 1, j, x, y,
+                max_dist, dist + 1);
     }
 
     // go to the right cell
     if (isSafe(mat, visited, i, j + 1)) {
-        findLongestPath(mat, visited, i, j + 1, x, y, max_dist, dist + 1);
+        max_dist = findLongestPath(mat, visited, i, j + 1, x, y,
+                max_dist, dist + 1);
     }
 
     // go to the top cell
     if (isSafe(mat, visited, i - 1, j)) {
-        findLongestPath(mat, visited, i - 1, j, x, y, max_dist, dist + 1);
+        max_dist = findLongestPath(mat, visited, i - 1, j, x, y,
+                max_dist, dist + 1);
     }
 
     // go to the left cell
     if (isSafe(mat, visited, i, j - 1)) {
-        findLongestPath(mat, visited, i, j - 1, x, y, max_dist, dist + 1);
+        max_dist = findLongestPath(mat, visited, i, j - 1, x, y,
+                max_dist, dist + 1);
     }
 
     // backtrack: remove (i, j) from the visited matrix
-    visited[i][j] = 0;
-}
-
-// Wrapper over findLongestPath() function
-int findLongestPathLength(vector<vector<int>> &mat, pair<int, int> &src,
-                    pair<int, int> &dest)
-{
-    // base case: invalid input
-    if (mat.size() == 0 || mat[src.first][src.second] == 0 ||
-            mat[dest.first][dest.second] == 0) {
-        return -1;
-    }
-
-    // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
-
-    // construct an `M × N` matrix to keep track of visited cells
-    vector<vector<bool>> visited;
-    visited.resize(M, vector<bool>(N));
-
-    int max_dist = 0;
-    findLongestPath(mat, visited, src.first, src.second, dest.first, dest.second,
-            max_dist, 0);
+    visited[i][j] = false;
 
     return max_dist;
 }
 
-int main()
-{
-    // input matrix
-    vector<vector<int>> mat =
-    {
-        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
-        { 1, 0, 1, 0, 1, 1, 1, 0, 1, 1 },
-        { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
-        { 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
-        { 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-        { 1, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 0, 1, 1 },
-        { 1, 1, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 1, 0, 0 }
-    };
+// Wrapper over findLongestPath() function
+function findLongestPathLength(mat: number[][], i: number, j: number, x: number, y: number): number {
+    // base case: invalid input
+    if (mat === null || mat.length === 0 || mat[i][j] === 0 || mat[x][y] === 0) {
+        return -1;
+    }
 
-    // (0, 0) are the source cell, and (5, 7) are the destination cell coordinates
-    pair<int, int> src = make_pair(0, 0);
-    pair<int, int> dest = make_pair(5, 7);
+    // `M × N` matrix
+    const M = mat.length;
+    const N = mat[0].length;
 
-    cout << "The Maximum length path is " << findLongestPathLength(mat, src, dest);
+    // construct an `M × N` matrix to keep track of visited cells
+    const visited: boolean[][] = new Array(M).fill(false).map(() => new Array(N).fill(false));
 
-    return 0;
+    // (i, j) are the source cell, and (x, y) are the destination
+    // cell coordinates
+    return findLongestPath(mat, visited, i, j, x, y, 0, 0);
 }
+
+// input matrix
+const mat = [
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    [1, 0, 1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+    [0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+    [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 1, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1, 0, 0]
+];
+
+// (0, 0) are the source cell, and (5, 7) are the destination
+// cell coordinates
+const max_dist = findLongestPathLength(mat, 0, 0, 5, 7);
+console.log('The maximum length path is ' + max_dist);
 ```
 
 **Output:** The maximum length path is 22
 
-##
-
-```java
-class Main
-{
-    // Check if it is possible to go to position (x, y) from
-    // the current position. The function returns false if the cell
-    // is invalid, has a value 0, or it is already visited.
-    private static boolean isSafe(int[][] mat, boolean[][] visited, int x, int y) {
-        return (x >= 0 && x < mat.length && y >= 0 && y < mat[0].length) &&
-                mat[x][y] == 1 && !visited[x][y];
-    }
-
-    // Find the longest possible route in a matrix `mat` from the source cell
-    // (i, j) to destination cell (x, y).
-    // `max_dist` —> keep track of the length of the longest path from source to
-    // destination.
-    // `dist` —> length of the path from the source cell to the current cell (i, j).
-    public static int findLongestPath(int[][] mat, boolean[][] visited, int i, int j,
-                                      int x, int y, int max_dist, int dist)
-    {
-        // if the destination is not possible from the current cell
-        if (mat[i][j] == 0) {
-            return 0;
-        }
-
-        // if the destination is found, update `max_dist`
-        if (i == x && j == y) {
-            return Integer.max(dist, max_dist);
-        }
-
-        // set (i, j) cell as visited
-        visited[i][j] = true;
-
-        // go to the bottom cell
-        if (isSafe(mat, visited, i + 1, j))
-        {
-            max_dist = findLongestPath(mat, visited, i + 1, j, x, y,
-                    max_dist, dist + 1);
-        }
-
-        // go to the right cell
-        if (isSafe(mat, visited, i, j + 1))
-        {
-            max_dist = findLongestPath(mat, visited, i, j + 1, x, y,
-                    max_dist, dist + 1);
-        }
-
-        // go to the top cell
-        if (isSafe(mat, visited, i - 1, j))
-        {
-            max_dist = findLongestPath(mat, visited, i - 1, j, x, y,
-                    max_dist, dist + 1);
-        }
-
-        // go to the left cell
-        if (isSafe(mat, visited, i, j - 1))
-        {
-            max_dist = findLongestPath(mat, visited, i, j - 1, x, y,
-                    max_dist, dist + 1);
-        }
-
-        // backtrack: remove (i, j) from the visited matrix
-        visited[i][j] = false;
-
-        return max_dist;
-    }
-
-    // Wrapper over findLongestPath() function
-    public static int findLongestPathLength(int[][] mat, int i, int j, int x, int y)
-    {
-        // base case: invalid input
-        if (mat == null || mat.length == 0 || mat[i][j] == 0 || mat[x][y] == 0) {
-            return -1;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // construct an `M × N` matrix to keep track of visited cells
-        boolean[][] visited= new boolean[M][N];
-
-        // (i, j) are the source cell, and (x, y) are the destination
-        // cell coordinates
-        return findLongestPath(mat, visited, i, j, x, y, 0, 0);
-    }
-
-    public static void main(String[] args)
-    {
-        // input matrix
-        int mat[][] =
-                {
-                        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
-                        { 1, 0, 1, 0, 1, 1, 1, 0, 1, 1 },
-                        { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
-                        { 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
-                        { 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-                        { 1, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-                        { 1, 0, 1, 1, 1, 1, 0, 0, 1, 1 },
-                        { 1, 1, 0, 0, 1, 0, 0, 0, 0, 1 },
-                        { 1, 0, 1, 1, 1, 1, 0, 1, 0, 0 }
-                };
-
-        // (0, 0) are the source cell, and (5, 7) are the destination
-        // cell coordinates
-        int max_dist = findLongestPathLength(mat, 0, 0, 5, 7);
-        System.out.println("The maximum length path is " + max_dist);
-    }
-}
-```
-
-##
-
-```python3
-# Check if it is possible to go to position (x, y) from
-# the current position. The function returns false if the cell
-# is invalid, has a value 0, or it is already visited.
-def isSafe(mat, visited, x, y):
-    return 0 <= x < len(mat) and 0 <= y < len(mat[0]) and \
-           not (mat[x][y] == 0 or visited[x][y])
-
-# Find the longest possible route in a matrix `mat` from the source cell (i, j)
-# to destination cell `dest`.
-# `max_dist` —> keep track of the length of the longest path from source to destination
-# `dist` —> length of the path from the source cell to the current cell (i, j)
-def findLongestPath(mat, visited, i, j, dest, max_dist=0, dist=0):
-
-    # if the destination is not possible from the current cell
-    if mat[i][j] == 0:
-        return 0
-
-    # if the destination is found, update `max_dist`
-    if (i, j) == dest:
-        return max(dist, max_dist)
-
-    # set (i, j) cell as visited
-    visited[i][j] = 1
-
-    # go to the bottom cell
-    if isSafe(mat, visited, i + 1, j):
-        max_dist = findLongestPath(mat, visited, i + 1, j, dest, max_dist, dist + 1)
-
-    # go to the right cell
-    if isSafe(mat, visited, i, j + 1):
-        max_dist = findLongestPath(mat, visited, i, j + 1, dest, max_dist, dist + 1)
-
-    # go to the top cell
-    if isSafe(mat, visited, i - 1, j):
-        max_dist = findLongestPath(mat, visited, i - 1, j, dest, max_dist, dist + 1)
-
-    # go to the left cell
-    if isSafe(mat, visited, i, j - 1):
-        max_dist = findLongestPath(mat, visited, i, j - 1, dest, max_dist, dist + 1)
-
-    # backtrack: remove (i, j) from the visited matrix
-    visited[i][j] = 0
-
-    return max_dist
-
-# Wrapper over findLongestPath() function
-def findLongestPathLength(mat, src, dest):
-
-    # get source cell (i, j)
-    i, j = src
-
-    # get destination cell (x, y)
-    x, y = dest
-
-    # base case
-    if not mat or len(mat) == 0 or mat[i][j] == 0 or mat[x][y] == 0:
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # construct an `M × N` matrix to keep track of visited cells
-    visited = [[0 for x in range(N)] for y in range(M)]
-
-    # (i, j) are the source cell coordinates, and (x, y) are the
-    # destination cell coordinates
-    return findLongestPath(mat, visited, i, j, dest)
-
-if __name__ == '__main__':
-
-    # input matrix
-    mat = [
-        [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [1, 0, 1, 0, 1, 1, 1, 0, 1, 1],
-        [1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
-        [0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-        [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [1, 0, 0, 0, 1, 0, 0, 1, 0, 1],
-        [1, 0, 1, 1, 1, 1, 0, 0, 1, 1],
-        [1, 1, 0, 0, 1, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 0, 1, 0, 0]
-    ]
-
-    src = (0, 0)
-    dest = (5, 7)
-
-    print("The maximum length path is", findLongestPathLength(mat, src, dest))
-```
+The time complexity of the above solution
 
 The time complexity of the above solution is exponential and requires additional space for the recursion (call stack).
 

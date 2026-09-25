@@ -12,83 +12,67 @@ As we already know, the adjacency list associates each vertex in the graph with 
 
 For example, below is the adjacency list representation of the above graph:
 
-The above representation allows the storage of additional data on the vertices but is practically very efficient when the graph contains only a few edges. We will use the STL vector class to implement the adjacency list representation of a graph.
+The above representation allows the storage of additional data on the vertices but is practically very efficient when the graph contains only a few edges. We will use the array-based adjacency list representation of a graph.
 
 ## 1\. Directed Graph Implementation using STL
 
-```
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
+class Edge {
+    constructor(public src: number, public dest: number) {}
+}
 
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+    // an array of arrays to represent an adjacency list
+    adjList: number[][];
 
     // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    constructor(edges: Edge[], n: number) {
+        // resize the array to hold `n` elements of type `number[]`
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the directed graph
-        for (auto &edge: edges)
-        {
+        for (const edge of edges) {
             // insert at the end
-            adjList[edge.src].push_back(edge.dest);
+            this.adjList[edge.src].push(edge.dest);
 
             // uncomment the following code for undirected graph
-            // adjList[edge.dest].push_back(edge.src);
+            // this.adjList[edge.dest].push(edge.src);
         }
-    }
-};
-
-// Function to print adjacency list representation of a graph
-void printGraph(Graph const &graph, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        // print the current vertex number
-        cout << i << " ——> ";
-
-        // print all neighboring vertices of a vertex `i`
-        for (int v: graph.adjList[i]) {
-            cout << v << " ";
-        }
-        cout << endl;
     }
 }
 
-// Graph Implementation using STL
-int main()
-{
-    // vector of graph edges as per the above diagram.
-    // Please note that the initialization vector in the below format will
-    // work fine in C++11, C++14, C++17 but will fail in C++98.
-    vector<Edge> edges =
-    {
-        {0, 1}, {1, 2}, {2, 0}, {2, 1}, {3, 2}, {4, 5}, {5, 4}
-    };
+// Function to print adjacency list representation of a graph
+function printGraph(graph: Graph, n: number): void {
+    for (let i = 0; i < n; i++) {
+        // print the current vertex number
+        process.stdout.write(`${i} ——> `);
+
+        // print all neighboring vertices of a vertex `i`
+        for (const v of graph.adjList[i]) {
+            process.stdout.write(`${v} `);
+        }
+        console.log();
+    }
+}
+
+(function main() {
+    // list of graph edges as per the above diagram
+    const edges = [
+        new Edge(0, 1), new Edge(1, 2), new Edge(2, 0), new Edge(2, 1),
+        new Edge(3, 2), new Edge(4, 5), new Edge(5, 4)
+    ];
 
     // total number of nodes in the graph (labelled from 0 to 5)
-    int n = 6;
+    const n = 6;
 
     // construct graph
-    Graph graph(edges, n);
+    const graph = new Graph(edges, n);
 
     // print adjacency list representation of a graph
     printGraph(graph, n);
-
-    return 0;
-}
+})();
 ```
 
 **Output:** 0 ——> 1 1 ——> 2 2 ——> 0 1 3 ——> 2 4 ——> 5 5 ——> 4
@@ -97,85 +81,65 @@ int main()
 
 We know that in a weighted graph, every edge will have a weight or cost associated with it, as shown below:
 
-Following is the C++ implementation of a weighted directed graph using STL. The implementation is similar to the above implementation of the unweighted directed graph, except here, we will also store the weight of every edge in the adjacency list.
+Following is the TypeScript implementation of a weighted directed graph using an adjacency list. The implementation is similar to the above implementation of the unweighted directed graph, except here, we will also store the weight of every edge in the adjacency list.
 
-```
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // Data structure to store a graph edge
-struct Edge {
-    int src, dest, weight;
-};
-
-typedef pair<int, int> Pair;
+class Edge {
+    constructor(public src: number, public dest: number, public weight: number) {}
+}
 
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors of Pairs to represent an adjacency list
-    vector<vector<Pair>> adjList;
+class Graph {
+    // an array of arrays of Pairs to represent an adjacency list
+    adjList: [number, number][][];
 
     // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type vector<Edge>
-        adjList.resize(n);
+    constructor(edges: Edge[], n: number) {
+        // resize the array to hold `n` elements of type Edge
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the directed graph
-        for (auto &edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-            int weight = edge.weight;
+        for (const edge of edges) {
+            const { src, dest, weight } = edge;
 
             // insert at the end
-            adjList[src].push_back(make_pair(dest, weight));
+            this.adjList[src].push([dest, weight]);
 
             // uncomment the following code for undirected graph
-            // adjList[dest].push_back(make_pair(src, weight));
+            // this.adjList[dest].push([src, weight]);
         }
-    }
-};
-
-// Function to print adjacency list representation of a graph
-void printGraph(Graph const &graph, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        // Function to print all neighboring vertices of a given vertex
-        for (Pair v: graph.adjList[i]) {
-            cout << "(" << i << ", " << v.first << ", " << v.second << ") ";
-        }
-        cout << endl;
     }
 }
 
-// Graph Implementation using STL
-int main()
-{
-    // vector of graph edges as per the above diagram.
-    // Please note that the initialization vector in the below format will
-    // work fine in C++11, C++14, C++17 but will fail in C++98.
-    vector<Edge> edges =
-    {
+// Function to print adjacency list representation of a graph
+function printGraph(graph: Graph, n: number): void {
+    for (let i = 0; i < n; i++) {
+        // Function to print all neighboring vertices of a given vertex
+        for (const [dest, weight] of graph.adjList[i]) {
+            process.stdout.write(`(${i}, ${dest}, ${weight}) `);
+        }
+        console.log();
+    }
+}
+
+(function main() {
+    // list of graph edges as per the above diagram
+    const edges = [
         // (x, y, w) —> edge from `x` to `y` having weight `w`
-        {0, 1, 6}, {1, 2, 7}, {2, 0, 5}, {2, 1, 4}, {3, 2, 10}, {5, 4, 1}, {4, 5, 3}
-    };
+        new Edge(0, 1, 6), new Edge(1, 2, 7), new Edge(2, 0, 5), new Edge(2, 1, 4),
+        new Edge(3, 2, 10), new Edge(5, 4, 1), new Edge(4, 5, 3)
+    ];
 
     // total number of nodes in the graph (labelled from 0 to 5)
-    int n = 6;
+    const n = 6;
 
     // construct graph
-    Graph graph(edges, n);
+    const graph = new Graph(edges, n);
 
     // print adjacency list representation of a graph
     printGraph(graph, n);
-
-    return 0;
-}
+})();
 ```
 
 **Output:** (0, 1, 6) (1, 2, 7) (2, 0, 5) (2, 1, 4) (3, 2, 10) (4, 5, 3) (5, 4, 1)

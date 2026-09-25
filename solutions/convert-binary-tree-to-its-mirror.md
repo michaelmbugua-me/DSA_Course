@@ -10,232 +10,71 @@ For example, the following binary trees are mirrors of each other:
 
 > 
 
-The idea is simple – traverse the tree in a [postorder fashion](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/), and for every node, swap its left and right child pointer after recursively converting its left and right subtree to mirror first. Following is the C++, Java, and Python implementation of the idea:
+The idea is simple – traverse the tree in a [postorder fashion](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/), and for every node, swap its left and right child pointer after recursively converting its left and right subtree to mirror first. Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Function to perform preorder traversal on a given binary tree
-void preorder(Node* root)
-{
-    if (root == nullptr) {
+function preorder(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
 
-    cout << root->data << " ";
-    preorder(root->left);
-    preorder(root->right);
+    output.push(root.data);
+    preorder(root.left, output);
+    preorder(root.right, output);
 }
 
 // Function to convert a given binary tree into its mirror
-void convertToMirror(Node* root)
-{
+function convertToMirror(root: Node | null): void {
+
     // base case: if the tree is empty
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // convert left subtree
-    convertToMirror(root->left);
+    convertToMirror(root.left);
 
     // convert right subtree
-    convertToMirror(root->right);
+    convertToMirror(root.right);
 
     // swap left subtree with right subtree
-    swap(root->left, root->right);
+    const temp = root.left;
+    root.left = root.right;
+    root.right = temp;
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    */
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     / \     / \
+    4   5   6   7
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
+let root = new Node(1);
+root.left = new Node(2);
+root.right = new Node(3);
+root.left!.left = new Node(4);
+root.left!.right = new Node(5);
+root.right!.left = new Node(6);
+root.right!.right = new Node(7);
 
-    convertToMirror(root);
-    preorder(root);
-
-    return 0;
-}
+convertToMirror(root);
+const output: number[] = [];
+preorder(root, output);
+console.log(output.join(' '));
 ```
 
 **Output:** 1 3 7 6 2 5 4
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform preorder traversal on a given binary tree
-    public static void preorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.data + " ");
-        preorder(root.left);
-        preorder(root.right);
-    }
-
-    // Utility function to swap left subtree with right subtree
-    public static void swap(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        Node temp = root.left;
-        root.left = root.right;
-        root.right = temp;
-    }
-
-    // Function to convert a given binary tree into its mirror
-    public static void convertToMirror(Node root)
-    {
-        // base case: if the tree is empty
-        if (root == null) {
-            return;
-        }
-
-        // convert left subtree
-        convertToMirror(root.left);
-
-        // convert right subtree
-        convertToMirror(root.right);
-
-        // swap left subtree with right subtree
-        swap(root);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             / \     / \
-            4   5   6   7
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-
-        convertToMirror(root);
-        preorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform preorder traversal on a given binary tree
-def preorder(root):
-    if root is None:
-        return
-
-    print(root.data, end=' ')
-    preorder(root.left)
-    preorder(root.right)
-
-# Utility function to swap left subtree with right subtree
-def swap(root):
-    if root is None:
-        return
-
-    temp = root.left
-    root.left = root.right
-    root.right = temp
-
-# Function to convert a given binary tree into its mirror
-def convertToMirror(root):
-
-    # base case: if the tree is empty
-    if root is None:
-        return
-
-    # convert left subtree
-    convertToMirror(root.left)
-
-    # convert right subtree
-    convertToMirror(root.right)
-
-    # swap left subtree with right subtree
-    swap(root)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         / \     / \
-        4   5   6   7
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-
-    convertToMirror(root)
-    preorder(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

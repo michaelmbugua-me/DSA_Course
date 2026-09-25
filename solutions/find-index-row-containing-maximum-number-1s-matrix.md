@@ -17,40 +17,32 @@ The idea is to start from the top-right corner of the matrix and do the followin
   * If the current cell has value 1, continue moving left till we encounter 0, or all columns are processed;
   * If the current cell has value 0, continue moving down till we encounter 1, or all rows are processed.
 
-Finally, return the row index of the last cell in which we have seen 1. The algorithm can be implemented as follows in C++, Java, and Python:
+Finally, return the row index of the last cell in which we have seen 1. The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
+```ts
+function findRowIndex(mat: number[][]): number {
 
-int findRowIndex(vector<vector<int>> const &mat)
-{
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return 0;
     }
 
-    // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    // stores row number with maximum index
+    let row = -1;
 
     // `(i, j)` stores the current row and column index
-    int i, j;
-
-    // stores row number with maximum index
-    int row = -1;
 
     // start from the top-rightmost cell of the matrix
-    i = 0, j = N - 1;
+    let i = 0, j = mat[0].length - 1;
 
-    while (i <= M - 1 && j >= 0)
-    {
+    while (i <= mat.length - 1 && j >= 0) {
         // move left if the current cell has value 1
-        if (mat[i][j]) {
-            j--, row = i;   // update row number
+        if (mat[i][j] === 1) {
+            j--;
+            row = i;        // update row number
         }
-        else {              // otherwise, move down
+        // otherwise, move down
+        else {
             i++;
         }
     }
@@ -58,130 +50,23 @@ int findRowIndex(vector<vector<int>> const &mat)
     return row + 1;
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 0, 0, 0, 1, 1 },
-        { 0, 0, 1, 1, 1 },
-        { 0, 0, 0, 0, 0 },
-        { 0, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 1 }
-    };
+const mat = [
+    [0, 0, 0, 1, 1],
+    [0, 0, 1, 1, 1],
+    [0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1]
+];
 
-    int rowIndex = findRowIndex(mat);
+const rowIndex = findRowIndex(mat);
 
-    // rowIndex = 0 means no 1's are present in the matrix
-    if (rowIndex) {
-        cout << "The Maximum 1's are present in the row " << rowIndex;
-    }
-
-    return 0;
+// rowIndex = 0 means no 1's are present in the matrix
+if (rowIndex) {
+    console.log(`The maximum 1's are present in the row ${rowIndex}`);
 }
 ```
 
 **Output:** The maximum 1’s are present in the row 4
-
-##
-
-```java
-class Main
-{
-    public static int findRowIndex(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // stores row number with maximum index
-        int row = -1;
-
-        // `(i, j)` stores the current row and column index
-
-        // start from the top-rightmost cell of the matrix
-        int i = 0, j = mat[0].length - 1;
-
-        while (i <= mat.length - 1 && j >= 0)
-        {
-            // move left if the current cell has value 1
-            if (mat[i][j] == 1)
-            {
-                j--;
-                row = i;    // update row number
-            }
-            // otherwise, move down
-            else {
-                i++;
-            }
-        }
-        return row + 1;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 0, 0, 0, 1, 1 },
-            { 0, 0, 1, 1, 1 },
-            { 0, 0, 0, 0, 0 },
-            { 0, 1, 1, 1, 1 },
-            { 0, 0, 0, 0, 1 }
-        };
-
-        int rowIndex = findRowIndex(mat);
-
-        // rowIndex = 0 means no 1's are present in the matrix
-        if (rowIndex != 0) {
-            System.out.print("The maximum 1's are present in the row " + rowIndex);
-        }
-    }
-}
-```
-
-##
-
-```python3
-def findRowIndex(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return
-
-    # stores row number with maximum index
-    row = -1
-
-    # `(i, j)` stores the current row and column index
-    # start from the top-rightmost cell of the matrix
-    (i, j) = (0, len(mat[0]) - 1)
-
-    while i <= len(mat) - 1 and j >= 0:
-        # move left if the current cell has value 1
-        if mat[i][j] == 1:
-            j = j - 1
-            row = i         # update row number
-        # otherwise, move down
-        else:
-            i = i + 1
-
-    return row + 1
-
-if __name__ == '__main__':
-
-    mat = [
-        [0, 0, 0, 1, 1],
-        [0, 0, 1, 1, 1],
-        [0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1],
-        [0, 0, 0, 0, 1]
-    ]
-
-    rowIndex = findRowIndex(mat)
-
-    # rowIndex = 0 means no 1's are present in the matrix
-    if rowIndex:
-        print("The maximum 1's are present in the row", rowIndex)
-```
 
 The time complexity of the proposed solution is O(M + N) for an `M × N` matrix and doesn’t require any extra space.
 

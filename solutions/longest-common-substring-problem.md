@@ -22,155 +22,47 @@ For example, consider strings `ABAB` and `BABA`.
 
 Finally, the longest common substring length would be the maximal of these longest common suffixes of all possible prefixes.
 
-The following solution in C++, Java, and Python finds the length of the longest repeated subsequence of sequences `X` and `Y` iteratively using the [optimal substructure](https://techiedelight.com/introduction-dynamic-programming/#optimal-substructure) property of the [LCS problem](https://techiedelight.com/longest-common-subsequence/).
+The following solution in TypeScript finds the length of the longest repeated subsequence of sequences `X` and `Y` iteratively using the [optimal substructure](https://techiedelight.com/introduction-dynamic-programming/#optimal-substructure) property of the [LCS problem](https://techiedelight.com/longest-common-subsequence/).
 
-```cpp
-#include <iostream>
-#include <string>
-#include <cstring>
-using namespace std;
+```ts
+// Function to find the longest common substring of sequences `X[0…m-1]` and `Y[0…n-1]`
+function LCS(X: string, Y: string, m: number, n: number): string {
+  let maxLength = 0;        // stores the max length of LCS
+  let endingIndex = m;      // stores the ending index of LCS in `X`
 
-// Function to find the longest common substring of sequences
-// `X[0…m-1]` and `Y[0…n-1]`
-string LCS(string X, string Y, int m, int n)
-{
-    int maxlen = 0;         // stores the max length of LCS
-    int endingIndex = m;    // stores the ending index of LCS in `X`
+  // `lookup[i][j]` stores the length of LCS of substring `X[0…i-1]` and `Y[0…j-1]`
+  const lookup: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
 
-    // `lookup[i][j]` stores the length of LCS of substring `X[0…i-1]`, `Y[0…j-1]`
-    int lookup[m + 1][n + 1];
+  // fill the lookup table in a bottom-up manner
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      // if the current character of `X` and `Y` matches
+      if (X[i - 1] === Y[j - 1]) {
+        lookup[i][j] = lookup[i - 1][j - 1] + 1;
 
-    // initialize all cells of the lookup table to 0
-    memset(lookup, 0, sizeof(lookup));
-
-    // fill the lookup table in a bottom-up manner
-    for (int i = 1; i <= m; i++)
-    {
-        for (int j = 1; j <= n; j++)
-        {
-            // if the current character of `X` and `Y` matches
-            if (X[i - 1] == Y[j - 1])
-            {
-                lookup[i][j] = lookup[i - 1][j - 1] + 1;
-
-                // update the maximum length and ending index
-                if (lookup[i][j] > maxlen)
-                {
-                    maxlen = lookup[i][j];
-                    endingIndex = i;
-                }
-            }
+        // update the maximum length and ending index
+        if (lookup[i][j] > maxLength) {
+          maxLength = lookup[i][j];
+          endingIndex = i;
         }
+      }
     }
+  }
 
-    // return longest common substring having length `maxlen`
-    return X.substr(endingIndex - maxlen, maxlen);
+  // return longest common substring having length `maxLength`
+  return X.slice(endingIndex - maxLength, endingIndex);
 }
 
-int main()
-{
-    string X = "ABC", Y = "BABA";
-    int m = X.length(), n = Y.length();
+const X = 'ABC';
+const Y = 'BABA';
 
-    // Find longest common substring
-    cout << "The longest common substring is " << LCS(X, Y, m, n);
+const m = X.length, n = Y.length;
 
-    return 0;
-}
+// Find longest common substring
+console.log('The longest common substring is', LCS(X, Y, m, n));
 ```
 
 **Output:** The longest common substring is AB
-
-##
-
-```java
-class Main
-{
-    // Function to find the longest common substring of sequences
-    // `X[0…m-1]` and `Y[0…n-1]`
-    public static String LCS(String X, String Y, int m, int n)
-    {
-        int maxlen = 0;         // stores the max length of LCS
-        int endingIndex = m;    // stores the ending index of LCS in `X`
-
-        // `lookup[i][j]` stores the length of LCS of substring
-        // `X[0…i-1]`, `Y[0…j-1]`
-        int[][] lookup = new int[m + 1][n + 1];
-
-        // fill the lookup table in a bottom-up manner
-        for (int i = 1; i <= m; i++)
-        {
-            for (int j = 1; j <= n; j++)
-            {
-                // if the current character of `X` and `Y` matches
-                if (X.charAt(i - 1) == Y.charAt(j - 1))
-                {
-                    lookup[i][j] = lookup[i - 1][j - 1] + 1;
-
-                    // update the maximum length and ending index
-                    if (lookup[i][j] > maxlen)
-                    {
-                        maxlen = lookup[i][j];
-                        endingIndex = i;
-                    }
-                }
-            }
-        }
-
-        // return longest common substring having length `maxlen`
-        return X.substring(endingIndex - maxlen, endingIndex);
-    }
-
-    public static void main(String[] args)
-    {
-        String X = "ABC", Y = "BABA";
-        int m = X.length(), n = Y.length();
-
-        // Find longest common substring
-        System.out.print("The longest common substring is " + LCS(X, Y, m, n));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the longest common substring of sequences `X[0…m-1]` and `Y[0…n-1]`
-def LCS(X, Y, m, n):
-
-    maxLength = 0           # stores the max length of LCS
-    endingIndex = m         # stores the ending index of LCS in `X`
-
-    # `lookup[i][j]` stores the length of LCS of substring `X[0…i-1]` and `Y[0…j-1]`
-    lookup = [[0 for x in range(n + 1)] for y in range(m + 1)]
-
-    # fill the lookup table in a bottom-up manner
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-
-            # if the current character of `X` and `Y` matches
-            if X[i - 1] == Y[j - 1]:
-                lookup[i][j] = lookup[i - 1][j - 1] + 1
-
-                # update the maximum length and ending index
-                if lookup[i][j] > maxLength:
-                    maxLength = lookup[i][j]
-                    endingIndex = i
-
-    # return longest common substring having length `maxLength`
-    return X[endingIndex - maxLength: endingIndex]
-
-if __name__ == '__main__':
-
-    X = 'ABC'
-    Y = 'BABA'
-
-    m = len(X)
-    n = len(Y)
-
-    # Find longest common substring
-    print('The longest common substring is', LCS(X, Y, m, n))
-```
 
 The time complexity of the above solution is O(m.n) and requires O(m.n) extra space, where `m` and `n` are the length of the strings `X` and `Y`, respectively. The space complexity of the above solution can be improved to O(n) as calculating LCS of a row of the LCS table requires only the solutions to the current row and the previous row. We can also store only non-zero values in the rows. We can do this using hash tables instead of arrays.
 

@@ -12,227 +12,76 @@ For example,
 
 Exponential search is an algorithm used for searching sorted, unbounded/infinite arrays. The idea is to determine a range that the target value resides in and perform a [binary search](https://techiedelight.com/binary-search/) within that range. Assuming that the array is sorted in ascending order, _it looks for the first exponent,`k`, where the value `2k` is greater than the search key_. Now `2k` and `2k-1` becomes the upper bound and lower bound for the binary search algorithm, respectively.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
+```ts
+// Binary search algorithm to return the position of key `x` in sublist A[left…right]
+function binarySearch(A: number[], left: number, right: number, x: number): number {
 
-// Utility function to find a minimum of two numbers
-int min(int x, int y) {
-    return (x < y) ? x : y;
-}
-
-// Binary search algorithm to return the position of key `x` in subarray A[low…high]
-int binarySearch(int A[], int low, int high, int x)
-{
     // base condition (search space is exhausted)
-    if (low > high) {
+    if (left > right) {
         return -1;
     }
 
     // find the mid-value in the search space and
     // compares it with the key
 
-    int mid = (low + high)/2;        // overflow can happen
-    // int mid = low + (high - low)/2;
+    const mid = Math.floor((left + right) / 2);
+
+    // overflow can happen. Use below
+    // mid = left + Math.floor((right - left) / 2)
 
     // base condition (a key is found)
-    if (x == A[mid]) {
+    if (x === A[mid]) {
         return mid;
     }
-
     // discard all elements in the right search space,
     // including the middle element
     else if (x < A[mid]) {
-        return binarySearch(A, low, mid - 1, x);
+        return binarySearch(A, left, mid - 1, x);
     }
-
     // discard all elements in the left search space,
     // including the middle element
     else {
-        return binarySearch(A, mid + 1, high, x);
+        return binarySearch(A, mid + 1, right, x);
     }
 }
 
-// Returns the position of key `x` in a given array `A` of length `n`
-int exponentialSearch(int A[], int n, int x)
-{
+// Returns the position of key `x` in a given list `A` of length `n`
+function exponentialSearch(A: number[], x: number): number {
+
     // base case
-    if (n == 0) {
+    if (!A.length) {
         return -1;
     }
 
-    int bound = 1;
+    let bound = 1;
 
     // find the range in which key `x` would reside
-    while (bound < n && A[bound] < x) {
+    while (bound < A.length && A[bound] < x) {
         bound *= 2;        // calculate the next power of 2
     }
 
     // call binary search on A[bound/2 … min(bound, n-1)]
-    return binarySearch(A, bound/2, min(bound, n - 1), x);
+    return binarySearch(A, Math.floor(bound / 2), Math.min(bound, A.length - 1), x);
 }
 
 // Exponential search algorithm
-int main(void)
-{
-    int A[] = {2, 5, 6, 8, 9, 10};
-    int target = 9;
 
-    int n = sizeof(A)/sizeof(A[0]);
-    int index = exponentialSearch(A, n, target);
+const A = [2, 5, 6, 8, 9, 10];
+const key = 9;
 
-    if (index != -1) {
-        printf("Element found at index %d", index);
-    }
-    else {
-        printf("Element not found in the array");
-    }
+const index = exponentialSearch(A, key);
 
-    return 0;
+if (index !== -1) {
+    console.log(`Element found at index ${index}`);
+}
+else {
+    console.log('Element found not in the list');
 }
 ```
 
 **Output:** Element found at index 4
-
-##
-
-```java
-class Main
-{
-    // Binary search algorithm to return the position of key `x` in
-    // subarray A[left…right]
-    private static int binarySearch(int[] A, int left, int right, int x)
-    {
-        // base condition (search space is exhausted)
-        if (left > right) {
-            return -1;
-        }
-
-        // find the mid-value in the search space and
-        // compares it with the key
-
-        int mid = (left + right) / 2;
-
-        // overflow can happen. Use
-        // int mid = left + (right - left) / 2;
-
-        // base condition (a key is found)
-        if (x == A[mid]) {
-            return mid;
-        }
-
-        // discard all elements in the right search space,
-        // including the middle element
-        else if (x < A[mid]) {
-            return binarySearch(A, left, mid - 1, x);
-        }
-
-        // discard all elements in the left search space,
-        // including the middle element
-        else {
-            return binarySearch(A, mid + 1, right, x);
-        }
-    }
-
-    // Returns the position of key `x` in a given array `A` of length `n`
-    public static int exponentialSearch(int[] A, int x)
-    {
-        // base case
-        if (A == null || A.length == 0) {
-            return -1;
-        }
-
-        int bound = 1;
-
-        // find the range in which key `x` would reside
-        while (bound < A.length && A[bound] < x) {
-            bound *= 2;        // calculate the next power of 2
-        }
-
-        // call binary search on A[bound/2 … min(bound, n-1)]
-        return binarySearch(A, bound/2, Integer.min(bound, A.length - 1), x);
-    }
-
-    // Exponential search algorithm
-    public static void main(String[] args)
-    {
-        int[] A = {2, 5, 6, 8, 9, 10};
-        int key = 9;
-
-        int index = exponentialSearch(A, key);
-
-        if (index != -1) {
-            System.out.println("Element found at index " + index);
-        }
-        else {
-            System.out.println("Element not found in the array");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Binary search algorithm to return the position of key `x` in sublist A[left…right]
-def binarySearch(A, left, right, x):
-
-    # base condition (search space is exhausted)
-    if left > right:
-        return -1
-
-    # find the mid-value in the search space and
-    # compares it with the key
-
-    mid = (left + right) // 2
-
-    # overflow can happen. Use below
-    # mid = left + (right - left) // 2
-
-    # base condition (a key is found)
-    if x == A[mid]:
-        return mid
-
-    # discard all elements in the right search space,
-    # including the middle element
-    elif x < A[mid]:
-        return binarySearch(A, left, mid - 1, x)
-
-    # discard all elements in the left search space,
-    # including the middle element
-    else:
-        return binarySearch(A, mid + 1, right, x)
-
-# Returns the position of key `x` in a given list `A` of length `n`
-def exponentialSearch(A, x):
-
-    # base case
-    if not A:
-        return -1
-
-    bound = 1
-
-    # find the range in which key `x` would reside
-    while bound < len(A) and A[bound] < x:
-        bound *= 2        # calculate the next power of 2
-
-    # call binary search on A[bound/2 … min(bound, n-1)]
-    return binarySearch(A, bound // 2, min(bound, len(A) - 1), x)
-
-# Exponential search algorithm
-if __name__ == '__main__':
-
-    A = [2, 5, 6, 8, 9, 10]
-    key = 9
-
-    index = exponentialSearch(A, key)
-
-    if index != -1:
-        print('Element found at index', index)
-    else:
-        print('Element found not in the list')
-```
 
 ## Performance
 

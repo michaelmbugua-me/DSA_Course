@@ -15,293 +15,84 @@ The problem might look complex at first look, but its solution is simple. The id
   * If the sum of nodes in the path from the root node to the current node is more than or equal to `k`, nothing needs to be done.
   * If it is a leaf node and its path from the root node has a sum less than `k`, remove it.
 
-Following is the C++, Java, and Python implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Function to perform inorder traversal on the tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+function inorder(root: TreeNode | null): void {
+    if (root === null) {
         return;
     }
 
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
+    inorder(root.left);
+    process.stdout.write(root.data + ' ');
+    inorder(root.right);
 }
 
 // Function to check if a given node is a leaf node or not
-bool isLeaf(Node* node) {
-    return (node->left == nullptr && node->right == nullptr);
+function isLeaf(node: TreeNode): boolean {
+    return node.left === null && node.right === null;
 }
 
-// The main function to truncate a given binary tree to remove nodes
-// that lie on a path having a sum less than `k`
-void trunc(Node* &curr, int k, int target)
-{
+// Function to truncate a given binary tree to remove nodes which lie on
+// a path having sum less than `k`
+function truncate(curr: TreeNode | null, k: number, target = 0): TreeNode | null {
     // base case: empty tree
-    if (curr == nullptr) {
-        return;
+    if (curr === null) {
+        return null;
     }
 
     // update sum of nodes in the path from the root node to the current node
-    target = target + (curr->data);
+    target = target + curr.data;
 
     // Recursively truncate left and right subtrees
-    trunc(curr->left, k, target);
-    trunc(curr->right, k, target);
+    curr.left = truncate(curr.left, k, target);
+    curr.right = truncate(curr.right, k, target);
 
     // Since we are doing postorder traversal, the subtree rooted at the current
     // node may be already truncated, and the current node is a leaf
 
     // if the current node is a leaf node and its path from the root node has a sum
     // less than the required sum, remove it
-    if (target < k && isLeaf(curr))
-    {
-        // free the memory allocated to the current node
-        delete(curr);
-
-        // set current node to null (node is passed by reference)
-        curr = nullptr;
+    if (target < k && isLeaf(curr)) {
+        // set current node as null
+        return null;
     }
-};
 
-// Function to truncate a given binary tree to remove nodes which lie on
-// a path having sum less than `k`
-void truncate(Node* &root, int k)
-{
-    int target = 0;
-    trunc(root, k, target);
+    return curr;
 }
 
-int main()
-{
-    /* Construct the following tree
-             6
-           /   \
-          /     \
-         3       8
-               /   \
-              /     \
-             4       2
-           /   \      \
-          /     \      \
-         1       7      3
-    */
-
-    Node* root = new Node(6);
-    root->left = new Node(3);
-    root->right = new Node(8);
-    root->right->left = new Node(4);
-    root->right->right = new Node(2);
-    root->right->left->left = new Node(1);
-    root->right->left->right = new Node(7);
-    root->right->right->right = new Node(3);
-
-    int k = 20;
-    truncate(root, k);
-    inorder(root);
-
-    return 0;
-}
-```
-
-**Output:** 6 4 7 8
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to perform inorder traversal on the tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // Function to check if a given node is a leaf node or not
-    public static boolean isLeaf(Node node) {
-        return (node.left == null && node.right == null);
-    }
-
-    // The main function to truncate a given binary tree to remove nodes
-    // that lie on a path having a sum less than `k`
-    public static Node trunc(Node curr, int k, int target)
-    {
-        // base case: empty tree
-        if (curr == null) {
-            return null;
-        }
-
-        // update sum of nodes in the path from the root node to the current node
-        target = target + (curr.data);
-
-        // Recursively truncate left and right subtrees
-        curr.left = trunc(curr.left, k, target);
-        curr.right = trunc(curr.right, k, target);
-
-        // Since we are doing postorder traversal, the subtree rooted at the current
-        // node may be already truncated, and the current node is a leaf
-
-        // if the current node is a leaf node and its path from the root node has a sum
-        // less than the required sum, remove it
-        if (target < k && isLeaf(curr))
-        {
-            // set the current node as null
-            return null;
-        }
-
-        return curr;
-    }
-
-    // Function to truncate a given binary tree to remove nodes which lie on
-    // a path having sum less than `k`
-    public static Node truncate(Node root, int k)
-    {
-        int target = 0;
-        return trunc(root, k, target);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  6
-                /   \
-               /     \
-              3       8
-                    /   \
-                   /     \
-                  4       2
-                /   \      \
-               /     \      \
-              1       7      3
-        */
-
-        Node root = new Node(6);
-        root.left = new Node(3);
-        root.right = new Node(8);
-        root.right.left = new Node(4);
-        root.right.right = new Node(2);
-        root.right.left.left = new Node(1);
-        root.right.left.right = new Node(7);
-        root.right.right.right = new Node(3);
-
-        int k = 20;
-        root = truncate(root, k);
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Function to perform inorder traversal on the tree
-def inorder(root):
-    if root is None:
-        return
-
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# Function to check if a given node is a leaf node or not
-def isLeaf(node):
-    return node.left is None and node.right is None
-
-# Function to truncate a given binary tree to remove nodes which lie on
-# a path having sum less than `k`
-def truncate(curr, k, target=0):
-
-    # base case: empty tree
-    if curr is None:
-        return None
-
-    # update sum of nodes in the path from the root node to the current node
-    target = target + curr.data
-
-    # Recursively truncate left and right subtrees
-    curr.left = truncate(curr.left, k, target)
-    curr.right = truncate(curr.right, k, target)
-
-    # Since we are doing postorder traversal, the subtree rooted at the current
-    # node may be already truncated, and the current node is a leaf
-
-    # if the current node is a leaf node and its path from the root node has a sum
-    # less than the required sum, remove it
-    if target < k and isLeaf(curr):
-        # set current node as None
-        return None
-
-    return curr
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              6
+/*
+ Construct the following tree
+          6
+        /   \
+       /     \
+      3       8
             /   \
            /     \
-          3       8
-                /   \
-               /     \
-              4       2
-            /   \      \
-           /     \      \
-          1       7      3
-    '''
+          4       2
+        /   \      \
+       /     \      \
+      1       7      3
+ */
 
-    root = Node(6)
-    root.left = Node(3)
-    root.right = Node(8)
-    root.right.left = Node(4)
-    root.right.right = Node(2)
-    root.right.left.left = Node(1)
-    root.right.left.right = Node(7)
-    root.right.right.right = Node(3)
+let root: TreeNode | null = new TreeNode(6);
+root.left = new TreeNode(3);
+root.right = new TreeNode(8);
+root.right.left = new TreeNode(4);
+root.right.right = new TreeNode(2);
+root.right.left.left = new TreeNode(1);
+root.right.left.right = new TreeNode(7);
+root.right.right.right = new TreeNode(3);
 
-    k = 20
-    root = truncate(root, k)
-    inorder(root)
+const k = 20;
+root = truncate(root, k);
+inorder(root);
 ```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.

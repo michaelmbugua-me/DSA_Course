@@ -37,147 +37,48 @@ As this rightmost bit is set in one number and unset in the other, we will have 
 
 Now iterate each subarray once more, do XOR on each element of the subarray, and the result will be the odd appearing element present in the subarray (since even appearing elements will cancel each other).
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <cmath>
-using namespace std;
+```ts
+const log2 = (x: number, base: number): number =>
+    Math.floor(Math.log(x) / Math.log(base));
 
-pair<int, int> findOddOccuring(vector<int> const &arr)
-{
-    int result = 0;
-
-    // take XOR of all array elements
-    for (int i: arr) {
+const findOddOccuring = (arr: number[]): [number, number] => {
+    // take XOR of all list elements
+    let result = 0;
+    for (const i of arr) {
         result = result ^ i;
     }
 
     // find the position of the rightmost set bit in `result`
-    int k = log2(result & -result);
+    const k = log2(result & -result, 2);
 
     // `x` and `y` are two odd appearing elements
-    int x = 0, y = 0;
+    let x = 0;
+    let y = 0;
 
-    // split the array into two subarrays
-    for (int i: arr)
-    {
-        // elements that have k'th bit 1
+    // split the list into two sublists
+    for (const i of arr) {
+        // elements that have k'th bit set
         if (i & (1 << k)) {
             x = x ^ i;
         }
 
-        // elements that have k'th bit 0
+        // elements that don't have k'th bit set
         else {
             y = y ^ i;
         }
     }
 
-    return make_pair(x, y);
-}
+    return [x, y];
+};
 
-int main()
-{
-    vector<int> arr = { 4, 3, 6, 2, 4, 2, 3, 4, 3, 3 };
-
-    pair<int, int> p = findOddOccuring(arr);
-    cout << "The odd occurring elements are " << p.first << " and " << p.second;
-
-    return 0;
-}
+const arr = [4, 3, 6, 2, 4, 2, 3, 4, 3, 3];
+const [x, y] = findOddOccuring(arr);
+console.log('The odd occurring elements are', [x, y]);
 ```
 
 **Output:** The odd occurring elements are 6 and 4
-
-##
-
-```java
-class Main
-{
-    public static int log(int x, int base) {
-        return (int) (Math.log(x) / Math.log(base));
-    }
-
-    public static void findOddOccuring(int[] arr)
-    {
-        int result = 0;
-
-        // take XOR of all array elements
-        for (int i: arr) {
-            result = result ^ i;
-        }
-
-        // find the position of the rightmost set bit in `result`
-        int k = log(result & -result, 2);
-
-        // `x` and `y` are two odd appearing elements
-        int x = 0, y = 0;
-
-        // split the array into two subarrays
-        for (int i: arr)
-        {
-            // elements that have k'th bit set
-            if ((i & (1 << k)) != 0) {
-                x = x ^ i;
-            }
-
-            // elements that don't have k'th bit set
-            else {
-                y = y ^ i;
-            }
-        }
-
-        System.out.println("The odd occurring elements are " + x + " and " + y);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 4, 3, 6, 2, 4, 2, 3, 4, 3, 3 };
-        findOddOccuring(arr);
-    }
-}
-```
-
-##
-
-```python3
-from math import log
-
-def log2(x, base):
-    return int(log(x) / log(base))
-
-def findOddOccuring(arr):
-
-    # take XOR of all list elements
-    result = 0
-    for i in arr:
-        result = result ^ i
-
-    # find the position of the rightmost set bit in `result`
-    k = log2(result & -result, 2)
-
-    # `x` and `y` are two odd appearing elements
-    x = y = 0
-
-    # split the list into two sublists
-    for i in arr:
-
-        # elements that have k'th bit set
-        if i & (1 << k):
-            x = x ^ i
-
-        # elements that don't have k'th bit set
-        else:
-            y = y ^ i
-
-    return x, y
-
-if __name__ == '__main__':
-
-    arr = [4, 3, 6, 2, 4, 2, 3, 4, 3, 3]
-    print('The odd occurring elements are', findOddOccuring(arr))
-```
 
 Rate this post
 

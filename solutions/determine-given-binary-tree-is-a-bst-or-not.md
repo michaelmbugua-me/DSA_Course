@@ -21,255 +21,80 @@ So, the condition we need to check at each node is:
   * If the node is the left child of its parent, it must be smaller than (or equal to) the parent, and it must pass down the value from its parent to its right subtree to make sure none of the nodes in that subtree is greater than the parent.
   * If the node is the right child of its parent, it must be larger than the parent, and it must pass down the value from its parent to its left subtree to make sure none of the nodes in that subtree is lesser than the parent.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <climits>
-using namespace std;
-
-// Data structure to store a BST node
-struct Node
-{
-    int data;
-    Node* left = nullptr, *right = nullptr;
-
-    Node() {}
-    Node(int data): data(data) {}
-};
+```ts
+// A class to store a BST node
+class TreeNode {
+  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Recursive function to insert a key into a BST
-Node* insert(Node* root, int key)
-{
-    // if the root is null, create a new node and return it
-    if (root == nullptr) {
-        return new Node(key);
-    }
+function insert(root: TreeNode | null, key: number): TreeNode {
+  // if the root is null, create a new node and return it
+  if (root === null) {
+    return new TreeNode(key);
+  }
 
-    // if the given key is less than the root node, recur for the left subtree
-    if (key < root->data) {
-        root->left = insert(root->left, key);
-    }
-    // if the given key is more than the root node, recur for the right subtree
-    else {
-        root->right = insert(root->right, key);
-    }
+  // if the given key is less than the root node, recur for the left subtree
+  if (key < root.data) {
+    root.left = insert(root.left, key);
+  }
+  // if the given key is more than the root node, recur for the right subtree
+  else {
+    root.right = insert(root.right, key);
+  }
 
-    return root;
+  return root;
 }
 
 // Function to determine whether a given binary tree is a BST by keeping a
 // valid range (starting from [-INFINITY, INFINITY]) and keep shrinking
 // it down for each node as we go down recursively
-bool isBST(Node* node, int minKey, int maxKey)
-{
-    // base case
-    if (node == nullptr) {
-        return true;
-    }
+function isBST(node: TreeNode | null, minKey: number, maxKey: number): boolean {
+  // base case
+  if (node === null) {
+    return true;
+  }
 
-    // if the node's value falls outside the valid range
-    if (node->data < minKey || node->data > maxKey) {
-        return false;
-    }
+  // if the node's value falls outside the valid range
+  if (node.data < minKey || node.data > maxKey) {
+    return false;
+  }
 
-    // recursively check left and right subtrees with an updated range
-    return isBST(node->left, minKey, node->data) &&
-            isBST(node->right, node->data, maxKey);
+  // recursively check left and right subtrees with an updated range
+  return isBST(node.left, minKey, node.data) &&
+    isBST(node.right, node.data, maxKey);
 }
 
 // Function to determine whether a given binary tree is a BST
-void isBST(Node* root)
-{
-    if (isBST(root, INT_MIN, INT_MAX)) {
-        printf("The tree is a BST.");
-    }
-    else {
-        printf("The tree is not a BST!");
-    }
+function checkForBST(root: TreeNode | null): void {
+  if (isBST(root, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)) {
+    console.log("The tree is a BST.");
+  } else {
+    console.log("The tree is not a BST!");
+  }
 }
 
-int main()
-{
-    int keys[] = { 15, 10, 20, 8, 12, 16, 25 };
-
-    Node* root = nullptr;
-    for (int key: keys) {
-        root = insert(root, key);
-    }
-
-    // swap nodes
-    swap(root->left, root->right);
-    isBST(root);
-
-    return 0;
+function swap(root: TreeNode): void {
+  const left = root.left;
+  root.left = root.right;
+  root.right = left;
 }
+
+const keys = [15, 10, 20, 8, 12, 16, 25];
+
+let root: TreeNode | null = null;
+for (const key of keys) {
+  root = insert(root, key);
+}
+
+// swap left and right nodes
+swap(root!);
+checkForBST(root);
 ```
 
 **Output:** The tree is not a BST!
-
-##
-
-```java
-// A class to store a BST node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to insert a key into a BST
-    public static Node insert(Node root, int key)
-    {
-        // if the root is null, create a new node and return it
-        if (root == null) {
-            return new Node(key);
-        }
-
-        // if the given key is less than the root node, recur for the left subtree
-        if (key < root.data) {
-            root.left = insert(root.left, key);
-        }
-        // if the given key is more than the root node, recur for the right subtree
-        else {
-            root.right = insert(root.right, key);
-        }
-
-        return root;
-    }
-
-    // Function to determine whether a given binary tree is a BST by keeping a
-    // valid range (starting from [-INFINITY, INFINITY]) and keep shrinking
-    // it down for each node as we go down recursively
-    public static boolean isBST(Node node, int minKey, int maxKey)
-    {
-        // base case
-        if (node == null) {
-            return true;
-        }
-
-        // if the node's value falls outside the valid range
-        if (node.data < minKey || node.data > maxKey) {
-            return false;
-        }
-
-        // recursively check left and right subtrees with an updated range
-        return isBST(node.left, minKey, node.data) &&
-            isBST(node.right, node.data, maxKey);
-    }
-
-    // Function to determine whether a given binary tree is a BST
-    public static void isBST(Node root)
-    {
-        if (isBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE)) {
-            System.out.println("The tree is a BST.");
-        }
-        else {
-            System.out.println("The tree is not a BST!");
-        }
-    }
-
-    private static void swap(Node root)
-    {
-        Node left = root.left;
-        root.left = root.right;
-        root.right = left;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] keys = { 15, 10, 20, 8, 12, 16, 25 };
-
-        Node root = null;
-        for (int key: keys) {
-            root = insert(root, key);
-        }
-
-        // swap left and right nodes
-        swap(root);
-        isBST(root);
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# A class to store a BST node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to insert a key into a BST
-def insert(root, key):
-
-    # if the root is None, create a new node and return it
-    if root is None:
-        return Node(key)
-
-    # if the given key is less than the root node, recur for the left subtree
-    if key < root.data:
-        root.left = insert(root.left, key)
-
-    # if the given key is more than the root node, recur for the right subtree
-    else:
-        root.right = insert(root.right, key)
-
-    return root
-
-# Function to determine whether a given binary tree is a BST by keeping a
-# valid range (starting from [-INFINITY, INFINITY]) and keep shrinking
-# it down for each node as we go down recursively
-def isBST(node, minKey, maxKey):
-
-    # base case
-    if node is None:
-        return True
-
-    # if the node's value falls outside the valid range
-    if node.data < minKey or node.data > maxKey:
-        return False
-
-    # recursively check left and right subtrees with an updated range
-    return isBST(node.left, minKey, node.data) and \
-        isBST(node.right, node.data, maxKey)
-
-# Function to determine whether a given binary tree is a BST
-def checkForBST(root):
-
-    if isBST(root, -sys.maxsize, sys.maxsize):
-        print('The tree is a BST.')
-    else:
-        print('The tree is not a BST')
-
-def swap(root):
-
-    left = root.left
-    root.left = root.right
-    root.right = left
-
-if __name__ == '__main__':
-
-    keys = [15, 10, 20, 8, 12, 16, 25]
-
-    root = None
-    for key in keys:
-        root = insert(root, key)
-
-    # swap left and right nodes
-    swap(root)
-    checkForBST(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the size of the BST, and requires space proportional to the tree’s height for the call stack.
 
@@ -277,276 +102,88 @@ Another approach:
 
 We know that an [inorder traversal](https://techiedelight.com/inorder-tree-traversal-iterative-recursive/) of a binary search tree returns the nodes in sorted order. To determine whether a given binary tree is a BST, keep track of the last visited node while traversing the tree. Then for each encountered node in the inorder traversal, check whether the last visited node is smaller (or smaller/equal, if duplicates are to be allowed in the tree) compared to the current node.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is the TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <climits>
-using namespace std;
-
-// Data structure to store a BST node
-struct Node
-{
-    int data;
-    Node* left = nullptr, *right = nullptr;
-
-    Node() {}
-    Node(int data): data(data) {}
-};
+```ts
+// A class to store a BST node
+class TreeNode {
+  constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Recursive function to insert a key into a BST
-Node* insert(Node* root, int key)
-{
-    // if the root is null, create a new node and return it
-    if (root == nullptr) {
-        return new Node(key);
-    }
+function insert(root: TreeNode | null, key: number): TreeNode {
+  // if the root is null, create a new node and return it
+  if (root === null) {
+    return new TreeNode(key);
+  }
 
-    // if the given key is less than the root node, recur for the left subtree
-    if (key < root->data) {
-        root->left = insert(root->left, key);
-    }
+  // if the given key is less than the root node, recur for the left subtree
+  if (key < root.data) {
+    root.left = insert(root.left, key);
+  }
 
-    // if the given key is more than the root node, recur for the right subtree
-    else {
-        root->right = insert(root->right, key);
-    }
+  // if the given key is more than the root node, recur for the right subtree
+  else {
+    root.right = insert(root.right, key);
+  }
 
-    return root;
+  return root;
 }
 
 // Function to perform inorder traversal on the given binary tree and
 // check if it is a BST or not. Here, `prev` is the previously processed node
-bool isBST(Node* root, Node* &prev)
-{
-    // base case: empty tree is a BST
-    if (root == nullptr) {
-        return true;
-    }
+function isBST(root: TreeNode | null, prev: TreeNode): boolean {
+  // base case: empty tree is a BST
+  if (root === null) {
+    return true;
+  }
 
-    // check if the left subtree is BST or not
-    bool left = isBST(root->left, prev);
+  // check if the left subtree is BST or not
+  const left = isBST(root.left, prev);
 
-    // value of the current node should be more than that of the previous node
-    if (root->data <= prev->data) {
-        return false;
-    }
+  // value of the current node should be more than that of the previous node
+  if (root.data <= prev.data) {
+    return false;
+  }
 
-    // update the previous node and check if the right subtree is BST or not
-    prev = root;
-    return left && isBST(root->right, prev);
+  // update previous node data and check if the right subtree is BST or not
+  prev.data = root.data;
+
+  return left && isBST(root.right, prev);
 }
 
 // Function to determine whether a given binary tree is a BST
-void isBST(Node* node)
-{
-    // pointer to store previously processed node in the inorder traversal
-    Node* prev = new Node(INT_MIN);
+function checkForBST(node: TreeNode | null): void {
+  // pointer to store previously processed node in the inorder traversal
+  const prev = new TreeNode(Number.MIN_SAFE_INTEGER);
 
-    // check if nodes are processed in sorted order
-    if (isBST(node, prev)) {
-        printf("The tree is a BST.");
-    }
-    else {
-        printf("The tree is not a BST!");
-    }
+  // check if nodes are processed in sorted order
+  if (isBST(node, prev)) {
+    console.log("The tree is a BST!");
+  } else {
+    console.log("The tree is not a BST!");
+  }
 }
 
-int main()
-{
-    int keys[] = { 15, 10, 20, 8, 12, 16, 25 };
-
-    Node* root = nullptr;
-    for (int key: keys) {
-        root = insert(root, key);
-    }
-
-    // swap nodes
-    swap(root->left, root->right);
-    isBST(root);
-
-    return 0;
+function swap(root: TreeNode): void {
+  const left = root.left;
+  root.left = root.right;
+  root.right = left;
 }
+
+const keys = [15, 10, 20, 8, 12, 16, 25];
+
+let root: TreeNode | null = null;
+for (const key of keys) {
+  root = insert(root, key);
+}
+
+// swap nodes
+swap(root!);
+checkForBST(root);
 ```
 
 **Output:** The tree is not a BST!
-
-##
-
-```java
-// A class to store a BST node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to insert a key into a BST
-    public static Node insert(Node root, int key)
-    {
-        // if the root is null, create a new node and return it
-        if (root == null) {
-            return new Node(key);
-        }
-
-        // if the given key is less than the root node, recur for the left subtree
-        if (key < root.data) {
-            root.left = insert(root.left, key);
-        }
-
-        // if the given key is more than the root node, recur for the right subtree
-        else {
-            root.right = insert(root.right, key);
-        }
-
-        return root;
-    }
-
-    // Function to perform inorder traversal on the given binary tree and
-    // check if it is a BST or not. Here, `prev` is the previously processed node
-    public static boolean isBST(Node root, Node prev)
-    {
-        // base case: empty tree is a BST
-        if (root == null) {
-            return true;
-        }
-
-        // check if the left subtree is BST or not
-        boolean left = isBST(root.left, prev);
-
-        // value of the current node should be more than that of the previous node
-        if (root.data <= prev.data) {
-            return false;
-        }
-
-        // update previous node data and check if the right subtree is BST or not
-        prev.data = root.data;
-
-        return left && isBST(root.right, prev);
-    }
-
-    // Function to determine whether a given binary tree is a BST
-    public static void isBST(Node node)
-    {
-        // pointer to store previously processed node in the inorder traversal
-        Node prev = new Node(Integer.MIN_VALUE);
-
-        // check if nodes are processed in sorted order
-        if (isBST(node, prev)) {
-            System.out.println("The tree is a BST.");
-        }
-        else {
-            System.out.println("The tree is not a BST!");
-        }
-    }
-
-    private static void swap(Node root)
-    {
-        Node left = root.left;
-        root.left = root.right;
-        root.right = left;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] keys = { 15, 10, 20, 8, 12, 16, 25 };
-
-        Node root = null;
-        for (int key: keys) {
-            root = insert(root, key);
-        }
-
-        // swap nodes
-        swap(root);
-        isBST(root);
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# A class to store a BST node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to insert a key into a BST
-def insert(root, key):
-
-    # if the root is None, create a new node and return it
-    if root is None:
-        return Node(key)
-
-    # if the given key is less than the root node, recur for the left subtree
-    if key < root.data:
-        root.left = insert(root.left, key)
-
-    # if the given key is more than the root node, recur for the right subtree
-    else:
-        root.right = insert(root.right, key)
-
-    return root
-
-# Function to perform inorder traversal on the given binary tree and
-# check if it is a BST or not. Here, `prev` is the previously processed node
-def isBST(root, prev):
-
-    # base case: empty tree is a BST
-    if root is None:
-        return True
-
-    # check if the left subtree is BST or not
-    left = isBST(root.left, prev)
-
-    # value of the current node should be more than that of the previous node
-    if root.data <= prev.data:
-        return False
-
-    # update previous node data and check if the right subtree is BST or not
-    prev.data = root.data
-    return left and isBST(root.right, prev)
-
-# Function to determine whether a given binary tree is a BST
-def checkForBST(node):
-
-    # pointer to store previously processed node in the inorder traversal
-    prev = Node(-sys.maxsize)
-
-    # check if nodes are processed in sorted order
-    if isBST(node, prev):
-        print('The tree is a BST!')
-    else:
-        print('The tree is not a BST!')
-
-def swap(root):
-
-    left = root.left
-    root.left = root.right
-    root.right = left
-
-if __name__ == '__main__':
-
-    keys = [15, 10, 20, 8, 12, 16, 25]
-
-    root = None
-    for key in keys:
-        root = insert(root, key)
-
-    # swap nodes
-    swap(root)
-    checkForBST(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the size of the BST, and requires space proportional to the tree’s height for the call stack.
 

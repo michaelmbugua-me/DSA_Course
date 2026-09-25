@@ -17,60 +17,20 @@ This is probably one of the simplest and most commonly used bit hacks. The expre
 
 00010100 & (n = 20) 00000001 (1) ~~~~~~~~ 00000000 00010101 & (n = 21) 00000001 (1) ~~~~~~~~ 00000001
 
-Following is the C++, Java, and Python program that demonstrates it:
+Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+const n = 5;
 
-int main()
-{
-    int n = 5;
-
-    if (n & 1) {
-        cout << n << " is odd";
-    }
-    else {
-        cout << n << " is even";
-    }
-
-    return 0;
+if ((n & 1) !== 0) {
+    console.log(`${n} is odd`);
+} else {
+    console.log(`${n} is even`);
 }
 ```
 
 **Output:** 5 is odd
 
-##
-
-```java
-class Main
-{
-    public static void main(String[] args)
-    {
-        int n = 5;
-
-        if ((n & 1) != 0) {
-            System.out.println(n + " is odd");
-        }
-        else {
-            System.out.println(n + " is even");
-        }
-    }
-}
-```
-
-##
-
-```python3
-if __name__ == '__main__':
-
-    n = 5
-
-    if (n & 1) != 0:
-        print(f'{n} is odd')
-    else:
-        print(f'{n} is even')
-```
 
 ## Problem 2. Detect if two integers have opposite signs or not
 
@@ -78,88 +38,30 @@ The expression output `x ^ y` is negative if `x` and `y` have opposite signs. We
 
 00…000100 ^ (x = 4) 00…001000 (y = 8) ~~~~~~~~~ 00…001100 positive number 00…000100 ^ (x = 4) 11…111000 (y = -8) ~~~~~~~~~ 11…111100 negative number
 
-This approach is demonstrated below in C++, Java, and Python:
+This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <bitset>
-using namespace std;
+```ts
+const x = 4;
+const y = -8;
 
-int main()
-{
-    int x = 4;
-    int y = -8;
+const toBinaryString = (n: number): string =>
+    (n >>> 0).toString(2).padStart(32, '0');
 
-    cout << x << " in binary is " << bitset<32>(x) << endl;
-    cout << y << " in binary is " << bitset<32>(y) << endl;
+console.log(`${x} in binary is ${toBinaryString(x)}`);
+console.log(`${y} in binary is ${toBinaryString(y)}`);
 
-    // true if `x` and `y` have opposite signs
-    bool isOpposite = ((x ^ y) < 0);
+// true if `x` and `y` have opposite signs
+const isOpposite = ((x ^ y) < 0);
 
-    if (isOpposite) {
-        cout << x << " and " << y << " have opposite signs";
-    }
-    else {
-        cout << x << " and " << y << " don't have opposite signs";
-    }
-
-    return 0;
+if (isOpposite) {
+    console.log(`${x} and ${y} have opposite signs`);
+} else {
+    console.log(`${x} and ${y} don't have opposite signs`);
 }
 ```
 
 **Output:** 4 in binary is 00000000000000000000000000000100 -8 in binary is 11111111111111111111111111111000 4 and -8 have opposite signs
 
-##
-
-```java
-class Main
-{
-    public static String toBinaryString(int n)
-    {
-        return String.format("%32s", Integer.toBinaryString(n))
-                    .replaceAll(" ", "0");
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 4;
-        int y = -8;
-
-        System.out.println(x + " in binary is " + toBinaryString(x));
-        System.out.println(y + " in binary is " + toBinaryString(y));
-
-        // true if `x` and `y` have opposite signs
-        boolean isOpposite = ((x ^ y) < 0);
-
-        if (isOpposite) {
-            System.out.println(x + " and " + y + " have opposite signs");
-        }
-        else {
-            System.out.println(x + " and " + y + " don't have opposite signs");
-        }
-    }
-}
-```
-
-##
-
-```python3
-if __name__ == '__main__':
-
-    x = 4
-    y = -8
-
-    print(f'{x} in binary is {bin(x)}')
-    print(f'{y} in binary is {bin(y)}')
-
-    # true if `x` and `y` have opposite signs
-    isOpposite = ((x ^ y) < 0)
-
-    if isOpposite:
-        print(f'{x} and {y} have opposite signs')
-    else:
-        print(f'{x} and {y} don\'t have opposite signs')
-```
 
 ## Problem 3. Add 1 to an integer
 
@@ -167,25 +69,17 @@ The expression `-~x` will add 1 to an integer `x`. We know that to get negative 
 
 -x = ~x + 1; -~x = x + 1 (by replacing x by ~x)
 
-The implementation can be seen below in C++ and Java:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+let x = 4;
+console.log(`${x} + ${1} is ${-~x}`);
 
-int main()
-{
-    int x = 4;
-    cout << x << " + " << 1 << " is " << -~x << endl;
+x = -5;
+console.log(`${x} + ${1} is ${-~x}`);
 
-    x = -5;
-    cout << x << " + " << 1 << " is " << -~x << endl;
-
-    x = 0;
-    cout << x << " + " << 1 << " is " << -~x << endl;
-
-    return 0;
-}
+x = 0;
+console.log(`${x} + ${1} is ${-~x}`);
 ```
 
 **Output:** 4 + 1 is 5 -5 + 1 is -4 0 + 1 is 1

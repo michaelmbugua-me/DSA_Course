@@ -16,185 +16,62 @@ The idea is to do the opposite, i.e., the array can be converted to an array of 
 
 Traverse the array and convert each odd number to even by reducing its value by 1. For each decrement operation, increment the number of moves required. After traversing the array, the array is left with all even numbers. Now divide each even number by two and increment the number of moves by 1. Note this is done only once for the divide operation performed on the whole array. Repeat this process till each array element becomes 0.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
+```ts
 // Find the minimum number of moves required for converting a given array
 // to an array of zeros using only the decrement and reduce operation.
-int countMoves(int arr[], int n)
-{
-    // stores the count of minimum moves required
-    int min_moves = 0;
+const countMoves = (A: number[]): number => {
 
-    // loop till all the array elements become 0
-    while (1)
-    {
+    // stores the count of minimum moves required
+    let min_moves = 0;
+
+    // loop till all elements in the array become 0
+    while (true) {
+
         // stores count of 0's in the current array
-        int no_of_zeros = 0;
+        let no_of_zeros = 0;
 
         // traverse the array
-        for (int i = 0; i < n; i++)
-        {
+        for (let i = 0; i < A.length; i++) {
             // convert all odd numbers to even by reducing their value by 1
             // for each odd value, increment the number of moves required
-            if (arr[i] % 2 == 1)
-            {
-                --arr[i];
-                ++min_moves;
+            if (A[i] % 2 === 1) {
+                A[i] = A[i] - 1;
+                min_moves = min_moves + 1;
             }
 
             // increment zeros count if the current element becomes 0
-            if (arr[i] == 0) {
-                no_of_zeros++;
+            if (A[i] === 0) {
+                no_of_zeros = no_of_zeros + 1;
             }
         }
 
         // break the loop if elements in the array become 0
-        if (no_of_zeros == n) {
+        if (no_of_zeros === A.length) {
             break;
         }
 
-        // Since each array element is even at this point,
+        // Since each element in the array is even at this point,
         // divide each element by 2
-        for (int j = 0; j < n; j++) {
-            arr[j] = arr[j] / 2;
+        for (let j = 0; j < A.length; j++) {
+            A[j] = A[j] / 2;
         }
 
         // increment number of moves by 1 for the above divide operation
-        min_moves++;
+        min_moves = min_moves + 1;
     }
 
     // return count of minimum moves required
     return min_moves;
-}
+};
 
-int main(void)
-{
-    int arr[] = { 8, 9, 8 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+const A = [8, 9, 8];
 
-    printf("The minimum moves required is %d", countMoves(arr, n));
-
-    return 0;
-}
+console.log(`The minimum moves required is ${countMoves(A)}`);
 ```
 
 **Output:** The minimum moves required is 7
-
-##
-
-```java
-class Main
-{
-    // Find the minimum number of moves required for converting a given array
-    // to an array of zeros using only the decrement and reduce operation.
-    public static int countMoves(int[] arr)
-    {
-        // stores the count of minimum moves required
-        int min_moves = 0;
-
-        // loop till all the array elements become 0
-        while (true)
-        {
-            // stores count of 0's in the current array
-            int no_of_zeros = 0;
-
-            // traverse the array
-            for (int i = 0; i < arr.length; i++)
-            {
-                // convert all odd numbers to even by reducing their value by 1
-                // for each odd value, increment the number of moves required
-                if (arr[i] % 2 == 1)
-                {
-                    --arr[i];
-                    ++min_moves;
-                }
-
-                // increment zeros count if the current element becomes 0
-                if (arr[i] == 0) {
-                    no_of_zeros++;
-                }
-            }
-
-            // break the loop if elements in the array become 0
-            if (no_of_zeros == arr.length) {
-                break;
-            }
-
-            // Since each array element is even at this point,
-            // divide each element by 2
-            for (int j = 0; j < arr.length; j++) {
-                arr[j] = arr[j] / 2;
-            }
-
-            // increment number of moves by 1 for the above divide operation
-            min_moves++;
-        }
-
-        // return count of minimum moves required
-        return min_moves;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 8, 9, 8 };
-
-        System.out.print("The minimum moves required is " + countMoves(arr));
-    }
-}
-```
-
-##
-
-```python3
-# Find the minimum number of moves required for converting a given list
-# to a list of zeros using only the decrement and reduce operation.
-def countMoves(A):
-
-    # stores the count of minimum moves required
-    min_moves = 0
-
-    # loop till all elements in the list become 0
-    while True:
-
-        # stores count of 0's in the current list
-        no_of_zeros = 0
-
-        # traverse the list
-        for i in range(len(A)):
-            # convert all odd numbers to even by reducing their value by 1
-            # for each odd value, increment the number of moves required
-            if A[i] % 2 == 1:
-                A[i] = A[i] - 1
-                min_moves = min_moves + 1
-
-            # increment zeros count if the current element becomes 0
-            if A[i] == 0:
-                no_of_zeros = no_of_zeros + 1
-
-        # break the loop if elements in the list become 0
-        if no_of_zeros == len(A):
-            break
-
-        # Since each element in the list is even at this point,
-        # divide each element by 2
-        for j in range(len(A)):
-            A[j] = A[j] // 2
-
-        # increment number of moves by 1 for the above divide operation
-        min_moves = min_moves + 1
-
-    # return count of minimum moves required
-    return min_moves
-
-if __name__ == '__main__':
-
-    A = [8, 9, 8]
-
-    print("The minimum moves required is", countMoves(A))
-```
 
 The time complexity of the above solution will be O(n.log(m)) and runs in constant space. Here `n` is the size of the input, and `m` is the maximum element in the input.
 

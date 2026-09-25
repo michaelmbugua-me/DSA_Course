@@ -12,306 +12,84 @@ For example, the following graph shows a Hamiltonian Path marked in red:
 
 The idea is to use [backtracking](https://techiedelight.com/backtracking-interview-questions/). We check if every edge starting from an unvisited vertex leads to a solution or not. As a Hamiltonian path visits each vertex exactly once, we take the help of the `visited[]` array in the proposed solution to process only unvisited vertices. Also, we use the `path[]` array to store vertices covered in the current path. If all the vertices are visited, then a Hamiltonian path exists in the graph, and we print the complete path stored in the `path[]` array.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
     // Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-
-            adjList[src].push_back(dest);
-            adjList[dest].push_back(src);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
+            this.adjList[dest].push(src);
         }
     }
-};
-
-// Utility function to print a path
-void printPath(vector<int> const &path)
-{
-    for (int i: path) {
-        cout << i << ' ';
-    }
-    cout << endl;
 }
 
-void hamiltonianPaths(Graph const &graph, int v, vector<bool> &visited,
-                    vector<int> &path, int n)
-{
+function hamiltonianPaths(graph: Graph, v: number, visited: boolean[], path: number[], n: number): void {
+
     // if all the vertices are visited, then the Hamiltonian path exists
-    if (path.size() == n)
-    {
+    if (path.length === n) {
         // print the Hamiltonian path
-        printPath(path);
+        console.log(path);
         return;
     }
 
     // Check if every edge starting from vertex `v` leads to a solution or not
-    for (int w: graph.adjList[v])
-    {
+    for (const w of graph.adjList[v]) {
+
         // process only unvisited vertices as the Hamiltonian
         // path visit each vertex exactly once
-        if (!visited[w])
-        {
+        if (!visited[w]) {
             visited[w] = true;
-            path.push_back(w);
+            path.push(w);
 
             // check if adding vertex `w` to the path leads to the solution or not
             hamiltonianPaths(graph, w, visited, path, n);
 
             // backtrack
             visited[w] = false;
-            path.pop_back();
+            path.pop();
         }
     }
 }
 
-void findHamiltonianPaths(Graph const &graph, int n)
-{
+function findHamiltonianPaths(graph: Graph, n: number): void {
+
     // start with every node
-    for (int start = 0; start < n; start++)
-    {
+    for (let start = 0; start < n; start++) {
+
         // add starting node to the path
-        vector<int> path;
-        path.push_back(start);
+        const path: number[] = [start];
 
         // mark the start node as visited
-        vector<bool> visited(n);
+        const visited: boolean[] = new Array(n).fill(false);
         visited[start] = true;
 
         hamiltonianPaths(graph, start, visited, path, n);
     }
 }
 
-int main()
-{
-    // consider a complete graph having 4 vertices
-    vector<Edge> edges = {
-        {0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}
-    };
+// consider a complete graph having 4 vertices
+const edges: [number, number][] = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
 
-    // total number of nodes in the graph (labelled from 0 to 3)
-    int n = 4;
+// total number of nodes in the graph (labelled from 0 to 3)
+const n = 4;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    findHamiltonianPaths(graph, n);
-
-    return 0;
-}
+findHamiltonianPaths(graph, n);
 ```
 
 **Output:** 0 1 2 3 0 1 3 2 0 2 1 3 0 2 3 1 0 3 1 2 0 3 2 1 1 0 2 3 1 0 3 2 1 2 0 3 1 2 3 0 1 3 0 2 1 3 2 0 2 0 1 3 2 0 3 1 2 1 0 3 2 1 3 0 2 3 0 1 2 3 1 0 3 0 1 2 3 0 2 1 3 1 0 2 3 1 2 0 3 2 0 1 3 2 1 0
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    public static void hamiltonianPaths(Graph graph, int v, boolean[] visited,
-                                            List<Integer> path, int n)
-    {
-        // if all the vertices are visited, then the Hamiltonian path exists
-        if (path.size() == n)
-        {
-            // print the Hamiltonian path
-            System.out.println(path);
-            return;
-        }
-
-        // Check if every edge starting from vertex `v` leads
-        // to a solution or not
-        for (int w: graph.adjList.get(v))
-        {
-            // process only unvisited vertices as the Hamiltonian
-            // path visit each vertex exactly once
-            if (!visited[w])
-            {
-                visited[w] = true;
-                path.add(w);
-
-                // check if adding vertex `w` to the path leads
-                // to the solution or not
-                hamiltonianPaths(graph, w, visited, path, n);
-
-                // backtrack
-                visited[w] = false;
-                path.remove(path.size() - 1);
-            }
-        }
-    }
-
-    public static void findHamiltonianPaths(Graph graph, int n)
-    {
-        // start with every node
-        for (int start = 0; start < n; start++)
-        {
-            // add starting node to the path
-            List<Integer> path = new ArrayList<>();
-            path.add(start);
-
-            // mark the start node as visited
-            boolean[] visited = new boolean[n];
-            visited[start] = true;
-
-            hamiltonianPaths(graph, start, visited, path, n);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // consider a complete graph having 4 vertices
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1), new Edge(0, 2), new Edge(0, 3),
-                new Edge(1, 2), new Edge(1, 3), new Edge(2, 3)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 3)
-        int n = 4;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        findHamiltonianPaths(graph, n);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-def hamiltonianPaths(graph, v, visited, path, n):
-
-    # if all the vertices are visited, then the Hamiltonian path exists
-    if len(path) == n:
-        # print the Hamiltonian path
-        print(path)
-        return
-
-    # Check if every edge starting from vertex `v` leads to a solution or not
-    for w in graph.adjList[v]:
-
-        # process only unvisited vertices as the Hamiltonian
-        # path visit each vertex exactly once
-        if not visited[w]:
-            visited[w] = True
-            path.append(w)
-
-            # check if adding vertex `w` to the path leads to the solution or not
-            hamiltonianPaths(graph, w, visited, path, n)
-
-            # backtrack
-            visited[w] = False
-            path.pop()
-
-def findHamiltonianPaths(graph, n):
-
-    # start with every node
-    for start in range(n):
-
-        # add starting node to the path
-        path = [start]
-
-        # mark the start node as visited
-        visited = [False] * n
-        visited[start] = True
-
-        hamiltonianPaths(graph, start, visited, path, n)
-
-if __name__ == '__main__':
-
-    # consider a complete graph having 4 vertices
-    edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-
-    # total number of nodes in the graph (labelled from 0 to 3)
-    n = 4
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    findHamiltonianPaths(graph, n)
-```
 
 The time complexity of the above solution is exponential and requires additional space for the recursion (call stack).
 

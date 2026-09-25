@@ -12,241 +12,85 @@ We can easily check for palindromic string in-place without using extra string a
 
 ## Iterative Version
 
-The iterative implementation can be seen below in C++, Java, and Python:
+The iterative implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
+```ts
 // Iterative function to check if the given string is a palindrome or not
-bool isPalindrome(string str)
-{
-    int low = 0;
-    int high = str.length() - 1;
+function isPalindrome(s: string): boolean {
+  let i = 0;
+  let j = s.length - 1;
 
-    while (low < high)
-    {
-        // if a mismatch happens
-        if (str[low] != str[high]) {
-            return false;
-        }
-
-        low++;
-        high--;
+  while (i < j) {
+    // if a mismatch happens
+    if (s[i] !== s[j]) {
+      return false;
     }
 
-    return true;
+    i = i + 1;
+    j = j - 1;
+  }
+
+  return true;
 }
 
-int main()
-{
-    string str = "XYXYX";
+const s = "XYBYBYX";
 
-    if (isPalindrome(str)) {
-        cout << "Palindrome";
-    }
-    else {
-        cout << "Not Palindrome";
-    }
-
-    return 0;
+if (isPalindrome(s)) {
+  console.log("Palindrome");
+} else {
+  console.log("Not Palindrome");
 }
 ```
 
 **Output:** Palindrome
-
-##
-
-```java
-class Main
-{
-    public static boolean isPalindrome(String str)
-    {
-        if (str == null) {
-            return false;
-        }
-
-        for (int i = 0, j = str.length() - 1; i < j; i++, j--)
-        {
-            if (str.charAt(i) != str.charAt(j)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static void main (String[] args)
-    {
-        String str = "XYBYBYX";
-
-        if (isPalindrome(str)) {
-            System.out.println("Palindrome");
-        }
-        else {
-            System.out.println("Not Palindrome");
-        }
-    }
-}
-```
-
-##
-
-```python3
-def isPalindrome(s):
-
-    i = 0
-    j = len(s) - 1
-    while i < j:
-        if s[i] != s[j]:
-            return False
-        i = i + 1
-        j = j - 1
-
-    return True
-
-if __name__ == '__main__':
-
-    s = 'XYBYBYX'
-
-    if isPalindrome(s):
-        print('Palindrome')
-    else:
-        print('Not Palindrome')
-```
 
 ## Recursive Version
 
-The recursive implementation can be seen below in C++, Java, and Python:
+The recursive implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+// Recursive function to check if `s[low…high]` is a palindrome or not
+function isPalindrome(s: string, low: number, high: number): boolean {
+  // base case
+  if (low >= high) {
+    return true;
+  }
 
-// Recursive function to check if `str[low…high]` is a palindrome or not
-bool isPalindrome(string str, int low, int high)
-{
-    // base case
-    if (low >= high) {
-        return true;
-    }
+  // return false if mismatch happens
+  if (s[low] !== s[high]) {
+    return false;
+  }
 
-    // return false if mismatch happens
-    if (str[low] != str[high]) {
-        return false;
-    }
-
-    // move to the next pair
-    return isPalindrome(str, low + 1, high - 1);
+  // move to the next pair
+  return isPalindrome(s, low + 1, high - 1);
 }
 
-int main()
-{
-    string str = "XYBYBYX";
-    int len = str.length();
+const s = "XYBYBYX";
 
-    if (isPalindrome(str, 0, len - 1)) {
-        cout << "Palindrome";
-    }
-    else {
-        cout << "Not Palindrome";
-    }
-
-    return 0;
+if (isPalindrome(s, 0, s.length - 1)) {
+  console.log("Palindrome");
+} else {
+  console.log("Not Palindrome");
 }
 ```
 
 **Output:** Palindrome
 
-##
-
-```java
-class Main
-{
-    // Recursive function to check if `str[low…high]` is a palindrome or not
-    public static boolean isPalindrome(String str, int low, int high)
-    {
-        // base case
-        if (low >= high) {
-            return true;
-        }
-
-        // return false if mismatch happens
-        if (str.charAt(low) != str.charAt(high)) {
-            return false;
-        }
-
-        // move to the next pair
-        return isPalindrome(str, low + 1, high - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        String str = "XYBYBYX";
-
-        if (isPalindrome(str, 0, str.length() - 1)) {
-            System.out.print("Palindrome");
-        }
-        else {
-            System.out.print("Not Palindrome");
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to check if `s[low…high]` is a palindrome or not
-def isPalindrome(s, low, high):
-
-    # base case
-    if low >= high:
-        return True
-
-    # return false if mismatch happens
-    if s[low] != s[high]:
-        return False
-
-    # move to the next pair
-    return isPalindrome(s, low + 1, high - 1)
-
-if __name__ == '__main__':
-
-    s = 'XYBYBYX'
-
-    if isPalindrome(s, 0, len(s) - 1):
-        print('Palindrome')
-    else:
-        print('Not Palindrome')
-```
-
 We can also rewrite the above recursive code in a single line (remember, an interviewer can ask this as a follow-up question or even start with this problem itself).
 
-```cpp
-#include <iostream>
-using namespace std;
-
-// Recursive function to check if `str[low…high]` is a palindrome or not
-bool isPalindrome(string str, int low, int high)
-{
-    return (low >= high) || (str[low] == str[high] &&
-                isPalindrome(str, low + 1, high - 1));
+```ts
+// Recursive function to check if `s[low…high]` is a palindrome or not
+function isPalindrome(s: string, low: number, high: number): boolean {
+  return low >= high || (s[low] === s[high] && isPalindrome(s, low + 1, high - 1));
 }
 
-int main()
-{
-    string str = "XYBYBYX";
-    int len = str.length();
+const s = "XYBYBYX";
+const len = s.length;
 
-    if (isPalindrome(str, 0, len - 1)) {
-        cout << "Palindrome";
-    }
-    else {
-        cout << "Not Palindrome";
-    }
-
-    return 0;
+if (isPalindrome(s, 0, len - 1)) {
+  console.log("Palindrome");
+} else {
+  console.log("Not Palindrome");
 }
 ```
 

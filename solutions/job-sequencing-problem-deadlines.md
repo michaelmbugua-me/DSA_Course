@@ -34,46 +34,32 @@ Next, consider task 10 having a deadline of 3. Since all slots before deadline 3
 
 The last task is task 4, having deadline 7, gets the next empty slot `6–5`.
 
-Following is the implementation of the above approach in C++, Java, and Python:
+Following is the implementation of the above approach in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-// Stores the maximum deadline that can be associated with a job
-#define T 15
-
-// Data structure to store job details. Each job has an identifier,
+```ts
+// A class to store job details. Each job has an identifier,
 // a deadline, and profit associated with it.
-struct Job {
-    int taskId, deadline, profit;
-};
+class Job {
+    constructor(public taskId: number, public deadline: number, public profit: number) {}
+}
 
 // Function to schedule jobs to maximize profit
-void scheduleJobs(vector<Job> jobs)        // no-ref, no-const
-{
+function scheduleJobs(jobs: Job[], T: number): void {
+
     // stores the maximum profit that can be earned by scheduling jobs
-    int profit = 0;
+    let profit = 0;
 
     // array to store used and unused slots info
-    vector<int> slot(T, -1);
+    const slot: number[] = new Array(T).fill(-1);
 
     // arrange the jobs in decreasing order of their profits
-    sort(jobs.begin(), jobs.end(),
-        [](Job &a, Job &b) {
-            return a.profit > b.profit;    // using C++11 lambda comparison
-        });
+    jobs.sort((a, b) => b.profit - a.profit);
 
     // consider each job in decreasing order of their profits
-    for (const Job &job: jobs)
-    {
+    for (const job of jobs) {
         // search for the next free slot and map the task to that slot
-        for (int j = job.deadline - 1; j >= 0; j--)
-        {
-            if (j < T && slot[j] == -1)
-            {
+        for (let j = job.deadline - 1; j >= 0; j--) {
+            if (j < T && slot[j] === -1) {
                 slot[j] = job.taskId;
                 profit += job.profit;
                 break;
@@ -82,169 +68,24 @@ void scheduleJobs(vector<Job> jobs)        // no-ref, no-const
     }
 
     // print the scheduled jobs
-    cout << "The scheduled jobs are ";
-    for (int i = 0; i < T; i++)
-    {
-        if (slot[i] != -1) {
-            cout << slot[i] << " ";
-        }
-    }
+    console.log('The scheduled jobs are', slot.filter((val) => val !== -1));
 
-    // print the total profit that can be earned
-    cout << "\nThe total profit earned is " << profit;
+    // print total profit that can be earned
+    console.log('The total profit earned is', profit);
 }
 
-int main()
-{
-    // vector of given jobs. Each job has an identifier, a deadline, and
-    // profit associated with it
-    vector<Job> jobs =
-    {
-        {1, 9, 15}, {2, 2, 2}, {3, 5, 18}, {4, 7, 1}, {5, 4, 25},
-        {6, 2, 20}, {7, 5, 8}, {8, 7, 10}, {9, 4, 12}, {10, 3, 5}
-    };
+// List of given jobs. Each job has an identifier, a deadline, and
+// profit associated with it
+const jobs = [
+    new Job(1, 9, 15), new Job(2, 2, 2), new Job(3, 5, 18), new Job(4, 7, 1), new Job(5, 4, 25),
+    new Job(6, 2, 20), new Job(7, 5, 8), new Job(8, 7, 10), new Job(9, 4, 12), new Job(10, 3, 5)
+];
 
-    // schedule jobs and calculate the maximum profit
-    scheduleJobs(jobs);
+// stores the maximum deadline that can be associated with a job
+const T = 15;
 
-    return 0;
-}
-```
-
-**Output:** The scheduled jobs are 7 6 9 5 3 4 8 1 The total profit earned is 109
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-// Data structure to store job details. Each job has an identifier,
-// a deadline, and profit associated with it.
-class Job
-{
-    public int taskId, deadline, profit;
-
-    public Job(int taskId, int deadline, int profit)
-    {
-        this.taskId = taskId;
-        this.deadline = deadline;
-        this.profit = profit;
-    }
-}
-
-class Main
-{
-    // Function to schedule jobs to maximize profit
-    public static void scheduleJobs(List<Job> jobs, int T)
-    {
-        // stores the maximum profit that can be earned by scheduling jobs
-        int profit = 0;
-
-        // array to store used and unused slots info
-        int[] slot = new int[T];
-        Arrays.fill(slot, -1);
-
-        // arrange the jobs in decreasing order of their profits
-        Collections.sort(jobs, (a, b) -> b.profit - a.profit);
-
-        // consider each job in decreasing order of their profits
-        for (Job job: jobs)
-        {
-            // search for the next free slot and map the task to that slot
-            for (int j = job.deadline - 1; j >= 0; j--)
-            {
-                if (j < T && slot[j] == -1)
-                {
-                    slot[j] = job.taskId;
-                    profit += job.profit;
-                    break;
-                }
-            }
-        }
-
-        // print the scheduled jobs
-        System.out.println("The scheduled jobs are " +
-                Arrays.stream(slot).filter(val -> val != -1).boxed()
-                        .collect(Collectors.toList()));
-
-        // print total profit that can be earned
-        System.out.println("The total profit earned is " + profit);
-    }
-
-    public static void main(String[] args)
-    {
-        // List of given jobs. Each job has an identifier, a deadline, and
-        // profit associated with it
-        List<Job> jobs = Arrays.asList(
-                new Job(1, 9, 15), new Job(2, 2, 2), new Job(3, 5, 18),
-                new Job(4, 7, 1), new Job(5, 4, 25), new Job(6, 2, 20),
-                new Job(7, 5, 8), new Job(8, 7, 10), new Job(9, 4, 12),
-                new Job(10, 3, 5));
-
-        // stores the maximum deadline that can be associated with a job
-        final int T = 15;
-
-        // schedule jobs and calculate the maximum profit
-        scheduleJobs(jobs, T);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store job details. Each job has an identifier,
-# a deadline, and profit associated with it.
-class Job:
-    def __init__(self, taskId, deadline, profit):
-        self.taskId = taskId
-        self.deadline = deadline
-        self.profit = profit
-
-# Function to schedule jobs to maximize profit
-def scheduleJobs(jobs, T):
-
-    # stores the maximum profit that can be earned by scheduling jobs
-    profit = 0
-
-    # list to store used and unused slots info
-    slot = [-1] * T
-
-    # arrange the jobs in decreasing order of their profits
-    jobs.sort(key=lambda x: x.profit, reverse=True)
-
-    # consider each job in decreasing order of their profits
-    for job in jobs:
-        # search for the next free slot and map the task to that slot
-        for j in reversed(range(job.deadline)):
-            if j < T and slot[j] == -1:
-                slot[j] = job.taskId
-                profit += job.profit
-                break
-
-    # print the scheduled jobs
-    print('The scheduled jobs are', list(filter(lambda x: x != -1, slot)))
-
-    # print total profit that can be earned
-    print('The total profit earned is', profit)
-
-if __name__ == '__main__':
-
-    # List of given jobs. Each job has an identifier, a deadline, and
-    # profit associated with it
-    jobs = [
-        Job(1, 9, 15), Job(2, 2, 2), Job(3, 5, 18), Job(4, 7, 1), Job(5, 4, 25),
-        Job(6, 2, 20), Job(7, 5, 8), Job(8, 7, 10), Job(9, 4, 12), Job(10, 3, 5)
-    ]
-
-    # stores the maximum deadline that can be associated with a job
-    T = 15
-
-    # schedule jobs and calculate the maximum profit
-    scheduleJobs(jobs, T)
+// schedule jobs and calculate the maximum profit
+scheduleJobs(jobs, T);
 ```
 
 The time complexity of the above solution is O(n2), where `n` is the total number of jobs.

@@ -14,138 +14,44 @@ For instance, the following matrix is a Toeplitz matrix:
 
 The idea is simple – traverse the matrix once, and for each element `(i, j)`, check if it is the same as its immediate diagonal element `(i+1, j+1)` or not. If any element differs from its immediate diagonal element, the matrix cannot be Toeplitz.
 
-Following is the implementation in C++, Java, and Python based on the above idea:
+Following is a TypeScript implementation of the above idea:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // Function to determine if a given matrix is a Toeplitz or not
-bool isToeplitz(vector<vector<int>> const &matrix)
-{
+const isToeplitz = (matrix: number[][]): boolean => {
+
     // base case
-    if (matrix.size() == 0) {
+    if (matrix.length === 0) {
         return true;
     }
 
-    int M = matrix.size();
-    int N = matrix[0].size();
-
-    for (int i = 0; i < M - 1; i++)
-    {
-        for (int j = 0; j < N - 1; j++)
-        {
-            // return false if any diagonal elements have different values
-            if (matrix[i][j] != matrix[i + 1][j + 1]) {
+    for (let i = 0; i < matrix.length - 1; i++) {
+        for (let j = 0; j < matrix[0].length - 1; j++) {
+            if (matrix[i][j] !== matrix[i + 1][j + 1]) {
                 return false;
             }
         }
     }
 
     return true;
-}
+};
 
-int main()
-{
-    vector<vector<int>> matrix =
-    {
-        { 3, 7, 0, 9, 8 },
-        { 5, 3, 7, 0, 9 },
-        { 6, 5, 3, 7, 0 },
-        { 4, 6, 5, 3, 7 }
-    };
+// demo
+const matrix: number[][] = [
+    [3, 7, 0, 9, 8],
+    [5, 3, 7, 0, 9],
+    [6, 5, 3, 7, 0],
+    [4, 6, 5, 3, 7]
+];
 
-    if (isToeplitz(matrix)) {
-        cout << "Toeplitz matrix.";
-    }
-    else {
-        cout << "Not a Toeplitz matrix.";
-    }
-
-    return 0;
+if (isToeplitz(matrix)) {
+    console.log("Toeplitz matrix");
+} else {
+    console.log("Not a Toeplitz matrix");
 }
 ```
 
 **Output:** Toeplitz matrix
-
-##
-
-```java
-class Main
-{
-    // Function to determine if a given matrix is a Toeplitz or not
-    public static boolean isToeplitz(int[][] matrix)
-    {
-        // base case
-        if (matrix == null) {
-            return true;
-        }
-
-        for (int i = 0; i < matrix.length - 1; i++)
-        {
-            for (int j = 0; j < matrix[0].length - 1; j++)
-            {
-                if (matrix[i][j] != matrix[i + 1][j + 1]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] matrix =
-        {
-            { 3, 7, 0, 9, 8 },
-            { 5, 3, 7, 0, 9 },
-            { 6, 5, 3, 7, 0 },
-            { 4, 6, 5, 3, 7 }
-        };
-
-        if (isToeplitz(matrix)) {
-            System.out.print("Toeplitz matrix");
-        }
-        else {
-            System.out.print("Not a Toeplitz matrix");
-        }
-    }
-}
-```
-
-##
-
-```python3
-#Function to determine if a given matrix is a Toeplitz or not
-def isToeplitz(matrix):
-
-    # base case
-    if not matrix:
-        return True
-
-    for i in range(len(matrix) - 1):
-        for j in range(len(matrix[0]) - 1):
-            if matrix[i][j] != matrix[i + 1][j + 1]:
-                return False
-
-    return True
-
-if __name__ == '__main__':
-
-    matrix = [
-        [3, 7, 0, 9, 8],
-        [5, 3, 7, 0, 9],
-        [6, 5, 3, 7, 0],
-        [4, 6, 5, 3, 7]
-    ]
-
-    if isToeplitz(matrix):
-        print("Toeplitz matrix")
-    else:
-        print("Not a Toeplitz matrix")
-```
 
 The time complexity of the proposed solution is O(N2) for an `N × N` matrix and doesn’t require any extra space.
 

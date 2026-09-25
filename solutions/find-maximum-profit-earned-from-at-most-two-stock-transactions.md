@@ -25,202 +25,65 @@ Finally, the last element of `profit[]` has the result.
 
 Note that we can initiate the second transaction on the same day as closing the first transaction, i.e., at the same price. This does not violate the problem constraint that a second transaction can only start once the first transaction is complete. This essentially means that we have performed only a single transaction.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
+**Output:** The maximum profit is 7
 
+```ts
 // Function to find the maximum profit earned from at most two stock transactions
-int findMaxProfit(vector<int> const &price)
-{
-    int n = price.size();
+function findMaxProfit(price: number[]): number {
+
+    const n = price.length;
 
     // base case
-    if (n == 0) {
+    if (n === 0) {
         return 0;
     }
 
-    // create an auxiliary array of size `n`
-    int profit[n];
+    // create an auxiliary space of size `n`
+    const profit: number[] = Array(n).fill(0);
 
-    // initialize the last element of the auxiliary array to 0
-    profit[n-1] = 0;
+    // initialize the last element of the auxiliary space to 0
+    profit[n - 1] = 0;
 
     // to keep track of the maximum stock price on the right of the current stock price
-    int max_so_far = price[n - 1];
+    let max_so_far = price[n - 1];
 
     // traverse the array from right to left
-    for (int i = n - 2; i >= 0; i--)
-    {
+    for (let i = n - 2; i >= 0; i--) {
+
         // update profit[i] to the maximum profit earned by a single stock
         // transaction from the day `i` till day `n-1`
-        profit[i] = max(profit[i + 1], max_so_far - price[i]);
+        profit[i] = Math.max(profit[i + 1], max_so_far - price[i]);
 
         // update maximum stock price seen so far
-        max_so_far = max(max_so_far, price[i]);
+        max_so_far = Math.max(max_so_far, price[i]);
     }
 
     // to keep track of the minimum stock price to the left of the current stock price
-    int min_so_far = price[0];
+    let min_so_far = price[0];
 
     // traverse the array from left to right
-    for (int i = 1; i < n; i++)
-    {
+    for (let i = 1; i < n; i++) {
+
         /* Update profit[i] by taking a maximum of the following:
            1. profit[i-1], which represents the maximum profit calculated so far
            2. The total profit obtained by closing the first transaction on the day `i`
               and performing another transaction from the day `i` till day `n-1`. */
 
-        profit[i] = max(profit[i - 1], (price[i] - min_so_far) + profit[i]);
+        profit[i] = Math.max(profit[i - 1], (price[i] - min_so_far) + profit[i]);
 
         // update the minimum stock price seen so far
-        min_so_far = min(min_so_far, price[i]);
+        min_so_far = Math.min(min_so_far, price[i]);
     }
 
-    // the last element of `profit[]` stores the result
+    // the last element of profit stores the result
     return profit[n - 1];
 }
 
-int main()
-{
-    vector<int> price = { 2, 4, 7, 5, 4, 3, 5 };
+const price = [2, 4, 7, 5, 4, 3, 5];
 
-    cout << "The maximum profit is " << findMaxProfit(price);
-
-    return 0;
-}
-```
-
-**Output:** The maximum profit is 7
-
-##
-
-```java
-class Main
-{
-    // Function to find the maximum profit earned from at most two stock transactions
-    public static int findMaxProfit(int[] price)
-    {
-        int n = price.length;
-
-        // base case
-        if (n == 0) {
-            return 0;
-        }
-
-        // create an auxiliary array of size `n`
-        int[] profit = new int[n];
-
-        // initialize the last element of the auxiliary array to 0
-        profit[n - 1] = 0;
-
-        // to keep track of the maximum stock price on the right of the current
-        // stock price
-        int max_so_far = price[n - 1];
-
-        // traverse the array from right to left
-        for (int i = n - 2; i >= 0; i--)
-        {
-            // update profit[i] to the maximum profit earned by a single stock
-            // transaction from the day `i` till day `n-1`
-            profit[i] = Math.max(profit[i + 1], max_so_far - price[i]);
-
-            // update maximum stock price seen so far
-            max_so_far = Math.max(max_so_far, price[i]);
-        }
-
-        // to keep track of the minimum stock price to the left of the current
-        // stock price
-        int min_so_far = price[0];
-
-        // traverse the array from left to right
-        for (int i = 1; i < n; i++)
-        {
-            /*
-            Update profit[i] by taking a maximum of the following:
-               1. profit[i-1], which represents the maximum profit calculated so far
-               2. The total profit obtained by closing the first transaction on the
-                   day `i` and performing another transaction from the day `i`
-                   till day `n-1`.
-            */
-
-            profit[i] = Math.max(profit[i - 1], (price[i] - min_so_far) + profit[i]);
-
-            // update the minimum stock price seen so far
-            min_so_far = Math.min(min_so_far, price[i]);
-        }
-
-        // the last element of `profit[]` stores the result
-        return profit[n - 1];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] price = { 2, 4, 7, 5, 4, 3, 5 };
-
-        System.out.println("The maximum profit is " + findMaxProfit(price));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the maximum profit earned from at most two stock transactions
-def findMaxProfit(price):
-
-    n = len(price)
-
-    # base case
-    if n == 0:
-        return 0
-
-    # create an auxiliary space of size `n`
-    profit = [0] * n
-
-    # initialize the last element of the auxiliary space to 0
-    profit[n - 1] = 0
-
-    # to keep track of the maximum stock price on the right of the current stock price
-    max_so_far = price[n - 1]
-
-    # traverse the list from right to left
-    for i in reversed(range(n - 1)):
-
-        # update profit[i] to the maximum profit earned by a single stock
-        # transaction from the day `i` till day `n-1`
-        profit[i] = max(profit[i + 1], max_so_far - price[i])
-
-        # update maximum stock price seen so far
-        max_so_far = max(max_so_far, price[i])
-
-    # to keep track of the minimum stock price to the left of the current stock price
-    min_so_far = price[0]
-
-    # traverse the list from left to right
-    for i in range(1, n):
-
-        ''' Update profit[i] by taking a maximum of the following:
-           1. profit[i-1], which represents the maximum profit calculated so far
-           2. The total profit obtained by closing the first transaction on the day `i`
-              and performing another transaction from the day `i` till day `n-1`. '''
-
-        profit[i] = max(profit[i - 1], (price[i] - min_so_far) + profit[i])
-
-        # update the minimum stock price seen so far
-        min_so_far = min(min_so_far, price[i])
-
-    # the last element of profit stores the result
-    return profit[n - 1]
-
-if __name__ == '__main__':
-
-    price = [2, 4, 7, 5, 4, 3, 5]
-
-    print('The maximum profit is', findMaxProfit(price))
+console.log(`The maximum profit is ${findMaxProfit(price)}`);
 ```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space, where `n` is the total number of given days.

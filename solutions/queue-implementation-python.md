@@ -2,7 +2,7 @@
 
 > Source: https://www.techiedelight.com/queue-implementation-python/
 
-This article covers queue implementation in Python. A queue is a linear data structure that follows the FIFO (First–In, First–Out) order, i.e., the item inserted first will be the first one out.
+This article covers queue implementation in TypeScript. A queue is a linear data structure that follows the FIFO (First–In, First–Out) order, i.e., the item inserted first will be the first one out.
 
 A queue supports the following standard operations:
 
@@ -16,125 +16,139 @@ The time complexity of all the above operations should be constant.
 
 > 
 
-Queue Implementation using a List:
+Queue Implementation using an Array:
 
-The queue can easily be implemented as a list. Following is the custom queue implementation in Python, which uses a list:
+The queue can easily be implemented as an array. Following is the custom queue implementation in TypeScript, which uses an array:
 
-```
-# Custom queue implementation in Python
-class Queue:
+```ts
+// Custom queue implementation in TypeScript
+class Queue {
+    #q: (number | null)[];      // array to store queue elements
+    #capacity: number;          // maximum capacity of the queue
+    #front: number;             // front points to the front element in the queue
+    #rear: number;              // rear points to the last element in the queue
+    #count: number;             // current size of the queue
 
-    # Initialize queue
-    def __init__(self, size=1000):
-        self.q = [None] * size      # list to store queue elements
-        self.capacity = size        # maximum capacity of the queue
-        self.front = 0              # front points to the front element in the queue
-        self.rear = -1              # rear points to the last element in the queue
-        self.count = 0              # current size of the queue
+    // Initialize queue
+    constructor(size = 1000) {
+        this.#q = new Array<number | null>(size).fill(null);
+        this.#capacity = size;
+        this.#front = 0;
+        this.#rear = -1;
+        this.#count = 0;
+    }
 
-    # Function to dequeue the front element
-    def dequeue(self):
-        # check for queue underflow
-        if self.isEmpty():
-            print('Queue Underflow!! Terminating process.')
-            exit(-1)
-        x = self.q[self.front]
-        print('Removing element…', x)
-        self.front = (self.front + 1) % self.capacity
-        self.count = self.count - 1
-        return x
+    // Function to dequeue the front element
+    dequeue(): number | null {
+        // check for queue underflow
+        if (this.isEmpty()) {
+            console.log('Queue Underflow!! Terminating process.');
+            process.exit(-1);
+        }
+        const x = this.#q[this.#front];
+        console.log('Removing element…', x);
+        this.#front = (this.#front + 1) % this.#capacity;
+        this.#count = this.#count - 1;
+        return x;
+    }
 
-    # Function to add an element to the queue
-    def enqueue(self, value):
-        # check for queue overflow
-        if self.isFull():
-            print('Overflow!! Terminating process.')
-            exit(-1)
-        print('Inserting element…', value)
-        self.rear = (self.rear + 1) % self.capacity
-        self.q[self.rear] = value
-        self.count = self.count + 1
+    // Function to add an element to the queue
+    enqueue(value: number): void {
+        // check for queue overflow
+        if (this.isFull()) {
+            console.log('Overflow!! Terminating process.');
+            process.exit(-1);
+        }
+        console.log('Inserting element…', value);
+        this.#rear = (this.#rear + 1) % this.#capacity;
+        this.#q[this.#rear] = value;
+        this.#count = this.#count + 1;
+    }
 
-    # Function to return the front element of the queue
-    def peek(self):
-        if self.isEmpty():
-            print('Queue UnderFlow!! Terminating process.')
-            exit(-1)
-        return self.q[self.front]
+    // Function to return the front element of the queue
+    peek(): number | null {
+        if (this.isEmpty()) {
+            console.log('Queue UnderFlow!! Terminating process.');
+            process.exit(-1);
+        }
+        return this.#q[this.#front];
+    }
 
-    # Function to return the size of the queue
-    def size(self):
-        return self.count
+    // Function to return the size of the queue
+    size(): number {
+        return this.#count;
+    }
 
-    # Function to check if the queue is empty or not
-    def isEmpty(self):
-        return self.size() == 0
+    // Function to check if the queue is empty or not
+    isEmpty(): boolean {
+        return this.size() === 0;
+    }
 
-    # Function to check if the queue is full or not
-    def isFull(self):
-        return self.size() == self.capacity
+    // Function to check if the queue is full or not
+    isFull(): boolean {
+        return this.size() === this.#capacity;
+    }
+}
 
-if __name__ == '__main__':
+// create a queue of capacity 5
+const q = new Queue(5);
 
-    # create a queue of capacity 5
-    q = Queue(5)
+q.enqueue(1);
+q.enqueue(2);
+q.enqueue(3);
 
-    q.enqueue(1)
-    q.enqueue(2)
-    q.enqueue(3)
+console.log('The queue size is', q.size());
+console.log('The front element is', q.peek());
+q.dequeue();
+console.log('The front element is', q.peek());
 
-    print('The queue size is', q.size())
-    print('The front element is', q.peek())
-    q.dequeue()
-    print('The front element is', q.peek())
+q.dequeue();
+q.dequeue();
 
-    q.dequeue()
-    q.dequeue()
-
-    if q.isEmpty():
-        print('The queue is empty')
-    else:
-        print('The queue is not empty')
+if (q.isEmpty()) {
+    console.log('The queue is empty');
+}
+else {
+    console.log('The queue is not empty');
+}
 ```
 
 **Output:** Inserting 1 Inserting 2 Inserting 3 The front element is 1 Removing 1 The front element is 2 The queue size is 2 Removing 2 Removing 3 The queue is empty
 
-Using `deque()`:
+Using an Array:
 
-Python’s library offers a [deque](https://docs.python.org/3.3/library/collections.html#collections.deque) object, which stands for the double-ended queue. A deque is a generalization of [stack](https://techiedelight.com/stack-implementation/) and queues which support constant-time insertions and removals from either side of the deque in either direction.
+The TypeScript standard library offers array operations, which can act as a double-ended queue. A deque is a generalization of [stack](https://techiedelight.com/stack-implementation/) and queues which support constant-time insertions and removals from either side of the deque in either direction.
 
-Following is a simple example demonstrating the usage of deque to implement queue data structure in Python:
+Following is a simple example demonstrating the usage of array operations to implement queue data structure in TypeScript:
 
-```
-from collections import deque
+```ts
+// Program to demonstrate queue in TypeScript
+const queue: number[] = [];
 
-# Program to demonstrate queue in Python
-if __name__ == '__main__':
+queue.push(1);     // Insert 1 into the queue
+queue.push(2);     // Insert 2 into the queue
+queue.push(3);     // Insert 3 into the queue
+queue.push(4);     // Insert 4 into the queue
 
-    queue = deque()
+// Print front item of the queue
+console.log('The front element is', queue[0]);     // 1
 
-    queue.append(1)     # Insert 1 into the queue
-    queue.append(2)     # Insert 2 into the queue
-    queue.append(3)     # Insert 3 into the queue
-    queue.append(4)     # Insert 4 into the queue
+queue.shift();     // removing the front element (1)
+queue.shift();     // removing the front element (2)
 
-    # Print front item of the queue
-    print('The front element is', queue[0])     # 1
+// Print front item of the queue
+console.log('The front element is', queue[0]);     // 3
 
-    queue.popleft()     # removing the front element (1)
-    queue.popleft()     # removing the front element (2)
+// Print the number of elements present in the queue
+console.log('The queue size is', queue.length);      // 2
 
-    # Print front item of the queue
-    print('The front element is', queue[0])     # 3
-
-    # Print the number of elements present in the queue
-    print('The queue size is', len(queue))      # 2
-
-    # check whether the queue is empty
-    if len(queue) == 0:
-        print('The queue is empty')
-    else:
-        print('The queue is not empty')
+// check whether the queue is empty
+if (queue.length === 0) {
+    console.log('The queue is empty');
+}
+else {
+    console.log('The queue is not empty');
+}
 ```
 
 **Output:** The front element is 1 The front element is 3 The queue size is 2 The queue is not empty

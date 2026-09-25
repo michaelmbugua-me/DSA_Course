@@ -12,211 +12,68 @@ For example, the following binary tree is a sum tree.
 
 We can easily solve this problem by using [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/). The idea is to traverse the tree in a [postorder fashion](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/). For each non-leaf node, check if the node’s value is equal to the sum of all elements present in its left and right subtree. If this relation does not hold for any node, then the given binary tree cannot be a sum tree.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <climits>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public key: number,
+                public left: TreeNode | null = null,
+                public right: TreeNode | null = null) {}
+}
 
 // Recursive function to check if a given binary tree is a sum tree or not
-int isSumTree(Node* root)
-{
+const isSumTree = (root: TreeNode | null): number => {
+
     // base case: empty tree
-    if (root == nullptr) {
+    if (root === null) {
         return 0;
     }
 
     // special case: leaf node
-    if (root->left == nullptr && root->right == nullptr) {
-        return root->key;
+    if (root.left === null && root.right === null) {
+        return root.key;
     }
 
-    int left = isSumTree(root->left);
-    int right = isSumTree(root->right);
+    const left = isSumTree(root.left);
+    const right = isSumTree(root.right);
 
     // if the root's value is equal to the sum of all elements present in its
     // left and right subtree
-    if (left != INT_MIN && right != INT_MIN && root->key == left + right) {
-        return 2 * root->key;
+    if (left !== Number.MIN_SAFE_INTEGER && right !== Number.MIN_SAFE_INTEGER &&
+            root.key === left + right) {
+        return 2 * root.key;
     }
 
-    return INT_MIN;
+    return Number.MIN_SAFE_INTEGER;
+};
+
+/* Construct the following tree
+         44
+        /  \
+       /    \
+      9     13
+     / \    / \
+    4   5  6   7
+*/
+
+const root = new TreeNode(44);
+root.left = new TreeNode(9);
+root.right = new TreeNode(13);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+root.right.left = new TreeNode(6);
+root.right.right = new TreeNode(7);
+
+if (isSumTree(root) !== Number.MIN_SAFE_INTEGER) {
+    console.log('Binary tree is a sum tree');
 }
-
-int main()
-{
-    /* Construct the following tree
-             44
-            /  \
-           /    \
-          9     13
-         / \    / \
-        4   5  6   7
-    */
-
-    Node* root = new Node(44);
-    root->left = new Node(9);
-    root->right = new Node(13);
-    root->left->left = new Node(4);
-    root->left->right = new Node(5);
-    root->right->left = new Node(6);
-    root->right->right = new Node(7);
-
-    if (isSumTree(root) != INT_MIN) {
-        cout << "Binary tree is a sum tree";
-    }
-    else {
-        cout << "Binary tree is not a sum tree";
-    }
-
-    return 0;
+else {
+    console.log('Binary tree is not a sum tree');
 }
 ```
 
 **Output:** Binary tree is a sum tree
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left = null, right = null;
-
-    Node(int key) {
-        this.key = key;
-    }
-}
-
-class Main
-{
-    // Recursive function to check if a given binary tree is a sum tree or not
-    public static int isSumTree(Node root)
-    {
-        // base case: empty tree
-        if (root == null) {
-            return 0;
-        }
-
-        // special case: leaf node
-        if (root.left == null && root.right == null) {
-            return root.key;
-        }
-
-        int left = isSumTree(root.left);
-        int right = isSumTree(root.right);
-
-        // if the root's value is equal to the sum of all elements present in its
-        // left and right subtree
-        if (left != Integer.MIN_VALUE && right != Integer.MIN_VALUE &&
-                root.key == left + right) {
-            return 2 * root.key;
-        }
-
-        return Integer.MIN_VALUE;
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                 44
-                /  \
-               /    \
-              9     13
-             / \    / \
-            4   5  6   7
-        */
-
-        Node root = new Node(44);
-        root.left = new Node(9);
-        root.right = new Node(13);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-
-        if (isSumTree(root) != Integer.MIN_VALUE) {
-            System.out.println("Binary tree is a sum tree");
-        }
-        else {
-            System.out.println("Binary tree is not a sum tree");
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# A class to store a binary tree node
-class Node:
-    def __init__(self, key=None, left=None, right=None):
-        self.key = key
-        self.left = left
-        self.right = right
-
-# Recursive function to check if a given binary tree is a sum tree or not
-def isSumTree(root):
-
-    # base case: empty tree
-    if root is None:
-        return 0
-
-    # special case: leaf node
-    if root.left is None and root.right is None:
-        return root.key
-
-    left = isSumTree(root.left)
-    right = isSumTree(root.right)
-
-    # if the root's value is equal to the sum of all elements present in its
-    # left and right subtree
-    if left != -sys.maxsize and right != -sys.maxsize and root.key == left + right:
-        return 2 * root.key
-
-    return -sys.maxsize
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-             44
-            /  \
-           /    \
-          9     13
-         / \    / \
-        4   5  6   7
-    '''
-
-    root = Node(44)
-    root.left = Node(9)
-    root.right = Node(13)
-    root.left.left = Node(4)
-    root.left.right = Node(5)
-    root.right.left = Node(6)
-    root.right.right = Node(7)
-
-    if isSumTree(root) != -sys.maxsize:
-        print('Binary tree is a sum tree')
-    else:
-        print('Binary tree is not a sum tree')
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

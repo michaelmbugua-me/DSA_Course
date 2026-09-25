@@ -14,274 +14,80 @@ Assume no duplicate nodes are present in the linked list. Several lists might sa
 
 The idea is to start from the second node in the linked list and advance two nodes in each iteration of the loop. If the previous node is greater than the current node, swap their values. Similarly, if the next node is greater than the current node, exchange both values. At the end of the loop, we will get the desired linked list that satisfies the given constraints.
 
-Following is the C, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
+```ts
 // A Linked List Node
-struct Node
-{
-    int data;
-    struct Node* next;
-};
-
-// Helper function to return new linked list node from the heap
-struct Node* newNode(int key, struct Node *ptr)
-{
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->data = key;
-    node->next = ptr;
-
-    return node;
+class Node {
+    constructor(public data: number, public next: Node | null = null) {}
 }
 
-// Helper function to create a new node with the given data and
-// pushes it onto the list's front
-void push(struct Node** head, int data)
-{
-    // create a new linked list node from the heap
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+// Function to print a given linked list
+function printList(head: Node | null): void {
 
-    newNode->data = data;
-    newNode->next = *head;
-    *head = newNode;
-}
-
-// Helper function to print a given linked list
-void printList(struct Node* head)
-{
-    struct Node* ptr = head;
-    while (ptr)
-    {
-        printf("%d —> ", ptr->data);
-        ptr = ptr->next;
+    let ptr: Node | null = head;
+    while (ptr) {
+        process.stdout.write(`${ptr.data} —> `);
+        ptr = ptr.next;
     }
 
-    printf("NULL");
-}
-
-void swap(struct Node *first, struct Node *second)
-{
-    int temp = first->data;
-    first->data = second->data;
-    second->data = temp;
+    console.log('null');
 }
 
 // Rearrange the linked list so that it has alternating high, low values
-void rearrange(struct Node *head)
-{
+function rearrange(head: Node | null): Node | null {
+
     // empty list
-    if (head == NULL) {
-        return;
+    if (head === null) {
+        return null;
     }
 
-    struct Node* prev = head;
-    struct Node* curr = head->next;
+    let prev = head;
+    let curr = head.next;
 
     // start from the second node
-    while (curr)
-    {
+    while (curr) {
+
         // if the previous node is greater than the current node, swap their values
-        if (prev->data > curr->data) {
-            swap(prev, curr);
+        if (prev.data > curr.data) {
+            const temp = prev.data;
+            prev.data = curr.data;
+            curr.data = temp;
         }
 
         // if the next node is greater than the current node, swap their values
-        if (curr->next && curr->next->data > curr->data) {
-            swap(curr->next, curr);
+        if (curr.next && curr.next.data > curr.data) {
+            const temp = curr.next.data;
+            curr.next.data = curr.data;
+            curr.data = temp;
         }
 
         // update `prev` and `curr` node
-        prev = curr->next;
+        prev = curr.next;
 
-        if (!curr->next) {
+        if (curr.next === null) {
             break;
         }
 
-        curr = curr->next->next;
-    }
-}
-
-int main(void)
-{
-    // input keys
-    int keys[] = { 1, 2, 3, 4, 5, 6, 7, 8, 6 };
-    int n = sizeof(keys) / sizeof(keys[0]);
-
-    struct Node* head = NULL;
-    for (int i = n - 1; i >= 0; i--) {
-        push(&head, keys[i]);
+        curr = curr.next.next;
     }
 
-    rearrange(head);
-    printList(head);
-
-    return 0;
+    return head;
 }
+
+// input keys
+const keys = [1, 2, 3, 4, 5, 6, 7, 8, 6];
+
+let head: Node | null = null;
+for (let i = keys.length - 1; i >= 0; i--) {
+    head = new Node(keys[i], head);
+}
+
+head = rearrange(head);
+printList(head);
 ```
 
-**Output:** 1 —> 3 —> 2 —> 5 —> 4 —> 7 —> 6 —> 8 —> 6 —> NULL
-
-##
-
-```java
-// A Linked List Node
-class Node
-{
-    int data;
-    Node next;
-
-    Node(int data, Node next)
-    {
-        this.data = data;
-        this.next = next;
-    }
-}
-
-class Main
-{
-    // Helper function to print a given linked list
-    public static void printList(Node head)
-    {
-        Node ptr = head;
-        while (ptr != null)
-        {
-            System.out.print(ptr.data + " —> ");
-            ptr = ptr.next;
-        }
-
-        System.out.println("null");
-    }
-
-    // Rearrange the linked list so that it has alternating high, low values
-    public static Node rearrange(Node head)
-    {
-        // empty list
-        if (head == null) {
-            return null;
-        }
-
-        Node prev = head;
-        Node curr = head.next;
-
-        // start from the second node
-        while (curr != null)
-        {
-            // if the previous node is greater than the current node,
-            // swap their values
-            if (prev.data > curr.data)
-            {
-                int temp = prev.data;
-                prev.data = curr.data;
-                curr.data = temp;
-            }
-
-            // if the next node is greater than the current node,
-            // swap their values
-            if (curr.next != null && curr.next.data > curr.data)
-            {
-                int temp = curr.next.data;
-                curr.next.data = curr.data;
-                curr.data = temp;
-            }
-
-            // update `prev` and `curr` node
-            prev = curr.next;
-
-            if (curr.next == null) {
-                break;
-            }
-
-            curr = curr.next.next;
-        }
-
-        return head;
-    }
-
-    public static void main(String[] args)
-    {
-        // input keys
-        int[] keys = { 1, 2, 3, 4, 5, 6, 7, 8, 6 };
-
-        Node head = null;
-        for (int i = keys.length - 1; i >= 0; i--) {
-            head = new Node(keys[i], head);
-        }
-
-        head = rearrange(head);
-        printList(head);
-    }
-}
-```
-
-##
-
-```python3
-# A Linked List Node
-class Node:
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-# Function to print a given linked list
-def printList(head):
-
-    ptr = head
-    while ptr:
-        print(ptr.data, end=' —> ')
-        ptr = ptr.next
-
-    print('None')
-
-# Rearrange the linked list so that it has alternating high, low values
-def rearrange(head):
-
-    # empty list
-    if head is None:
-        return None
-
-    prev = head
-    curr = head.next
-
-    # start from the second node
-    while curr:
-
-        # if the previous node is greater than the current node, swap their values
-        if prev.data > curr.data:
-            temp = prev.data
-            prev.data = curr.data
-            curr.data = temp
-
-        # if the next node is greater than the current node, swap their values
-        if curr.next and curr.next.data > curr.data:
-            temp = curr.next.data
-            curr.next.data = curr.data
-            curr.data = temp
-
-        # update `prev` and `curr` node
-        prev = curr.next
-
-        if curr.next is None:
-            break
-
-        curr = curr.next.next
-
-    return head
-
-if __name__ == '__main__':
-
-    # input keys
-    keys = [1, 2, 3, 4, 5, 6, 7, 8, 6]
-
-    head = None
-    for i in reversed(range(len(keys))):
-        head = Node(keys[i], head)
-
-    head = rearrange(head)
-    printList(head)
-```
+**Output:** 1 —> 3 —> 2 —> 5 —> 4 —> 7 —> 6 —> 8 —> 6 —> null
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the linked list, and doesn’t require any extra space.
 

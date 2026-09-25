@@ -24,382 +24,105 @@ Usually, BFS doesn’t explore already discovered vertices again, but here we do
 
 Whenever we encounter any node whose cost of a path is more, update the result. The BFS will terminate when we have explored every path that doesn’t result in a cycle.
 
-This is demonstrated below in C++, Java, and Python:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <queue>
-#include <vector>
-#include <set>
-#include <climits>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest, weight;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors of `Edge` to represent an adjacency list
-    vector<vector<Edge>> adjList;
+class Graph {
+    // adjacency list: `adjList[v]` is a list of `[dest, weight]` pairs
+    adjList: Map<number, [number, number][]> = new Map();
 
-    // Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type vector<Edge>
-        adjList.resize(n);
+    // Graph Constructor
+    constructor(edges: [number, number, number][], n: number) {
+        // resize the list to `n` elements
+        for (let i = 0; i < n; i++) {
+            this.adjList.set(i, []);
+        }
 
         // add edges to the undirected graph
-        for (auto &edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-            int weight = edge.weight;
-
-            adjList[src].push_back({src, dest, weight});
-            adjList[dest].push_back({dest, src, weight});
+        for (const [src, dest, weight] of edges) {
+            this.adjList.get(src)!.push([dest, weight]);
+            this.adjList.get(dest)!.push([src, weight]);
         }
     }
-};
-
-// A BFS Node
-struct Node
-{
-    // current vertex number and cost of the current path
-    int vertex, weight;
-
-    // set of nodes visited so far in the current path
-    set<int> s;
-};
+}
 
 // Perform BFS on graph `graph` starting from vertex `v`
-int findMaxCost(Graph const &graph, int src, int k)
-{
+function findMaxCost(graph: Graph, src: number, k: number): number {
+
     // create a queue for doing BFS
-    queue<Node> q;
+    const q: [number, number, Set<number>][] = [];
 
     // add source vertex to set and enqueue it
-    set<int> vertices;
-    vertices.insert(src);
-    q.push({src, 0, vertices});
+    const vertices = new Set<number>([src]);
+
+    // (current vertex, current path cost, set of nodes visited so far in
+    // the current path)
+    q.push([src, 0, vertices]);
 
     // stores maximum cost of a path from the source
-    int maxCost = INT_MIN;
+    let maxcost = Number.NEGATIVE_INFINITY;
 
     // loop till queue is empty
-    while (!q.empty())
-    {
-        // dequeue front node
-        Node node = q.front();
-        q.pop();
+    while (q.length > 0) {
 
-        int v = node.vertex;
-        int cost = node.weight;
-        vertices = node.s;
+        // dequeue front node
+        const [v, cost, vertices] = q.shift()!;
 
         // if the destination is reached and BFS depth is equal to `m`,
         // update the minimum cost calculated so far
         if (cost > k) {
-            maxCost = max(maxCost, cost);
+            maxcost = Math.max(maxcost, cost);
         }
 
         // do for every adjacent edge of `v`
-        for (Edge edge: graph.adjList[v])
-        {
+        for (const [dest, weight] of graph.adjList.get(v)!) {
+
             // check for a cycle
-            if (vertices.find(edge.dest) == vertices.end())
-            {
+            if (!vertices.has(dest)) {
+
                 // add current node to the path
-                set<int> s = vertices;
-                s.insert(edge.dest);
+                const s = new Set(vertices);
+                s.add(dest);
 
                 // push every vertex (discovered or undiscovered) into
                 // the queue with a cost equal to the
                 // parent's cost plus the current edge's weight
-                q.push({edge.dest, cost + edge.weight, s});
+                q.push([dest, cost + weight, s]);
             }
         }
     }
 
     // return max-cost
-    return maxCost;
+    return maxcost;
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        {0, 6, 11}, {0, 1, 5}, {1, 6, 3}, {1, 5, 5}, {1, 2, 7},
-        {2, 3, -8}, {3, 4, 10}, {5, 2, -1}, {5, 3, 9}, {5, 4, 1},
-        {6, 5, 2}, {7, 6, 9}, {7, 1, 6}
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number, number][] = [
+    [0, 6, 11], [0, 1, 5], [1, 6, 3], [1, 5, 5], [1, 2, 7], [2, 3, -8], [3, 4, 10],
+    [5, 2, -1], [5, 3, 9], [5, 4, 1], [6, 5, 2], [7, 6, 9], [7, 1, 6]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 7)
-    int n = 8;
+// total number of nodes in the graph (labelled from 0 to 7)
+const n = 8;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    int src = 0;
-    int cost = 50;
+const src = 0;
+const cost = 50;
 
-    // Start modified BFS traversal from source vertex `src`
-    int maxCost = findMaxCost(graph, src, cost);
+// Start modified BFS traversal from source vertex `src`
+const max_cost = findMaxCost(graph, src, cost);
 
-    if (maxCost != INT_MIN) {
-        cout << maxCost;
-    }
-    else {
-        cout << "All paths from source have their costs < " << cost;
-    }
-
-    return 0;
+if (max_cost !== Number.NEGATIVE_INFINITY) {
+    console.log(max_cost);
+} else {
+    console.log(`All paths from source have their costs < ${cost}`);
 }
 ```
 
 **Output:** 51
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    public final int src, dest, weight;
-
-    private Edge(int src, int dest, int weight)
-    {
-        this.src = src;
-        this.dest = dest;
-        this.weight = weight;
-    }
-
-    // Factory method for creating an immutable instance of `Edge`
-    public static Edge of(int a, int b, int c) {
-        return new Edge(a, b, c);        // calls private constructor
-    }
-}
-
-// A BFS Node
-class Node
-{
-    // current vertex number and cost of the current path
-    int vertex, weight;
-
-    // set of nodes visited so far in the current path
-    Set<Integer> s;
-
-    Node(int vertex, int weight, Set<Integer> s)
-    {
-        this.vertex = vertex;
-        this.weight = weight;
-        this.s = s;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Edge>> adjList = new ArrayList<>();
-
-    // Graph Constructor
-    public Graph(List<Edge> edges, int n)
-    {
-        // resize the list to `n` elements of type `List<Edge>`
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge e: edges)
-        {
-            adjList.get(e.src).add(Edge.of(e.src, e.dest, e.weight));
-            adjList.get(e.dest).add(Edge.of(e.dest, e.src, e.weight));
-        }
-    }
-}
-
-class Main
-{
-    // Perform BFS on graph `graph` starting from vertex `v`
-    public static int findMaxCost(Graph graph, int src, int k)
-    {
-        // create a queue for doing BFS
-        Queue<Node> q = new ArrayDeque<>();
-
-        // add source vertex to set and enqueue it
-        Set<Integer> vertices = new HashSet<>();
-        vertices.add(src);
-        q.add(new Node(src, 0, vertices));
-
-        // stores maximum cost of a path from the source
-        int maxCost = Integer.MIN_VALUE;
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node
-            Node node = q.poll();
-
-            int v = node.vertex;
-            int cost = node.weight;
-            vertices = new HashSet<>(node.s);
-
-            // if the destination is reached and BFS depth is equal to `m`,
-            // update the minimum cost calculated so far
-            if (cost > k) {
-                maxCost = Math.max(maxCost, cost);
-            }
-
-            // do for every adjacent edge of `v`
-            for (Edge edge: graph.adjList.get(v))
-            {
-                // check for a cycle
-                if (!vertices.contains(edge.dest))
-                {
-                    // add current node to the path
-                    Set<Integer> s = new HashSet<>(vertices);
-                    s.add(edge.dest);
-
-                    // push every vertex (discovered or undiscovered) into
-                    // the queue with a cost equal to the
-                    // parent's cost plus the current edge's weight
-                    q.add(new Node(edge.dest, cost + edge.weight, s));
-                }
-            }
-        }
-
-        // return max-cost
-        return maxCost;
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(Edge.of(0, 6, 11), Edge.of(0, 1, 5),
-                                Edge.of(1, 6, 3), Edge.of(1, 5, 5), Edge.of(1, 2, 7),
-                                Edge.of(2, 3, -8), Edge.of(3, 4, 10), Edge.of(5, 2, -1),
-                                Edge.of(5, 3, 9), Edge.of(5, 4, 1), Edge.of(6, 5, 2),
-                                Edge.of(7, 6, 9), Edge.of(7, 1, 6));
-
-        // total number of nodes in the graph (labelled from 0 to 7)
-        int n = 8;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        int src = 0;
-        int cost = 50;
-
-        // Start modified BFS traversal from source vertex `src`
-        int maxCost = findMaxCost(graph, src, cost);
-
-        if (maxCost != Integer.MIN_VALUE) {
-            System.out.println(maxCost);
-        }
-        else {
-            System.out.println("All paths from source have their costs < " + cost);
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-from collections import deque
-
-# A class to represent a graph object
-class Graph:
-    # Graph Constructor
-    def __init__(self, edges, n):
-
-        # resize the list to `n` elements
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest, weight) in edges:
-            self.adjList[src].append((dest, weight))
-            self.adjList[dest].append((src, weight))
-
-# Perform BFS on graph `graph` starting from vertex `v`
-def findMaxCost(graph, src, k):
-
-    # create a queue for doing BFS
-    q = deque()
-
-    # add source vertex to set and enqueue it
-    vertices = set([src])
-
-    # (current vertex, current path cost, set of nodes visited so far in
-    # the current path)
-    q.append((src, 0, vertices))
-
-    # stores maximum cost of a path from the source
-    maxcost = -sys.maxsize
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node
-        v, cost, vertices = q.popleft()
-
-        # if the destination is reached and BFS depth is equal to `m`,
-        # update the minimum cost calculated so far
-        if cost > k:
-            maxcost = max(maxcost, cost)
-
-        # do for every adjacent edge of `v`
-        for (dest, weight) in graph.adjList[v]:
-
-            # check for a cycle
-            if not dest in vertices:
-
-                # add current node to the path
-                s = set(vertices)
-                s.add(dest)
-
-                # push every vertex (discovered or undiscovered) into
-                # the queue with a cost equal to the
-                # parent's cost plus the current edge's weight
-                q.append((dest, cost + weight, s))
-
-    # return max-cost
-    return maxcost
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [
-        (0, 6, 11), (0, 1, 5), (1, 6, 3), (1, 5, 5), (1, 2, 7), (2, 3, -8), (3, 4, 10),
-        (5, 2, -1), (5, 3, 9), (5, 4, 1), (6, 5, 2), (7, 6, 9), (7, 1, 6)
-    ]
-
-    # total number of nodes in the graph (labelled from 0 to 7)
-    n = 8
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    src = 0
-    cost = 50
-
-    # Start modified BFS traversal from source vertex `src`
-    max_cost = findMaxCost(graph, src, cost)
-
-    if max_cost != -sys.maxsize:
-        print(max_cost)
-    else:
-        print(f'All paths from source have their costs < {cost}')
-```
 
 The time complexity of the above solution is O(V.E), where `V` and `E` are the total number of vertices and edges in the graph, respectively.
 

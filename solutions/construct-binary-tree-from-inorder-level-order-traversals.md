@@ -22,271 +22,86 @@ The root node is present at the first index in the level order sequence, i.e., n
 
 **Left subtree:** Inorder : { 4, 2, 5 } Level-order : { 1, 2, 3, 4, 5, 6, 7 } **Right subtree:** Inorder : { 6, 3, 7 } Level-order : { 1, 2, 3, 4, 5, 6, 7 }
 
-In the respective inorder sequence, the key which appears first in the level order traversal becomes the root node for the corresponding left or right subtree. This is demonstrated below in C++, Java, and Python:
+In the respective inorder sequence, the key which appears first in the level order traversal becomes the root node for the corresponding left or right subtree. This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <climits>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node* left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Recursive function to perform inorder traversal on a given binary tree
-void inorderTraversal(Node* root)
-{
-    if (root == nullptr) {
+function inorderTraversal(root: Node | null, output: number[] = []): void {
+
+    if (root === null) {
         return;
     }
 
-    inorderTraversal(root->left);
-    cout << root->data << " ";
-    inorderTraversal(root->right);
+    inorderTraversal(root.left, output);
+    output.push(root.data);
+    inorderTraversal(root.right, output);
 }
 
 // Recursive function to construct a binary tree from a given inorder and
 // level order traversals
-Node* buildTree(vector<int> const &inorder, int start, int end,
-                unordered_map<int, int> map)
-{
+function buildTree(inorder: number[], start: number, end: number, d: Map<number, number>): Node | null {
+
     // base case
     if (start > end) {
-        return nullptr;
+        return null;
     }
 
     // find the root node index in sequence `inorder[]` to determine the
     // left and right subtree boundary
-    int index = start;
-    for (int j = start + 1; j <= end; j++)
-    {
+    let index = start;
+    for (let j = start + 1; j <= end; j++) {
         // Find node with minimum index in level order traversal.
         // That would be the root node of the sequence inorder[start, end]
-        if (map[inorder[j]] < map[inorder[index]]) {
+        if (d.get(inorder[j])! < d.get(inorder[index])!) {
             index = j;
         }
     }
 
     // construct the root node
-    Node* root = new Node(inorder[index]);
+    const root = new Node(inorder[index]);
 
     // recursively construct the left subtree
-    root->left = buildTree(inorder, start, index - 1, map);
+    root.left = buildTree(inorder, start, index - 1, d);
 
     // recursively construct the right subtree
-    root->right = buildTree(inorder, index + 1, end, map);
+    root.right = buildTree(inorder, index + 1, end, d);
 
     // return the root node
     return root;
 }
 
 // Construct a binary tree from inorder and level order traversals
-Node* buildTree(vector<int> const &inorder, vector<int> const &level)
-{
-    int n = inorder.size();
+function buildBT(inorder: number[], level: number[]): Node | null {
 
-    // create a map to efficiently find the index of an element in a
+    // create a dictionary to efficiently find the index of an element in a
     // level order sequence
-    unordered_map<int, int> map;
-    for (int i = 0; i < n; i++) {
-        map[level[i]] = i;
+    const d = new Map<number, number>();
+    for (let i = 0; i < level.length; i++) {
+        d.set(level[i], i);
     }
 
     // construct the tree and return it
-    return buildTree(inorder, 0, n - 1, map);
+    return buildTree(inorder, 0, inorder.length - 1, d);
 }
 
-int main()
-{
-    vector<int> inorder = { 4, 2, 5, 1, 6, 3, 7 };
-    vector<int> level    = { 1, 2, 3, 4, 5, 6, 7 };
+const inorderArr = [4, 2, 5, 1, 6, 3, 7];
+const level = [1, 2, 3, 4, 5, 6, 7];
 
-    Node* root = buildTree(inorder, level);
+const root = buildBT(inorderArr, level);
 
-    cout << "Inorder traversal of the constructed tree is ";
-    inorderTraversal(root);
-
-    return 0;
-}
+const output: number[] = [];
+inorderTraversal(root, output);
+console.log(`Inorder traversal of the constructed tree is ${output.join(' ')}`);
 ```
 
 **Output:** Inorder traversal of the constructed tree is 4 2 5 1 6 3 7
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left, right;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to perform inorder traversal on a given binary tree
-    public static void inorderTraversal(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorderTraversal(root.left);
-        System.out.print(root.data + " ");
-        inorderTraversal(root.right);
-    }
-
-    // Recursive function to construct a binary tree from a given inorder and
-    // level order traversals
-    public static Node buildTree(int[] inorder, int start, int end,
-                                Map<Integer, Integer> map)
-    {
-        // base case
-        if (start > end) {
-            return null;
-        }
-
-        // find the root node index in sequence `inorder[]` to determine the
-        // left and right subtree boundary
-        int index = start;
-        for (int j = start + 1; j <= end; j++)
-        {
-            // Find node with minimum index in level order traversal.
-            // That would be the root node of the sequence inorder[start, end]
-            if (map.get(inorder[j]) < map.get(inorder[index])) {
-                index = j;
-            }
-        }
-
-        // construct the root node
-        Node root = new Node(inorder[index]);
-
-        // recursively construct the left subtree
-        root.left = buildTree(inorder, start, index - 1, map);
-
-        // recursively construct the right subtree
-        root.right = buildTree(inorder, index + 1, end, map);
-
-        // return the root node
-        return root;
-    }
-
-    // Construct a binary tree from inorder and level order traversals
-    public static Node buildTree(int[] in, int[] level)
-    {
-        // create a map to efficiently find the index of an element in a
-        // level order sequence
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < in.length; i++) {
-            map.put(level[i], i);
-        }
-
-        // construct the tree and return it
-        return buildTree(in, 0, in.length - 1, map);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] inorder = { 4, 2, 5, 1, 6, 3, 7 };
-        int[] level    = { 1, 2, 3, 4, 5, 6, 7 };
-
-        Node root = buildTree(inorder, level);
-
-        System.out.print("Inorder traversal of the constructed tree is ");
-        inorderTraversal(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to perform inorder traversal on a given binary tree
-def inorderTraversal(root):
-
-    if root is None:
-        return
-
-    inorderTraversal(root.left)
-    print(root.data, end=' ')
-    inorderTraversal(root.right)
-
-# Recursive function to construct a binary tree from a given inorder and
-# level order traversals
-def buildTree(inorder, start, end, d):
-
-    # base case
-    if start > end:
-        return None
-
-    # find the root node index in sequence `inorder[]` to determine the
-    # left and right subtree boundary
-    index = start
-    for j in range(start + 1, end + 1):
-        # Find node with minimum index in level order traversal.
-        # That would be the root node of the sequence inorder[start, end]
-        if d.get(inorder[j]) < d.get(inorder[index]):
-            index = j
-
-    # construct the root node
-    root = Node(inorder[index])
-
-    # recursively construct the left subtree
-    root.left = buildTree(inorder, start, index - 1, d)
-
-    # recursively construct the right subtree
-    root.right = buildTree(inorder, index + 1, end, d)
-
-    # return the root node
-    return root
-
-# Construct a binary tree from inorder and level order traversals
-def buildBT(inorder, level):
-
-    # create a dictionary to efficiently find the index of an element in a
-    # level order sequence
-    d = {}
-    for i, e in enumerate(level):
-        d[e] = i
-
-    # construct the tree and return it
-    return buildTree(inorder, 0, len(inorder) - 1, d)
-
-if __name__ == '__main__':
-
-    inorder = [4, 2, 5, 1, 6, 3, 7]
-    level = [1, 2, 3, 4, 5, 6, 7]
-
-    root = buildBT(inorder, level)
-
-    print('Inorder traversal of the constructed tree is ', end='')
-    inorderTraversal(root)
-```
 
 The time complexity of the above solution is O(n2), where `n` is the total number of nodes in the binary tree. It also requires O(n) extra space for map and call stack.
 

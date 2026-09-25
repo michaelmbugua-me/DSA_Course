@@ -29,137 +29,117 @@ row[] = { -1, 0, 0, 1 } col[] = { 0, -1, 1, 0 } So, from position `(x, y)`, we c
 
 Note that in BFS, all cells having the shortest path as 1 are visited first, followed by their adjacent cells having the shortest path as 1 + 1 = 2 and so on… so if we reach any node in BFS, its shortest path is one more than the shortest path of the parent. So, the first occurrence of the destination cell gives us the result, and we can stop our search there. The shortest path cannot possibly exist from some other cell for which we haven’t reached the given node yet. If any such path was possible, we would have already explored it.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <climits>
-#include <queue>
-#include <cstring>
-using namespace std;
-
-// A queue node used in BFS
-struct Node {
-    // (x, y) represents a position inside the field
-    // `dist` represents its minimum distance from the source
-    int x, y, dist;
-};
-
+```ts
 // Below arrays detail all four possible movements from a cell,
 // i.e., (top, right, bottom, left)
-int row[] = { -1, 0, 0, 1 };
-int col[] = { 0, -1, 1, 0 };
+const row = [-1, 0, 0, 1];
+const col = [0, -1, 1, 0];
 
 // Function to check if it is safe to go to position (x, y)
 // from the current position. The function returns false if (x, y)
 // is unsafe or already visited.
-bool isSafe(vector<vector<int>> const &field, vector<vector<bool>> const &visited,
-                int x, int y) {
-    return field[x][y] != 0 && !visited[x][y];
+function isSafe(field: number[][], visited: boolean[][], x: number, y: number): boolean {
+    return field[x][y] === 1 && !visited[x][y];
 }
 
 // Check if (x, y) is valid field coordinates.
 // Note that we cannot go out of the field.
-bool isValid(int x, int y, int M, int N) {
-    return (x < M && y < N) && (x >= 0 && y >= 0);
+function isValid(x: number, y: number, M: number, N: number): boolean {
+    return x >= 0 && x < M && y >= 0 && y < N;
 }
 
 // Find the minimum number of steps required to reach the last column
 // from the first column using BFS
-int BFS(vector<vector<int>> const &field)
-{
-    // `M × N` matrix
-    int M = field.size();
-    int N = field[0].size();
+function BFS(field: number[][]): number {
 
-    // stores if a cell is visited or not
-    vector<vector<bool>> visited;
-    visited.resize(M, vector<bool>(N));
+    // `M × N` matrix
+    const M = field.length;
+    const N = field[0].length;
+
+    // stores if the cell is visited or not
+    const visited: boolean[][] = Array.from({ length: M }, () => new Array(N).fill(false));
 
     // create an empty queue
-    queue<Node> q;
+    const q: [number, number, number][] = [];
 
     // process every cell of the first column
-    for (int r = 0; r < M; r++)
-    {
+    for (let r = 0; r < M; r++) {
+
         // if the cell is safe, mark it as visited and
         // enqueue it by assigning it distance as 0
-        if (field[r][0] == 1)
-        {
-            q.push({r, 0, 0});
+        if (field[r][0] === 1) {
+            q.push([r, 0, 0]);
             visited[r][0] = true;
         }
     }
 
     // loop till queue is empty
-    while (!q.empty())
-    {
+    while (q.length) {
+
         // dequeue front node and process it
-        int i = q.front().x;
-        int j = q.front().y;
-        int dist = q.front().dist;
-        q.pop();
+
+        // (i, j) represents the position inside the field
+        // `dist` represents its minimum distance from the source
+
+        const [i, j, dist] = q.shift();
 
         // if the destination is found, return minimum distance
-        if (j == N - 1) {
+        if (j === N - 1) {
             return dist;
         }
 
         // check for all four possible movements from the current cell
         // and enqueue each valid movement
-        for (int k = 0; k < 4; k++)
-        {
+        for (let k = 0; k < row.length; k++) {
+
             // skip if the location is invalid or visited, or unsafe
             if (isValid(i + row[k], j + col[k], M, N) &&
-                isSafe(field, visited, i + row[k], j + col[k]))
-            {
+                    isSafe(field, visited, i + row[k], j + col[k])) {
                 // mark it as visited and enqueue it with +1 distance
                 visited[i + row[k]][j + col[k]] = true;
-                q.push({i + row[k], j + col[k], dist + 1});
+                q.push([i + row[k], j + col[k], dist + 1]);
             }
         }
     }
 
-    return INT_MAX;
+    return Number.MAX_SAFE_INTEGER;
 }
 
 // Find the shortest path from the first column to the last column in a given field
-int findShortestDistance(vector<vector<int>> &mat)
-{
+function findShortestDistance(mat: number[][]): number {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || mat.length === 0) {
         return 0;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length;
+    const N = mat[0].length;
 
-    // `r[]` and `c[]` detail all eight possible movements from a cell
+    // `r` and `c` detail all eight possible movements from a cell
     // (top, right, bottom, left, and four diagonal moves)
-    int r[] = { -1, -1, -1, 0, 0, 1, 1, 1 };
-    int c[] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+    const r = [-1, -1, -1, 0, 0, 1, 1, 1];
+    const c = [-1, 0, 1, -1, 1, -1, 0, 1];
 
     // mark adjacent cells of sensors as unsafe
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            for (int k = 0; k < 8; k++) {
-                if (!mat[i][j] && isValid(i + r[k], j + c[k], M, N)
-                        && mat[i + r[k]][j + c[k]]) {
-                    mat[i + r[k]][j + c[k]] = INT_MAX;
+    for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
+            for (let k = 0; k < r.length; k++) {
+                if (mat[i][j] === 0 && isValid(i + r[k], j + c[k], M, N) &&
+                        mat[i + r[k]][j + c[k]] === 1) {
+                    mat[i + r[k]][j + c[k]] = Number.MAX_SAFE_INTEGER;
                 }
             }
         }
     }
 
     // update the mat
-    for (int i = 0; i < M; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            if (mat[i][j] == INT_MAX) {
+    for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
+            if (mat[i][j] === Number.MAX_SAFE_INTEGER) {
                 mat[i][j] = 0;
             }
         }
@@ -169,337 +149,32 @@ int findShortestDistance(vector<vector<int>> &mat)
     return BFS(mat);
 }
 
-int main()
-{
-    vector<vector<int>> field =
-    {
-        { 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-    };
+const field = [
+    [0, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
 
-    int dist = findShortestDistance(field);
+// `M × N` field
+const M = field.length;
 
-    if (dist != INT_MAX) {
-        cout << "The shortest safe path has a length of " << dist;
-    }
-    else {
-        cout << "No route is safe to reach destination";
-    }
+const dist = findShortestDistance(field);
 
-    return 0;
+if (dist !== Number.MAX_SAFE_INTEGER) {
+    console.log('The shortest safe path has a length of', dist);
+} else {
+    console.log('No route is safe to reach destination');
 }
 ```
 
 **Output:** The shortest safe path has a length of 11
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-// A queue node used in BFS
-class Node
-{
-    // (x, y) represents a position inside the field
-    // `dist` represents its minimum distance from the source
-    int x, y, dist;
-
-    Node(int x, int y, int dist)
-    {
-        this.x = x;
-        this.y = y;
-        this.dist = dist;
-    }
-}
-
-class Main
-{
-    // Below arrays detail all four possible movements from a cell,
-    // i.e., (top, right, bottom, left)
-    private static final int[] row = { -1, 0, 0, 1 };
-    private static final int[] col = { 0, -1, 1, 0 };
-
-    // Function to check if it is safe to go to position (x, y)
-    // from the current position. The function returns false if (x, y)
-    // is unsafe or already visited.
-    private static boolean isSafe(int[][] field, boolean visited[][], int x, int y) {
-        return (field[x][y] == 1 && !visited[x][y]);
-    }
-
-    // Check if (x, y) is valid field coordinates.
-    // Note that we cannot go out of the field.
-    private static boolean isValid(int x, int y, int M, int N) {
-        return (x < M && y < N && x >= 0 && y >= 0);
-    }
-
-    // Find the minimum number of steps required to reach the last column
-    // from the first column using BFS
-    private static int BFS(int[][] field)
-    {
-        // `M × N` matrix
-        int M = field.length;
-        int N = field[0].length;
-
-        // stores if a cell is visited or not
-        boolean[][] visited = new boolean[M][N];
-
-        // create an empty queue
-        Queue<Node> q = new ArrayDeque<>();
-
-        // process every cell of the first column
-        for (int r = 0; r < M; r++)
-        {
-            // if the cell is safe, mark it as visited and
-            // enqueue it by assigning it distance as 0
-            if (field[r][0] == 1)
-            {
-                q.add(new Node(r, 0, 0));
-                visited[r][0] = true;
-            }
-        }
-
-        // loop till queue is empty
-        while (!q.isEmpty())
-        {
-            // dequeue front node and process it
-            int i = q.peek().x;
-            int j = q.peek().y;
-            int dist = q.peek().dist;
-            q.poll();
-
-            // if the destination is found, return minimum distance
-            if (j == N - 1) {
-                return dist;
-            }
-
-            // check for all four possible movements from the current cell
-            // and enqueue each valid movement
-            for (int k = 0; k < row.length; k++)
-            {
-                // skip if the location is invalid or visited, or unsafe
-                if (isValid(i + row[k], j + col[k], M, N) &&
-                        isSafe(field, visited, i + row[k], j + col[k]))
-                {
-                    // mark it as visited and enqueue it with +1 distance
-                    visited[i + row[k]][j + col[k]] = true;
-                    q.add(new Node(i + row[k], j + col[k], dist + 1));
-                }
-            }
-        }
-        return Integer.MAX_VALUE;
-    }
-
-    // Find the shortest path from the first column to the last column in a given field
-    public static int findShortestDistance(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return 0;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // `r[]` and `c[]` detail all eight possible movements from a cell
-        // (top, right, bottom, left, and four diagonal moves)
-        int[] r = { -1, -1, -1, 0, 0, 1, 1, 1 };
-        int[] c = { -1, 0, 1, -1, 1, -1, 0, 1 };
-
-        // mark adjacent cells of sensors as unsafe
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                for (int k = 0; k < r.length; k++) {
-                    if (mat[i][j] == 0 && isValid(i + r[k], j + c[k], M, N)
-                            && mat[i + r[k]][j + c[k]] == 1) {
-                        mat[i + r[k]][j + c[k]] = Integer.MAX_VALUE;
-                    }
-                }
-            }
-        }
-
-        // update the mat
-        for (int i = 0; i < M; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                if (mat[i][j] == Integer.MAX_VALUE) {
-                    mat[i][j] = 0;
-                }
-            }
-        }
-
-        // call BFS and return the shortest distance found by it
-        return BFS(mat);
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] field =
-                {
-                        { 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-                        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 },
-                        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-                };
-
-        int dist = findShortestDistance(field);
-
-        if (dist != Integer.MAX_VALUE) {
-            System.out.print("The shortest safe path has a length of " + dist);
-        }
-        else {
-            System.out.print("No route is safe to reach destination");
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-from collections import deque
-
-# Below lists detail all four possible movements from a cell,
-# i.e., (top, right, bottom, left)
-row = [-1, 0, 0, 1]
-col = [0, -1, 1, 0]
-
-# Function to check if it is safe to go to position (x, y)
-# from the current position. The function returns false if (x, y)
-# is unsafe or already visited.
-def isSafe(field, visited, x, y):
-    return field[x][y] == 1 and not visited[x][y]
-
-# Check if (x, y) is valid field coordinates.
-# Note that we cannot go out of the field.
-def isValid(x, y, M, N):
-    return M > x >= 0 and N > y >= 0
-
-# Find the minimum number of steps required to reach the last column
-# from the first column using BFS
-def BFS(field):
-
-    # `M × N` matrix
-    (M, N) = (len(field), len(field[0]))
-
-    # stores if the cell is visited or not
-    visited = [[False for x in range(N)] for y in range(M)]
-
-    # create an empty queue
-    q = deque()
-
-    # process every cell of the first column
-    for r in range(M):
-
-        # if the cell is safe, mark it as visited and
-        # enqueue it by assigning it distance as 0
-        if field[r][0] == 1:
-            q.append((r, 0, 0))
-            visited[r][0] = True
-
-    # loop till queue is empty
-    while q:
-
-        # dequeue front node and process it
-
-        # (i, j) represents the position inside the field
-        # `dist` represents its minimum distance from the source
-
-        (i, j, dist) = q.popleft()
-
-        # if the destination is found, return minimum distance
-        if j == N - 1:
-            return dist
-
-        # check for all four possible movements from the current cell
-        # and enqueue each valid movement
-        for k in range(len(row)):
-
-            # skip if the location is invalid or visited, or unsafe
-            if (isValid(i + row[k], j + col[k], M, N) and
-                    isSafe(field, visited, i + row[k], j + col[k])):
-                # mark it as visited and enqueue it with +1 distance
-                visited[i + row[k]][j + col[k]] = True
-                q.append((i + row[k], j + col[k], dist + 1))
-
-    return sys.maxsize
-
-# Find the shortest path from the first column to the last column in a given field
-def findShortestDistance(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return 0
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # `r` and `c` detail all eight possible movements from a cell
-    # (top, right, bottom, left, and four diagonal moves)
-    r = [-1, -1, -1, 0, 0, 1, 1, 1]
-    c = [-1, 0, 1, -1, 1, -1, 0, 1]
-
-    # mark adjacent cells of sensors as unsafe
-    for i in range(M):
-        for j in range(N):
-            for k in range(len(r)):
-                if mat[i][j] == 0 and isValid(i + r[k], j + c[k], M, N) \
-                        and mat[i + r[k]][j + c[k]] == 1:
-                    mat[i + r[k]][j + c[k]] = sys.maxsize
-
-    # update the mat
-    for i in range(M):
-        for j in range(N):
-            if mat[i][j] == sys.maxsize:
-                mat[i][j] = 0
-
-    # call BFS and return the shortest distance found by it
-    return BFS(field)
-
-if __name__ == '__main__':
-
-    field = [
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    ]
-
-    # `M × N` field
-    M = N = len(field)
-
-    dist = findShortestDistance(field)
-
-    if dist != sys.maxsize:
-        print("The shortest safe path has a length of", dist)
-    else:
-        print("No route is safe to reach destination")
-```
 
 The time complexity of the proposed solution is O(M × N) and requires O(M × N) extra space, where `M` and `N` are dimensions of the matrix.
 

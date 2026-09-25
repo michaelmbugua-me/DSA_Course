@@ -26,182 +26,53 @@ The problem is very similar to the [0/1 knapsack problem](https://techiedelight.
   1. Consider that element.
   2. Don’t consider that element.
 
-The following solution generates all combinations of subsets using the above logic. To print only distinct subsets, initially [sort the subset](https://techiedelight.com/sort-array-ascending-order-cpp/) and exclude all adjacent duplicate elements from the subset along with the current element in case 2. This is demonstrated below in C++, Java, and Python:
+The following solution generates all combinations of subsets using the above logic. To print only distinct subsets, initially [sort the subset](https://techiedelight.com/sort-array-ascending-order-cpp/) and exclude all adjacent duplicate elements from the subset along with the current element in case 2. This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-// Function to print the elements of a vector
-void printVector(vector<int> const &input)
-{
-    cout << "[";
-    int n = input.size();
-    for (int i: input) {
-        cout << i;
-        if (--n) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
+```ts
 // Recursive function to print all distinct subsets of `S`.
 // `S`   ——> input set
-// `out` ——> vector to store subset
 // `i`   ——> index of next element in set `S` to be processed
-void printPowerSet(vector<int> &S, vector<int> &out, int i)
-{
+// `out` ——> list to store elements of a subset
+function printPowerSet(S: number[], i: number, out: number[] = []): void {
+
     // if all elements are processed, print the current subset
-    if (i < 0)
-    {
-        printVector(out);
+    if (i < 0) {
+        console.log([...out]);
         return;
     }
 
     // include the current element in the current subset and recur
-    out.push_back(S[i]);
-    printPowerSet(S, out, i - 1);
+    out.push(S[i]);
+    printPowerSet(S, i - 1, out);
 
     // backtrack: exclude the current element from the current subset
-    out.pop_back();
+    out.pop();
 
     // remove adjacent duplicate elements
-    while (S[i] == S[i-1]) {
-        i--;
+    while (i > 0 && S[i] === S[i - 1]) {
+        i = i - 1;
     }
 
     // exclude the current element from the current subset and recur
-    printPowerSet(S, out, i - 1);
+    printPowerSet(S, i - 1, out);
 }
 
 // Wrapper over `printPowerSet()` function
-void findPowerSet(vector<int> S)        // no-ref, no-const
-{
+function findPowerSet(S: number[]): void {
+
     // sort the set
-    sort(S.begin(), S.end());
+    S.sort((a, b) => a - b);
 
-    // create an empty vector to store elements of a subset
-    vector<int> out;
-    printPowerSet(S, out, S.size() - 1);
+    // print the power set
+    printPowerSet(S, S.length - 1);
 }
 
-int main()
-{
-    vector<int> S = { 1, 3, 1 };
-    findPowerSet(S);
+const S = [1, 3, 1];
 
-    return 0;
-}
+findPowerSet(S);
 ```
 
 **Output:** [3, 1, 1] [3, 1] [3] [1, 1] [1] []
-
-##
-
-```java
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-
-class Main
-{
-    // Recursive function to print all distinct subsets of `S`.
-    // `S`   ——> input set
-    // `out` ——> list to store subset
-    // `i`   ——> index of next element in set `S` to be processed
-    public static void printPowerSet(int[] S, Deque<Integer> out, int i)
-    {
-        // if all elements are processed, print the current subset
-        if (i < 0)
-        {
-            System.out.println(out);
-            return;
-        }
-
-        // include the current element in the current subset and recur
-        out.addLast(S[i]);
-        printPowerSet(S, out, i - 1);
-
-        // backtrack: exclude the current element from the current subset
-        out.pollLast();
-
-        // remove adjacent duplicate elements
-        while (i > 0 && S[i] == S[i - 1]) {
-            i--;
-        }
-
-        // exclude the current element from the current subset and recur
-        printPowerSet(S, out, i - 1);
-    }
-
-    // Wrapper over `printPowerSet()` function
-    public static void findPowerSet(int[] S)
-    {
-        // sort the set
-        Arrays.sort(S);
-
-        // create an empty list to store elements of a subset
-        Deque<Integer> out = new ArrayDeque<>();
-        printPowerSet(S, out, S.length - 1);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] S = { 1, 3, 1 };
-
-        findPowerSet(S);
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# Recursive function to print all distinct subsets of `S`.
-# `S`   ——> input set
-# `i`   ——> index of next element in set `S` to be processed
-# `out` ——> list to store elements of a subset
-def printPowerSet(S, i, out=deque()):
-
-    # if all elements are processed, print the current subset
-    if i < 0:
-        print(list(out))
-        return
-
-    # include the current element in the current subset and recur
-    out.append(S[i])
-    printPowerSet(S, i - 1, out)
-
-    # backtrack: exclude the current element from the current subset
-    out.pop()
-
-    # remove adjacent duplicate elements
-    while i > 0 and S[i] == S[i - 1]:
-        i = i - 1
-
-    # exclude the current element from the current subset and recur
-    printPowerSet(S, i - 1, out)
-
-# Wrapper over `printPowerSet()` function
-def findPowerSet(S):
-
-    # sort the set
-    S.sort()
-
-    # print the power set
-    printPowerSet(S, len(S) - 1)
-
-if __name__ == '__main__':
-
-    S = [1, 3, 1]
-
-    findPowerSet(S)
-```
 
 The time complexity of the above solution is O(n.2n), where `n` is the size of the given set.
 
@@ -218,160 +89,42 @@ For a given set `S`, the power set can be found by generating all binary numbers
   * 6 = 110 = {_x_ , _y_}
   * 7 = 111 = {_x_ , _y_ , _z_}
 
-To avoid printing duplicates subsets, initially sort the set. Also, insert each subset into the set. As the set maintains all distinct combinations, we will have unique subsets into the set. Following is the C++, Java, and Python program that demonstrates it:
+To avoid printing duplicates subsets, initially sort the set. Also, insert each subset into the set. As the set maintains all distinct combinations, we will have unique subsets into the set. Following is a TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-#include <set>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-using namespace std;
+```ts
+// Iterative function to print all distinct subsets of `S`
+function findPowerSet(S: number[]): void {
 
-// Function to print a given set
-void printSet(vector<int> const &input)
-{
-    cout << "[";
-    int n = input.size();
-    for (int i: input) {
-        cout << i;
-        if (--n) {
-            cout << ", ";
-        }
-    }
-    cout << "]\n";
-}
-
-// Iterative function to find all distinct subsets of `S`
-set<vector<int>> findPowerSet(vector<int> S)        // no-ref, no-const
-{
     // `N` stores the total number of subsets
-    int N = pow(2, S.size());
+    const N = Math.pow(2, S.length);
+    const s = new Map<string, number[]>();
 
     // sort the set
-    sort(S.begin(), S.end());
-
-    set<vector<int>> powerset;
+    S.sort((a, b) => a - b);
 
     // generate each subset one by one
-    for (int i = 0; i < N; i++)
-    {
-        vector<int> set;
-
+    for (let i = 0; i < N; i++) {
+        const subset: number[] = [];
         // check every bit of `i`
-        for (int j = 0; j < S.size(); j++)
-        {
+        for (let j = 0; j < S.length; j++) {
             // if j'th bit of `i` is set, append `S[j]` to the subset
             if (i & (1 << j)) {
-                set.push_back(S[j]);
+                subset.push(S[j]);
             }
         }
 
-        // insert the subset into the powerset
-        powerset.insert(set);
+        // insert the subset into the set
+        s.set(subset.join(","), subset);
     }
 
-    return powerset;
+    // print all subsets present in the set
+    console.log([...s.values()]);
 }
 
-int main()
-{
-    vector<int> S = { 1, 2, 1 };
-
-    // find powerset of set S
-    set<vector<int>> powerset = findPowerSet(S);
-
-    // print all subsets present in the powerset
-    for (vector<int> subset: powerset) {
-        printSet(subset);
-    }
-
-    return 0;
-}
+const S = [1, 2, 1];
+findPowerSet(S);
 ```
 
 **Output:** [] [1] [1, 1] [1, 1, 2] [1, 2] [2]
-
-##
-
-```java
-import java.util.*;
-
-class Main
-{
-    // Iterative function to print all distinct subsets of `S`
-    public static void findPowerSet(int[] S)
-    {
-        // `N` stores the total number of subsets
-        int N = (int)Math.pow(2, S.length);
-        Set<List<Integer>> set = new HashSet<>();
-
-        // sort the set
-        Arrays.sort(S);
-
-        // generate each subset one by one
-        for (int i = 0; i < N; i++)
-        {
-            List<Integer> subset = new ArrayList<>();
-
-            // check every bit of `i`
-            for (int j = 0; j < S.length; j++)
-            {
-                // if j'th bit of `i` is set, append `S[j]` to the subset
-                if ((i & (1 << j)) != 0) {
-                    subset.add(S[j]);
-                }
-            }
-
-            // insert the subset into the set
-            set.add(subset);
-        }
-
-        // print all subsets present in the set
-        System.out.println(set);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] S = { 1, 2, 1 };
-
-        findPowerSet(S);
-    }
-}
-```
-
-##
-
-```python3
-# Iterative function to print all distinct subsets of `S`
-def findPowerSet(S):
-
-    # `N` stores the total number of subsets
-    N = int(pow(2, len(S)))
-    s = set()
-
-    # sort the set
-    S.sort()
-
-    # generate each subset one by one
-    for i in range(N):
-        subset = []
-        # check every bit of `i`
-        for j in range(len(S)):
-            # if j'th bit of `i` is set, append `S[j]` to the subset
-            if i & (1 << j):
-                subset.append(S[j])
-
-        # insert the subset into the set
-        s.add(tuple(subset))
-
-    # print all subsets present in the set
-    print(s)
-
-if __name__ == '__main__':
-
-    S = [1, 2, 1]
-    findPowerSet(S)
-```
 
 The time complexity of the above solution is O(n.2n), where `n` is the size of the given set.

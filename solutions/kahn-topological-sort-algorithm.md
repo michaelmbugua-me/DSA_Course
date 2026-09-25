@@ -33,350 +33,108 @@ The idea is to maintain in-degree information of all graph vertices in a map or 
   * If vertex `m` has no incoming edge and is ready to get processed, its indegree will be 0, i.e., `indegree[m] = 0`.
   * To remove an edge from `n` to `m` from the graph, we decrement `indegree[m]` by 1.
 
-Following is the C++, Java, and Python implementation of Kahn’s topological sort algorithm:
+Following is the TypeScript implementation of Kahn’s topological sort algorithm:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
+```ts
 // A class to represent a graph object
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
+class Graph {
+
+    // A list of lists to represent an adjacency list
+    adjList: number[][];
 
     // stores indegree of a vertex
-    vector<int> indegree;
+    indegree: number[];
 
-    // Graph Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    // Constructor
+    constructor(edges: [number, number][], n: number) {
 
-        // initialize indegree
-        vector<int> temp(n, 0);
-        indegree = temp;
+        // A list of lists to represent an adjacency list
+        this.adjList = Array.from({ length: n }, () => []);
+
+        // initialize indegree of each vertex by 0
+        this.indegree = new Array(n).fill(0);
 
         // add edges to the directed graph
-        for (auto &edge: edges)
-        {
+        for (const [src, dest] of edges) {
+
             // add an edge from source to destination
-            adjList[edge.src].push_back(edge.dest);
+            this.adjList[src].push(dest);
 
             // increment in-degree of destination vertex by 1
-            indegree[edge.dest]++;
+            this.indegree[dest] = this.indegree[dest] + 1;
         }
     }
-};
+}
 
 // Function to perform a topological sort on a given DAG
-vector<int> doTopologicalSort(Graph const &graph)
-{
-    vector<int> L;
+function doTopologicalSort(graph: Graph, n: number): number[] | null {
 
-    // get the total number of nodes in the graph
-    int n = graph.adjList.size();
+    // list to store the sorted elements
+    const L: number[] = [];
 
-    vector<int> indegree = graph.indegree;
+    // get in-degree information of the graph
+    const indegree = graph.indegree;
 
     // Set of all nodes with no incoming edges
-    vector<int> S;
-    for (int i = 0; i < n; i++)
-    {
-        if (!indegree[i]) {
-            S.push_back(i);
+    const S: number[] = [];
+    for (let i = 0; i < n; i++) {
+        if (indegree[i] === 0) {
+            S.push(i);
         }
     }
 
-    while (!S.empty())
-    {
+    while (S.length > 0) {
+
         // remove node `n` from `S`
-        int n = S.back();
-        S.pop_back();
+        const n = S.pop()!;
 
         // add `n` at the tail of `L`
-        L.push_back(n);
+        L.push(n);
 
-        for (int m: graph.adjList[n])
-        {
+        for (const m of graph.adjList[n]) {
+
             // remove an edge from `n` to `m` from the graph
-            indegree[m] -= 1;
+            indegree[m] = indegree[m] - 1;
 
             // if `m` has no other incoming edges, insert `m` into `S`
-            if (!indegree[m]) {
-                S.push_back(m);
+            if (indegree[m] === 0) {
+                S.push(m);
             }
         }
     }
 
     // if a graph has edges, then the graph has at least one cycle
-    for (int i = 0; i < n; i++)
-    {
+    for (let i = 0; i < n; i++) {
         if (indegree[i]) {
-            return {};
+            return null;
         }
     }
 
     return L;
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        { 0, 6 }, { 1, 2 }, { 1, 4 }, { 1, 6 }, { 3, 0 }, { 3, 4 },
-        { 5, 1 }, { 7, 0 }, { 7, 1 }
-    };
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 6], [1, 2], [1, 4], [1, 6], [3, 0], [3, 4], [5, 1], [7, 0], [7, 1]
+];
 
-    // total number of nodes in the graph (labelled from 0 to 7)
-    int n = 8;
+// total number of nodes in the graph (labelled from 0 to 7)
+const n = 8;
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-    // Perform topological sort
-    vector<int> L = doTopologicalSort(graph);
+// Perform topological sort
+const L = doTopologicalSort(graph, n);
 
-    // print topological order
-    if (L.size()) {
-        for (int i: L) {
-            cout << i << " ";
-        }
-    } else {
-        cout << "Graph has at least one cycle. Topological sorting is not possible";
-    }
-
-    return 0;
+if (L !== null) {
+    console.log(L.join(' '));    // print topological order
+} else {
+    console.log('Graph has at least one cycle. Topological sorting is not possible.');
 }
 ```
 
 **Output:** 7 5 1 2 3 4 0 6
-
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int src, dest;
-
-    public Edge(int src, int dest)
-    {
-        this.src = src;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // stores indegree of a vertex
-    List<Integer> indegree = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // initialize indegree of each vertex by 0
-        indegree = new ArrayList<>(Collections.nCopies(n, 0));
-
-        // add edges to the directed graph
-        for (Edge edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-
-            // add an edge from source to destination
-            adjList.get(src).add(dest);
-
-            // increment in-degree of destination vertex by 1
-            indegree.set(dest, indegree.get(dest) + 1);
-        }
-    }
-}
-
-class Main
-{
-    // Function to perform a topological sort on a given DAG
-    public static List<Integer> doTopologicalSort(Graph graph, int n)
-    {
-        // list to store the sorted elements
-        List<Integer> L = new ArrayList<>();
-
-        // get in-degree information of the graph
-        List<Integer> indegree = graph.indegree;
-
-        // Set of all nodes with no incoming edges
-        Stack<Integer> S = new Stack<>();
-        for (int i = 0; i < n; i++)
-        {
-            if (indegree.get(i) == 0) {
-                S.add(i);
-            }
-        }
-
-        while (!S.isEmpty())
-        {
-            // remove node `i` from `S`
-            int i = S.pop();
-
-            // add `i` at the tail of `L`
-            L.add(i);
-
-            for (int m: graph.adjList.get(i))
-            {
-                // remove an edge from `n` to `m` from the graph
-                indegree.set(m, indegree.get(m) - 1);
-
-                // if `m` has no other incoming edges, insert `m` into `S`
-                if (indegree.get(m) == 0) {
-                    S.add(m);
-                }
-            }
-        }
-
-        // if a graph has edges, then the graph has at least one cycle
-        for (int i = 0; i < n; i++)
-        {
-            if (indegree.get(i) != 0) {
-                return null;
-            }
-        }
-
-        return L;
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 6), new Edge(1, 2), new Edge(1, 4),
-                new Edge(1, 6), new Edge(3, 0), new Edge(3, 4),
-                new Edge(5, 1), new Edge(7, 0), new Edge(7, 1)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 7)
-        int n = 8;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // Perform topological sort
-        List<Integer> L = doTopologicalSort(graph, n);
-
-        if (L != null) {
-            System.out.print(L);    // print topological order
-        }
-        else {
-            System.out.println("Graph has at least one cycle. " +
-                    "Topological sorting is not possible");
-        }
-    }
-}
-```
-
-##
-
-```python3
-from collections import deque
-
-# A class to represent a graph object
-class Graph:
-
-    # stores indegree of a vertex
-    indegree = None
-
-    # Constructor
-    def __init__(self, edges, n):
-
-        # A list of lists to represent an adjacency list
-        self.adjList = [[] for _ in range(n)]
-
-        # initialize indegree of each vertex by 0
-        self.indegree = [0] * n
-
-        # add edges to the directed graph
-        for (src, dest) in edges:
-
-            # add an edge from source to destination
-            self.adjList[src].append(dest)
-
-            # increment in-degree of destination vertex by 1
-            self.indegree[dest] = self.indegree[dest] + 1
-
-# Function to perform a topological sort on a given DAG
-def doTopologicalSort(graph, n):
-
-    # list to store the sorted elements
-    L = []
-
-    # get in-degree information of the graph
-    indegree = graph.indegree
-
-    # Set of all nodes with no incoming edges
-    S = deque([i for i in range(n) if indegree[i] == 0])
-
-    while S:
-
-        # remove node `n` from `S`
-        n = S.pop()
-
-        # add `n` at the tail of `L`
-        L.append(n)
-
-        for m in graph.adjList[n]:
-
-            # remove an edge from `n` to `m` from the graph
-            indegree[m] = indegree[m] - 1
-
-            # if `m` has no other incoming edges, insert `m` into `S`
-            if indegree[m] == 0:
-                S.append(m)
-
-    # if a graph has edges, then the graph has at least one cycle
-    for i in range(n):
-        if indegree[i]:
-            return None
-
-    return L
-
-if __name__ == '__main__':
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 6), (1, 2), (1, 4), (1, 6), (3, 0), (3, 4), (5, 1), (7, 0), (7, 1)]
-
-    # total number of nodes in the graph (labelled from 0 to 7)
-    n = 8
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # Perform topological sort
-    L = doTopologicalSort(graph, n)
-
-    if L:
-        print(L)    # print topological order
-    else:
-        print('Graph has at least one cycle. Topological sorting is not possible.')
-```
 
 The time complexity of Kahn’s topological sort algorithm is O(V + E), where `V` and `E` are the total number of vertices and edges in the graph, respectively.
 

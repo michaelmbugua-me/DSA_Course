@@ -12,200 +12,57 @@ For example,
 
 The idea is to use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to find all routes. Start from the source cell (top-left corner) of the grid and recur for the next nodes. The next node can be either of the immediate right cell, immediate bottom cell, or immediate down-right diagonal cell. Recursively repeat this for every visited cell until the destination is reached. Also, maintain a data structure to store nodes in the current route and print the path whenever the destination cell (bottom-right corner) is reached.
 
-Here’s code to print all such paths in C++, Java, and Python:
+Here’s code to print all such paths in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-using namespace std;
-
+```ts
 // Recursive function to get all routes in a rectangular grid
 // that start at cell (i, j) and ends at the last cell (M-1, N-1).
-void printPaths(vector<vector<int>> const &mat, vector<int> &route, int i, int j)
-{
+function printPaths(mat: number[][], route: number[] = [], i = 0, j = 0): void {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || mat.length === 0) {
         return;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
-
-    // if the last cell is reached
-    if (i == M - 1 && j == N - 1)
-    {
-        // print the current route
-        for (int i: route) {
-            cout << i << ", ";
-        }
-        cout << mat[i][j] << endl;
-        return;
-    }
+    const M = mat.length;
+    const N = mat[0].length;
 
     // include current cell in route
-    route.push_back(mat[i][j]);
+    route.push(mat[i][j]);
 
-    // move down
-    if (i + 1 < M) {
-        printPaths(mat, route, i + 1, j);
+    // if the last cell is reached
+    if (i === M - 1 && j === N - 1) {
+        console.log([...route]);
     }
-
-    // move right
-    if (j + 1 < N) {
-        printPaths(mat, route, i, j + 1);
-    }
-
-    // move diagonally
-    if (i + 1 < M && j + 1 < N) {
-        printPaths(mat, route, i + 1, j + 1);
-    }
-
-    // backtrack
-    route.pop_back();
-}
-
-// Print all routes in a rectangular grid
-void printPaths(vector<vector<int>> const &mat)
-{
-    // vector to store the current route
-    vector<int> route;
-
-    // start from the first cell (0, 0)
-    printPaths(mat, route, 0, 0);
-}
-
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 1, 2, 3 },
-        { 4, 5, 6 },
-        { 7, 8, 9 }
-    };
-
-    printPaths(mat);
-
-    return 0;
-}
-```
-
-##
-
-```java
-import java.util.Stack;
-
-class Main
-{
-    // Recursive function to get all routes in a rectangular grid
-    // that start at cell (i, j) and ends at the last cell (M-1, N-1).
-    public static void printPaths(int[][] mat, Stack<Integer> route, int i, int j)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return;
+    else {
+        // move down
+        if (i + 1 < M) {
+            printPaths(mat, route, i + 1, j);
         }
 
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // include current cell in route
-        route.add(mat[i][j]);
-
-        // if the last cell is reached
-        if (i == M - 1 && j == N - 1) {
-            System.out.println(route);
-        }
-        else {
-            // move down
-            if (i + 1 < M) {
-                printPaths(mat, route, i + 1, j);
-            }
-
-            // move right
-            if (j + 1 < N) {
-                printPaths(mat, route, i, j + 1);
-            }
-
-            // move diagonally
-            if (i + 1 < M && j + 1 < N) {
-                printPaths(mat, route, i + 1, j + 1);
-            }
+        // move right
+        if (j + 1 < N) {
+            printPaths(mat, route, i, j + 1);
         }
 
-        // backtrack: remove the current cell from the route
-        route.pop();
+        // move diagonally
+        if (i + 1 < M && j + 1 < N) {
+            printPaths(mat, route, i + 1, j + 1);
+        }
     }
 
-    // Print all routes in a rectangular grid
-    public static void printPaths(int[][] mat)
-    {
-        // list to store the current route
-        Stack<Integer> route = new Stack<>();
-
-        // start from the first cell (0, 0)
-        printPaths(mat, route, 0, 0);
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 1, 2, 3 },
-            { 4, 5, 6 },
-            { 7, 8, 9 }
-        };
-
-        printPaths(mat);
-    }
+    // backtrack: remove the current cell from the route
+    route.pop();
 }
-```
 
-##
+const mat = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
 
-```python3
-# Recursive function to get all routes in a rectangular grid
-# that start at cell (i, j) and ends at the last cell (M-1, N-1).
-def printPaths(mat, route=[], i=0, j=0):
-
-    # base case
-    if not mat or not len(mat):
-        return
-
-    # `M × N` matrix
-    (M, N) = (len(mat), len(mat[0]))
-
-    # include current cell in route
-    route.append(mat[i][j])
-
-    # if the last cell is reached
-    if i == M - 1 and j == N - 1:
-        print(route)
-    else:
-        # move down
-        if i + 1 < M:
-            printPaths(mat, route, i + 1, j)
-
-        # move right
-        if j + 1 < N:
-            printPaths(mat, route, i, j + 1)
-
-        # move diagonally
-        if i + 1 < M and j + 1 < N:
-            printPaths(mat, route, i + 1, j + 1)
-
-    # backtrack: remove the current cell from the route
-    route.pop()
-
-if __name__ == '__main__':
-
-    mat = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ]
-
-    printPaths(mat)
+printPaths(mat);
 ```
 
 **Output:** [1, 4, 7, 8, 9] [1, 4, 5, 8, 9] [1, 4, 5, 6, 9] [1, 4, 5, 9] [1, 4, 8, 9] [1, 2, 5, 8, 9] [1, 2, 5, 6, 9] [1, 2, 5, 9] [1, 2, 3, 6, 9] [1, 2, 6, 9] [1, 5, 8, 9] [1, 5, 6, 9] [1, 5, 9]
@@ -220,7 +77,7 @@ There is another variation of the above problem where we need to print only thos
 
 [1, 2, 3, 6, 9] [1, 2, 5, 6, 9] [1, 2, 5, 9] [1, 2, 6, 9] [1, 5, 6, 9] [1, 5, 9]
 
-For a path to be valid, at all points `(x, y)` on the path, `x` should be less than `y`. We can simply enforce this constraint while building the paths. This is demonstrated below in C++, Java, and Python:
+For a path to be valid, at all points `(x, y)` on the path, `x` should be less than `y`. We can simply enforce this constraint while building the paths. This is demonstrated below:
 
 [C++](https://techiedelight.com/compiler/?run=tbJwX8), [Java](https://techiedelight.com/compiler/?run=ltGQJs), and [Python](https://techiedelight.com/compiler/?run=ltGQJsP) code.
 

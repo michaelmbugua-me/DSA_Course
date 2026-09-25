@@ -20,372 +20,115 @@ To convert a binary tree into a threaded binary tree, point all _null_ right chi
 
 Also maintain a boolean field in each Node that is true wherever the right pointer of a node points to its inorder successor. This field is useful while traversing the threaded binary tree to find an inorder successor if the current node has a threaded link.
 
-Now let’s construct a threaded binary tree out of a normal binary tree, in C++, Java, and Python:
+Now let’s construct a threaded binary tree out of a normal binary tree, in TypeScript:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <utility>
-using namespace std;
-
+```ts
 // Threaded binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
+class Node {
+    left: Node | null = null;
+    right: Node | null = null;
+    // true if the right child of the node points to its inorder successor
+    isThreaded = false;
 
-    // true if the right pointer of the node points to its inorder successor
-    bool isThreaded;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-        isThreaded = false;
-    }
-};
+    constructor(public data: number) {}
+}
 
 // Utility function to return the leftmost node in a given binary tree
-Node *leftMostNode(Node* root)
-{
-    Node* node = root;
-    while (node && node->left) {
-        node = node->left;
+function leftMostNode(root: Node | null): Node | null {
+    let node = root;
+    while (node && node.left) {
+        node = node.left;
     }
-
     return node;
 }
 
 // Iterative function to perform inorder traversal on a threaded binary tree
-void traverse(Node* root)
-{
+function traverse(root: Node | null): void {
     // base case
-    if (root == nullptr) {
+    if (root === null) {
         return;
     }
 
     // start from the leftmost node
-    Node* curr = leftMostNode(root);
-    while (curr)
-    {
+    let curr = leftMostNode(root);
+    while (curr) {
         // print the current node
-        cout << curr->data << " ";
+        process.stdout.write(curr.data + ' ');
 
         // go to the inorder successor if the current node is threaded
-        if (curr->isThreaded) {
-            curr = curr->right;
+        if (curr.isThreaded) {
+            curr = curr.right;
         }
         // otherwise, visit the leftmost child in the right subtree
         else {
-            curr = leftMostNode(curr->right);
+            curr = leftMostNode(curr.right);
         }
     }
 }
 
 // Function to convert a binary tree into a threaded binary tree
 // using inorder traversal
-void populateNext(Node* curr, Node* &prev)
-{
+function populateNext(curr: Node | null, prev: Node | null): Node | null {
     // base case: empty tree
-    if (curr == nullptr) {
-        return;
+    if (curr === null) {
+        return prev;
     }
 
     // recur for the left subtree
-    populateNext(curr->left, prev);
+    prev = populateNext(curr.left, prev);
 
     // if the current node is not the root node of a binary tree
-    // and has a null right child
-    if (prev && !prev->right)
-    {
+    // and has an empty right child
+    if (prev && prev.right === null) {
         // set the right child of the previous node to point to the current node
-        prev->right = curr;
+        prev.right = curr;
 
         // set thread flag to true
-        prev->isThreaded = true;
+        prev.isThreaded = true;
     }
 
     // update previous node
     prev = curr;
 
     // recur for the right subtree
-    populateNext(curr->right, prev);
+    prev = populateNext(curr.right, prev);
+    return prev;
 }
 
 // Convert a binary tree into a threaded binary tree
-void convertToThreaded(Node* root)
-{
+function convertToThreaded(root: Node | null): void {
     // stores previously visited node
-    Node* prev = nullptr;
+    let prev: Node | null = null;
     populateNext(root, prev);
 }
 
-int main()
-{
-    /* Construct the following tree
-              5
-            /   \
-           /     \
-          2       7
-         / \     / \
-        /   \   /   \
-       1     4 6     9
-            /       / \
-           /       /   \
-          3       8    10
-    */
+/*
+ Construct the following tree
+           5
+         /   \
+        /     \
+       2       7
+      / \     / \
+     /   \   /   \
+    1     4 6     9
+         /       / \
+        /       /   \
+       3       8    10
+ */
 
-    Node* root = new Node(5);
-    root->left = new Node(2);
-    root->right = new Node(7);
-    root->left->left = new Node(1);
-    root->left->right = new Node(4);
-    root->right->left = new Node(6);
-    root->right->right = new Node(9);
-    root->left->right->left = new Node(3);
-    root->right->right->left = new Node(8);
-    root->right->right->right = new Node(10);
+const root = new Node(5);
+root.left = new Node(2);
+root.right = new Node(7);
+root.left.left = new Node(1);
+root.left.right = new Node(4);
+root.right.left = new Node(6);
+root.right.right = new Node(9);
+root.left.right.left = new Node(3);
+root.right.right.left = new Node(8);
+root.right.right.right = new Node(10);
 
-    convertToThreaded(root);
-    traverse(root);
-
-    return 0;
-}
-```
-
-**Output:** 1 2 3 4 5 6 7 8 9 10
-
-##
-
-```java
-// Threaded binary tree node
-class Node
-{
-    int data;
-    Node left, right;
-
-    // true if the right child of the node points to its inorder successor
-    boolean isThreaded = false;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Utility function to return the leftmost node in a given binary tree
-    public static Node leftMostNode(Node root)
-    {
-        Node node = root;
-        while (node != null && node.left != null) {
-            node = node.left;
-        }
-        return node;
-    }
-
-    // Iterative function to perform inorder traversal on a threaded binary tree
-    public static void traverse(Node root)
-    {
-        // base case
-        if (root == null) {
-            return;
-        }
-
-        // start from the leftmost node
-        Node curr = leftMostNode(root);
-        while (curr != null)
-        {
-            // print the current node
-            System.out.print(curr.data + " ");
-
-            // go to the inorder successor if the current node is threaded
-            if (curr.isThreaded) {
-                curr = curr.right;
-            }
-            // otherwise, visit the leftmost child in the right subtree
-            else {
-                curr = leftMostNode(curr.right);
-            }
-        }
-    }
-
-    // Function to convert a binary tree into a threaded binary tree
-    // using inorder traversal
-    public static Node populateNext(Node curr, Node prev)
-    {
-        // base case: empty tree
-        if (curr == null) {
-            return prev;
-        }
-
-        // recur for the left subtree
-        prev = populateNext(curr.left, prev);
-
-        // if the current node is not the root node of a binary tree
-        // and has a null right child
-        if (prev != null && prev.right == null)
-        {
-            // set the right child of the previous node to point to the current node
-            prev.right = curr;
-
-            // set thread flag to true
-            prev.isThreaded = true;
-        }
-
-        // update previous node
-        prev = curr;
-
-        // recur for the right subtree
-        prev = populateNext(curr.right, prev);
-        return prev;
-    }
-
-    // Convert a binary tree into a threaded binary tree
-    public static void convertToThreaded(Node root)
-    {
-        // stores previously visited node
-        Node prev = null;
-        populateNext(root, prev);
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  5
-                /   \
-               /     \
-              2       7
-             / \     / \
-            /   \   /   \
-           1     4 6     9
-                /       / \
-               /       /   \
-              3       8    10
-        */
-
-        Node root = new Node(5);
-        root.left = new Node(2);
-        root.right = new Node(7);
-        root.left.left = new Node(1);
-        root.left.right = new Node(4);
-        root.right.left = new Node(6);
-        root.right.right = new Node(9);
-        root.left.right.left = new Node(3);
-        root.right.right.left = new Node(8);
-        root.right.right.right = new Node(10);
-
-        convertToThreaded(root);
-        traverse(root);
-    }
-}
-```
-
-##
-
-```python3
-# Threaded binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-        # true if the right child of the node points to its inorder successor
-        self.isThreaded = False
-
-# Utility function to return the leftmost node in a given binary tree
-def leftMostNode(root):
-
-    node = root
-    while node and node.left:
-        node = node.left
-    return node
-
-# Iterative function to perform inorder traversal on a threaded binary tree
-def traverse(root):
-
-    # base case
-    if root is None:
-        return
-
-    # start from the leftmost node
-    curr = leftMostNode(root)
-    while curr:
-
-        # print the current node
-        print(curr.data, end=' ')
-
-        # go to the inorder successor if the current node is threaded
-        if curr.isThreaded:
-            curr = curr.right
-        # otherwise, visit the leftmost child in the right subtree
-        else:
-            curr = leftMostNode(curr.right)
-
-# Function to convert a binary tree into a threaded binary tree
-# using inorder traversal
-def populateNext(curr, prev):
-
-    # base case: empty tree
-    if curr is None:
-        return prev
-
-    # recur for the left subtree
-    prev = populateNext(curr.left, prev)
-
-    # if the current node is not the root node of a binary tree
-    # and has an empty right child
-    if prev and prev.right is None:
-
-        # set the right child of the previous node to point to the current node
-        prev.right = curr
-
-        # set thread flag to true
-        prev.isThreaded = True
-
-    # update previous node
-    prev = curr
-
-    # recur for the right subtree
-    prev = populateNext(curr.right, prev)
-    return prev
-
-# Convert a binary tree into a threaded binary tree
-def convertToThreaded(root):
-
-    # stores previously visited node
-    prev = None
-    populateNext(root, prev)
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              5
-            /   \
-           /     \
-          2       7
-         / \     / \
-        /   \   /   \
-       1     4 6     9
-            /       / \
-           /       /   \
-          3       8    10
-    '''
-
-    root = Node(5)
-    root.left = Node(2)
-    root.right = Node(7)
-    root.left.left = Node(1)
-    root.left.right = Node(4)
-    root.right.left = Node(6)
-    root.right.right = Node(9)
-    root.left.right.left = Node(3)
-    root.right.right.left = Node(8)
-    root.right.right.right = Node(10)
-
-    convertToThreaded(root)
-    traverse(root)
+convertToThreaded(root);
+traverse(root);
 ```
 
 Also See:

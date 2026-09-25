@@ -16,334 +16,104 @@ As evident from the above example, the ternary tree’s root node is pushed befo
 
 The idea is to perform reverse [postorder traversal](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/) on a ternary tree. In reverse postorder traversal, before processing a ternary tree node, its right child is processed first, followed by its mid and left child. After traversing all children of a ternary tree node, insert the node at the front of the doubly linked list. The reverse postorder traversal is used to ensure the correct insertion order in a doubly-linked list.
 
-Following is the C++, Java, and Python program that demonstrates the idea:
+Following is a TypeScript program that demonstrates the idea:
 
-```cpp
-#include <iostream>
-#include <string>
-#include <utility>
-using namespace std;
-
-// Data structure to store a ternary tree node
-struct Node
-{
-    int data;
-    Node *left, *mid, *right;
-
-    Node() {}
-    Node(int data): data(data) {}
-};
-
-// Insert a tree node at the front of the doubly linked list
-void push(Node* node, Node* &headRef)
-{
-    // insert the given node at the front of the doubly linked list
-    headRef->left = node;
-    node->right = headRef;
-
-    // update left and mid-child pointer to null
-    node->left = node->mid = nullptr;
-
-    // update the `head` pointer to point to a given node
-    headRef = node;
+```ts
+// A class to store a ternary tree node
+class Node {
+    constructor(public data: number, public left: Node | null = null, public mid: Node | null = null, public right: Node | null = null) {}
 }
 
-// Convert a ternary tree into a doubly-linked list using
-// reverse postorder traversal
-void ternaryTreeToDoublyLinkedList(Node* root, Node* &headRef)
-{
+// Insert a tree node at the front of the doubly linked list
+function push(node: Node, head: Node | null): Node | null {
+    // insert the given node at the front of the doubly linked list
+    head!.left = node;
+    node.right = head;
+
+    // update left and mid-child pointer to null
+    node.left = node.mid = null;
+
+    // update and return a head pointer to point to the given node
+    head = node;
+    return head;
+}
+
+// Convert a ternary tree into a doubly-linked list using reverse postorder traversal
+function ternaryTreeToDoublyLinkedList(root: Node | null, head: Node | null = null): Node | null {
     // base case: an empty tree
-    if (root == nullptr) {
-        return;
+    if (root === null) {
+        return head;
     }
 
     // recur for the right, mid, and left child
-    ternaryTreeToDoublyLinkedList(root->right, headRef);
-    ternaryTreeToDoublyLinkedList(root->mid, headRef);
-    ternaryTreeToDoublyLinkedList(root->left, headRef);
+    head = ternaryTreeToDoublyLinkedList(root.right, head);
+    head = ternaryTreeToDoublyLinkedList(root.mid, head);
+    head = ternaryTreeToDoublyLinkedList(root.left, head);
 
     // initialize head pointer of a doubly linked list
-    if (headRef == nullptr) {
-        headRef = root;
-    }
-    else {
+    if (head === null) {
+        head = root;
+    } else {
         // push the current node at the front of the doubly linked list
-        push(root, headRef);
+        head = push(root, head);
     }
+
+    return head;
 }
 
-// Helper function to print a doubly linked list
-void printDoublyLinkedList(Node* ptr)
-{
-    while (ptr)
-    {
-        cout << ptr->data << " —> ";
-        ptr = ptr->right;
+// Function to print a doubly linked list
+function printDoublyLinkedList(node: Node | null): void {
+    let out = '';
+    while (node) {
+        out += `${node.data} —> `;
+        node = node.right;
     }
-    cout << "nullptr";
+    console.log(out + 'null');
 }
 
-int main()
-{
-    /* Construct the following ternary tree
-                  1
-                / | \
-              /   |   \
-            /     |     \
-           2      9      12
-         / | \   / \     |  \
-        3  6  8 10  11  13   16
-        |   \          /  \   |
-        4    7        14  15  17
-         \
-          5
-    */
+/* Construct the following ternary tree
+              1
+            / | \
+          /   |   \
+        /     |     \
+       2      9      12
+     / | \   / \     |  \
+    3  6  8 10  11  13   16
+    |   \          /  \   |
+    4    7        14  15  17
+     \
+      5
+*/
 
-    Node* root = new Node(1);
+const root = new Node(1);
 
-    root->left = new Node(2);
-    root->mid = new Node(9);
-    root->right = new Node(12);
+root.left = new Node(2);
+root.mid = new Node(9);
+root.right = new Node(12);
 
-    root->left->left = new Node(3);
-    root->left->mid = new Node(6);
-    root->left->right = new Node(8);
+root.left!.left = new Node(3);
+root.left!.mid = new Node(6);
+root.left!.right = new Node(8);
 
-    root->mid->left = new Node(10);
-    root->mid->right = new Node(11);
+root.mid!.left = new Node(10);
+root.mid!.right = new Node(11);
 
-    root->right->mid = new Node(13);
-    root->right->right = new Node(16);
+root.right!.mid = new Node(13);
+root.right!.right = new Node(16);
 
-    root->left->left->mid = new Node(4);
-    root->left->left->mid->right = new Node(5);
-    root->left->mid->right = new Node(7);
+root.left!.left!.mid = new Node(4);
+root.left!.left!.mid!.right = new Node(5);
+root.left!.mid!.right = new Node(7);
 
-    root->right->mid->left = new Node(14);
-    root->right->mid->right = new Node(15);
-    root->right->right->mid = new Node(17);
+root.right!.mid!.left = new Node(14);
+root.right!.mid!.right = new Node(15);
+root.right!.right!.mid = new Node(17);
 
-    Node* head = nullptr;
-    ternaryTreeToDoublyLinkedList(root, head);
-    printDoublyLinkedList(root);
-
-    return 0;
-}
+ternaryTreeToDoublyLinkedList(root);
+printDoublyLinkedList(root);
 ```
 
 **Output:** 1 —> 2 —> 3 —> 4 —> 5 —> 6 —> 7 —> 8 —> 9 —> 10 —> 11 —> 12 —> 13 —> 14 —> 15 —> 16 —> 17 —> nullptr
-
-##
-
-```java
-// A class to store a ternary tree node
-class Node
-{
-    int data;
-    Node left, mid, right;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Insert a tree node at the front of the doubly linked list
-    public static Node push(Node node, Node head)
-    {
-        // insert the given node at the front of the doubly linked list
-        head.left = node;
-        node.right = head;
-
-        // update left and mid-child pointer to null
-        node.left = node.mid = null;
-
-        // update and return a head pointer to point to the given node
-        head = node;
-        return head;
-    }
-
-    // Convert a ternary tree into a doubly-linked list using
-    // reverse postorder traversal
-    public static Node ternaryTreeToDoublyLinkedList(Node root, Node head)
-    {
-        // base case: an empty tree
-        if (root == null) {
-            return head;
-        }
-
-        // recur for the right, mid, and left child
-        head = ternaryTreeToDoublyLinkedList(root.right, head);
-        head = ternaryTreeToDoublyLinkedList(root.mid, head);
-        head = ternaryTreeToDoublyLinkedList(root.left, head);
-
-        // initialize head pointer of a doubly linked list
-        if (head == null) {
-            head = root;
-        }
-        else {
-            // push the current node at the front of the doubly linked list
-            head = push(root, head);
-        }
-
-        return head;
-    }
-
-    // Helper function to print a doubly linked list
-    public static void printDoublyLinkedList(Node node)
-    {
-        while (node != null)
-        {
-            System.out.print(node.data + " —> ");
-            node = node.right;
-        }
-        System.out.println("null");
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following ternary tree
-                      1
-                    / | \
-                  /   |   \
-                /     |     \
-               2      9      12
-             / | \   / \     |  \
-            3  6  8 10  11  13   16
-            |   \          /  \   |
-            4    7        14  15  17
-             \
-              5
-        */
-
-        Node root = new Node(1);
-
-        root.left = new Node(2);
-        root.mid = new Node(9);
-        root.right = new Node(12);
-
-        root.left.left = new Node(3);
-        root.left.mid = new Node(6);
-        root.left.right = new Node(8);
-
-        root.mid.left = new Node(10);
-        root.mid.right = new Node(11);
-
-        root.right.mid = new Node(13);
-        root.right.right = new Node(16);
-
-        root.left.left.mid = new Node(4);
-        root.left.left.mid.right = new Node(5);
-        root.left.mid.right = new Node(7);
-
-        root.right.mid.left = new Node(14);
-        root.right.mid.right = new Node(15);
-        root.right.right.mid = new Node(17);
-
-        ternaryTreeToDoublyLinkedList(root, null);
-        printDoublyLinkedList(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a ternary tree node
-class Node:
-    def __init__(self, data, left=None, mid=None, right=None):
-        self.data = data
-        self.left = left
-        self.mid = mid
-        self.right = right
-
-# Insert a tree node at the front of the doubly linked list
-def push(node, head):
-
-    # insert the given node at the front of the doubly linked list
-    head.left = node
-    node.right = head
-
-    # update left and mid-child pointer to None
-    node.left = node.mid = None
-
-    # update and return a head pointer to point to the given node
-    head = node
-    return head
-
-# Convert a ternary tree into a doubly-linked list using reverse postorder traversal
-def ternaryTreeToDoublyLinkedList(root, head=None):
-
-    # base case: an empty tree
-    if root is None:
-        return head
-
-    # recur for the right, mid, and left child
-    head = ternaryTreeToDoublyLinkedList(root.right, head)
-    head = ternaryTreeToDoublyLinkedList(root.mid, head)
-    head = ternaryTreeToDoublyLinkedList(root.left, head)
-
-    # initialize head pointer of a doubly linked list
-    if head is None:
-        head = root
-    else:
-        # push the current node at the front of the doubly linked list
-        head = push(root, head)
-
-    return head
-
-# Function to print a doubly linked list
-def printDoublyLinkedList(node):
-
-    while node:
-        print(node.data, end=' —> ')
-        node = node.right
-    print('None')
-
-if __name__ == '__main__':
-
-    ''' Construct the following ternary tree
-                  1
-                / | \
-              /   |   \
-            /     |     \
-           2      9      12
-         / | \   / \     |  \
-        3  6  8 10  11  13   16
-        |   \          /  \   |
-        4    7        14  15  17
-         \
-          5
-    '''
-
-    root = Node(1)
-
-    root.left = Node(2)
-    root.mid = Node(9)
-    root.right = Node(12)
-
-    root.left.left = Node(3)
-    root.left.mid = Node(6)
-    root.left.right = Node(8)
-
-    root.mid.left = Node(10)
-    root.mid.right = Node(11)
-
-    root.right.mid = Node(13)
-    root.right.right = Node(16)
-
-    root.left.left.mid = Node(4)
-    root.left.left.mid.right = Node(5)
-    root.left.mid.right = Node(7)
-
-    root.right.mid.left = Node(14)
-    root.right.mid.right = Node(15)
-    root.right.right.mid = Node(17)
-
-    ternaryTreeToDoublyLinkedList(root)
-    printDoublyLinkedList(root)
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the ternary tree. The program requires O(h) extra space for the call stack, where `h` is the height of the tree.
 

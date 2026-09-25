@@ -20,67 +20,27 @@ We can use any of the following single line expressions to convert both elements
   * arr[0] = arr[1] = arr[0] & arr[1], or
   * arr[0] = arr[1] -= arr[1] // or arr[1] = arr[0] -= arr[0]
 
-This is demonstrated below in C++ and Java:
+This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-void convert(int arr[])
-{
-    arr[0] = arr[1] = arr[!arr[1]];
-    // arr[0] = arr[1] = arr[0] & arr[1];
+```ts
+function convert(arr: number[]): void {
+    arr[0] = arr[1] = arr[0] & arr[1];
     // arr[0] = arr[1] -= arr[1];
     // arr[1] = arr[0] -= arr[0];
 }
 
-int main()
-{
-    int first[] = { 0, 1 };
-    convert(first);
-    cout << first[0] << " " << first[1] << endl;
+// demo
+const first = [0, 1];
+convert(first);
+console.log(`${first[0]} ${first[1]}`);
 
-    int second[] = { 1, 0 };
-    convert(second);
-    cout << second[0] << " " << second[1] << endl;
+const second = [1, 0];
+convert(second);
+console.log(`${second[0]} ${second[1]}`);
 
-    int third[] = { 0, 0 };
-    convert(third);
-    cout << third[0] << " " << third[1] << endl;
-
-    return 0;
-}
-```
-
-**Output:** 0 0 0 0 0 0
-
-##
-
-```java
-class Main
-{
-    public static void convert(int[] arr)
-    {
-        arr[0] = arr[1] = arr[0] & arr[1];
-        // arr[0] = arr[1] -= arr[1];
-        // arr[1] = arr[0] -= arr[0];
-    }
-
-    public static void main(String[] args)
-    {
-        int[] first = { 0, 1 };
-        convert(first);
-        System.out.println(first[0] + " " + first[1]);
-
-        int[] second = { 1, 0 };
-        convert(second);
-        System.out.println(second[0] + " " + second[1]);
-
-        int[] third = { 0, 0 };
-        convert(third);
-        System.out.println(third[0] + " " + third[1]);
-    }
-}
+const third = [0, 0];
+convert(third);
+console.log(`${third[0]} ${third[1]}`);
 ```
 
 ## Method 2: Using negation (logical NOT) operator
@@ -91,66 +51,27 @@ We can use the negation operator with an assignment operator to convert both ele
   * arr[arr[1]] = arr[!arr[1]], or
   * arr[!arr[0]] = arr[!arr[1]]
 
-Following is the C++ and Java program that demonstrates it:
+Following is the TypeScript program that demonstrates it:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-void convert(int arr[])
-{
-    arr[!arr[0]] = arr[arr[0]];
-    // arr[arr[1]] = arr[!arr[1]];
-    // arr[!arr[0]] = arr[!arr[1]];
+```ts
+function convert(arr: number[]): void {
+    arr[Number(!arr[1])] = arr[arr[0]];
+    // arr[Number(!arr[0])] = arr[Number(!arr[1])];
+    // arr[Number(!arr[0])] = 0;
 }
 
-int main()
-{
-    int first[] = { 0, 1 };
-    convert(first);
-    cout << first[0] << " " << first[1] << endl;
+// demo
+const first = [0, 1];
+convert(first);
+console.log(`${first[0]} ${first[1]}`);
 
-    int second[] = { 1, 0 };
-    convert(second);
-    cout << second[0] << " " << second[1] << endl;
+const second = [1, 0];
+convert(second);
+console.log(`${second[0]} ${second[1]}`);
 
-    int third[] = { 0, 0 };
-    convert(third);
-    cout << third[0] << " " << third[1] << endl;
-
-    return 0;
-}
-```
-
-**Output:** 0 0 0 0 0 0
-
-##
-
-```java
-class Main
-{
-    public static void convert(int[] arr)
-    {
-        arr[arr[1]] = arr[arr[0]];
-        // arr[1 - arr[0]] = arr[1 - arr[1]];
-        // arr[arr[1]] = 0;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] first = { 0, 1 };
-        convert(first);
-        System.out.println(first[0] + " " + first[1]);
-
-        int[] second = { 1, 0 };
-        convert(second);
-        System.out.println(second[0] + " " + second[1]);
-
-        int[] third = { 0, 0 };
-        convert(third);
-        System.out.println(third[0] + " " + third[1]);
-    }
-}
+const third = [0, 0];
+convert(third);
+console.log(`${third[0]} ${third[1]}`);
 ```
 
 ## Method 3: Using only assignment operator
@@ -161,35 +82,27 @@ We can directly use an assignment operator to set both elements of the given bin
   * arr[1 – arr[0]] = arr[1 – arr[1]], or
   * arr[arr[1]] = 0
 
-The implementation can be seen below in C++ and Java:
+The implementation can be seen below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-void convert(int arr[])
-{
+```ts
+function convert(arr: number[]): void {
     arr[arr[1]] = arr[arr[0]];
     // arr[1 - arr[0]] = arr[1 - arr[1]];
     // arr[arr[1]] = 0;
 }
 
-int main()
-{
-    int first[] = { 0, 1 };
-    convert(first);
-    cout << first[0] << " " << first[1] << endl;
+// demo
+const first = [0, 1];
+convert(first);
+console.log(`${first[0]} ${first[1]}`);
 
-    int second[] = { 1, 0 };
-    convert(second);
-    cout << second[0] << " " << second[1] << endl;
+const second = [1, 0];
+convert(second);
+console.log(`${second[0]} ${second[1]}`);
 
-    int third[] = { 0, 0 };
-    convert(third);
-    cout << third[0] << " " << third[1] << endl;
-
-    return 0;
-}
+const third = [0, 0];
+convert(third);
+console.log(`${third[0]} ${third[1]}`);
 ```
 
 **Output:** 0 0 0 0 0 0

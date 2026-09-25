@@ -16,181 +16,56 @@ A naive solution would be to check if each element is present in all rows or not
 
 An efficient solution is to use a map. Start by inserting every element of the first row into an empty map. Then for every element in the remaining rows, if they are present on the map and occur for the first time in the current row, increment their value in the map by 1. Finally, print the element for the last row, if it has already appeared `M-1` times.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
+```ts
 // Function to find the common elements in all the rows of the specified matrix
-void findCommon(vector<vector<int>> const &mat)
-{
+function findCommon(mat: number[][]): void {
+
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return;
     }
 
-    unordered_map<int, int> map;
+    const d = new Map<number, number>();
 
-    for (int i = 0; i < mat.size(); i++)
-    {
-        for (int j = 0; j < mat[0].size(); j++)
-        {
+    for (let i = 0; i < mat.length; i++) {
+        for (let j = 0; j < mat[0].length; j++) {
+
             // insert elements of the first row into the map and
             // initialize them with a value of 1
-            if (i == 0) {
-                map[mat[0][j]] = 1;
+            if (i === 0) {
+                d.set(mat[0][j], 1);
 
                 // if matrix contains the single row, print all its elements
-                if (mat.size() == 1) {
-                    cout << mat[i][j] << " ";
+                if (mat.length === 1) {
+                    process.stdout.write(`${mat[i][j]} `);
                 }
             }
 
             // from the second row onwards, check if the current element exists
             // in the map and first in the current row
-            if (i > 0 && map[mat[i][j]] == i)
-            {
+            if (i > 0 && d.has(mat[i][j]) && d.get(mat[i][j]) === i) {
                 // increment the count of the element by 1
-                map[mat[i][j]] = i + 1;
+                d.set(mat[i][j], i + 1);
 
                 // if `i` represent the last row, print the element
-                if (i == mat.size() - 1) {
-                    cout << mat[i][j] << " ";
+                if (i === mat.length - 1) {
+                    process.stdout.write(`${mat[i][j]} `);
                 }
             }
         }
     }
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 2, 4, 3, 8, 7 },
-        { 4, 7, 1, 3, 6 },
-        { 3, 5, 2, 1, 3 },
-        { 4, 5, 0, 2, 3 },
-    };
+const mat = [
+    [2, 4, 3, 8, 7],
+    [4, 7, 1, 3, 6],
+    [3, 5, 2, 1, 3],
+    [4, 5, 0, 2, 3]
+];
 
-    findCommon(mat);
-
-    return 0;
-}
-```
-
-**Output:** 3
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Find the common elements in all the rows of the specified matrix
-    private static void findCommon(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return;
-        }
-
-        Map<Integer, Integer> map = new HashMap<>();
-
-        for (int i = 0; i < mat.length; i++)
-        {
-            for (int j = 0; j < mat[0].length; j++)
-            {
-                // insert elements of the first row into the map and
-                // initialize them with a value of 1
-                if (i == 0) {
-                    map.put(mat[0][j], 1);
-
-                    // if matrix contains the single row, print all its elements
-                    if (mat.length == 1) {
-                        System.out.print(mat[i][j] + " ");
-                    }
-                }
-
-                // from the second row onwards, check if the current element
-                // exists in the map and first in the current row
-                if (i > 0 && map.containsKey(mat[i][j]) && map.get(mat[i][j]) == i)
-                {
-                    // increment the count of the element by 1
-                    map.put(mat[i][j], i + 1);
-
-                    // if `i` represent the last row, print the element
-                    if (i == mat.length - 1) {
-                        System.out.print(mat[i][j] + " ");
-                    }
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 2, 4, 3, 8, 7 },
-            { 4, 7, 1, 3, 6 },
-            { 3, 5, 2, 1, 3 },
-            { 4, 5, 0, 2, 3 },
-        };
-
-        findCommon(mat);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the common elements in all the rows of the specified matrix
-def findCommon(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return set()
-
-    d = {}
-
-    for i in range(len(mat)):
-        for j in range(len(mat[0])):
-
-            # insert elements of the first row into the dictionary and
-            # initialize them with a value of 1
-            if i == 0:
-                d[mat[0][j]] = 1
-
-                # if matrix contains the single row, print all its elements
-                if len(mat) == 1:
-                    print(mat[i][j], end=' ')
-
-            # from the second row onwards, check if the current element exists
-            # in the dictionary and first in the current row
-            if i > 0 and mat[i][j] in d and d[mat[i][j]] == i:
-                # increment the count of the element by 1
-                d[mat[i][j]] = i + 1
-
-                # if `i` represent the last row, print the element
-                if i == len(mat) - 1:
-                    print(mat[i][j], end=' ')
-
-if __name__ == '__main__':
-
-    mat = [
-        [2, 4, 3, 8, 7],
-        [4, 7, 1, 3, 6],
-        [3, 5, 2, 1, 3],
-        [4, 5, 0, 2, 3]
-    ]
-
-    findCommon(mat)
+findCommon(mat);
 ```
 
 **Author:** Aditya Goel

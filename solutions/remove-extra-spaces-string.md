@@ -8,162 +8,78 @@ Write a program to [in-place](https://techiedelight.com/in-place-vs-out-of-place
 
 The idea is to iterate through the string’s characters and check if the current character is a space, non-space character, or a punctuation mark. If it is a punctuation mark, any preceding space, if present, is removed. If it is a space, remove it unless it just after a word or a punctuation mark.
 
-Following is the C and C++ implementation of it. The solution keeps track of the next empty position in the output string to facilitate the algorithm and handles the leading and trailing spaces separately.
+Following is a TypeScript implementation of it. The solution keeps track of the next empty position in the output string to facilitate the algorithm and handles the leading and trailing spaces separately.
 
-```c
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
+```ts
+// true when the character is a space
+const isSpace = (c: string): boolean => c === ' ';
 
-// Function to remove all extra whitespace from a string
-// (note that the string is passed by reference)
-void removeSpace(char *arr, int n)
-{
-    // space is 1 when a space character is found and
-    // 0 when any non-space character is found
-    int space = 0;
-
-    // `k` points to the next free position
-    int k = 0;
-
-    // iterate through the characters of the string
-    for (int i = 0; i < n; i++)
-    {
-        // handle leading spaces in the string
-        while (k == 0 && i < n && arr[i] == ' ') {
-            i++;
-        }
-
-        // if the current character is a space
-        if (arr[i] == ' ')
-        {
-            // if the flag was 0 earlier, i.e., the first occurrence of a
-            // space after a word
-            if (!space)
-            {
-                // copy current char (whitespace) at the next free index
-                // and set the flag
-                arr[k++] = arr[i];
-                space = 1;
-            }
-        }
-        // if the current character is a punctuation mark
-        else if (ispunct(arr[i]))
-        {
-            // if the last assigned character was a space, overwrite it
-            // with the current character
-            if (k > 0 && arr[k-1] == ' ') {
-                arr[k-1] = arr[i];
-            }
-            else {
-                // copy the current character at the next free index
-                arr[k++] = arr[i];
-            }
-            space = 0;
-        }
-        else {
-            // copy the current character at the next free index
-            arr[k++] = arr[i];
-            space = 0;
-        }
-    }
-
-    // handle trailing spaces in the string
-    arr[k] = '\0';
-}
-
-int main(void)
-{
-    char arr[] = " Hello .   This is   a C   program !! ";
-
-    removeSpace(arr, strlen(arr));
-    printf("%s", arr);
-
-    return 0;
-}
-```
-
-**Output:** Hello. This is a C program!!
-
-##
-
-```cpp
-#include <iostream>
-#include <string>
-#include <cctype>
-using namespace std;
-
-bool isSpace(char c) {
-    return c == ' ';
-}
+// true when the character is a punctuation mark
+const isPunct = (c: string): boolean => /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(c);
 
 // Function to remove all extra whitespace from a string
-// (note that the string is passed by reference)
-void removeSpace(string &s)
-{
+function removeSpace(s: string): string {
+    const chars = s.split('');
+
     // true when a whitespace character is found and false when
     // any non-space character is found
-    bool space = false;
+    let space = false;
 
     // `k` points to the next free position
-    int k = 0;
+    let k = 0;
 
     // iterate through the characters of the string
-    for (int i = 0; i < s.length(); i++)
-    {
+    for (let i = 0; i < chars.length; i++) {
         // handle leading spaces in the string
-        while (k == 0 && i < s.length() && isSpace(s[i])) {
+        while (k === 0 && i < chars.length && isSpace(chars[i])) {
             i++;
         }
 
+        if (i >= chars.length) {
+            break;
+        }
+
         // if the current character is a space
-        if (isSpace(s[i]))
-        {
+        if (isSpace(chars[i])) {
             // if the flag was false earlier, i.e., the first occurrence of a
             // space after a word
-            if (!space)
-            {
+            if (!space) {
                 // copy current char (whitespace) at the next free index
                 // and set the flag
-                s[k++] = s[i];
+                chars[k++] = chars[i];
                 space = true;
             }
         }
         // if the current character is a punctuation mark
-        else if (ispunct(s[i]))
-        {
+        else if (isPunct(chars[i])) {
             // if the last assigned character was a space, overwrite it
             // with the current character
-            if (k > 0 && isSpace(s[k-1])) {
-                s[k-1] = s[i];
+            if (k > 0 && isSpace(chars[k - 1])) {
+                chars[k - 1] = chars[i];
             }
             else {
                 // copy the current character at the next free index
-                s[k++] = s[i];
+                chars[k++] = chars[i];
             }
             space = false;
         }
         else {
             // copy the current character at the next free index
-            s[k++] = s[i];
+            chars[k++] = chars[i];
             space = false;
         }
     }
 
     // handle trailing spaces in the string
-    s.erase(s.begin() + k - 1, s.end());
+    return chars.slice(0, k).join('');
 }
 
-int main()
-{
-    string s = " Hello .   This is  a C++   program   !! ";
+const s = ' Hello .   This is   a C   program !! ';
 
-    removeSpace(s);
-    cout << s << endl;
-
-    return 0;
-}
+console.log(removeSpace(s));
 ```
+
+**Output:** Hello. This is a C program!!
 
 The time complexity of the above solution is O(n), where `n` is the length of the input string and doesn’t require any extra space for the conversion.
 

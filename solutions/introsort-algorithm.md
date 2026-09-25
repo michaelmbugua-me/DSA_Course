@@ -16,28 +16,27 @@ Introsort is a hybrid of [Quicksort](https://techiedelight.com/quicksort/) and [
 
 > [Practice this algorithm](https://techiedelight.com/?problem=SortArray)
 
-Following is the C++ implementation of the introsort algorithm is similar to the GNU Standard C++ library. It uses introsort with a maximum depth of `2.log2(n)`, followed by an insertion sort on partitions smaller than 16. The Quicksort algorithm is optimized by [better pivot selection](https://techiedelight.com/boost-quicksort-performance/).
+Following is the TypeScript implementation of the introsort algorithm, similar to the GNU Standard C++ library. It uses introsort with a maximum depth of `2.log2(n)`, followed by an insertion sort on partitions smaller than 16. The Quicksort algorithm is optimized by [better pivot selection](https://techiedelight.com/boost-quicksort-performance/).
 
-```
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-using namespace std;
+```ts
+// Function to swap two elements in the array
+const swap = (a: number[], i: number, j: number): void => {
+    const temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+};
 
 // Function to perform insertion sort on subarray `a[low…high]`
-void insertionsort(int a[], int low, int high)
-{
+function insertionsort(a: number[], low: number, high: number): void {
     // start from the second element in the subarray
     // (the element at index `low` is already sorted)
-    for (int i = low + 1; i <= high; i++)
-    {
-        int value = a[i];
-        int j = i;
+    for (let i = low + 1; i <= high; i++) {
+        const value = a[i];
+        let j = i;
 
         // find index `j` within the sorted subset a[0…i-1]
         // where element a[i] belongs
-        while (j > low && a[j - 1] > value)
-        {
+        while (j > low && a[j - 1] > value) {
             a[j] = a[j - 1];
             j--;
         }
@@ -50,91 +49,111 @@ void insertionsort(int a[], int low, int high)
 }
 
 // Function to partition the array using Lomuto partition scheme
-int partition(int a[], int low, int high)
-{
+function partition(a: number[], low: number, high: number): number {
     // Pick the rightmost element as a pivot from the array
-    int pivot = a[high];
+    const pivot = a[high];
 
     // elements less than the pivot will be pushed to the left of `pIndex`
     // elements more than the pivot will be pushed to the right of `pIndex`
     // equal elements can go either way
-    int pIndex = low;
+    let pIndex = low;
 
     // each time we find an element less than or equal to the pivot, `pIndex`
     // is incremented, and that element would be placed before the pivot.
-    for (int i = low; i < high; i++)
-    {
-        if (a[i] <= pivot)
-        {
-            swap(a[i], a[pIndex]);
+    for (let i = low; i < high; i++) {
+        if (a[i] <= pivot) {
+            swap(a, i, pIndex);
             pIndex++;
         }
     }
 
     // swap `pIndex` with pivot
-    swap (a[pIndex], a[high]);
+    swap(a, pIndex, high);
 
     // return `pIndex` (index of the pivot element)
     return pIndex;
 }
 
 // Quicksort randomized partition to rearrange elements across pivot
-int randPartition(int a[], int low, int high)
-{
+function randPartition(a: number[], low: number, high: number): number {
     // choose a random index between `[low, high]`
-    int pivotIndex = rand() % (high - low + 1) + low;
+    const pivotIndex = Math.floor(Math.random() * (high - low + 1)) + low;
 
     // swap the end element with the element present at a random index
-    swap(a[pivotIndex], a[high]);
+    swap(a, pivotIndex, high);
 
     // call the partition procedure
     return partition(a, low, high);
 }
 
+// Function to sift a heap rooted at index `i` (heapify-down)
+// max-heap built with plain array ops (JS has no builtin heap)
+function heapify(a: number[], i: number, size: number, offset: number): void {
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+    let largest = i;
+
+    if (left < size && a[offset + left] > a[offset + largest]) {
+        largest = left;
+    }
+    if (right < size && a[offset + right] > a[offset + largest]) {
+        largest = right;
+    }
+    if (largest !== i) {
+        swap(a, offset + i, offset + largest);
+        heapify(a, largest, size, offset);
+    }
+}
+
 // Function to perform heapsort on the given range of elements
-void heapsort(int *begin, int *end)
-{
-    make_heap(begin, end);
-    sort_heap(begin, end);
+function heapsort(a: number[], low: number, high: number): void {
+    const size = high - low + 1;
+
+    // build a max-heap
+    for (let i = Math.floor(size / 2) - 1; i >= 0; i--) {
+        heapify(a, i, size, low);
+    }
+
+    // repeatedly extract the max element
+    for (let i = size - 1; i > 0; i--) {
+        swap(a, low, low + i);
+        heapify(a, 0, i, low);
+    }
 }
 
 // Function to perform introsort on the given array
-void introsort(int a[], int *begin, int *end, int maxdepth)
-{
+function introsort(a: number[], low: number, high: number, maxdepth: number): void {
     // perform insertion sort if partition size is 16 or smaller
-    if ((end - begin) < 16) {
-        insertionsort(a, begin - a, end - a);
+    if ((high - low) < 16) {
+        insertionsort(a, low, high);
     }
     // perform heapsort if the maximum depth is 0
-    else if (maxdepth == 0) {
-        heapsort(begin, end + 1);
+    else if (maxdepth === 0) {
+        heapsort(a, low, high);
     }
     else {
         // otherwise, perform Quicksort
-        int pivot = randPartition(a, begin - a, end - a);
-        introsort(a, begin, a + pivot - 1, maxdepth - 1);
-        introsort(a, a + pivot + 1, end, maxdepth - 1);
+        const pivot = randPartition(a, low, high);
+        introsort(a, low, pivot - 1, maxdepth - 1);
+        introsort(a, pivot + 1, high, maxdepth - 1);
     }
 }
 
-int main()
-{
-    int a[] = { 5, 7, -8, 9, 10, 4, -7, 0, -12, 1, 6, 2, 3, -4, -15, 12 };
-    int n = sizeof(a) / sizeof(a[0]);
+(function main() {
+    const a = [5, 7, -8, 9, 10, 4, -7, 0, -12, 1, 6, 2, 3, -4, -15, 12];
+    const n = a.length;
 
     // get the maximum depth
-    int maxdepth = log(n) * 2;
+    const maxdepth = Math.floor(Math.log(n) * 2);
 
     // sort the array using introsort the algorithm
-    introsort(a, a, a + n - 1, maxdepth);
+    introsort(a, 0, n - 1, maxdepth);
 
     // print the sorted array
-    for (int i = 0; i < n; i++) {
-        cout << a[i] << " ";
+    for (const x of a) {
+        process.stdout.write(`${x} `);
     }
-
-    return 0;
-}
+})();
 ```
 
 **Output:** -15 -12 -8 -7 -4 0 1 2 3 4 5 6 7 9 10 12

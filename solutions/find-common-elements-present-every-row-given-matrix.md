@@ -14,221 +14,62 @@ For example,
 
 The idea is simple and efficient – create an empty map and insert all the first row elements into the map with their value set as 1. For each element of the remaining rows, check if it is present on the map or not. If the element is present on the map, check its count to see if it is present in all previous rows or not. If yes, increment its count by 1; otherwise, ignore the element.
 
-Following is the implementation in C++, Java, and Python based on the above idea. One particular case we need to handle that any duplicate entry in the same row should not get inserted into the map again.
+Following is the implementation in TypeScript based on the above idea. One particular case we need to handle that any duplicate entry in the same row should not get inserted into the map again.
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
+```ts
+// Function to find all common elements present in every row of a given matrix
+function findCommonElements(mat: number[][]): void {
 
-// Function to find all common elements present in every row
-// of a given matrix
-void findCommonElements(vector<vector<int>> const &mat)
-{
     // base case
-    if (mat.size() == 0) {
+    if (!mat || !mat.length) {
         return;
     }
 
     // `M × N` matrix
-    int M = mat.size();
-    int N = mat[0].size();
+    const M = mat.length;
+    const N = mat[0].length;
 
     // Create an empty map
-    unordered_map<int, int> map;
+    const d = new Map<number, number>();
 
     // Insert all elements of the first row into the map
     // with their value set as 1
-
-    for (int c = 0; c < N; c++) {
-        map.insert(pair<int, int>(mat[0][c], 1));
+    for (let c = 0; c < N; c++) {
+        d.set(mat[0][c], 1);
     }
 
     // Do for remaining rows
-    for (int r = 1; r < M; r++)
-    {
-        for (int c = 0; c < N; c++)
-        {
+    for (let r = 1; r < M; r++) {
+        for (let c = 0; c < N; c++) {
             // Get the current element
-            int curr = mat[r][c];
+            const curr = mat[r][c];
 
-            // If the current element is present on the map and its value
+            // if the current element is present in the map and its value
             // is the same as the row index, increment its value by 1.
             // This check also handles duplicate entries in the same row.
-
-            if (map.find(curr) != map.end() && map[curr] == r) {
-                map[curr] = r + 1;
+            if (d.has(curr) && d.get(curr) === r) {
+                d.set(curr, r + 1);
             }
         }
     }
 
     // Iterate over each entry in the map and print keys having
     // their value equal to `M` (number of rows in the matrix)
-
-    cout << "The common elements are: ";
-    for (auto it: map)
-    {
-        if (it.second == M) {
-            cout << it.first << " ";
-        }
-    }
+    console.log('The common elements are:', [...d.keys()].filter((k) => d.get(k) === M));
 }
 
-int main()
-{
-    vector<vector<int>> mat =
-    {
-        { 7, 1, 3, 5, 3, 6 },
-        { 2, 3, 6, 1, 1, 6 },
-        { 6, 1, 7, 2, 1, 4 },
-        { 6, 6, 7, 1, 3, 3 },
-        { 5, 5, 6, 1, 5, 4 },
-        { 3, 5, 6, 2, 7, 1 },
-        { 4, 1, 4, 3, 6, 4 },
-        { 4, 6, 1, 7, 4, 3 }
-    };
+const mat = [
+    [7, 1, 3, 5, 3, 6],
+    [2, 3, 6, 1, 1, 6],
+    [6, 1, 7, 2, 1, 4],
+    [6, 6, 7, 1, 3, 3],
+    [5, 5, 6, 1, 5, 4],
+    [3, 5, 6, 2, 7, 1],
+    [4, 1, 4, 3, 6, 4],
+    [4, 6, 1, 7, 4, 3]
+];
 
-    findCommonElements(mat);
-
-    return 0;
-}
-```
-
-**Output:** The common elements are: 6 1
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to find all common elements present in every row
-    // of a given matrix
-    public static void findCommonElements(int[][] mat)
-    {
-        // base case
-        if (mat == null || mat.length == 0) {
-            return;
-        }
-
-        // `M × N` matrix
-        int M = mat.length;
-        int N = mat[0].length;
-
-        // Create an empty map
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // Insert all elements of the first row into the map
-        // with their value set as 1
-
-        for (int c = 0; c < N; c++) {
-            map.put(mat[0][c], 1);
-        }
-
-        // Do for remaining rows
-        for (int r = 1; r < M; r++)
-        {
-            for (int c = 0; c < N; c++)
-            {
-                // Get the current element
-                int curr = mat[r][c];
-
-                // If the current element is present on the map and its value
-                // is the same as the row index, increment its value by 1.
-                // This check also handles duplicate entries in the same row.
-
-                if (map.containsKey(curr) && map.get(curr) == r) {
-                    map.put(curr, r + 1);
-                }
-            }
-        }
-
-        // Iterate over each entry in the map and print keys having
-        // their value equal to `M` (number of rows in the matrix)
-
-        System.out.print("The common elements are: ");
-        for (Map.Entry<Integer, Integer> entry: map.entrySet())
-        {
-            if (entry.getValue() == M) {
-                System.out.print(entry.getKey() + " ");
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] mat =
-        {
-            { 7, 1, 3, 5, 3, 6 },
-            { 2, 3, 6, 1, 1, 6 },
-            { 6, 1, 7, 2, 1, 4 },
-            { 6, 6, 7, 1, 3, 3 },
-            { 5, 5, 6, 1, 5, 4 },
-            { 3, 5, 6, 2, 7, 1 },
-            { 4, 1, 4, 3, 6, 4 },
-            { 4, 6, 1, 7, 4, 3 }
-        };
-
-        findCommonElements(mat);
-    }
-}
-```
-
-##
-
-```python3
-# Function to find all common elements present in every row of a given matrix
-def findCommonElements(mat):
-
-    # base case
-    if not mat or not len(mat):
-        return set()
-
-    # `M × N` matrix
-    M = len(mat)
-    N = len(mat[0])
-
-    # Create an empty dictionary
-    d = {}
-
-    # Insert all elements of the first row into the dictionary
-    # with their value set as 1
-    for c in range(N):
-        d[mat[0][c]] = 1
-
-    # Do for remaining rows
-    for r in range(1, M):
-        for c in range(N):
-            # Get the current element
-            curr = mat[r][c]
-
-            # if the current element is present in the dictionary and its value
-            # is the same as the row index, increment its value by 1.
-            # This check also handles duplicate entries in the same row.
-            if curr in d and d[curr] == r:
-                d[curr] = r + 1
-
-    # Iterate over each entry in the dictionary and print keys having
-    # their value equal to `M` (number of rows in the matrix)
-    print('The common elements are:', [k for k in d.keys() if d.get(k) == M])
-
-if __name__ == '__main__':
-
-    mat = [
-        [7, 1, 3, 5, 3, 6],
-        [2, 3, 6, 1, 1, 6],
-        [6, 1, 7, 2, 1, 4],
-        [6, 6, 7, 1, 3, 3],
-        [5, 5, 6, 1, 5, 4],
-        [3, 5, 6, 2, 7, 1],
-        [4, 1, 4, 3, 6, 4],
-        [4, 6, 1, 7, 4, 3]
-    ]
-
-    findCommonElements(mat)
+findCommonElements(mat);
 ```
 
 The time complexity of the proposed solution is O(M × N) for an `M × N` matrix and doesn’t require any extra space.

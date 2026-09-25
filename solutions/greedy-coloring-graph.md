@@ -30,282 +30,76 @@ Greedy coloring _considers the vertices of the graph in sequence and assigns eac
 
 **Greedy coloring doesn’t always use the minimum number of colors possible to color a graph.** For a graph of maximum degree `x`, greedy coloring will use at most `x+1` color. Greedy coloring can be arbitrarily bad; for example, the following crown graph (a complete bipartite graph), having `n` vertices, can be 2–colored (refer left image), but greedy coloring resulted in `n/2` colors (refer right image).
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <set>
-using namespace std;
+```ts
+// A class to represent a graph object
+class Graph {
+    // adjacency list
+    adjList: number[][];
 
-// Data structure to store a graph edge
-struct Edge {
-    int src, dest;
-};
-
-class Graph
-{
-public:
-    // a vector of vectors to represent an adjacency list
-    vector<vector<int>> adjList;
-
-    // Constructor
-    Graph(vector<Edge> const &edges, int n)
-    {
-        // resize the vector to hold `n` elements of type `vector<int>`
-        adjList.resize(n);
+    constructor(edges: [number, number][], n: number) {
+        this.adjList = Array.from({ length: n }, () => []);
 
         // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.src;
-            int dest = edge.dest;
-
-            adjList[src].push_back(dest);
-            adjList[dest].push_back(src);
+        for (const [src, dest] of edges) {
+            this.adjList[src].push(dest);
+            this.adjList[dest].push(src);
         }
     }
-};
-
-// Add more colors for graphs with many more vertices
-string color[] =
-{
-    "", "BLUE", "GREEN", "RED", "YELLOW", "ORANGE", "PINK",
-    "BLACK", "BROWN", "WHITE", "PURPLE", "VOILET"
-};
+}
 
 // Function to assign colors to vertices of a graph
-void colorGraph(Graph const &graph, int n)
-{
+function colorGraph(graph: Graph, n: number, colors: string[]): void {
+
     // keep track of the color assigned to each vertex
-    unordered_map<int, int> result;
+    const result = new Map<number, number>();
 
     // assign a color to vertex one by one
-    for (int u = 0; u < n; u++)
-    {
-        // set to store the color of adjacent vertices of `u`
-        set<int> assigned;
+    for (let u = 0; u < n; u++) {
 
         // check colors of adjacent vertices of `u` and store them in a set
-        for (int i: graph.adjList[u])
-        {
-            if (result[i]) {
-                assigned.insert(result[i]);
-            }
-        }
+        const assigned = new Set<number>(
+            graph.adjList[u].filter(i => result.has(i)).map(i => result.get(i)!)
+        );
 
         // check for the first free color
-        int color = 1;
-        for (auto &c: assigned )
-        {
-            if (color != c) {
+        let color = 1;
+        for (const c of Array.from(assigned).sort((a, b) => a - b)) {
+            if (color !== c) {
                 break;
             }
-            color++;
+            color = color + 1;
         }
 
         // assign vertex `u` the first available color
-        result[u] = color;
+        result.set(u, color);
     }
 
-    for (int v = 0; v < n; v++)
-    {
-        cout << "The color assigned to vertex " << v << " is "
-             << color[result[v]] << endl;
+    for (let v = 0; v < n; v++) {
+        console.log(`The color assigned to vertex ${v} is ${colors[result.get(v)!]}`);
     }
 }
 
 // Greedy coloring of a graph
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges = {
-        {0, 1}, {0, 4}, {0, 5}, {4, 5}, {1, 4}, {1, 3}, {2, 3}, {2, 4}
-    };
 
-    // total number of nodes in the graph (labelled from 0 to 5)
-    int n = 6;
+// Add more colors for graphs with many more vertices
+const colors = ['', 'BLUE', 'GREEN', 'RED', 'YELLOW', 'ORANGE', 'PINK',
+    'BLACK', 'BROWN', 'WHITE', 'PURPLE', 'VOILET'];
 
-    // build a graph from the given edges
-    Graph graph(edges, n);
+// List of graph edges as per the above diagram
+const edges: [number, number][] = [
+    [0, 1], [0, 4], [0, 5], [4, 5], [1, 4], [1, 3], [2, 3], [2, 4]
+];
 
-    // color graph using the greedy algorithm
-    colorGraph(graph, n);
+// total number of nodes in the graph (labelled from 0 to 5)
+const n = 6;
 
-    return 0;
-}
-```
+// build a graph from the given edges
+const graph = new Graph(edges, n);
 
-##
-
-```java
-import java.util.*;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest;
-
-    public Edge(int source, int dest)
-    {
-        this.source = source;
-        this.dest = dest;
-    }
-}
-
-// A class to represent a graph object
-class Graph
-{
-    // A list of lists to represent an adjacency list
-    List<List<Integer>> adjList = null;
-
-    // Constructor
-    Graph(List<Edge> edges, int n)
-    {
-        adjList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adjList.add(new ArrayList<>());
-        }
-
-        // add edges to the undirected graph
-        for (Edge edge: edges)
-        {
-            int src = edge.source;
-            int dest = edge.dest;
-
-            adjList.get(src).add(dest);
-            adjList.get(dest).add(src);
-        }
-    }
-}
-
-class Main
-{
-    // Add more colors for graphs with many more vertices
-    private static String[] color = {
-            "", "BLUE", "GREEN", "RED", "YELLOW", "ORANGE", "PINK",
-            "BLACK", "BROWN", "WHITE", "PURPLE", "VOILET"
-    };
-
-    // Function to assign colors to vertices of a graph
-    public static void colorGraph(Graph graph, int n)
-    {
-        // keep track of the color assigned to each vertex
-        Map<Integer, Integer> result = new HashMap<>();
-
-        // assign a color to vertex one by one
-        for (int u = 0; u < n; u++)
-        {
-            // set to store the color of adjacent vertices of `u`
-            Set<Integer> assigned = new TreeSet<>();
-
-            // check colors of adjacent vertices of `u` and store them in a set
-            for (int i: graph.adjList.get(u))
-            {
-                if (result.containsKey(i)) {
-                    assigned.add(result.get(i));
-                }
-            }
-
-            // check for the first free color
-            int color = 1;
-            for (Integer c: assigned)
-            {
-                if (color != c) {
-                    break;
-                }
-                color++;
-            }
-
-            // assign vertex `u` the first available color
-            result.put(u, color);
-        }
-
-        for (int v = 0; v < n; v++)
-        {
-            System.out.println("The color assigned to vertex " + v + " is "
-                    + color[result.get(v)]);
-        }
-    }
-
-    // Greedy coloring of a graph
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                new Edge(0, 1), new Edge(0, 4), new Edge(0, 5), new Edge(4, 5),
-                new Edge(1, 4), new Edge(1, 3), new Edge(2, 3), new Edge(2, 4)
-        );
-
-        // total number of nodes in the graph (labelled from 0 to 5)
-        int n = 6;
-
-        // build a graph from the given edges
-        Graph graph = new Graph(edges, n);
-
-        // color graph using the greedy algorithm
-        colorGraph(graph, n);
-    }
-}
-```
-
-##
-
-```python3
-# A class to represent a graph object
-class Graph:
-    def __init__(self, edges, n):
-        self.adjList = [[] for _ in range(n)]
-
-        # add edges to the undirected graph
-        for (src, dest) in edges:
-            self.adjList[src].append(dest)
-            self.adjList[dest].append(src)
-
-# Function to assign colors to vertices of a graph
-def colorGraph(graph, n):
-
-    # keep track of the color assigned to each vertex
-    result = {}
-
-    # assign a color to vertex one by one
-    for u in range(n):
-
-        # check colors of adjacent vertices of `u` and store them in a set
-        assigned = set([result.get(i) for i in graph.adjList[u] if i in result])
-
-        # check for the first free color
-        color = 1
-        for c in assigned:
-            if color != c:
-                break
-            color = color + 1
-
-        # assign vertex `u` the first available color
-        result[u] = color
-
-    for v in range(n):
-        print(f'Color assigned to vertex {v} is {colors[result[v]]}')
-
-# Greedy coloring of a graph
-if __name__ == '__main__':
-
-    # Add more colors for graphs with many more vertices
-    colors = ['', 'BLUE', 'GREEN', 'RED', 'YELLOW', 'ORANGE', 'PINK',
-            'BLACK', 'BROWN', 'WHITE', 'PURPLE', 'VOILET']
-
-    # List of graph edges as per the above diagram
-    edges = [(0, 1), (0, 4), (0, 5), (4, 5), (1, 4), (1, 3), (2, 3), (2, 4)]
-
-    # total number of nodes in the graph (labelled from 0 to 5)
-    n = 6
-
-    # build a graph from the given edges
-    graph = Graph(edges, n)
-
-    # color graph using the greedy algorithm
-    colorGraph(graph, n)
+// color graph using the greedy algorithm
+colorGraph(graph, n, colors);
 ```
 
 **Output:** The color assigned to vertex 0 is BLUE The color assigned to vertex 1 is GREEN The color assigned to vertex 2 is BLUE The color assigned to vertex 3 is RED The color assigned to vertex 4 is RED The color assigned to vertex 5 is GREEN

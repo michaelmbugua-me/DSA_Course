@@ -23,246 +23,77 @@ Therefore, in binary,
 
 So, the idea is to extract each bit from both integers one by one from LSB to MSB and store their addition result in an array of the size of an integer. If addition results in a carry, propagate the carry to the next pair of bits.
 
-The algorithm can be implemented as follows in C++, Java, and Python using `LEFT` shift and `AND` binary operator:
+The algorithm can be implemented as follows in TypeScript using `LEFT` shift and `AND` binary operator:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <bitset>
-using namespace std;
-
-// A macro that defines the size of an integer
-#define INT_SIZE sizeof(int) * 8
-
+```ts
 // Function to add `x` and `y` in binary
-vector<int> add(int x, int y)
-{
-    int carry = 0;
-    int n = INT_SIZE;
+function append(x: number, y: number, n: number): string {
 
-    // create an array to store the binary sum
-    vector<int> arr(n);
+    let carry = 0;
 
-    for (int i = 0; i < n; i++)
-    {
+    // create a list to store the binary sum
+    const result: number[] = new Array(n).fill(0);
+
+    for (let i = 0; i < n; i++) {
+
         // if `x` is 1
-        if (x & (1 << i))
-        {
-            if (y & (1 << i))               // if both `x` and `y` are 1
-            {
-                if (carry) {
-                    arr[n - i - 1] = 1;     // carry = 1
-                }
-                else {
-                    arr[n - i - 1] = 0, carry = 1;
+        if (x & (1 << i)) {
+            // if both `x` and `y` are 1
+            if (y & (1 << i)) {
+                if (carry === 1) {
+                    result[n - i - 1] = 1;      // carry = 1
+                } else {
+                    result[n - i - 1] = 0;
+                    carry = 1;
                 }
             }
-            else                            // `x` is 1, `y` is 0
-            {
-                if (carry) {
-                    arr[n - i - 1] = 0;     // carry = 1
-                }
-                else {
-                    arr[n - i - 1] = 1;     // carry = 0
+            // `x` is 1, `y` is 0
+            else {
+                if (carry === 1) {
+                    result[n - i - 1] = 0;      // carry = 1
+                } else {
+                    result[n - i - 1] = 1;      // carry = 0
                 }
             }
         }
         // if `x` is 0
         else {
-            if (y & (1 << i))               // `x` is 0, `y` is 1
-            {
-                if (carry) {
-                    arr[n - i - 1] = 0;     // carry = 1
-                }
-                else {
-                    arr[n - i - 1] = 1;     // carry = 0
+            if (y & (1 << i)) {                 // `x` is 0, `y` is 1
+                if (carry === 1) {
+                    result[n - i - 1] = 0;      // carry = 1
+                } else {
+                    result[n - i - 1] = 1;      // carry = 0
                 }
             }
-            else                            // both `x` and `y` are 0
-            {
-                if (carry == 1) {
-                    arr[n - i - 1] = 1, carry = 0;
-                }
-                else {
-                    arr[n - i - 1] = 0;     // carry = 0
+            else {                              // both `x` and `y` are 0
+                if (carry === 1) {
+                    result[n - i - 1] = 1;
+                    carry = 0;
+                } else {
+                    result[n - i - 1] = 0;      // carry = 0
                 }
             }
         }
     }
 
-    return arr;
+    return result.join('');
 }
 
-int main()
-{
-    int x = 12731, y = 38023;
+const x = 12731;
+const y = 38023;
 
-    cout << "x (" << x << ") in binary is " << bitset<32>(x) << endl;
-    cout << "y (" << y << ") in binary is " << bitset<32>(y) << endl;
+const SIZE = 32;        // Assume 32-bit integer
 
-    vector<int> arr = add(x, y);
+const toBinaryString = (n: number): string => n.toString(2).padStart(SIZE, '0');
 
-    cout << "\nx + y is ";
-    for (unsigned i = 0; i < INT_SIZE; i++) {
-        cout << arr[i];
-    }
+console.log(`x ${x} in binary is ${toBinaryString(x)}`);
+console.log(`y ${y} in binary is ${toBinaryString(y)}`);
 
-    return 0;
-}
+const result = append(x, y, SIZE);
+console.log(`x + y is ${result}`);
 ```
 
 **Output:** x (12731) in binary is 00000000000000000011000110111011 y (38023) in binary is 00000000000000001001010010000111 x + y is 00000000000000001100011001000010
-
-##
-
-```java
-class Main
-{
-    public static String toBinaryString(int n)
-    {
-        return String.format("%32s", Integer.toBinaryString(n))
-                    .replaceAll(" ", "0");
-    }
-
-    // Function to add `x` and `y` in binary
-    public static int[] add(int x, int y)
-    {
-        int carry = 0;
-        int n = Integer.SIZE;
-
-        // create an array to store the binary sum
-        int[] arr = new int[n];
-
-        for (int i = 0; i < n; i++)
-        {
-            // if `x` is 1
-            if ((x & (1 << i)) != 0)
-            {
-                if ((y & (1 << i)) != 0)        // if both `x` and `y` are 1
-                {
-                    if (carry == 1) {
-                        arr[n - i - 1] = 1;     // carry = 1
-                    }
-                    else {
-                        arr[n - i - 1] = 0;
-                        carry = 1;
-                    }
-                }
-                else                            // `x` is 1, `y` is 0
-                {
-                    if (carry == 1) {
-                        arr[n - i - 1] = 0;     // carry = 1
-                    }
-                    else {
-                        arr[n - i - 1] = 1;     // carry = 0
-                    }
-                }
-            }
-            // if `x` is 0
-            else {
-                if ((y & (1 << i)) != 0)        // `x` is 0, `y` is 1
-                {
-                    if (carry == 1) {
-                        arr[n - i - 1] = 0;     // carry = 1
-                    }
-                    else {
-                        arr[n - i - 1] = 1;     // carry = 0
-                    }
-                }
-                else                            // both `x` and `y` are 0
-                {
-                    if (carry == 1)
-                    {
-                        arr[n - i - 1] = 1;
-                        carry = 0;
-                    }
-                    else {
-                        arr[n - i - 1] = 0;     // carry = 0
-                    }
-                }
-            }
-        }
-
-        return arr;
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 12731, y = 38023;
-
-        System.out.println("x (" + x + ") in binary is " + toBinaryString(x));
-        System.out.println("y (" + y + ") in binary is " + toBinaryString(y));
-
-        int[] arr = add(x, y);
-
-        System.out.print("x + y is ");
-        for (int i = 0; i < Integer.SIZE; i++) {
-            System.out.printf("%d", arr[i]);
-        }
-    }
-}
-```
-
-##
-
-```python3
-# Function to add `x` and `y` in binary
-def append(x, y):
-
-    carry = 0
-    n = SIZE
-
-    # create a list to store the binary sum
-    result = [None] * n
-
-    for i in range(n):
-
-        # if `x` is 1
-        if x & (1 << i):
-            # if both `x` and `y` are 1
-            if y & (1 << i):
-                if carry == 1:
-                    result[n - i - 1] = 1     # carry = 1
-                else:
-                    result[n - i - 1] = 0
-                    carry = 1
-            # `x` is 1, `y` is 0
-            else:
-                if carry == 1:
-                    result[n - i - 1] = 0     # carry = 1
-                else:
-                    result[n - i - 1] = 1     # carry = 0
-
-        # if `x` is 0
-        else:
-            if y & (1 << i): # `x` is 0, `y` is 1
-                if carry == 1:
-                    result[n - i - 1] = 0     # carry = 1
-                else:
-                    result[n - i - 1] = 1     # carry = 0
-
-            else:    # both `x` and `y` are 0
-                if carry == 1:
-                    result[n - i - 1] = 1
-                    carry = 0
-                else:
-                    result[n - i - 1] = 0     # carry = 0
-
-    return ''.join(map(str, result))
-
-if __name__ == '__main__':
-
-    x = 12731
-    y = 38023
-
-    SIZE = 32        # Assume 32-bit integer
-
-    print(f'x {x} in binary is', bin(x))
-    print(f'y {y} in binary is', bin(y))
-
-    result = append(x, y)
-    print('x + y is', result)
-```
 
 Check similar implementation using `RIGHT` shift and `AND` binary operator [here](https://techiedelight.com/compiler/?run=4JOhE4).
 

@@ -16,106 +16,34 @@ The idea is simple. First, partition the given rod of length `n` into two parts 
 
 rodcut(n) = max { n, i * rodcut(n – i) } where 1 <= i <= n
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-using namespace std;
-
+```ts
 // Function to find the best way to cut a rod of length `n`
 // where the rod of length `i` has price `i`
-int findMaxProfit(int n)
-{
+function findMaxProfit(n: number): number {
+
     // base case
     if (n <= 1) {
         return n;
     }
 
     // rod of length `n` has at least cost of `n`
-    int maxValue = n;
+    let maxValue = n;
 
     // one by one, partition the given rod of length `n` into two parts of
     // length (1, n-1), (2, n-2), … (n-1 , 1), (n, 0) and take maximum
-    for (int i = 1; i <= n; i++) {
-        maxValue = max(maxValue, i * findMaxProfit(n - i));
+    for (let i = 1; i <= n; i++) {
+        maxValue = Math.max(maxValue, i * findMaxProfit(n - i));
     }
 
     return maxValue;
 }
 
-int main()
-{
-    // `n` is rod length
-    int n = 15;        // 3 × 5 times
+// `n` is rod length
+const n = 15;        // 3 × 5 times
 
-    cout << "The Maximum profit is " << findMaxProfit(n);
-
-    return 0;
-}
-```
-
-**Output:** The maximum profit is 243
-
-##
-
-```java
-class Main
-{
-    // Function to find the best way to cut a rod of length `n`
-    // where the rod of length `i` has price `i`
-    public static int findMaxProfit(int n)
-    {
-        // base case
-        if (n <= 1) {
-            return n;
-        }
-
-        // rod of length `n` has at least cost of `n`
-        int maxValue = n;
-
-        // one by one, partition the given rod of length `n` into two parts of
-        // length (1, n-1), (2, n-2), … (n-1 , 1), (n, 0) and take maximum
-        for (int i = 1; i <= n; i++) {
-            maxValue = Integer.max(maxValue, i * findMaxProfit(n - i));
-        }
-
-        return maxValue;
-    }
-
-    public static void main(String[] args)
-    {
-        int n = 15;        // 3 × 5 times
-        System.out.println("The maximum profit is " + findMaxProfit(n));
-    }
-}
-```
-
-##
-
-```python3
-# Function to find the best way to cut a rod of length `n`
-# where the rod of length `i` has price `i`
-def findMaxProfit(n):
-
-    # base case
-    if n <= 1:
-        return n
-
-    # rod of length `n` has at least cost of `n`
-    maxValue = n
-
-    # one by one, partition the given rod of length `n` into two parts of
-    # length (1, n-1), (2, n-2), … (n-1 , 1), (n, 0) and take maximum
-    for i in range(1, n + 1):
-        maxValue = max(maxValue, i * findMaxProfit(n - i))
-
-    return maxValue
-
-if __name__ == '__main__':
-
-    n = 15        # 3 × 5 times
-    print('The maximum profit is', findMaxProfit(n))
+console.log(`The maximum profit is ${findMaxProfit(n)}`);
 ```
 
 The time complexity of the above solution is O(nn) and occupies space in the call stack, where `n` is the rod length.
@@ -126,30 +54,22 @@ As we can see, the same subproblems (highlighted in the same color) are getting 
 
 We will solve this problem in a bottom-up manner. In the bottom-up approach, we solve smaller subproblems first, then solve larger subproblems from them. The following bottom-up approach computes `T[i]`, which stores the maximum profit achieved from the rod of length `i` for each `1 <= i <= n`. It uses the value of smaller values `i` already computed.
 
-Following is the C++, Java, and Python implementation of the idea:
+Following is a TypeScript implementation of the idea:
 
-```cpp
-#include <iostream>
-#include <algorithm>
-using namespace std;
+```ts
+function findMaxProfit(n: number): number {
 
-int findMaxProfit(int n)
-{
     // `T[i]` stores the maximum profit achieved from the rod of length `i`.
-    int T[n + 1];
-
     // A rod of length `i` has at least cost `i`
-    for (int i = 0; i <= n; i++) {
-        T[i] = i;
-    }
+    const T: number[] = Array.from({ length: n + 1 }, (_, i) => i);
 
     // consider rod of length `i`
-    for (int i = 2; i <= n; i++)
+    for (let i = 2; i <= n; i++)
     {
         // divide the rod of length `i` into two rods of length `j`
         // and `i-j` each and take maximum
-        for (int j = 1; j <= i; j++) {
-            T[i] = max(T[i], j * T[i - j]);
+        for (let j = 1; j <= i; j++) {
+            T[i] = Math.max(T[i], j * T[i - j]);
         }
     }
 
@@ -157,84 +77,10 @@ int findMaxProfit(int n)
     return T[n];
 }
 
-int main()
-{
-    // rod length
-    int n = 15;
+// rod length
+const n = 15;
 
-    cout << "The maximum profit is " << findMaxProfit(n);
-
-    return 0;
-}
-```
-
-**Output:** The maximum profit is 243
-
-##
-
-```java
-class Main
-{
-    public static int findMaxProfit(int n)
-    {
-        // `T[i]` stores the maximum profit achieved from the rod of length `i`.
-        int[] T = new int[n + 1];
-
-        // A rod of length `i` has at least cost `i`
-        for (int i = 0; i <= n; i++) {
-            T[i] = i;
-        }
-
-        // consider rod of length `i`
-        for (int i = 2; i <= n; i++)
-        {
-            // divide the rod of length `i` into two rods of length `j`
-            // and `i-j` each and take maximum
-            for (int j = 1; j <= i; j++) {
-                T[i] = Integer.max(T[i], j * T[i - j]);
-            }
-        }
-
-        // `T[n]` stores the maximum profit achieved from the rod of length `n`
-        return T[n];
-    }
-
-    public static void main(String[] args)
-    {
-        // rod length
-        int n = 15;
-
-        System.out.println("The maximum profit is " + findMaxProfit(n));
-    }
-}
-```
-
-##
-
-```python3
-def findMaxProfit(n):
-
-    # `T[i]` stores the maximum profit achieved from the rod of length `i`.
-    # A rod of length `i` has at least cost `i`
-    T = [i for i in range(n + 1)]
-
-    # consider rod of length `i`
-    for i in range(2, n + 1):
-
-        # divide the rod of length `i` into two rods of length `j`
-        # and `i-j` each and take maximum
-        for j in range(1, i + 1):
-            T[i] = max(T[i], j * T[i - j])
-
-    # `T[n]` stores the maximum profit achieved from the rod of length `n`
-    return T[n]
-
-if __name__ == '__main__':
-
-    # rod length
-    n = 15
-
-    print('The maximum profit is', findMaxProfit(n))
+console.log(`The maximum profit is ${findMaxProfit(n)}`);
 ```
 
 The time complexity of the above solution is O(n2) and requires O(n) extra space, where `n` is the rod length.

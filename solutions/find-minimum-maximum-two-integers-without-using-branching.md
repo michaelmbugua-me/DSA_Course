@@ -26,72 +26,24 @@ If `x` is more than `y`, then `-(x < y)` will be 0, so the result `r` is:
 
 r = x ^ ((x ^ y) & -(x < y)) r = x ^ ((x ^ y) & 0) r = x ^ 0 r = x
 
-This approach is demonstrated below in C++, Java, and Python:
+This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
-
-int findMin(int x, int y) {
-    return y ^ ((x ^ y) & -(x < y));
+```ts
+function findMin(x: number, y: number): number {
+    return y ^ ((x ^ y) & -(x < y ? 1 : 0));
 }
 
-int findMax(int x, int y) {
-    return x ^ ((x ^ y) & -(x < y));
+function findMax(x: number, y: number): number {
+    return x ^ ((x ^ y) & -(x < y ? 1 : 0));
 }
 
-int main()
-{
-    int x = 2, y = 4;
+const x = 2, y = 4;
 
-    cout << "min(" << x << ", " << y << ") is " << findMin(x, y) << endl;
-    cout << "max(" << x << ", " << y << ") is " << findMax(x, y) << endl;
-
-    return 0;
-}
+console.log(`min(${x}, ${y}) is ${findMin(x, y)}`);
+console.log(`max(${x}, ${y}) is ${findMax(x, y)}`);
 ```
 
 **Output:** min(2, 4) is 2 max(2, 4) is 4
-
-##
-
-```java
-class Main
-{
-    public static int findMin(int x, int y) {
-        return y ^ ((x ^ y) & -((x < y) ? 1 : 0));
-    }
-
-    public static int findMax(int x, int y) {
-        return x ^ ((x ^ y) & -((x < y) ? 1 : 0));
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 2, y = 4;
-
-        System.out.println("min(" + x + ", " + y + ") is " + findMin(x, y));
-        System.out.println("max(" + x + ", " + y + ") is " + findMax(x, y));
-    }
-}
-```
-
-##
-
-```python3
-def findMin(x, y):
-    return y ^ ((x ^ y) & -(1 if (x < y) else 0))
-
-def findMax(x, y):
-    return x ^ ((x ^ y) & -(1 if (x < y) else 0))
-
-if __name__ == '__main__':
-
-    x, y = 2, 4
-
-    print(f'min({x}, {y}) is', findMin(x, y))
-    print(f'max({x}, {y}) is', findMax(x, y))
-```
 
 ## Approach 2
 
@@ -107,69 +59,21 @@ r = y + ((x – y) & ((x – y) >> 31)) r = y + ((x – y) & 0) r = y + (0) r = 
 
 Similarly, we can find the `maximum(x, y)` by using `x - ((x - y) & ((x - y) >> 31))`. The explanation is left for the users as an exercise.
 
-```cpp
-#include <iostream>
-using namespace std;
-
-int findMin(int x, int y) {
+```ts
+function findMin(x: number, y: number): number {
     return y + ((x - y) & ((x - y) >> 31));
 }
 
-int findMax(int x, int y) {
+function findMax(x: number, y: number): number {
     return x - ((x - y) & ((x - y) >> 31));
 }
 
-int main()
-{
-    int x = 2, y = 4;
+const x = 2, y = 4;
 
-    cout << "min(" << x << ", " << y << ") is " << findMin(x, y) << endl;
-    cout << "max(" << x << ", " << y << ") is " << findMax(x, y) << endl;
-
-    return 0;
-}
+console.log(`min(${x}, ${y}) is ${findMin(x, y)}`);
+console.log(`max(${x}, ${y}) is ${findMax(x, y)}`);
 ```
 
 **Output:** min(2, 4) is 2 max(2, 4) is 4
-
-##
-
-```java
-class Main
-{
-    public static int findMin(int x, int y) {
-        return y + ((x - y) & ((x - y) >> 31));
-    }
-
-    public static int findMax(int x, int y) {
-        return x - ((x - y) & ((x - y) >> 31));
-    }
-
-    public static void main(String[] args)
-    {
-        int x = 2, y = 4;
-
-        System.out.println("min(" + x + ", " + y + ") is " + findMin(x, y));
-        System.out.println("max(" + x + ", " + y + ") is " + findMax(x, y));
-    }
-}
-```
-
-##
-
-```python3
-def findMin(x, y):
-    return y + ((x - y) & ((x - y) >> 31))
-
-def findMax(x, y):
-    return x - ((x - y) & ((x - y) >> 31))
-
-if __name__ == '__main__':
-
-    x, y = 2, 4
-
-    print(f'min({x}, {y}) is', findMin(x, y))
-    print(f'max({x}, {y}) is', findMax(x, y))
-```
 
 **References:** <https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax>

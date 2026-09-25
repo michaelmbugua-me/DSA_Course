@@ -12,184 +12,57 @@ For example,
 
 The idea is to maintain search space by maintaining two indexes (`low` and `high`) that initially points to two endpoints of the array. Then loop if low is less than the `high` index and reduce the search space `arr[low…high]` at each iteration of the loop by comparing the sum of elements present at index `low` and `high` with 0. We increment index `low` if the sum is less than the 0; otherwise, decrement index `high` if the sum is more than the 0. We also maintain the minimum absolute difference among all pairs present at `low` and `high` index.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <cstdlib>
-#include <climits>
-using namespace std;
-
+```ts
 // Function to find a pair in an array with an absolute minimum sum
-void findPair(int arr[], int n)
-{
-    if (n < 2) {
+function findPair(A: number[]): void {
+    if (A.length < 2) {
         return;
     }
 
     // sort the array if it is unsorted
-    // sort(arr, arr + n);
 
     // maintain two indexes pointing to endpoints of the array
-    int low = 0;
-    int high = n - 1;
+    let low = 0;
+    let high = A.length - 1;
 
     // `min` stores the minimum absolute difference
-    int min = INT_MAX;
-    int i, j;
+    let min = Number.MAX_SAFE_INTEGER;
+    let i = 0, j = 0;
 
-    // reduce the search space `arr[low…high]` at each iteration of the loop
+    // reduce the search space `A[low…high]` at each iteration of the loop
 
     // loop if `low` is less than `high`
-    while (low < high)
-    {
+    while (low < high) {
         // update the minimum if the current absolute sum is less
-        if (abs(arr[high] + arr[low]) < min)
-        {
-            min = abs(arr[high] + arr[low]);
+        if (Math.abs(A[high] + A[low]) < min) {
+            min = Math.abs(A[high] + A[low]);
             i = low;
             j = high;
         }
 
         // optimization: pair with zero-sum is found
-        if (min == 0) {
+        if (min === 0) {
             break;
         }
 
         // increment `low` index if the total is less than 0;
         // decrement `high` index if the total is more than 0
-        (arr[high] + arr[low] < 0)? low++: high--;
+        if (A[high] + A[low] < 0) {
+            low++;
+        } else {
+            high--;
+        }
     }
 
     // print the pair
-    cout << "Pair found (" << arr[i] << ", " << arr[j] << ")";
+    console.log(`Pair found (${A[i]}, ${A[j]})`);
 }
 
-int main()
-{
-    int arr[] = { -6, -5, -3, 0, 2, 4, 9 };
-    int n = sizeof(arr)/sizeof(arr[0]);
+const A = [-6, -5, -3, 0, 2, 4, 9];
 
-    findPair(arr, n);
-
-    return 0;
-}
-```
-
-**Output:** Pair found (-5, 4)
-
-##
-
-```java
-class Main
-{
-    // Function to find a pair in an array with an absolute minimum sum
-    public static void findPair(int[] A)
-    {
-        if (A.length < 2) {
-            return;
-        }
-
-        // sort the array if it is unsorted
-        // Arrays.sort(A);
-
-        // maintain two indexes pointing to endpoints of the array
-        int low = 0;
-        int high = A.length - 1;
-
-        // `min` stores the minimum absolute difference
-        int min = Integer.MAX_VALUE;
-        int i = 0, j = 0;
-
-        // reduce the search space `A[low…high]` at each iteration of the loop
-
-        // loop if `low` is less than `high`
-        while (low < high)
-        {
-            // update the minimum if the current absolute sum is less
-            if (Math.abs(A[high] + A[low]) < min)
-            {
-                min = Math.abs(A[high] + A[low]);
-                i = low;
-                j = high;
-            }
-
-            // optimization: pair with zero-sum is found
-            if (min == 0) {
-                break;
-            }
-
-            // increment `low` index if the total is less than 0;
-            // decrement `high` index if the total is more than 0
-            if (A[high] + A[low] < 0) {
-                low++;
-            }
-            else {
-                high--;
-            }
-        }
-
-        // print the pair
-        System.out.print("Pair found (" + A[i] + ", " + A[j] + ")");
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { -6, -5, -3, 0, 2, 4, 9 };
-
-        findPair(A);
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to find a pair in a list with an absolute minimum sum
-def findPair(A):
-
-    if len(A) < 2:
-        return
-
-    # sort the list if it is unsorted
-
-    # maintain two indexes pointing to endpoints of the list
-    (low, high) = (0, len(A) - 1)
-
-    # `min` stores the minimum absolute difference
-    min = sys.maxsize
-    i = j = 0
-
-    # reduce the search space `A[low…high]` at each iteration of the loop
-
-    # loop if `low` is less than `high`
-    while low < high:
-        # update the minimum if the current absolute sum is less
-        if abs(A[high] + A[low]) < min:
-            min = abs(A[high] + A[low])
-            (i, j) = (low, high)
-
-        # optimization: pair with zero-sum is found
-        if min == 0:
-            break
-
-        # increment `low` index if the total is less than 0;
-        # decrement `high` index if the total is more than 0
-        if A[high] + A[low] < 0:
-            low = low + 1
-        else:
-            high = high - 1
-
-    # print the pair
-    print("Pair found", (A[i], A[j]))
-
-if __name__ == '__main__':
-
-    A = [-6, -5, -3, 0, 2, 4, 9]
-
-    findPair(A)
+findPair(A);
 ```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.

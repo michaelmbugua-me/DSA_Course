@@ -30,299 +30,96 @@ We know that the root is the first element in the preorder sequence and the last
 
 **Left subtree:** Postorder : {4, 5, 2} Preorder : {2, 4, 5} **Right subtree:** Postorder : {8, 9, 6, 7, 3} Preorder : {3, 6, 8, 9, 7}
 
-The idea is to recursively follow the above approach until the complete tree is constructed. This is demonstrated below in C++, Java, and Python:
+The idea is to recursively follow the above approach until the complete tree is constructed. This is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class Node {
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
+}
 
 // Recursive function to perform inorder traversal on a given binary tree
-void inorder(Node* root)
-{
-    if (root == nullptr) {
+function inorder(root: Node | null, output: number[] = []): void {
+
+    if (root === null) {
         return;
     }
 
-    inorder(root->left);
-    cout << root->data << ' ';
-    inorder(root->right);
+    inorder(root.left, output);
+    output.push(root.data);
+    inorder(root.right, output);
 }
 
 // A recursive function to construct a full binary tree from the given preorder
 // and postorder sequence
-Node* buildTree(auto &preorder, int &pIndex, int start, int end, auto &map)
-{
+function buildTree(preorder: number[], pIndex: number, start: number, end: number, d: Map<number, number>): [Node, number] {
+
     // Consider the next item from the given preorder sequence.
     // This item would be the root node of the subtree formed by
-    // the postorder[start, end]
-    Node* root = new Node(preorder[pIndex]);
-
-    // increment `pIndex`
-    pIndex++;
+    // the `postorder[start, end]` and increment `pIndex`
+    const root = new Node(preorder[pIndex]);
+    pIndex = pIndex + 1;
 
     // return if all keys are processed
-    if (pIndex == preorder.size()) {
-        return root;
+    if (pIndex === preorder.length) {
+        return [root, pIndex];
     }
 
     // find the next key index in the postorder sequence to determine the
     // boundary of the left and right subtree of the current root node
-    int index = map[preorder[pIndex]];
+    const index = d.get(preorder[pIndex])!;
 
     // fill the left and right subtree together
-    if (start <= index && index + 1 <= end - 1)
-    {
+    if (start <= index && index + 1 <= end - 1) {
         // build the left subtree
-        root->left = buildTree(preorder, pIndex, start, index, map);
+        [root.left, pIndex] = buildTree(preorder, pIndex, start, index, d);
 
         // build the right subtree
-        root->right = buildTree(preorder, pIndex, index + 1, end - 1, map);
+        [root.right, pIndex] = buildTree(preorder, pIndex, index + 1, end - 1, d);
     }
 
-    return root;
+    return [root, pIndex];
 }
 
 // Construct a full binary tree from preorder and postorder sequence
-Node* buildTree(auto const &preorder, auto const &postorder)
-{
+function buildBinaryTree(preorder: number[], postorder: number[]): Node | null {
+
     // base case
-    if (postorder.size() == 0) {
-        return nullptr;
+    if (preorder.length === 0) {
+        return null;
     }
 
-    // map is used to efficiently find the index of any element in the given
+    // dictionary is used to efficiently find the index of any element in the given
     // postorder sequence
-    unordered_map<int, int> map;
-    for (int i = 0; i < postorder.size(); i++) {
-        map[postorder[i]] = i;
+    const d = new Map<number, number>();
+    for (let i = 0; i < postorder.length; i++) {
+        d.set(postorder[i], i);
     }
 
     // `pIndex` stores the index of the next node in the preorder sequence
-    int pIndex = 0;
+    let pIndex = 0;
 
     // set range [start, end] for subtree formed by postorder sequence
-    int start = 0;
-    int end = preorder.size() - 1;
+    const start = 0;
+    const end = preorder.length - 1;
 
     // construct the binary tree and return it
-    return buildTree(preorder, pIndex, start, end, map);
+    return buildTree(preorder, pIndex, start, end, d)[0];
 }
 
-int main()
-{
-    vector<int> preorder = { 1, 2, 4, 5, 3, 6, 8, 9, 7 };
-    vector<int> postorder = { 4, 5, 2, 8, 9, 6, 7, 3, 1 };
+const preorder = [1, 2, 4, 5, 3, 6, 8, 9, 7];
+const postorder = [4, 5, 2, 8, 9, 6, 7, 3, 1];
 
-    Node* root = buildTree(preorder, postorder);
+const root = buildBinaryTree(preorder, postorder);
 
-    cout << "Inorder traversal is ";
-    inorder(root);
-
-    return 0;
-}
+const output: number[] = [];
+inorder(root, output);
+console.log(`Inorder traversal is ${output.join(' ')}`);
 ```
 
 **Output:** Inorder traversal is 4 2 5 1 8 6 9 3 7
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Recursive function to perform inorder traversal on a given binary tree
-    public static void inorder(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorder(root.left);
-        System.out.print(root.data + " ");
-        inorder(root.right);
-    }
-
-    // A recursive function to construct a full binary tree from the given preorder
-    // and postorder sequence
-    public static Node buildTree(int[] preorder, AtomicInteger pIndex,
-                                int start, int end, Map<Integer, Integer> map)
-    {
-        // Consider the next item from the given preorder sequence.
-        // This item would be the root node of the subtree formed by
-        // the `postorder[start, end]` and increment `pIndex`
-        Node root = new Node(preorder[pIndex.getAndIncrement()]);
-
-        // return if all keys are processed
-        if (pIndex.get() == preorder.length) {
-            return root;
-        }
-
-        // find the next key index in the postorder sequence to determine the
-        // boundary of the left and right subtree of the current root node
-        int index = map.get(preorder[pIndex.get()]);
-
-        // fill the left and right subtree together
-        if (start <= index && index + 1 <= end - 1)
-        {
-            // build the left subtree
-            root.left = buildTree(preorder, pIndex, start, index, map);
-
-            // build the right subtree
-            root.right = buildTree(preorder, pIndex, index + 1, end - 1, map);
-        }
-
-        return root;
-    }
-
-    // Construct a full binary tree from preorder and postorder sequence
-    public static Node buildTree(int[] preorder, int[] postorder)
-    {
-        // base case
-        if (postorder.length == 0) {
-            return null;
-        }
-
-        // map is used to efficiently find the index of any element in the given
-        // postorder sequence
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < postorder.length; i++) {
-            map.put(postorder[i], i);
-        }
-
-        // `pIndex` stores the index of the next node in the preorder sequence
-        AtomicInteger pIndex = new AtomicInteger(0);
-
-        // set range [start, end] for subtree formed by postorder sequence
-        int start = 0;
-        int end = preorder.length - 1;
-
-        // construct the binary tree and return it
-        return buildTree(preorder, pIndex, start, end, map);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] preorder = { 1, 2, 4, 5, 3, 6, 8, 9, 7 };
-        int[] postorder = { 4, 5, 2, 8, 9, 6, 7, 3, 1 };
-
-        Node root = buildTree(preorder, postorder);
-
-        System.out.print("Inorder traversal is ");
-        inorder(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to perform inorder traversal on a given binary tree
-def inorder(root):
-
-    if root is None:
-        return
-
-    inorder(root.left)
-    print(root.data, end=' ')
-    inorder(root.right)
-
-# A recursive function to construct a full binary tree from the given preorder
-# and postorder sequence
-def buildTree(preorder, pIndex, start, end, d):
-
-    # Consider the next item from the given preorder sequence.
-    # This item would be the root node of the subtree formed by
-    # the `postorder[start, end]` and increment `pIndex`
-    root = Node(preorder[pIndex])
-    pIndex = pIndex + 1
-
-    # return if all keys are processed
-    if pIndex == len(preorder):
-        return root, pIndex
-
-    # find the next key index in the postorder sequence to determine the
-    # boundary of the left and right subtree of the current root node
-    index = d.get(preorder[pIndex])
-
-    # fill the left and right subtree together
-    if start <= index and index + 1 <= end - 1:
-        # build the left subtree
-        root.left, pIndex = buildTree(preorder, pIndex, start, index, d)
-
-        # build the right subtree
-        root.right, pIndex = buildTree(preorder, pIndex, index + 1, end - 1, d)
-
-    return root, pIndex
-
-# Construct a full binary tree from preorder and postorder sequence
-def buildBinaryTree(preorder, postorder):
-
-    # base case
-    if not preorder:
-        return
-
-    # dictionary is used to efficiently find the index of any element in the given
-    # postorder sequence
-    d = {}
-    for i, e in enumerate(postorder):
-        d[e] = i
-
-    # `pIndex` stores the index of the next node in the preorder sequence
-    pIndex = 0
-
-    # set range [start, end] for subtree formed by postorder sequence
-    start = 0
-    end = len(preorder) - 1
-
-    # construct the binary tree and return it
-    return buildTree(preorder, pIndex, start, end, d)[0]
-
-if __name__ == '__main__':
-
-    preorder = [1, 2, 4, 5, 3, 6, 8, 9, 7]
-    postorder = [4, 5, 2, 8, 9, 6, 7, 3, 1]
-
-    root = buildBinaryTree(preorder, postorder)
-
-    print('Inorder traversal is ', end='')
-    inorder(root)
-```
 
 Note that the above algorithm will ensure a unique binary tree only when all keys in the given preorder/postorder sequence are distinct. For example, two full binary trees exist for following preorder and postorder sequences whose node keys are not distinct:
 

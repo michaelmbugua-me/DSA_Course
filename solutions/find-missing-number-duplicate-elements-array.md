@@ -33,41 +33,34 @@ As the rightmost bit is set in one number and unset in the other, we will have a
 
 Now iterate both lists once more and do XOR on each element. The result will be the duplicate element present in one list and the missing number present in the other list (since elements appearing twice will cancel each other).
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-using namespace std;
-
-// Function to find the missing number and duplicate element using XOR operator
-// in an array of size `n` and range of elements from 1 to `n`
-pair<int, int> findMissingAndDuplicate(vector<int> const &arr)
-{
-    int n = arr.size();
+```ts
+// Function to find the missing number and duplicate element
+// using XOR operator in an array of size `n` and range of
+// elements from 1 to `n`
+const findMissingAndDuplicate = (arr: number[]): [number, number] => {
+    const n = arr.length;
 
     // take XOR of all array elements from index 0 to `n-1`
     // all numbers in range 1 to `n`
-    int result = n;
-    for (int i = 0; i < n; i++) {
+    let result = n;
+    for (let i = 0; i < n; i++) {
         result = result ^ arr[i] ^ i;
     }
 
     // `x` and `y` stores the duplicate element and missing number
-    int x = 0, y = 0;
+    let x = 0, y = 0;
 
     // `result` stores `x ^ y`
 
     // find the position of the rightmost set bit in result
-    int k = log2(result & -result);
+    const k = Math.floor(Math.log2(result & -result));
 
     // split the array into two subarrays
-    for (int val: arr)
-    {
+    for (const val of arr) {
         // array elements that have k'th bit 1
-        if (val & (1 << k)) {
+        if ((val & (1 << k)) !== 0) {
             x = x ^ val;
         }
         // array elements that have k'th bit 0
@@ -77,13 +70,11 @@ pair<int, int> findMissingAndDuplicate(vector<int> const &arr)
     }
 
     // split range [1, n] into two subranges
-    for (int i = 1; i <= n; i++)
-    {
+    for (let i = 1; i <= n; i++) {
         // number `i` has k'th bit 1
-        if (i & (1 << k)) {
+        if ((i & (1 << k)) !== 0) {
             x = x ^ i;
         }
-
         // number `i` has k'th bit 0
         else {
             y = y ^ i;
@@ -91,166 +82,19 @@ pair<int, int> findMissingAndDuplicate(vector<int> const &arr)
     }
 
     // linear search for the missing element
-    if (find(arr.begin(), arr.end(), x) == arr.end()) {
-        return make_pair(y, x);
+    if (arr.includes(x)) {
+        return [x, y];
     }
+    else {
+        return [y, x];
+    }
+};
 
-    return make_pair(x, y);
-}
-
-int main()
-{
-    vector<int> arr = { 4, 3, 6, 5, 2, 4 };
-
-    pair<int, int> p = findMissingAndDuplicate(arr);
-
-    cout << "The duplicate and missing elements are "
-         << p.first << " and " << p.second;
-
-    return 0;
-}
+const arr = [4, 3, 6, 5, 2, 4];
+console.log(`The duplicate and missing elements are ${findMissingAndDuplicate(arr)}`);
 ```
 
 **Output:** The duplicate and missing elements are 4 and 1
-
-##
-
-```java
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-class Main
-{
-    public static int log(int x, int base) {
-        return (int) (Math.log(x) / Math.log(base));
-    }
-
-    // Function to find the missing number and duplicate element
-    // using XOR operator in an array of size `n` and range of
-    // elements from 1 to `n`
-    public static void findMissingAndDuplicate(int[] arr)
-    {
-        int n = arr.length;
-
-        // take XOR of all array elements from index 0 to `n-1`
-        // all numbers in range 1 to `n`
-        int result = n;
-        for (int i = 0; i < n; i++) {
-            result = result ^ arr[i] ^ i;
-        }
-
-        // `x` and `y` stores the duplicate element and missing number
-        int x = 0, y = 0;
-
-        // `result` stores `x ^ y`
-
-        // find the position of the rightmost set bit in result
-        int k = log(result & -result, 2);
-
-        // split the array into two subarrays
-        for (int value: arr)
-        {
-            // array elements that have k'th bit 1
-            if ((value & (1 << k)) != 0) {
-                x = x ^ value;
-            }
-
-            // array elements that have k'th bit 0
-            else {
-                y = y ^ value;
-            }
-        }
-
-        // split range [1, n] into two subranges
-        for (int i = 1; i <= n; i++)
-        {
-            // number `i` has k'th bit 1
-            if ((i & (1 << k)) != 0) {
-                x = x ^ i;
-            }
-
-            // number `i` has k'th bit 0
-            else {
-                y = y ^ i;
-            }
-        }
-
-        // linear search for the missing element
-        System.out.print("The duplicate and missing elements are ");
-
-        if (Arrays.stream(arr).boxed().collect(Collectors.toList()).contains(x)) {
-            System.out.println(x + " and " + y);
-        }
-        else {
-            System.out.println(y + " and " + x);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] arr = { 4, 3, 6, 5, 2, 4 };
-
-        findMissingAndDuplicate(arr);
-    }
-}
-```
-
-##
-
-```python3
-from math import log
-
-def log2(x, base):
-    return int(log(x) // log(base))
-
-# Function to find the missing number and duplicate element
-# using XOR operator in a list of size `n` and range of
-# elements from 1 to `n`
-def findMissingAndDuplicate(arr):
-    n = len(arr)
-
-    # take XOR of all list elements from index 0 to `n-1`
-    # all numbers in range 1 to `n`
-    result = n
-    for i in range(n):
-        result = result ^ arr[i] ^ i
-
-    # `x` and `y` stores the duplicate element and missing number
-    x = y = 0
-
-    # `result` stores `x ^ y`
-
-    # find the position of the rightmost set bit in result
-    k = log2(result & -result, 2)
-
-    # split the list into two sublists
-    for val in arr:
-        # list elements that have k'th bit 1
-        if (val & (1 << k)) != 0:
-            x = x ^ val
-        # list elements that have k'th bit 0
-        else:
-            y = y ^ val
-
-    # split range [1, n] into two subranges
-    for i in range(1, n + 1):
-        # number `i` has k'th bit 1
-        if (i & (1 << k)) != 0:
-            x = x ^ i
-        # number `i` has k'th bit 0
-        else:
-            y = y ^ i
-
-    # linear search for the missing element
-    if x in arr:
-        return x, y
-    else:
-        return y, x
-
-if __name__ == '__main__':
-    arr = [4, 3, 6, 5, 2, 4]
-    print('The duplicate and missing elements are', findMissingAndDuplicate(arr))
-```
 
 Rate this post
 

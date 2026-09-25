@@ -18,164 +18,51 @@ We can easily solve this problem in linear time. Following is the complete algor
 
 For example, consider array `{ 1, 2, 3, **7** , 5, 6, **4** , 8 }`. If we traverse the array from left to right, the last encountered index, which is less than the maximum so far, is 6. Similarly, if we traverse the array from right to left, the last encountered index, which is more than the minimum so far, is 3. So, we need to sort the array from index 3 to 6.
 
-Following is the C++, Java, and Python implementation based on the above idea:
+Following is a TypeScript implementation based on the above idea:
 
-```cpp
-#include <iostream>
-#include <climits>
-using namespace std;
-
+```ts
 // Function to find the smallest window in an array, sorting which will
 // make the entire array sorted
-void findSubarray(int arr[], int n)
-{
-    int leftIndex = -1, rightIndex = -1;
+function findSubarray(A: number[]): void {
+
+    let leftIndex = -1, rightIndex = -1;
 
     // traverse from left to right and keep track of maximum so far
-    int max_so_far = INT_MIN;
-    for (int i = 0; i < n; i++)
-    {
-        if (max_so_far < arr[i]) {
-            max_so_far = arr[i];
+    let maxSoFar = Number.MIN_SAFE_INTEGER;
+    for (let i = 0; i < A.length; i++) {
+        if (maxSoFar < A[i]) {
+            maxSoFar = A[i];
         }
 
         // find the last position that is less than the maximum so far
-        if (arr[i] < max_so_far) {
+        if (A[i] < maxSoFar) {
             rightIndex = i;
         }
     }
 
     // traverse from right to left and keep track of the minimum so far
-    int min_so_far = INT_MAX;
-    for (int i = n - 1; i >= 0; i--)
-    {
-        if (min_so_far > arr[i]) {
-            min_so_far = arr[i];
+    let minSoFar = Number.MAX_SAFE_INTEGER;
+    for (let i = A.length - 1; i >= 0; i--) {
+        if (minSoFar > A[i]) {
+            minSoFar = A[i];
         }
 
         // find the last position that is more than the minimum so far
-        if (arr[i] > min_so_far) {
+        if (A[i] > minSoFar) {
             leftIndex = i;
         }
     }
 
-    if (leftIndex == -1) {
-        cout << "Array is already sorted";
+    if (leftIndex === -1) {
+        console.log('Array is already sorted');
         return;
     }
 
-    cout << "Sort array from index " << leftIndex << " to " << rightIndex;
+    console.log(`Sort array from index ${leftIndex} to ${rightIndex}`);
 }
 
-int main()
-{
-    int arr[] = { 1, 3, 2, 7, 5, 6, 4, 8 };
-    int n = sizeof(arr)/sizeof(arr[0]);
-
-    findSubarray(arr, n);
-
-    return 0;
-}
-```
-
-**Output:** Sort array from index 1 to 6
-
-##
-
-```java
-class Main
-{
-    // Function to find the smallest window in the array, sorting
-    // which will make the entire array sorted
-    public static void findSubarray(int[] A)
-    {
-        int leftIndex = -1, rightIndex = -1;
-
-        // traverse from left to right and keep track of maximum so far
-        int max_so_far = Integer.MIN_VALUE;
-        for (int i = 0; i < A.length; i++)
-        {
-            if (max_so_far < A[i]) {
-                max_so_far = A[i];
-            }
-
-            // find the last position that is less than the maximum so far
-            if (A[i] < max_so_far) {
-                rightIndex = i;
-            }
-        }
-
-        // traverse from right to left and keep track of the minimum so far
-        int min_so_far = Integer.MAX_VALUE;
-        for (int i = A.length - 1; i >= 0; i--)
-        {
-            if (min_so_far > A[i]) {
-                min_so_far = A[i];
-            }
-
-            // find the last position that is more than the minimum so far
-            if (A[i] > min_so_far) {
-                leftIndex = i;
-            }
-        }
-
-        if (leftIndex == -1) {
-            System.out.print("Array is already sorted");
-            return;
-        }
-
-        System.out.print("Sort array from index " + leftIndex + " to " + rightIndex);
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 1, 3, 2, 7, 5, 6, 4, 8 };
-        findSubarray(A);
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to find the smallest window in a list, sorting which will
-# make the entire list sorted
-def findSublist(A):
-
-    leftIndex = rightIndex = -1
-
-    # traverse from left to right and keep track of maximum so far
-    max_so_far = -sys.maxsize
-    for i in range(len(A)):
-        if max_so_far < A[i]:
-            max_so_far = A[i]
-
-        # find the last position that is less than the maximum so far
-        if A[i] < max_so_far:
-            rightIndex = i
-
-    # traverse from right to left and keep track of the minimum so far
-    min_so_far = sys.maxsize
-    for i in reversed(range(len(A))):
-        if min_so_far > A[i]:
-            min_so_far = A[i]
-
-        # find the last position that is more than the minimum so far
-        if A[i] > min_so_far:
-            leftIndex = i
-
-    if leftIndex == -1:
-        print("Array is already sorted")
-        return
-
-    print("Sort list from index", leftIndex, "to", rightIndex)
-
-if __name__ == '__main__':
-
-    A = [1, 3, 2, 7, 5, 6, 4, 8]
-    findSublist(A)
+const A = [1, 3, 2, 7, 5, 6, 4, 8];
+findSubarray(A);
 ```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.

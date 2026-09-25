@@ -8,30 +8,24 @@ Given two numbers, add them without using an addition operator.
 
 ## 1\. Using subtraction operator
 
-```
-int add(int a, int b) {
-    return a-(-b);
+```ts
+function add(a: number, b: number): number {
+    return a - (-b);
 }
 ```
 
 ## 2\. Repeated Addition/Subtraction using `--/++` operator
 
-```
-#include <iostream>
-using namespace std;
-
-int add(int a, int b)
-{
+```ts
+function add(a: number, b: number): number {
     // to handle positive `a`
-    while (a > 0)
-    {
+    while (a > 0) {
         b++;
         a--;
     }
 
     // to handle negative `a`
-    while (a < 0)
-    {
+    while (a < 0) {
         b--;
         a++;
     }
@@ -39,14 +33,9 @@ int add(int a, int b)
     return b;
 }
 
-int main()
-{
-    cout << add(5, 8) << " ";
-    cout << add(5, -8) << " ";
-    cout << add(-5, 8) << " ";
-
-    return 0;
-}
+console.log(add(5, 8));
+console.log(add(5, -8));
+console.log(add(-5, 8));
 ```
 
 **Output:** 13 -3 3
@@ -60,25 +49,24 @@ This method makes use of two facts:
 
 Note that we can also use `%*c, ' '` replacing `%*s, ""`.
 
-```
-int add(int a, int b)
-{
-    // `%*s` means print a character `*` number of times
-    return printf("%*s%*s", a, "", b, "");
+```ts
+function add(a: number, b: number): number {
+    // `%*s` in C means print a space `*` number of times and the return
+    // value is the total number of characters printed — the string length
+    return (' '.repeat(a) + ' '.repeat(b)).length;
 }
 ```
 
 ## 4\. Half adder logic
 
-```
-int add(int a, int b)
-{
+```ts
+function add(a: number, b: number): number {
     if (!b) {
         return a;
     }
 
-    int sum = a ^ b;
-    int carry = (a & b) << 1;
+    const sum = a ^ b;
+    const carry = (a & b) << 1;
 
     return add(sum, carry);
 }
@@ -86,17 +74,10 @@ int add(int a, int b)
 
 ## 5\. Using logarithm and exponential function
 
-```
-#include <stdio.h>
+```ts
+const a = 8, b = 6;
 
-int main(void)
-{
-    int a = 8, b = 6;
-
-    printf("%g\n", log(exp(a) * exp(b)));
-
-    return 0;
-}
+console.log(Math.log(Math.exp(a) * Math.exp(b)));
 ```
 
 Rate this post

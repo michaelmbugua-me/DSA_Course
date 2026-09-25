@@ -12,273 +12,85 @@ The inorder successor of node 4 is 2 The inorder successor of node 2 is 1 The in
 
 > 
 
-The idea is to perform an [inorder traversal](https://techiedelight.com/inorder-tree-traversal-iterative-recursive/) of the tree and maintain the previously processed node for every tree node. Then set the next node to a previously visited node for every node in the inorder traversal. This approach is demonstrated below in C++, Java, and Python:
+The idea is to perform an [inorder traversal](https://techiedelight.com/inorder-tree-traversal-iterative-recursive/) of the tree and maintain the previously processed node for every tree node. Then set the next node to a previously visited node for every node in the inorder traversal. This approach is demonstrated below in TypeScript:
 
-```cpp
-#include <iostream>
-using namespace std;
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    data: number;
+    left: TreeNode | null = null;
+    right: TreeNode | null = null;
+    next: TreeNode | null = null;
 
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right, *next;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = this->next = nullptr;
+    constructor(data: number) {
+        this.data = data;
     }
-};
+}
 
 // Function to set the next pointer of all nodes in a binary tree.
 // curr —> current node
-// prev —> previously processed node (passed by reference)
-void setNextNode(Node* curr, Node* &prev)
-{
+// prev —> previously processed node
+function setNextNode(curr: TreeNode | null, prev: TreeNode | null): TreeNode | null {
     // return if the tree is empty
-    if (curr == nullptr) {
-        return;
+    if (curr === null) {
+        return prev;
     }
 
     // recur for the left subtree
-    setNextNode(curr->left, prev);
+    prev = setNextNode(curr.left, prev);
 
     // set the previous node's next pointer to the current node
-    if (prev != nullptr) {
-        prev->next = curr;
+    if (prev !== null) {
+        prev.next = curr;
     }
 
     // update the previous node to the current node
     prev = curr;
 
     // recur for the right subtree
-    setNextNode(curr->right, prev);
+    return setNextNode(curr.right, prev);
 }
 
 // Function to print inorder successor of all nodes of
 // binary tree using the next pointer
-void inorderSuccessor(Node* root)
-{
-    Node* prev = nullptr;
-    Node* curr = root;
-
-    // set next pointer of all nodes
-    setNextNode(curr, prev);
-
+function printInorderSuccessors(root: TreeNode): void {
     // go to the leftmost node
-    curr = root;
-    while (curr->left != nullptr) {
-        curr = curr->left;
+    let curr: TreeNode | null = root;
+    while (curr.left) {
+        curr = curr.left;
     }
 
     // print inorder successor of all nodes
-    while (curr->next)
-    {
-        cout << "The inorder successor of " << curr->data << " is "
-             << curr->next->data << endl;
-        curr = curr->next;
+    while (curr.next) {
+        console.log(`The inorder successor of ${curr.data} is ${curr.next.data}`);
+        curr = curr.next;
     }
 }
 
-int main()
-{
-    /* Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         /      /  \
-        /      /    \
-       4      5      6
-             / \
-            /   \
-           7     8
-    */
+/* Construct the following tree
+          1
+        /   \
+       /     \
+      2       3
+     /      /  \
+    /      /    \
+   4      5      6
+         / \
+        /   \
+       7     8
+*/
 
-    Node* root = new Node(1);
-    root->left = new Node(2);
-    root->right = new Node(3);
-    root->left->left = new Node(4);
-    root->right->left = new Node(5);
-    root->right->right = new Node(6);
-    root->right->left->left = new Node(7);
-    root->right->left->right = new Node(8);
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.right.left = new TreeNode(5);
+root.right.right = new TreeNode(6);
+root.right.left.left = new TreeNode(7);
+root.right.left.right = new TreeNode(8);
 
-    inorderSuccessor(root);
-
-    return 0;
-}
-```
-
-##
-
-```java
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null, next = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Function to set the next pointer of all nodes in a binary tree.
-    // curr —> current node
-    // prev —> previously processed node
-    public static Node setNextNode(Node curr, Node prev)
-    {
-        // return if the tree is empty
-        if (curr == null) {
-            return prev;
-        }
-
-        // recur for the left subtree
-        prev = setNextNode(curr.left, prev);
-
-        // set the previous node's next pointer to the current node
-        if (prev != null) {
-            prev.next = curr;
-        }
-
-        // update the previous node to the current node
-        prev = curr;
-
-        // recur for the right subtree
-        return setNextNode(curr.right, prev);
-    }
-
-    // Function to print inorder successor of all nodes of
-    // binary tree using the next pointer
-    public static void inorderSuccessor(Node root)
-    {
-        Node prev = null;
-        Node curr = root;
-
-        // set next pointer of all nodes
-        setNextNode(curr, prev);
-
-        // go to the leftmost node
-        curr = root;
-        while (curr.left != null) {
-            curr = curr.left;
-        }
-
-        // print inorder successor of all nodes
-        while (curr.next != null)
-        {
-            System.out.println("The inorder successor of " + curr.data + " is "
-                                + curr.next.data);
-            curr = curr.next;
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  1
-                /   \
-               /     \
-              2       3
-             /      /  \
-            /      /    \
-           4      5      6
-                 / \
-                /   \
-               7     8
-        */
-
-        Node root = new Node(1);
-        root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.right.left = new Node(5);
-        root.right.right = new Node(6);
-        root.right.left.left = new Node(7);
-        root.right.left.right = new Node(8);
-
-        inorderSuccessor(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None, next=None):
-        self.data = data
-        self.left = left
-        self.right = right
-        self.next = next
-
-# Function to set the next pointer of all nodes in a binary tree.
-# curr —> current node
-# prev —> previously processed node
-def setNextNode(curr, prev=None):
-
-    # return if the tree is empty
-    if curr is None:
-        return prev
-
-    # recur for the left subtree
-    prev = setNextNode(curr.left, prev)
-
-    # set the previous node's next pointer to the current node
-    if prev:
-        prev.next = curr
-
-    # update the previous node to the current node
-    prev = curr
-
-    # recur for the right subtree
-    return setNextNode(curr.right, prev)
-
-# Function to print inorder successor of all nodes of
-# binary tree using the next pointer
-def printInorderSuccessors(root):
-
-    # go to the leftmost node
-    curr = root
-    while curr.left:
-        curr = curr.left
-
-    # print inorder successor of all nodes
-    while curr.next:
-        print(f'The inorder successor of {curr.data} is {curr.next.data}')
-        curr = curr.next
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              1
-            /   \
-           /     \
-          2       3
-         /      /  \
-        /      /    \
-       4      5      6
-             / \
-            /   \
-           7     8
-    '''
-
-    root = Node(1)
-    root.left = Node(2)
-    root.right = Node(3)
-    root.left.left = Node(4)
-    root.right.left = Node(5)
-    root.right.right = Node(6)
-    root.right.left.left = Node(7)
-    root.right.left.right = Node(8)
-
-    setNextNode(root)
-    printInorderSuccessors(root)
+setNextNode(root, null);
+printInorderSuccessors(root);
 ```
 
 **Output:** The inorder successor of 4 is 2 The inorder successor of 2 is 1 The inorder successor of 1 is 7 The inorder successor of 7 is 5 The inorder successor of 5 is 8 The inorder successor of 8 is 3 The inorder successor of 3 is 6

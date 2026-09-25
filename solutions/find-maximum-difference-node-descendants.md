@@ -14,236 +14,74 @@ A simple solution would be to traverse the tree, and for every node, find the mi
 
 We can solve this problem linearly by processing the tree nodes in a [bottom-up manner](https://techiedelight.com/postorder-tree-traversal-iterative-recursive/) by visiting the left and right subtree before processing a node. The function returns the minimum value among all nodes in the subtree rooted at it. So for any node, we can get minimum values in the left and right subtree in constant time. We find the maximum difference for every node, and if the difference is more than the maximum difference found so far, update it.
 
-Following is the C++, Java, and Python implementation of the algorithm:
+Following is a TypeScript implementation of the algorithm:
 
-```cpp
-#include <iostream>
-#include <climits>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int data;
-    Node *left, *right;
-
-    Node(int data)
-    {
-        this->data = data;
-        this->left = this->right = nullptr;
-    }
-};
+```ts
+// A class to store a binary tree node
+class TreeNode {
+    constructor(public data: number, public left: TreeNode | null = null, public right: TreeNode | null = null) {}
+}
 
 // Helper function to find the maximum difference between a node and its
 // descendants in a binary tree
-int findMaxDifference(Node* root, int &diff)
-{
+function findMaxDifference(root: TreeNode | null, diff: { value: number }): number {
+
     // base case: if the tree is empty, return infinity
-    if (root == nullptr) {
-        return INT_MAX;
+    if (root === null) {
+        return Number.MAX_SAFE_INTEGER;
     }
 
     // recur for the left and right subtree
-    int left = findMaxDifference(root->left, diff);
-    int right = findMaxDifference(root->right, diff);
+    const left = findMaxDifference(root.left, diff);
+    const right = findMaxDifference(root.right, diff);
 
     // find the maximum difference between the current node and its descendants
-    int d = INT_MIN;
-    if (min(left, right) != INT_MAX) {
-        d = root->data - min(left, right);
+    let d = Number.MIN_SAFE_INTEGER;
+    if (Math.min(left, right) !== Number.MAX_SAFE_INTEGER) {
+        d = root.data - Math.min(left, right);
     }
 
     // update the maximum difference found so far if required
-    diff = max(diff, d);
+    diff.value = Math.max(diff.value, d);
 
     // For the difference to be maximum, the function should return
     // a minimum value among all subtree nodes
-    return min(min(left, right), root->data);
+    return Math.min(Math.min(left, right), root.data);
 }
 
 // Find the maximum difference between a node and its descendants in a binary tree
-int findMaxDifference(Node* root)
-{
-    int diff = INT_MIN;
+function findMaxDifferenceValue(root: TreeNode): number {
+    const diff = { value: Number.MIN_SAFE_INTEGER };
     findMaxDifference(root, diff);
 
-    return diff;
+    return diff.value;
 }
 
-int main()
-{
-    /* Construct the following tree
-              6
+/* Construct the following tree
+          6
+        /   \
+       /     \
+      3       8
             /   \
            /     \
-          3       8
-                /   \
-               /     \
-              2       4
-            /   \
-           /     \
-          1       7
-    */
+          2       4
+        /   \
+       /     \
+      1       7
+*/
 
-    Node* root = new Node(6);
-    root->left = new Node(3);
-    root->right = new Node(8);
-    root->right->left = new Node(2);
-    root->right->right = new Node(4);
-    root->right->left->left = new Node(1);
-    root->right->left->right = new Node(7);
+const root = new TreeNode(6);
+root.left = new TreeNode(3);
+root.right = new TreeNode(8);
+root.right.left = new TreeNode(2);
+root.right.right = new TreeNode(4);
+root.right.left.left = new TreeNode(1);
+root.right.left.right = new TreeNode(7);
 
-    cout << findMaxDifference(root);
-
-    return 0;
-}
+console.log(findMaxDifferenceValue(root));
 ```
 
 **Output:** 7
-
-##
-
-```java
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a binary tree node
-class Node
-{
-    int data;
-    Node left = null, right = null;
-
-    Node(int data) {
-        this.data = data;
-    }
-}
-
-class Main
-{
-    // Helper function to find the maximum difference between a node and its
-    // descendants in a binary tree
-    public static int findMaxDifference(Node root, AtomicInteger diff)
-    {
-        // base case: if the tree is empty, return infinity
-        if (root == null) {
-            return Integer.MAX_VALUE;
-        }
-
-        // recur for the left and right subtree
-        int left = findMaxDifference(root.left, diff);
-        int right = findMaxDifference(root.right, diff);
-
-        // find the maximum difference between the current node and its descendants
-        int d = Integer.MIN_VALUE;
-        if (Math.min(left, right) != Integer.MAX_VALUE) {
-            d = root.data - Math.min(left, right);
-        }
-
-        // update the maximum difference found so far if required
-        diff.set(Math.max(diff.get(), d));
-
-        // For the difference to be maximum, the function should return
-        // a minimum value among all subtree nodes
-        return Math.min(Math.min(left, right), root.data);
-    }
-
-    // Find the maximum difference between a node and its descendants in a binary tree
-    public static int findMaxDifference(Node root)
-    {
-        // using `AtomicInteger` to get the result since `Integer` is passed by value
-        // in Java
-        AtomicInteger diff = new AtomicInteger(Integer.MIN_VALUE);
-        findMaxDifference(root, diff);
-
-        return diff.get();
-    }
-
-    public static void main(String[] args)
-    {
-        /* Construct the following tree
-                  6
-                /   \
-               /     \
-              3       8
-                    /   \
-                   /     \
-                  2       4
-                /   \
-               /     \
-              1       7
-        */
-
-        Node root = new Node(6);
-        root.left = new Node(3);
-        root.right = new Node(8);
-        root.right.left = new Node(2);
-        root.right.right = new Node(4);
-        root.right.left.left = new Node(1);
-        root.right.left.right = new Node(7);
-
-        System.out.print(findMaxDifference(root));
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# A class to store a binary tree node
-class Node:
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Helper function to find the maximum difference between a node and its
-# descendants in a binary tree
-def findMaxDifference(root, diff=-sys.maxsize):
-
-    # base case: if the tree is empty, return infinity
-    if root is None:
-        return sys.maxsize, diff
-
-    # recur for the left and right subtree
-    left, diff = findMaxDifference(root.left, diff)
-    right, diff = findMaxDifference(root.right, diff)
-
-    # find the maximum difference between the current node and its descendants
-    d = root.data - min(left, right)
-
-    # update the maximum difference found so far if required
-    diff = max(diff, d)
-
-    # For the difference to be maximum, the function should return
-    # a minimum value among all subtree nodes
-    return min(min(left, right), root.data), diff
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-              6
-            /   \
-           /     \
-          3       8
-                /   \
-               /     \
-              2       4
-            /   \
-           /     \
-          1       7
-    '''
-
-    root = Node(6)
-    root.left = Node(3)
-    root.right = Node(8)
-    root.right.left = Node(2)
-    root.right.right = Node(4)
-    root.right.left.left = Node(1)
-    root.right.left.right = Node(7)
-
-    print(findMaxDifference(root)[1])
-```
 
 The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. The auxiliary space required by the program is O(h) for call stack, where `h` is the height of the tree.
 

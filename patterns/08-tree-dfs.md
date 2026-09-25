@@ -13,16 +13,16 @@ Traverse a tree branch by branch, using recursion (or an explicit stack). The de
 - Answer is about nodes **closer to the leaves**; or "for each leaf/each path..."
 - Subtree comparisons (is T2 a subtree of T1, identical trees, symmetric trees)
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def dfs(root):
-    if not root:
-        return base_value           # e.g. 0 or True
-    left = dfs(root.left)
-    right = dfs(root.right)
-    # combine children's answers with the current node
-    return combine(left, right, root.val)
+```ts
+function dfs(root: TreeNode | null): T {
+    if (!root) return baseValue; // e.g. 0 or true
+    const left = dfs(root.left);
+    const right = dfs(root.right);
+    // combine children's answers with the current node
+    return combine(left, right, root.val);
+}
 ```
 
 With a running path (root→leaf problems): carry a list/path down the recursion and pop (backtrack) on the way up.

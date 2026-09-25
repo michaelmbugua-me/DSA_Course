@@ -16,272 +16,90 @@ A naive solution would be to calculate the product of all elements in the left a
 
 We can solve this problem in linear time by using two auxiliary arrays, `left[]` and `right[]`, where `left[i]` stores the product of all elements in subarray `A[0…i-1]` and `right[i]` stores the product of all elements in subarray `A[i+1…n-1]`. Now for each element `A[i]`, replace it with the product of its left-subarray and right-subarray (i.e., `A[i] = left[i] × right[i])`.
 
-The algorithm can be implemented as follows in C, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```c
-#include <stdio.h>
-
+```ts
 // Function to replace each array element with every other
 // element's product without using the division operator
-void findProduct(int arr[], int n)
-{
+function findProduct(A: number[]): void {
+    // get length of the array
+    const n = A.length;
+
     // base case
-    if (n == 0) {
+    if (n === 0) {
         return;
     }
 
     // use two auxiliary arrays
-    int left[n], right[n];
+    const left: number[] = new Array(n);
+    const right: number[] = new Array(n);
 
     // `left[i]` stores the product of all elements in subarray[0…i-1]
     left[0] = 1;
-    for (int i = 1; i < n; i++) {
-        left[i] = arr[i - 1] * left[i - 1];
+    for (let i = 1; i < n; i++) {
+        left[i] = A[i - 1] * left[i - 1];
     }
 
     // `right[i]` stores the product of all elements in subarray[i+1…n-1]
     right[n - 1] = 1;
-    for (int j = n - 2; j >= 0; j--) {
-        right[j] = arr[j + 1] * right[j + 1];
+    for (let j = n - 2; j >= 0; j--) {
+        right[j] = A[j + 1] * right[j + 1];
     }
 
     // replace each element with the product of its left and right subarray
-    for (int i = 0; i < n; i++) {
-        arr[i] = left[i] * right[i];
+    for (let i = 0; i < n; i++) {
+        A[i] = left[i] * right[i];
     }
 }
 
-int main(void)
-{
-    int arr[] = { 5, 3, 4, 2, 6, 8 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+const A = [5, 3, 4, 2, 6, 8];
 
-    findProduct(arr, n);
+findProduct(A);
 
-    // print the modified array
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-
-    return 0;
-}
+// print the modified array
+console.log(A);
 ```
 
 **Output:** 1152 1920 1440 2880 960 720
 
-##
 
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Function to replace each array element with every other
-    // element's product without using the division operator
-    public static void findProduct(int[] A)
-    {
-        // get length of the array
-        int n = A.length;
-
-        // base case
-        if (n == 0) {
-            return;
-        }
-
-        // use two auxiliary arrays
-        int[] left = new int[n];
-        int[] right = new int[n];
-
-        // `left[i]` stores the product of all elements in subarray[0…i-1]
-        left[0] = 1;
-        for (int i = 1; i < n; i++) {
-            left[i] = A[i - 1] * left[i - 1];
-        }
-
-        // `right[i]` stores the product of all elements in subarray[i+1…n-1]
-        right[n - 1] = 1;
-        for (int j = n - 2; j >= 0; j--) {
-            right[j] = A[j + 1] * right[j + 1];
-        }
-
-        // replace each element with the product of its left and right subarray
-        for (int i = 0; i < n; i++) {
-            A[i] = left[i] * right[i];
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 5, 3, 4, 2, 6, 8 };
-
-        findProduct(A);
-
-        // print the modified array
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# Function to replace each array element with every other
-# element's product without using the division operator
-def findProduct(A):
-
-    # get length of the list
-    n = len(A)
-
-    # base case
-    if n == 0:
-        return
-
-    # use two auxiliary lists
-    left = [None] * n
-    right = [None] * n
-
-    # `left[i]` stores the product of all elements in sublist `A[0…i-1]`
-    left[0] = 1
-    for i in range(1, n):
-        left[i] = A[i - 1] * left[i - 1]
-
-    # `right[i]` stores the product of all elements in sublist `A[i+1…n-1]`
-    right[n - 1] = 1
-    for j in reversed(range(n - 1)):
-        right[j] = A[j + 1] * right[j + 1]
-
-    # replace each element with the product of its left and right sublist
-    for i in range(n):
-        A[i] = left[i] * right[i]
-
-if __name__ == '__main__':
-
-    A = [5, 3, 4, 2, 6, 8]
-    findProduct(A)
-
-    # print the modified list
-    print(A)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) extra space.
 
-We can use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem in linear time and constant space. The idea is to recursively calculate all elements’ products in the right subarray and pass the left-subarray product in [function arguments](https://techiedelight.com/difference-between-argument-parameter/#Argument). Following is the C, Java, and Python program that demonstrates it:
+We can use [recursion](https://techiedelight.com/recursion-practice-problems-with-solutions/) to solve this problem in linear time and constant space. The idea is to recursively calculate all elements’ products in the right subarray and pass the left-subarray product in [function arguments](https://techiedelight.com/difference-between-argument-parameter/#Argument). Following is a TypeScript program that demonstrates it:
 
-```c
-#include <stdio.h>
-
-// Recursive function to replace each array element with the product
+```ts
+// Recursive function to replace each element in the array with the product
 // of every other element without using the division operator
-int findProduct(int arr[], int n, int left, int i)
-{
+function findProduct(A: number[], n: number, left: number, i: number): number {
     // base case: no elements left on the right
-    if (i == n) {
+    if (i === n) {
         return 1;
     }
 
     // take backup of the current element
-    int curr = arr[i];
+    const curr = A[i];
 
     // calculate the product of the right subarray
-    int right = findProduct(arr, n, left * arr[i], i + 1);
+    const right = findProduct(A, n, left * A[i], i + 1);
 
     // replace the current element with the product of the left and right subarray
-    arr[i] = left * right;
+    A[i] = left * right;
 
     // return product of right the subarray, including the current element
     return curr * right;
 }
 
-int main(void)
-{
-    int arr[] = { 5, 3, 4, 2, 6, 8 };
-    int n = sizeof(arr) / sizeof(arr[0]);
+const A = [5, 3, 4, 2, 6, 8];
 
-    findProduct(arr, n, 1, 0);
+findProduct(A, A.length, 1, 0);
 
-    // print the modified array
-    for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-
-    return 0;
-}
+// print the modified array
+console.log(A);
 ```
 
 **Output:** 1152 1920 1440 2880 960 720
 
-##
 
-```java
-import java.util.Arrays;
-
-class Main
-{
-    // Recursive function to replace each array element with the product
-    // of every other element without using the division operator
-    public static int findProduct(int[] A, int n, int left, int i)
-    {
-        // base case: no elements left on the right
-        if (i == n) {
-            return 1;
-        }
-
-        // take backup of the current element
-        int curr = A[i];
-
-        // calculate the product of the right subarray
-        int right = findProduct(A, n, left * A[i], i + 1);
-
-        // replace the current element with the product of the left and right subarray
-        A[i] = left * right;
-
-        // return product of right the subarray, including the current element
-        return curr * right;
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 5, 3, 4, 2, 6, 8 };
-
-        findProduct(A, A.length, 1, 0);
-
-        // print the modified array
-        System.out.println(Arrays.toString(A));
-    }
-}
-```
-
-##
-
-```python3
-# Recursive function to replace each element in the list with the product
-# of every other element without using the division operator
-def findProduct(A, n, left=1, i=0):
-
-    # base case: no elements left on the right
-    if i == n:
-        return 1
-
-    # take backup of the current element
-    curr = A[i]
-
-    # calculate the product of the right sublist
-    right = findProduct(A, n, left * A[i], i + 1)
-
-    # replace the current element with the product of the left and right sublist
-    A[i] = left * right
-
-    # return product of right the sublist, including the current element
-    return curr * right
-
-if __name__ == '__main__':
-
-    A = [5, 3, 4, 2, 6, 8]
-
-    findProduct(A, len(A))
-
-    # print the modified list
-    print(A)
-```
 
 The time complexity of the above solution is O(n) and requires O(n) implicit space for the call stack.

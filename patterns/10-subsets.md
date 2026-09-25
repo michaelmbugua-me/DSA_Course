@@ -13,22 +13,26 @@ Problems asking for **all subsets / permutations / combinations** of a set. The 
 - Counting arrangements that satisfy constraints (often combined with backtracking)
 - Input has no duplicates but output must avoid duplicate sets → dedupe step
 
-## Template (Python)
+## Template (TypeScript)
 
-```python3
-def subsets(nums):
-    result = [[]]
-    for num in nums:                 # BFS expansion
-        result += [subset + [num] for subset in result]
-    return result
+```ts
+function subsets(nums: number[]): number[][] {
+    const result: number[][] = [[]];
+    for (const num of nums) { // BFS expansion
+        for (const subset of [...result]) result.push([...subset, num]);
+    }
+    return result;
+}
 
-# backtracking alternative (also handles 'combinations of size k'):
-def backtrack(start, path):
-    result.append(path[:])
-    for i in range(start, len(nums)):
-        path.append(nums[i])
-        backtrack(i + 1, path)
-        path.pop()                   # undo choice
+// backtracking alternative (also handles 'combinations of size k'):
+function backtrack(start: number, path: number[]): void {
+    result.push([...path]);
+    for (let i = start; i < nums.length; i++) {
+        path.push(nums[i]);
+        backtrack(i + 1, path);
+        path.pop(); // undo choice
+    }
+}
 ```
 
 ## Complexity

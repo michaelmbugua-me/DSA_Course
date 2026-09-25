@@ -22,191 +22,62 @@ The time complexity of this solution would be exponential since we might end up 
 
 The idea is to construct an auxiliary array `lookup[]` for storing the subproblem solutions where each element `lookup[i]` of the lookup table stores the minimum cost to reach city `i` from city 0.
 
-The algorithm can be implemented as follows in C++, Java, and Python, where `lookup[]` is filled in a bottom-up fashion:
+The algorithm can be implemented as follows in TypeScript, where `lookup[]` is filled in a bottom-up fashion:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <climits>
-using namespace std;
-
+```ts
 // DP function to calculate the minimum cost to reach the destination city `n`
 // from the source city 0
-int findMinCost(vector<vector<int>> const &cost)
-{
+const findMinCost = (cost: number[][]): number => {
+
     // base case
-    if (cost.size() == 0) {
+    if (cost === null || cost.length === 0) {
         return 0;
     }
 
     // `N × N` matrix
-    int N = cost.size();
+    const N = cost.length;
 
     // `lookup[i]` stores the minimum cost to reach city `i` from city 0
-    int lookup[N];
+    const lookup: number[] = new Array(N);
 
     // Initialize `lookup[]` with the direct ticket price from the source city
-    for (int i = 0; i < N; i++) {
+    for (let i = 0; i < N; i++) {
         lookup[i] = cost[0][i];
     }
 
     // repeat loop till `lookup[]` is filled with all minimum values
-    bool is_filled = false;
-    while (!is_filled)
-    {
-        is_filled = true;
+    let isFilled = false;
+    while (!isFilled) {
+
+        isFilled = true;
 
         // fill `lookup[]` in a bottom-up manner
-        for (int i = 0; i < N; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                if (lookup[i] > lookup[j] + cost[j][i])
-                {
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                if (lookup[i] > lookup[j] + cost[j][i]) {
                     lookup[i] = lookup[j] + cost[j][i];
-                    is_filled = false;        // mark lookup[] as NOT filled
+                    isFilled = false;
                 }
             }
         }
     }
 
     // return the minimum cost to reach city `N-1` from city 0
-    return lookup[N-1];
+    return lookup[N - 1];
+};
 
-}
+const cost = [
+    [0, 25, 20, 10, 105],
+    [20, 0, 15, 80, 80],
+    [30, 15, 0, 70, 90],
+    [10, 10, 50, 0, 100],
+    [40, 50, 5, 10, 0]
+];
 
-int main()
-{
-    vector<vector<int>> cost =
-    {
-        { 0, 25, 20, 10, 105 },
-        { 20, 0, 15, 80, 80 },
-        { 30, 15, 0, 70, 90 },
-        { 10, 10, 50, 0, 100 },
-        { 40, 50, 5, 10, 0 }
-    };
-
-    cout << "The minimum cost is " << findMinCost(cost) << endl;
-
-    return 0;
-}
+console.log(`The minimum cost is ${findMinCost(cost)}`);
 ```
 
 **Output:** The minimum cost is 100
-
-##
-
-```java
-class Main
-{
-    // DP function to calculate the minimum cost to reach the destination city `n`
-    // from the source city 0
-    public static int findMinCost(int[][] cost)
-    {
-        // base case
-        if (cost == null || cost.length == 0) {
-            return 0;
-        }
-
-        // `N × N` matrix
-        int N = cost.length;
-
-        // `lookup[i]` stores the minimum cost to reach city `i` from city 0
-        int[] lookup = new int[N];
-
-        // Initialize `lookup[]` with the direct ticket price from the source city
-        for (int i = 0; i < N; i++) {
-            lookup[i] = cost[0][i];
-        }
-
-        // repeat loop till `lookup[]` is filled with all minimum values
-        boolean isFilled = false;
-        while (!isFilled)
-        {
-            isFilled = true;
-            // fill `lookup[]` in a bottom-up manner
-            for (int i = 0; i < N; i++)
-            {
-                for (int j = 0; j < N; j++)
-                {
-                    if (lookup[i] > lookup[j] + cost[j][i])
-                    {
-                        lookup[i] = lookup[j] + cost[j][i];
-                        isFilled = false;
-                    }
-                }
-            }
-        }
-
-        // return the minimum cost to reach city `N-1` from city 0
-        return lookup[N - 1];
-    }
-
-    public static void main(String[] args)
-    {
-        int[][] cost =
-        {
-            { 0, 25, 20, 10, 105 },
-            { 20, 0, 15, 80, 80 },
-            { 30, 15, 0, 70, 90 },
-            { 10, 10, 50, 0, 100 },
-            { 40, 50, 5, 10, 0 }
-        };
-
-        System.out.print("The minimum cost is " + findMinCost(cost));
-    }
-}
-```
-
-##
-
-```python3
-# DP function to calculate the minimum cost to reach the destination city `n`
-# from the source city 0
-def findMinCost(cost):
-
-    # base case
-    if not cost or not len(cost):
-        return 0
-
-    # `N × N` matrix
-    N = len(cost)
-
-    # `lookup[i]` stores the minimum cost to reach city `i` from city 0
-    lookup = [None] * N
-
-    # Initialize `lookup[]` with the direct ticket price from the source city
-    for i in range(N):
-        lookup[i] = cost[0][i]
-
-    # repeat loop till `lookup[]` is filled with all minimum values
-    isFilled = False
-    while not isFilled:
-        isFilled = True
-
-        # fill `lookup[]` in a bottom-up manner
-        for i in range(N):
-            for j in range(N):
-                if lookup[i] > lookup[j] + cost[j][i]:
-                    lookup[i] = lookup[j] + cost[j][i]
-                    isFilled = False
-
-    # return the minimum cost to reach city `N-1` from city 0
-    return lookup[N - 1]
-
-if __name__ == '__main__':
-
-    cost = [
-        [0, 25, 20, 10, 105],
-        [20, 0, 15, 80, 80],
-        [30, 15, 0, 70, 90],
-        [10, 10, 50, 0, 100],
-        [40, 50, 5, 10, 0]
-    ]
-
-    print('The minimum cost is', findMinCost(cost))
-```
 
 The time complexity of the proposed solution is O(N3) for an `N × N` matrix. The auxiliary space required by the program is O(N).
 

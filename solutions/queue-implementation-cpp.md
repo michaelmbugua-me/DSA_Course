@@ -4,9 +4,9 @@
 
 A queue is a [linear data structure](https://en.wikipedia.org/wiki/Linear_data_structure) that serves as a container of objects that are inserted and removed according to the FIFO (First–In, First–Out) principle.
 
-Queue has three main operations: `enqueue`, `dequeue`, and `peek`. We have already covered these operations and C implementation of queue data structure using an [array](https://techiedelight.com/circular-queue-implementation-c/) and [linked list](https://techiedelight.com/queue-implementation-using-linked-list/). In this post, we will cover queue implementation in C++ using class and STL.
+Queue has three main operations: `enqueue`, `dequeue`, and `peek`. We have already covered these operations and implementation of queue data structure using an [array](https://techiedelight.com/circular-queue-implementation-c/) and [linked list](https://techiedelight.com/queue-implementation-using-linked-list/). In this article, a TypeScript implementation of the queue data structure is discussed using a class.
 
-The following queue implementation in C++ covers the following operations:
+Following is the queue implementation in TypeScript which covers the following operations:
 
   * Enqueue: Inserts a new element at the rear of the queue.
   * Dequeue: Removes the front element of the queue and returns it.
@@ -19,140 +19,101 @@ The following queue implementation in C++ covers the following operations:
 
 Queue Implementation using an array:
 
-```
-#include <iostream>
-#include <cstdlib>
-using namespace std;
-
-// Define the default capacity of a queue
-#define SIZE 1000
-
+```ts
 // A class to store a queue
-class Queue
-{
-    int *arr;       // array to store queue elements
-    int capacity;   // maximum capacity of the queue
-    int front;      // front points to the front element in the queue (if any)
-    int rear;       // rear points to the last element in the queue
-    int count;      // current size of the queue
+class Queue {
+    private arr: number[];     // array to store queue elements
+    private capacity: number;  // maximum capacity of the queue
+    private front: number;     // front points to the front element in the queue (if any)
+    private rear: number;      // rear points to the last element in the queue
+    private count: number;     // current size of the queue
 
-public:
-    Queue(int size = SIZE);     // constructor
-    ~Queue();                   // destructor
-
-    int dequeue();
-    void enqueue(int x);
-    int peek();
-    int size();
-    bool isEmpty();
-    bool isFull();
-};
-
-// Constructor to initialize a queue
-Queue::Queue(int size)
-{
-    arr = new int[size];
-    capacity = size;
-    front = 0;
-    rear = -1;
-    count = 0;
-}
-
-// Destructor to free memory allocated to the queue
-Queue::~Queue() {
-    delete[] arr;
-}
-
-// Utility function to dequeue the front element
-int Queue::dequeue()
-{
-    // check for queue underflow
-    if (isEmpty())
-    {
-        cout << "Underflow\nProgram Terminated\n";
-        exit(EXIT_FAILURE);
+    // Constructor to initialize a queue
+    constructor(size = 1000) {
+        this.arr = new Array(size);
+        this.capacity = size;
+        this.front = 0;
+        this.rear = -1;
+        this.count = 0;
     }
 
-    int x = arr[front];
-    cout << "Removing " << x << endl;
+    // Utility function to dequeue the front element
+    dequeue(): number {
+        // check for queue underflow
+        if (this.isEmpty()) {
+            throw new Error('Underflow\nProgram Terminated');
+        }
 
-    front = (front + 1) % capacity;
-    count--;
+        const x = this.arr[this.front];
+        console.log(`Removing ${x}`);
 
-    return x;
-}
+        this.front = (this.front + 1) % this.capacity;
+        this.count--;
 
-// Utility function to add an item to the queue
-void Queue::enqueue(int item)
-{
-    // check for queue overflow
-    if (isFull())
-    {
-        cout << "Overflow\nProgram Terminated\n";
-        exit(EXIT_FAILURE);
+        return x;
     }
 
-    cout << "Inserting " << item << endl;
+    // Utility function to add an item to the queue
+    enqueue(item: number): void {
+        // check for queue overflow
+        if (this.isFull()) {
+            throw new Error('Overflow\nProgram Terminated');
+        }
 
-    rear = (rear + 1) % capacity;
-    arr[rear] = item;
-    count++;
-}
+        console.log(`Inserting ${item}`);
 
-// Utility function to return the front element of the queue
-int Queue::peek()
-{
-    if (isEmpty())
-    {
-        cout << "Underflow\nProgram Terminated\n";
-        exit(EXIT_FAILURE);
-    }
-    return arr[front];
-}
-
-// Utility function to return the size of the queue
-int Queue::size() {
-    return count;
-}
-
-// Utility function to check if the queue is empty or not
-bool Queue::isEmpty() {
-    return (size() == 0);
-}
-
-// Utility function to check if the queue is full or not
-bool Queue::isFull() {
-    return (size() == capacity);
-}
-
-int main()
-{
-    // create a queue of capacity 5
-    Queue q(5);
-
-    q.enqueue(1);
-    q.enqueue(2);
-    q.enqueue(3);
-
-    cout << "The front element is " << q.peek() << endl;
-    q.dequeue();
-
-    q.enqueue(4);
-
-    cout << "The queue size is " << q.size() << endl;
-
-    q.dequeue();
-    q.dequeue();
-    q.dequeue();
-
-    if (q.isEmpty()) {
-        cout << "The queue is empty\n";
-    }
-    else {
-        cout << "The queue is not empty\n";
+        this.rear = (this.rear + 1) % this.capacity;
+        this.arr[this.rear] = item;
+        this.count++;
     }
 
-    return 0;
+    // Utility function to return the front element of the queue
+    peek(): number {
+        if (this.isEmpty()) {
+            throw new Error('Underflow\nProgram Terminated');
+        }
+        return this.arr[this.front];
+    }
+
+    // Utility function to return the size of the queue
+    size(): number {
+        return this.count;
+    }
+
+    // Utility function to check if the queue is empty or not
+    isEmpty(): boolean {
+        return (this.size() === 0);
+    }
+
+    // Utility function to check if the queue is full or not
+    isFull(): boolean {
+        return (this.size() === this.capacity);
+    }
+}
+
+// create a queue of capacity 5
+const q = new Queue(5);
+
+q.enqueue(1);
+q.enqueue(2);
+q.enqueue(3);
+
+console.log(`The front element is ${q.peek()}`);
+q.dequeue();
+
+q.enqueue(4);
+
+console.log(`The queue size is ${q.size()}`);
+
+q.dequeue();
+q.dequeue();
+q.dequeue();
+
+if (q.isEmpty()) {
+    console.log('The queue is empty');
+}
+else {
+    console.log('The queue is not empty');
 }
 ```
 
@@ -160,91 +121,73 @@ int main()
 
 The time complexity of all the above queue operations is O(1).
 
-Using `std::queue`:
+Using the built-in array:
 
-C++’s STL provides a [std::queue](https://cplusplus.com/reference/list/list/) template class which is restricted to only enqueue/dequeue operations. It also provides [std::list](https://cplusplus.com/reference/queue/queue/) which has `push_back` and `pop_front` operations with LIFO semantics. Java’s library contains [Queue](https://docs.oracle.com/javase/8/docs/api/java/util/Queue.html) interface that specifies queue operations.
+JavaScript arrays have `push` and `shift` operations with FIFO semantics like a [queue](https://cplusplus.com/reference/list/list/), and `unshift` and `pop` operations like a [list](https://cplusplus.com/reference/queue/queue/).
 
-```std::queue
-#include <iostream>
-#include <queue>
-using namespace std;
+```ts
+// Queue implementation in TypeScript using a plain array
+const q: string[] = [];
 
-// Queue implementation in C++ using `std::queue`
-int main()
-{
-    queue<string> q;
+q.push('A');        // Insert `A` into the queue
+q.push('B');        // Insert `B` into the queue
+q.push('C');        // Insert `C` into the queue
+q.push('D');        // Insert `D` into the queue
 
-    q.push("A");        // Insert `A` into the queue
-    q.push("B");        // Insert `B` into the queue
-    q.push("C");        // Insert `C` into the queue
-    q.push("D");        // Insert `D` into the queue
+// Returns the total number of elements present in the queue
+console.log(`The queue size is ${q.length}`);
 
-    // Returns the total number of elements present in the queue
-    cout << "The queue size is " << q.size() << endl;
+// Prints the front of the queue (`A`)
+console.log(`The front element is ${q[0]}`);
 
-    // Prints the front of the queue (`A`)
-    cout << "The front element is " << q.front() << endl;
+// Prints the rear of the queue (`D`)
+console.log(`The rear element is ${q[q.length - 1]}`);
 
-    // Prints the rear of the queue (`D`)
-    cout << "The rear element is " << q.back() << endl;
+q.shift();          // removing the front element (`A`)
+q.shift();          // removing the next front element (`B`)
 
-    q.pop();            // removing the front element (`A`)
-    q.pop();            // removing the next front element (`B`)
+console.log(`The queue size is ${q.length}`);
 
-    cout << "The queue size is " << q.size() << endl;
-
-    // check if the queue is empty
-    if (q.empty()) {
-        cout << "The queue is empty\n";
-    }
-    else {
-        cout << "The queue is not empty\n";
-    }
-
-    return 0;
+// check if the queue is empty
+if (q.length === 0) {
+    console.log('The queue is empty');
+}
+else {
+    console.log('The queue is not empty');
 }
 ```
 
 ##
 
-```std::list
-#include <iostream>
-#include <list>
-using namespace std;
+```ts
+// Queue implementation in TypeScript using array front operations
+const q: string[] = [];
 
-// Queue implementation in C++ using `std::list`
-int main()
-{
-    list<string> q;
+q.unshift('A');     // Insert `A` into the queue
+q.unshift('B');     // Insert `B` into the queue
+q.unshift('C');     // Insert `C` into the queue
+q.unshift('D');     // Insert `D` into the queue
 
-    q.push_back("A");        // Insert `A` into the queue
-    q.push_back("B");        // Insert `B` into the queue
-    q.push_back("C");        // Insert `C` into the queue
-    q.push_back("D");        // Insert `D` into the queue
+// Returns the total number of elements present in the queue
+console.log(`The queue size is ${q.length}`);
 
-    // Returns the total number of elements present in the queue
-    cout << "The queue size is " << q.size() << endl;
+// Prints the front of the queue (`A`)
+console.log(`The front element is ${q[q.length - 1]}`);
 
-    // Prints the front of the queue (`A`)
-    cout << "The front element is " << q.front() << endl;
+// Prints the rear of the queue (`D`)
+console.log(`The rear element is ${q[0]}`);
 
-    // Prints the rear of the queue (`D`)
-    cout << "The rear element is " << q.back() << endl;
+q.pop();            // removing the front element (`A`)
+q.pop();            // removing the next front element (`B`)
 
-    q.pop_front();          // removing the front element (`A`)
-    q.pop_front();          // removing the next front element (`B`)
+console.log(`The queue size is ${q.length}`);
 
-    cout << "The queue size is " << q.size() << endl;
-
-    // check if the queue is empty
-    if (q.empty()) {
-        cout << "The queue is empty\n";
-    }
-    else {
-        cout << "The queue is not empty\n";
-    }
-
-    return 0;
+// check if the queue is empty
+if (q.length === 0) {
+    console.log('The queue is empty');
+}
+else {
+    console.log('The queue is not empty');
 }
 ```
 

@@ -14,206 +14,63 @@ For example,
 
 Please note that the problem specifically targets [subarrays](https://techiedelight.com/difference-between-subarray-subsequence-subset/#subarray) that are contiguous (i.e., occupy consecutive positions) and inherently maintains the order of elements. Also note that we don’t have to print the subarray but return its length.
 
-We can solve this problem by using a [sliding window](https://techiedelight.com/sliding-window-problems/). The idea is to maintain a window that ends at the current element, and the sum of its elements is less than or equal to the given sum. If the current window’s sum becomes more than the given sum at any point of time, then the window is unstable and continue removing elements from the window’ left till it becomes stable again. Also update the result if the unstable window’s length is less than the minimum found so far. The algorithm can be implemented as follows in C, Java, and Python:
+We can solve this problem by using a [sliding window](https://techiedelight.com/sliding-window-problems/). The idea is to maintain a window that ends at the current element, and the sum of its elements is less than or equal to the given sum. If the current window’s sum becomes more than the given sum at any point of time, then the window is unstable and continue removing elements from the window’ left till it becomes stable again. Also update the result if the unstable window’s length is less than the minimum found so far. Following is a TypeScript implementation of the idea:
 
-```c
-#include <stdio.h>
-#include <limits.h>
-
-// Utility function to find a minimum of two numbers
-int min(int x, int y) {
-    return (x < y) ? x : y;
-}
-
+```ts
 // Function to find the length of the smallest subarray whose sum
 // of elements is greater than the given number
-int findSmallestSubarrayLen(int arr[], int n, int k)
-{
-    // stores the current window sum
-    int windowSum = 0;
+function findSmallestSubarrayLen(A: number[], k: number): number {
+  // stores the current window sum
+  let windowSum = 0;
 
-    // stores the result
-    int len = INT_MAX;
+  // stores the result
+  let len = Number.MAX_VALUE;
 
-    // stores the window's starting index
-    int left = 0;
+  // stores the window's starting index
+  let left = 0;
 
-    // maintain a sliding window `[left…right]`
-    for (int right = 0; right < n; right++)
-    {
-        // include the current element in the window
-        windowSum += arr[right];
+  // maintain a sliding window `[left…right]`
+  for (let right = 0; right < A.length; right++) {
+    // include the current element in the window
+    windowSum += A[right];
 
-        // the window becomes unstable if its sum becomes more than `k`
-        while (windowSum > k && left <= right)
-        {
-            // update the result if the current window's length is less than the
-            // minimum found so far
-            len = min(len, right - left + 1);
+    // the window becomes unstable if its sum becomes more than `k`
+    while (windowSum > k && left <= right) {
+      // update the result if the current window's length is less than the
+      // minimum found so far
+      len = Math.min(len, right - left + 1);
 
-            // remove elements from the window's left side till the window
-            // becomes stable again
-            windowSum -= arr[left];
-            left++;
-        }
+      // remove elements from the window's left side till the window
+      // becomes stable again
+      windowSum -= A[left];
+      left++;
     }
+  }
 
-    // invalid input
-    if (len == INT_MAX) {
-        return 0;
-    }
+  // invalid input
+  if (len === Number.MAX_VALUE) {
+    return 0;
+  }
 
-    // return result
-    return len;
+  // return result
+  return len;
 }
 
-int main()
-{
-    // an array of positive numbers
-    int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-    int k = 21;
+// an array of positive numbers
+const A = [1, 2, 3, 4, 5, 6, 7, 8];
+const k = 21;
 
-    int n = sizeof(arr) / sizeof(arr[0]);
+// find the length of the smallest subarray
+const len = findSmallestSubarrayLen(A, k);
 
-    // find the length of the smallest subarray
-    int len = findSmallestSubarrayLen(arr, n, k);
-
-    if (len != INT_MAX) {
-        printf("The smallest subarray length is %d", len);
-    }
-    else {
-        printf("No subarray exists");
-    }
-
-    return 0;
+if (len !== Number.MAX_VALUE) {
+  console.log(`The smallest subarray length is ${len}`);
+} else {
+  console.log('No subarray exists');
 }
 ```
 
 **Output:** The smallest subarray length is 4
-
-##
-
-```java
-class Main
-{
-    // Function to find the length of the smallest subarray whose sum
-    // of elements is greater than the given number
-    public static int findSmallestSubarrayLen(int[] A, int k)
-    {
-        // stores the current window sum
-        int windowSum = 0;
-
-        // stores the result
-        int len = Integer.MAX_VALUE;
-
-        // stores the window's starting index
-        int left = 0;
-
-        // maintain a sliding window `[left…right]`
-        for (int right = 0; right < A.length; right++)
-        {
-            // include the current element in the window
-            windowSum += A[right];
-
-            // the window becomes unstable if its sum becomes more than `k`
-            while (windowSum > k && left <= right)
-            {
-                // update the result if the current window's length is less than the
-                // minimum found so far
-                len = Integer.min(len, right - left + 1);
-
-                // remove elements from the window's left side till the window
-                // becomes stable again
-                windowSum -= A[left];
-                left++;
-            }
-        }
-
-        // invalid input
-        if (len == Integer.MAX_VALUE) {
-            return 0;
-        }
-
-        // return result
-        return len;
-    }
-
-    public static void main(String[] args)
-    {
-        // an array of positive numbers
-        int[] A = {1, 2, 3, 4, 5, 6, 7, 8};
-        int k = 21;
-
-        // find the length of the smallest subarray
-        int len = findSmallestSubarrayLen(A, k);
-
-        if (len != Integer.MAX_VALUE) {
-            System.out.print("The smallest subarray length is " + len);
-        }
-        else {
-            System.out.print("No subarray exists");
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Function to find the length of the smallest sublist whose sum
-# of elements is greater than the given number
-def findSmallestSublistLen(A, k):
-
-    # stores the current window sum
-    windowSum = 0
-
-    # stores the result
-    length = sys.maxsize
-
-    # stores the window's starting index
-    left = 0
-
-    # maintain a sliding window `[left…right]`
-    for right in range(len(A)):
-
-        # include the current element in the window
-        windowSum += A[right]
-
-        # the window becomes unstable if its sum becomes more than `k`
-        while windowSum > k and left <= right:
-
-            # update the result if the current window's length is less than the
-            # minimum found so far
-            length = min(length, right - left + 1)
-
-            # remove elements from the window's left side till the window
-            # becomes stable again
-            windowSum -= A[left]
-            left = left + 1
-
-    # invalid input
-    if length == sys.maxsize:
-        return 0
-
-    # return result
-    return length
-
-if __name__ == '__main__':
-
-    # a list of positive numbers
-    A = [1, 2, 3, 4, 5, 6, 7, 8]
-    k = 21
-
-    # find the length of the smallest sublist
-    length = findSmallestSublistLen(A, k)
-
-    if length != sys.maxsize:
-        print("The smallest sublist length is", length)
-    else:
-        print("No sublist exists")
-```
 
 The time complexity of the above solution is O(n) and doesn’t require any extra space, where `n` is the size of the input.
 

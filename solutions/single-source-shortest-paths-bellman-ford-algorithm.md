@@ -22,65 +22,34 @@ function BellmanFord(list vertices, list edges, vertex source, distance[], paren
 
 The following slideshow illustrates the working of the Bellman–Ford algorithm. The images are taken from [MIT 6.046J/18.401J Introduction to Algorithms (Lecture 18 by Prof. Erik Demaine)](https://ocw.mit.edu/courses/6-046j-introduction-to-algorithms-sma-5503-fall-2005/resources/lecture-18-shortest-paths-ii-bellman-ford-linear-programming-difference-constraints/).
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <iomanip>
-#include <climits>
-using namespace std;
-
-// Data structure to store a graph edge
-struct Edge {
-    int source, dest, weight;
-};
-
+```ts
 // Recursive function to print the path of a given vertex from source vertex
-void printPath(vector<int> const &parent, int vertex, int source)
-{
+function getPath(parent: number[], vertex: number): number[] {
     if (vertex < 0) {
-        return;
+        return [];
     }
-
-    printPath(parent, parent[vertex], source);
-    if (vertex != source) {
-        cout << ", ";
-    }
-    cout << vertex;
+    return [...getPath(parent, parent[vertex]), vertex];
 }
 
 // Function to run the Bellman–Ford algorithm from a given source
-void bellmanFord(vector<Edge> const &edges, int source, int n)
-{
-    // distance[] and parent[] stores the shortest path (least cost/path)
-    // information. Initially, all vertices except the source vertex
-    // weight INFINITY and no parent
+function bellmanFord(edges: [number, number, number][], source: number, n: number): void {
+    // distance[] and parent[] stores the shortest path (least cost/path) info
+    const distance: number[] = new Array(n).fill(Number.MAX_SAFE_INTEGER);
+    const parent: number[] = new Array(n).fill(-1);
 
-    vector<int> distance (n, INT_MAX);
+    // Initially, all vertices except source vertex weight INFINITY and no parent
     distance[source] = 0;
 
-    vector<int> parent (n, -1);
-
-    int u, v, w, k = n;
-
     // relaxation step (run V-1 times)
-    while (--k)
-    {
-        for (Edge edge: edges)
-        {
-            // edge from `u` to `v` having weight `w`
-            u = edge.source;
-            v = edge.dest;
-            w = edge.weight;
-
-            // if the distance to destination `v` can be
-            // shortened by taking edge (u, v)
-            if (distance[u] != INT_MAX && distance[u] + w < distance[v])
-            {
+    for (let k = 0; k < n - 1; k++) {
+        // edge from `u` to `v` having weight `w`
+        for (const [u, v, w] of edges) {
+            // if the distance to destination `v` can be shortened by taking edge (u, v)
+            if (distance[u] !== Number.MAX_SAFE_INTEGER && distance[u] + w < distance[v]) {
                 // update distance to the new lower value
                 distance[v] = distance[u] + w;
-
                 // set v's parent as `u`
                 parent[v] = u;
             }
@@ -88,233 +57,36 @@ void bellmanFord(vector<Edge> const &edges, int source, int n)
     }
 
     // run relaxation step once more for n'th time to check for negative-weight cycles
-    for (Edge edge: edges)
-    {
-        // edge from `u` to `v` having weight `w`
-        u = edge.source;
-        v = edge.dest;
-        w = edge.weight;
-
+    for (const [u, v, w] of edges) {  // edge from `u` to `v` having weight `w`
         // if the distance to destination `u` can be shortened by taking edge (u, v)
-        if (distance[u] != INT_MAX && distance[u] + w < distance[v])
-        {
-            cout << "Negative-weight cycle is found!!";
+        if (distance[u] !== Number.MAX_SAFE_INTEGER && distance[u] + w < distance[v]) {
+            console.log('Negative-weight cycle is found!!');
             return;
         }
     }
 
-    for (int i = 0; i < n; i++)
-    {
-        if (i != source && distance[i] < INT_MAX)
-        {
-            cout << "The distance of vertex " << i << " from the source is "
-                 << setw(2) << distance[i] << ". Its path is [";
-            printPath(parent, i, source); cout << "]" << endl;
+    for (let i = 0; i < n; i++) {
+        if (i !== source && distance[i] < Number.MAX_SAFE_INTEGER) {
+            console.log(`The distance of vertex ${i} from vertex ${source} is ${distance[i]}. ` +
+                `Its path is`, getPath(parent, i));
         }
     }
 }
 
-int main()
-{
-    // vector of graph edges as per the above diagram
-    vector<Edge> edges =
-    {
-        // (x, y, w) —> edge from `x` to `y` having weight `w`
-        {0, 1, -1}, {0, 2, 4}, {1, 2, 3}, {1, 3, 2},
-        {1, 4, 2}, {3, 2, 5}, {3, 1, 1}, {4, 3, -3}
-    };
+// of graph edges as per the above diagram
+const edges: [number, number, number][] = [
+    // (x, y, w) —> edge from `x` to `y` having weight `w`
+    [0, 1, -1], [0, 2, 4], [1, 2, 3], [1, 3, 2],
+    [1, 4, 2], [3, 2, 5], [3, 1, 1], [4, 3, -3]
+];
 
-    // set the maximum number of nodes in the graph
-    int n = 5;
+// set the maximum number of nodes in the graph
+const n = 5;
 
-    // run the Bellman–Ford algorithm from every node
-    for (int source = 0; source < n; source++) {
-        bellmanFord(edges, source, n);
-    }
-
-    return 0;
+// run the Bellman–Ford algorithm from every node
+for (let source = 0; source < n; source++) {
+    bellmanFord(edges, source, n);
 }
-```
-
-##
-
-```java
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-// A class to store a graph edge
-class Edge
-{
-    int source, dest, weight;
-
-    public Edge(int source, int dest, int weight)
-    {
-        this.source = source;
-        this.dest = dest;
-        this.weight = weight;
-    }
-}
-
-class Main
-{
-    // Recursive function to print the path of a given vertex from source vertex
-    static void getPath(int parent[], int vertex, List<Integer> path)
-    {
-        if (vertex < 0) {
-            return;
-        }
-
-        getPath(parent, parent[vertex], path);
-        path.add(vertex);
-    }
-
-    // Function to run the Bellman–Ford algorithm from a given source
-    public static void bellmanFord(List<Edge> edges, int source, int n)
-    {
-        // distance[] and parent[] stores the shortest path
-        // (least cost/path) information
-        int distance[] = new int[n];
-        int parent[] = new int[n];
-
-        // initialize `distance[]` and `parent[]`. Initially, all vertices
-        // except source vertex weight INFINITY and no parent
-        Arrays.fill(distance, Integer.MAX_VALUE);
-        distance[source] = 0;
-
-        Arrays.fill(parent, -1);
-
-        // relaxation step (run V-1 times)
-        for (int i = 0; i < n - 1; i++)
-        {
-            for (Edge edge: edges)
-            {
-                // edge from `u` to `v` having weight `w`
-                int u = edge.source;
-                int v = edge.dest;
-                int w = edge.weight;
-
-                // if the distance to destination `v` can be
-                // shortened by taking edge (u, v)
-                if (distance[u] != Integer.MAX_VALUE && distance[u] + w < distance[v])
-                {
-                    // update distance to the new lower value
-                    distance[v] = distance[u] + w;
-
-                    // set v's parent as `u`
-                    parent[v] = u;
-                }
-            }
-        }
-
-        // run relaxation step once more for n'th time to
-        // check for negative-weight cycles
-        for (Edge edge: edges)
-        {
-            // edge from `u` to `v` having weight `w`
-            int u = edge.source;
-            int v = edge.dest;
-            int w = edge.weight;
-
-            // if the distance to destination `u` can be
-            // shortened by taking edge (u, v)
-            if (distance[u] != Integer.MAX_VALUE && distance[u] + w < distance[v])
-            {
-                System.out.println("Negative-weight cycle is found!!");
-                return;
-            }
-        }
-
-        for (int i = 0; i < n; i++)
-        {
-            if (i != source && distance[i] < Integer.MAX_VALUE) {
-                List<Integer> path = new ArrayList<>();
-                getPath(parent, i, path);
-                System.out.println("The distance of vertex " + i + " from vertex " +
-                        source + " is " + distance[i] + ". Its path is " + path);
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        // List of graph edges as per the above diagram
-        List<Edge> edges = Arrays.asList(
-                // (x, y, w) —> edge from `x` to `y` having weight `w`
-                new Edge(0, 1, -1), new Edge(0, 2, 4), new Edge(1, 2, 3),
-                new Edge(1, 3, 2), new Edge(1, 4, 2), new Edge(3, 2, 5),
-                new Edge(3, 1, 1), new Edge(4, 3, -3 )
-        );
-
-        // set the maximum number of nodes in the graph
-        int n = 5;
-
-        // run the Bellman–Ford algorithm from every node
-        for (int source = 0; source < n; source++) {
-            bellmanFord(edges, source, n);
-        }
-    }
-}
-```
-
-##
-
-```python3
-import sys
-
-# Recursive function to print the path of a given vertex from source vertex
-def getPath(parent, vertex):
-    if vertex < 0:
-        return []
-    return getPath(parent, parent[vertex]) + [vertex]
-
-# Function to run the Bellman–Ford algorithm from a given source
-def bellmanFord(edges, source, n):
-    # distance[] and parent[] stores the shortest path (least cost/path) info
-    distance = [sys.maxsize] * n
-    parent = [-1] * n
-
-    # Initially, all vertices except source vertex weight INFINITY and no parent
-    distance[source] = 0
-
-    # relaxation step (run V-1 times)
-    for k in range(n - 1):
-        # edge from `u` to `v` having weight `w`
-        for (u, v, w) in edges:
-            # if the distance to destination `v` can be shortened by taking edge (u, v)
-            if distance[u] != sys.maxsize and distance[u] + w < distance[v]:
-                # update distance to the new lower value
-                distance[v] = distance[u] + w
-                # set v's parent as `u`
-                parent[v] = u
-
-    # run relaxation step once more for n'th time to check for negative-weight cycles
-    for (u, v, w) in edges:  # edge from `u` to `v` having weight `w`
-        # if the distance to destination `u` can be shortened by taking edge (u, v)
-        if distance[u] != sys.maxsize and distance[u] + w < distance[v]:
-            print('Negative-weight cycle is found!!')
-            return
-
-    for i in range(n):
-        if i != source and distance[i] < sys.maxsize:
-            print(f'The distance of vertex {i} from vertex {source} is {distance[i]}. '
-                  f'Its path is', getPath(parent, i))
-
-if __name__ == '__main__':
-
-    # of graph edges as per the above diagram
-    edges = [
-        # (x, y, w) —> edge from `x` to `y` having weight `w`
-        (0, 1, -1), (0, 2, 4), (1, 2, 3), (1, 3, 2),
-        (1, 4, 2), (3, 2, 5), (3, 1, 1), (4, 3, -3)
-    ]
-
-    # set the maximum number of nodes in the graph
-    n = 5
-
-    # run the Bellman–Ford algorithm from every node
-    for source in range(n):
-        bellmanFord(edges, source, n)
 ```
 
 **Output:** The distance of vertex 1 from vertex 0 is -1. Its path is [0, 1] The distance of vertex 2 from vertex 0 is 2. Its path is [0, 1, 2] The distance of vertex 3 from vertex 0 is -2. Its path is [0, 1, 4, 3] The distance of vertex 4 from vertex 0 is 1. Its path is [0, 1, 4] The distance of vertex 2 from vertex 1 is 3. Its path is [1, 2] The distance of vertex 3 from vertex 1 is -1. Its path is [1, 4, 3] The distance of vertex 4 from vertex 1 is 2. Its path is [1, 4] The distance of vertex 1 from vertex 3 is 1. Its path is [3, 1] The distance of vertex 2 from vertex 3 is 4. Its path is [3, 1, 2] The distance of vertex 4 from vertex 3 is 3. Its path is [3, 1, 4] The distance of vertex 1 from vertex 4 is -2. Its path is [4, 3, 1] The distance of vertex 2 from vertex 4 is 1. Its path is [4, 3, 1, 2] The distance of vertex 3 from vertex 4 is -3. Its path is [4, 3]

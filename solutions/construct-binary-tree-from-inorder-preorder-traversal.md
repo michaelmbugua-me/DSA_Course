@@ -22,476 +22,117 @@ The root will be the first element in the preorder sequence, i.e., `1`. Next, lo
 
 **Left subtree:** Inorder : {4, 2} Preorder : {2, 4} **Right subtree:** Inorder : {7, 5, 8, 3, 6} Preorder : {3, 5, 7, 8, 6}
 
-The idea is to recursively follow the above approach until the complete tree is constructed. This is demonstrated below in C, C++, Java, and Python:
+The idea is to recursively follow the above approach until the complete tree is constructed. This is demonstrated below in TypeScript:
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    struct Node *left, *right;
-};
-
-// Function to create a new binary tree node having a given key
-struct Node* newNode(int key)
-{
-    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
-    node->key = key;
-    node->left = node->right = NULL;
-
-    return node;
+```ts
+// A class to store a binary tree node
+class Node {
+    // Constructor
+    constructor(public data: number,
+                public left: Node | null = null,
+                public right: Node | null = null) {}
 }
 
 // Recursive function to perform inorder traversal on a given binary tree
-void inorderTraversal(struct Node* root)
-{
-    if (root == NULL) {
+function inorderTraversal(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
 
-    inorderTraversal(root->left);
-    printf("%d ", root->key);
-    inorderTraversal(root->right);
-}
-
-// Recursive function to perform preorder traversal on a given binary tree
-void preorderTraversal(struct Node* root)
-{
-    if (root == NULL) {
-        return;
-    }
-
-    printf("%d ", root->key);
-    preorderTraversal(root->left);
-    preorderTraversal(root->right);
-}
-
-// Recursive function to construct a binary tree from a given
-// inorder and preorder sequence
-struct Node* construct(int inorder[], int start, int end,
-                int preorder[], int *pIndex)
-{
-    // base case
-    if (start > end) {
-        return NULL;
-    }
-
-    // The next element in `preorder[]` will be the root node of
-    // subtree formed by sequence represented by `inorder[start, end]`
-    struct Node* node = newNode(preorder[(*pIndex)++]);
-
-    // search the root node index in sequence `inorder[]` to determine the
-    // left and right subtree boundary
-    int i;
-    for (i = start; i <= end; i++)
-    {
-        if (inorder[i] == node->key) {
-            break;
-        }
-    }
-
-    // recursively construct the left subtree
-    node->left = construct(inorder, start, i - 1, preorder, pIndex);
-
-    // recursively construct the right subtree
-    node->right = construct(inorder, i + 1, end, preorder, pIndex);
-
-    // return current node
-    return node;
-}
-
-// Construct a binary tree from inorder and preorder traversals.
-// This function assumes that the input is valid, i.e., given
-// inorder and preorder sequence forms a binary tree.
-struct Node* constructTree(int inorder[], int preorder[], int n)
-{
-    // `pIndex` stores the index of the next unprocessed node in a preorder sequence;
-    // root node is present at index 0 in a preorder sequence
-    int pIndex = 0;
-
-    return construct(inorder, 0, n - 1, preorder, &pIndex);
-}
-
-int main()
-{
-    /* Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          /       / \
-         /       /   \
-        4       5     6
-               / \
-              /   \
-             7     8
-    */
-
-    int inorder[] = { 4, 2, 1, 7, 5, 8, 3, 6 };
-    int preorder[] = { 1, 2, 4, 3, 5, 7, 8, 6 };
-    int n = sizeof(inorder)/sizeof(inorder[0]);
-
-    struct Node* root = constructTree(inorder, preorder, n);
-
-    // traverse the constructed tree
-    printf("The inorder traversal is "); inorderTraversal(root);
-    printf("\nThe preorder traversal is "); preorderTraversal(root);
-
-    return 0;
-}
-```
-
-**Output:** The inorder traversal is 4 2 1 7 5 8 3 6 The preorder traversal is 1 2 4 3 5 7 8 6
-
-##
-
-```cpp
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-using namespace std;
-
-// Data structure to store a binary tree node
-struct Node
-{
-    int key;
-    Node *left, *right;
-
-    Node(int key)
-    {
-        this->key = key;
-        this->left = this->right = nullptr;
-    }
-};
-
-// Recursive function to perform inorder traversal on a given binary tree
-void inorderTraversal(Node* root)
-{
-    if (root == nullptr) {
-        return;
-    }
-
-    inorderTraversal(root->left);
-    cout << root->key << ' ';
-    inorderTraversal(root->right);
+    inorderTraversal(root.left, output);
+    output.push(root.data);
+    inorderTraversal(root.right, output);
 }
 
 // Recursive function to perform postorder traversal on a given binary tree
-void preorderTraversal(Node* root)
-{
-    if (root == nullptr) {
+function preorderTraversal(root: Node | null, output: number[] = []): void {
+    if (root === null) {
         return;
     }
 
-    cout << root->key << ' ';
-    preorderTraversal(root->left);
-    preorderTraversal(root->right);
+    output.push(root.data);
+    preorderTraversal(root.left, output);
+    preorderTraversal(root.right, output);
 }
 
 // Recursive function to construct a binary tree from a given
 // inorder and preorder sequence
-Node* construct(int start, int end, vector<int> const &preorder,
-                int &pIndex, unordered_map<int, int> &map)
-{
+function construct(start: number, end: number, preorder: number[], pIndex: number, d: Map<number, number>): [Node | null, number] {
+
     // base case
     if (start > end) {
-        return nullptr;
+        return [null, pIndex];
     }
 
     // The next element in `preorder[]` will be the root node of subtree
     // formed by sequence represented by `inorder[start, end]`
-    Node *root = new Node(preorder[pIndex++]);
+    const root = new Node(preorder[pIndex]);
+    pIndex = pIndex + 1;
 
-    // get the root node index in sequence `inorder[]` to determine the
+    // get the index of the root node in inorder to determine the
     // left and right subtree boundary
-    int index = map[root->key];
+    const index = d.get(root.data)!;
 
     // recursively construct the left subtree
-    root->left = construct(start, index - 1, preorder, pIndex, map);
+    [root.left, pIndex] = construct(start, index - 1, preorder, pIndex, d);
 
     // recursively construct the right subtree
-    root->right = construct(index + 1, end, preorder, pIndex, map);
+    [root.right, pIndex] = construct(index + 1, end, preorder, pIndex, d);
 
     // return current node
-    return root;
+    return [root, pIndex];
 }
 
 // Construct a binary tree from inorder and preorder traversals.
 // This function assumes that the input is valid
 // i.e., given inorder and preorder sequence forms a binary tree
-Node* construct(vector<int> const &inorder, vector<int> const &preorder)
-{
-    // get the total number of nodes in the tree
-    int n = inorder.size();
+function constructTree(inorder: number[], preorder: number[]): Node | null {
 
-    // create a map to efficiently find the index of any element in
+    // create a dictionary to efficiently find the index of any element in
     // a given inorder sequence
-    unordered_map<int, int> map;
-    for (int i = 0; i < n; i++) {
-        map[inorder[i]] = i;
+    const d = new Map<number, number>();
+    for (let i = 0; i < inorder.length; i++) {
+        d.set(inorder[i], i);
     }
 
-    // `pIndex` stores the index of the next unprocessed node in preorder;
+    // `pIndex` stores the index of the next unprocessed node in a preorder sequence;
     // start with the root node (present at 0th index)
-    int pIndex = 0;
+    let pIndex = 0;
 
-    return construct(0, n - 1, preorder, pIndex, map);
+    return construct(0, inorder.length - 1, preorder, pIndex, d)[0]!;
 }
 
-int main()
-{
-    /* Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          /       / \
-         /       /   \
-        4       5     6
-               / \
-              /   \
-             7     8
+/* Construct the following tree
+           1
+         /   \
+        /     \
+       2       3
+      /       / \
+     /       /   \
+    4       5     6
+           / \
+          /   \
+         7     8
     */
 
-    vector<int> inorder = { 4, 2, 1, 7, 5, 8, 3, 6 };
-    vector<int> preorder = { 1, 2, 4, 3, 5, 7, 8, 6 };
+const inorder = [4, 2, 1, 7, 5, 8, 3, 6];
+const preorder = [1, 2, 4, 3, 5, 7, 8, 6];
 
-    Node* root = construct(inorder, preorder);
+const root = constructTree(inorder, preorder);
 
-    // traverse the constructed tree
-    cout << "The inorder traversal is "; inorderTraversal(root);
-    cout << "\nThe preorder traversal is "; preorderTraversal(root);
+// traverse the constructed tree
+const output: number[] = [];
+inorderTraversal(root, output);
+console.log(`The inorder traversal is ${output.join(' ')}`);
 
-    return 0;
-}
+const outputPre: number[] = [];
+preorderTraversal(root, outputPre);
+console.log(`The preorder traversal is ${outputPre.join(' ')}`);
 ```
 
-##
+**Output:** The inorder traversal is 4 2 1 7 5 8 3 6 The preorder traversal is 1 2 4 3 5 7 8 6
 
-```java
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-// A class to store a binary tree node
-class Node
-{
-    int key;
-    Node left, right;
-
-    public Node(int key)
-    {
-        this.key = key;
-        left = right = null;
-    }
-}
-
-class Main
-{
-    // Recursive function to perform inorder traversal on a given binary tree
-    public static void inorderTraversal(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        inorderTraversal(root.left);
-        System.out.print(root.key + " ");
-        inorderTraversal(root.right);
-    }
-
-    // Recursive function to perform postorder traversal on a given binary tree
-    public static void preorderTraversal(Node root)
-    {
-        if (root == null) {
-            return;
-        }
-
-        System.out.print(root.key + " ");
-        preorderTraversal(root.left);
-        preorderTraversal(root.right);
-    }
-
-    // Recursive function to construct a binary tree from a given
-    // inorder and preorder sequence
-    public static Node construct(int start, int end,
-                                int[] preorder, AtomicInteger pIndex,
-                                Map<Integer, Integer> map) {
-        // base case
-        if (start > end) {
-            return null;
-        }
-
-        // The next element in `preorder[]` will be the root node of subtree
-        // formed by sequence represented by `inorder[start, end]`
-        Node root = new Node(preorder[pIndex.getAndIncrement()]);
-
-        // get the root node index in sequence `inorder[]` to determine the
-        // left and right subtree boundary
-        int index = map.get(root.key);
-
-        // recursively construct the left subtree
-        root.left = construct(start, index - 1, preorder, pIndex, map);
-
-        // recursively construct the right subtree
-        root.right = construct(index + 1, end, preorder, pIndex, map);
-
-        // return current node
-        return root;
-    }
-
-    // Construct a binary tree from inorder and preorder traversals.
-    // This function assumes that the input is valid, i.e., given
-    // inorder and preorder sequence forms a binary tree.
-    public static Node construct(int[] inorder, int[] preorder)
-    {
-        // create a map to efficiently find the index of any element in
-        // a given inorder sequence
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < inorder.length; i++) {
-            map.put(inorder[i], i);
-        }
-
-        // `pIndex` stores the index of the next unprocessed node in a preorder
-        // sequence. We start with the root node (present at 0th index).
-        AtomicInteger pIndex = new AtomicInteger(0);
-
-        return construct(0, inorder.length - 1, preorder, pIndex, map);
-    }
-
-    public static void main(String[] args) {
-        /* Construct the following tree
-                   1
-                 /   \
-                /     \
-               2       3
-              /       / \
-             /       /   \
-            4       5     6
-                   / \
-                  /   \
-                 7     8
-        */
-
-        int[] inorder = { 4, 2, 1, 7, 5, 8, 3, 6 };
-        int[] preorder = { 1, 2, 4, 3, 5, 7, 8, 6 };
-
-        Node root = construct(inorder, preorder);
-
-        // traverse the constructed tree
-        System.out.print("The inorder traversal is ");
-        inorderTraversal(root);
-
-        System.out.print("\nThe preorder traversal is ");
-        preorderTraversal(root);
-    }
-}
-```
-
-##
-
-```python3
-# A class to store a binary tree node
-class Node:
-    # Constructor
-    def __init__(self, data, left=None, right=None):
-        self.data = data
-        self.left = left
-        self.right = right
-
-# Recursive function to perform inorder traversal on a given binary tree
-def inorderTraversal(root):
-    if root is None:
-        return
-
-    inorderTraversal(root.left)
-    print(root.data, end=' ')
-    inorderTraversal(root.right)
-
-# Recursive function to perform postorder traversal on a given binary tree
-def preorderTraversal(root):
-    if root is None:
-        return
-
-    print(root.data, end=' ')
-    preorderTraversal(root.left)
-    preorderTraversal(root.right)
-
-# Recursive function to construct a binary tree from a given
-# inorder and preorder sequence
-def construct(start, end, preorder, pIndex, d):
-
-    # base case
-    if start > end:
-        return None, pIndex
-
-    # The next element in `preorder[]` will be the root node of subtree
-    # formed by sequence represented by `inorder[start, end]`
-    root = Node(preorder[pIndex])
-    pIndex = pIndex + 1
-
-    # get the index of the root node in inorder to determine the
-    # left and right subtree boundary
-    index = d[root.data]
-
-    # recursively construct the left subtree
-    root.left, pIndex = construct(start, index - 1, preorder, pIndex, d)
-
-    # recursively construct the right subtree
-    root.right, pIndex = construct(index + 1, end, preorder, pIndex, d)
-
-    # return current node
-    return root, pIndex
-
-# Construct a binary tree from inorder and preorder traversals.
-# This function assumes that the input is valid
-# i.e., given inorder and preorder sequence forms a binary tree
-def constructTree(inorder, preorder):
-
-    # create a dictionary to efficiently find the index of any element in
-    # a given inorder sequence
-    d = {}
-    for i, e in enumerate(inorder):
-        d[e] = i
-
-    # `pIndex` stores the index of the next unprocessed node in a preorder sequence;
-    # start with the root node (present at 0th index)
-    pIndex = 0
-
-    return construct(0, len(inorder) - 1, preorder, pIndex, d)[0]
-
-if __name__ == '__main__':
-
-    ''' Construct the following tree
-               1
-             /   \
-            /     \
-           2       3
-          /       / \
-         /       /   \
-        4       5     6
-               / \
-              /   \
-             7     8
-    '''
-
-    inorder = [4, 2, 1, 7, 5, 8, 3, 6]
-    preorder = [1, 2, 4, 3, 5, 7, 8, 6]
-
-    root = constructTree(inorder, preorder)
-
-    # traverse the constructed tree
-    print('The inorder traversal is ', end='')
-    inorderTraversal(root)
-
-    print('\nThe preorder traversal is ', end='')
-    preorderTraversal(root)
-```
-
-The time complexity of C++, Java, and Python solution is O(n), where `n` is the total number of nodes in the binary tree. They require O(n) extra space for hashing and recursion. The time complexity of the C solution is O(n2) and requires O(n) extra space for the call stack.
+The time complexity of the above solution is O(n), where `n` is the total number of nodes in the binary tree. It requires O(n) extra space for hashing and recursion.
 
 Also See:
 

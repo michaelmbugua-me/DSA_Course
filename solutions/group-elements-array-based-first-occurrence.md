@@ -17,136 +17,42 @@ The idea is to use [hashing](https://techiedelight.com/hashing-in-data-structure
   * If `A[i]` exists in the map, then this is the first occurrence of `A[i]` in the input array. Print the element, `A[i]`, `k` times, where `k` is the frequency of `A[i]` in the input array (stored in the map). Finally, delete `A[i]` from the map to avoid getting reprocessed.
   * If `A[i]` is not present on the map, then this is the repeated occurrence of `A[i]`. So move to the next element.
 
-The algorithm can be implemented as follows in C++, Java, and Python:
+The algorithm can be implemented as follows in TypeScript:
 
-```cpp
-#include <iostream>
-#include <unordered_map>
-using namespace std;
+```ts
+// Function to group elements of a given list based on the first
+// occurrence of each element
+function rearrange(A: number[]): void {
 
-// Function to group elements of a given array based on the first occurrence
-// of each element
-void rearrange(int A[], int n)
-{
     // create an empty map to store the frequency of each element
-    // present in the input array
-    unordered_map<int, int> freq;
+    // present in the input list
+    const freq = new Map<number, number>();
 
-    // traverse the input array and update the frequency of each element
-    for (int i = 0; i < n; i++) {
-        freq[A[i]]++;
+    // traverse the input list and update the frequency of each element
+    for (const i of A) {
+        freq.set(i, (freq.get(i) ?? 0) + 1);
     }
 
-    for (int i = 0; i < n; i++)
-    {
-        // if `A[i]` exists in the map (first occurrence of `A[i]`)
-        if (freq.find(A[i]) != freq.end())
-        {
-            // print `A[i]`, `k` times, where `k = freq[A[i]]`
-            int k = freq[A[i]];
-            while (k--) {
-                cout << A[i] << " ";
+    for (const i of A) {
+        // if `i` exists in the map (first occurrence of `i`)
+        if (freq.get(i)) {
+            // print `n` times, where `n = freq[i]`
+            for (let _ = 0; _ < freq.get(i)!; _++) {
+                console.log(i);
             }
 
-            // delete the element from the map, so it would not
+            // remove the element from the map, so it would not
             // get processed again
-            freq.erase(A[i]);
+            freq.set(i, 0);
         }
     }
 }
 
-int main()
-{
-    int A[] = { 5, 4, 5, 5, 3, 1, 2, 2, 4 };
-    int n = sizeof(A)/sizeof(A[0]);
-
-    rearrange(A, n);
-
-    return 0;
-}
+const A = [5, 4, 5, 5, 3, 1, 2, 2, 4];
+rearrange(A);
 ```
 
 **Output:** 5 5 5 4 4 3 1 2 2
-
-##
-
-```java
-import java.util.HashMap;
-import java.util.Map;
-
-class Main
-{
-    // Function to group elements of a given array based on the first
-    // occurrence of each element
-    public static void rearrange(int[] A)
-    {
-        // create an empty map to store the frequency of each element
-        // present in the input array
-        Map<Integer, Integer> freq = new HashMap<>();
-
-        // traverse the input array and update the frequency of each element
-        for (int i: A) {
-            freq.put(i, freq.getOrDefault(i, 0) + 1);
-        }
-
-        for (int i: A)
-        {
-            // if `i` exists in the map (first occurrence of `i`)
-            if (freq.containsKey(i))
-            {
-                // print `i`, `n` times, where `n = freq[i]`
-                int n = freq.get(i);
-                while (n-- != 0) {
-                    System.out.print(i + " ");
-                }
-
-                // delete the element from the map, so it would not
-                // get processed again
-                freq.remove(i);
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        int[] A = { 5, 4, 5, 5, 3, 1, 2, 2, 4 };
-
-        rearrange(A);
-    }
-}
-```
-
-##
-
-```python3
-# Function to group elements of a given list based on the first
-# occurrence of each element
-def rearrange(A):
-
-    # create an empty dictionary to store the frequency of each element
-    # present in the input list
-    freq = {}
-
-    # traverse the input list and update the frequency of each element
-    for i in A:
-        freq[i] = freq.get(i, 0) + 1
-
-    for i in A:
-        # if `i` exists in the dictionary (first occurrence of `i`)
-        if freq.get(i):
-            # print `n` times, where `n = freq[i]`
-            for _ in range(freq[i]):
-                print(i, end=' ')
-
-            # remove the element from the dictionary, so it would not
-            # get processed again
-            freq[i] = 0
-
-if __name__ == '__main__':
-
-    A = [5, 4, 5, 5, 3, 1, 2, 2, 4]
-    rearrange(A)
-```
 
 The time complexity of the above solution O(n) and requires O(n) extra space, where `n` is the size of the input.
 
