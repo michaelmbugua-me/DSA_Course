@@ -30,7 +30,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Recursive function to perform inorder traversal on a given binary tree
@@ -60,7 +62,9 @@ function buildTree(inorder: number[], start: number, end: number, d: Map<number,
     for (let j = start + 1; j <= end; j++) {
         // Find node with minimum index in level order traversal.
         // That would be the root node of the sequence inorder[start, end]
-        if (d.get(inorder[j])! < d.get(inorder[index])!) {
+        const currentLevel = d.get(inorder[j]);
+        const selectedLevel = d.get(inorder[index]);
+        if (currentLevel !== undefined && selectedLevel !== undefined && currentLevel < selectedLevel) {
             index = j;
         }
     }

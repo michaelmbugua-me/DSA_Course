@@ -30,9 +30,13 @@ The algorithm can be implemented as follows in TypeScript:
 // A class to store a binary tree node
 class TreeNode {
     data: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to perform inorder traversal on the tree
@@ -65,24 +69,31 @@ const createTree = (parent: number[]): TreeNode | null => {
 
     // traverse the parent array and build the tree
     for (let i = 0; i < parent.length; i++) {
+        const current = map.get(i);
+        if (current === undefined) {
+            return null;
+        }
 
         // if the parent is -1, set the root to the current node having the
         // value `i` (stored in map[i])
         if (parent[i] === -1) {
-            root = map.get(i)!;
+            root = current;
         }
         else {
             // get the parent for the current node
-            const ptr = map.get(parent[i])!;
+            const ptr = map.get(parent[i]);
+            if (ptr === undefined) {
+                return null;
+            }
 
             // if the parent's left child is filled, map the node to its right
             // child
             if (ptr.left) {
-                ptr.right = map.get(i)!;
+                ptr.right = current;
             }
             // if the parent's left child is empty, map the node to it
             else {
-                ptr.left = map.get(i)!;
+                ptr.left = current;
             }
         }
     }

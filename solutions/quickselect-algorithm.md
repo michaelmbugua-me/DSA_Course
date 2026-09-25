@@ -96,6 +96,28 @@ console.log(`k'th smallest element is ${quickSelect(nums, 0, nums.length - 1, k 
 It is worth noticing the resemblance to the Quicksort algorithm. This simple procedure has expected linear performance and, like Quicksort, has excellent performance traditionally, and beyond selecting the `k'th` element, it also partially sorts the data. It is also an [in-place algorithm](https://techiedelight.com/in-place-vs-out-of-place-algorithms/), requiring only constant memory overhead if tail-call optimization is available, or we can eliminate the tail recursion with a loop.
 
 ```ts
+function swap(nums: number[], i: number, j: number): void {
+    const temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+
+function partition(nums: number[], left: number, right: number, pIndex: number): number {
+    const pivot = nums[pIndex];
+    swap(nums, pIndex, right);
+    pIndex = left;
+
+    for (let i = left; i < right; i++) {
+        if (nums[i] <= pivot) {
+            swap(nums, i, pIndex);
+            pIndex = pIndex + 1;
+        }
+    }
+
+    swap(nums, pIndex, right);
+    return pIndex;
+}
+
 // Returns the k'th smallest element in the list within `left…right` (inclusive)
 function quickselect(nums: number[], left: number, right: number, k: number): number {
     while (true) {

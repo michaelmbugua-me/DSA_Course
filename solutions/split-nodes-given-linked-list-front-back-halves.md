@@ -20,8 +20,11 @@ Following is a TypeScript program that demonstrates it:
 // A Linked List Node
 class Node {
     data: number;
-    next: Node | null = null;
-    constructor(data: number, next: Node | null = null) {}
+    next: Node | null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -62,11 +65,18 @@ function frontBackSplit(source: Node | null): [Node | null, Node | null] {
         return [frontRef, backRef];
     }
 
-    let current = source!;
+    if (source === null) {
+        return [null, null];
+    }
+    let current: Node = source;
 
     const hopCount = (length - 1) / 2 | 0;  // figured these with a few drawings
     for (let i = 0; i < hopCount; i++) {
-        current = current.next!;
+        const next = current.next;
+        if (next === null) {
+            return [source, null];
+        }
+        current = next;
     }
 
     // Now cut at current
@@ -107,8 +117,11 @@ The algorithm can be implemented as follows in TypeScript:
 // A Linked List Node
 class Node {
     data: number;
-    next: Node | null = null;
-    constructor(data: number, next: Node | null = null) {}
+    next: Node | null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

@@ -22,8 +22,11 @@ The algorithm can be implemented as follows in TypeScript:
 // A Linked List Node
 class Node {
     data: number;
-    next: Node | null = null;
-    constructor(data: number, next: Node | null = null) {}
+    next: Node | null;
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -46,9 +49,9 @@ function sortList(head: Node | null): Node | null {
     }
 
     // maintain three dummy nodes
-    const first = new Node();
-    const second = new Node();
-    const third = new Node();
+    const first = new Node(0);
+    const second = new Node(0);
+    const third = new Node(0);
 
     // maintain three references
     let zero: Node = first;

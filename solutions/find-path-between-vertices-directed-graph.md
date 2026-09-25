@@ -57,6 +57,9 @@ function isReachable(graph: Graph, src: number, dest: number): boolean {
 
         // dequeue front node and print it
         const v = q.shift();
+        if (v === undefined) {
+            break;
+        }
 
         // if destination vertex is found
         if (v === dest) {

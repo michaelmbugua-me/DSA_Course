@@ -23,9 +23,13 @@ We can solve both problems in linear time by traversing the tree in a bottom-up 
 // A class to store a binary tree node
 class TreeNode {
     data: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print the root-to-leaf path with a given sum in a binary tree

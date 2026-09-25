@@ -1,4 +1,4 @@
-# Circular Queue implementation in C
+# Circular Queue implementation in TypeScript
 
 > Source: https://www.techiedelight.com/circular-queue-implementation-c/
 

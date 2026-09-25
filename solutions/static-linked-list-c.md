@@ -1,4 +1,4 @@
-# Static Linked List – C, Java, and Python
+# Static Linked List – TypeScript
 
 > Source: https://www.techiedelight.com/static-linked-list-c/
 

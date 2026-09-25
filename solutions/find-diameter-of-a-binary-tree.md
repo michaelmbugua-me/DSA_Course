@@ -19,9 +19,13 @@ The algorithm can be implemented as follows in TypeScript. Here, we pass diamete
 ```ts
 class TreeNode {
     val: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the diameter of the binary tree. Note that the function

@@ -1,4 +1,4 @@
-# Memory Efficient C++ Implementation of Trie – Insert, Search, and Delete
+# Memory-Efficient TypeScript Implementation of Trie – Insert, Search, and Delete
 
 > Source: https://www.techiedelight.com/memory-efficient-trie-implementation-using-map-insert-search-delete/
 

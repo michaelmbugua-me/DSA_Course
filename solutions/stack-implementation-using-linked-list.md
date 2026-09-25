@@ -1,4 +1,4 @@
-# Stack Implementation using a Linked List – C, Java, and Python
+# Stack Implementation using a Linked List – TypeScript
 
 > Source: https://www.techiedelight.com/stack-implementation-using-linked-list/
 
@@ -17,7 +17,10 @@ The implementation can be seen below in TypeScript:
 class Node {
     key: number;
     next: Node | null = null;
-    constructor(key: number, next: Node | null = null) {}
+    constructor(key: number, next: Node | null = null) {
+        this.key = key;
+        this.next = next;
+    }
 }
 
 class Stack {
@@ -52,32 +55,36 @@ class Stack {
     // Utility function to return the top element of the stack
     peek(): number {
         // check for an empty stack
-        if (this.isEmpty()) {
+        const top = this.top;
+        if (top === null) {
             console.log('The stack is empty');
             process.exit(-1);
+            return 0;
         }
-        return this.top!.key;
+        return top.key;
     }
 
     // Utility function to pop a top element from the stack
     pop(): number {             // remove at the beginning
 
         // check for stack underflow
-        if (this.top === null) {
+        const top = this.top;
+        if (top === null) {
             console.log('Stack Underflow');
             process.exit(-1);
+            return 0;
         }
 
         // take note of the top node's data
-        const top = this.top!.key;
+        const value = top.key;
 
         // update the top pointer to point to the next node
-        this.top = this.top!.next;
+        this.top = top.next;
 
         // decrease stack's size by 1
         this.nodesCount -= 1;
 
-        return top;
+        return value;
     }
 
     // Function to return the size of the stack
@@ -88,15 +95,18 @@ class Stack {
 
 const stack = new Stack();
 
+console.log('Inserting 1');
 stack.push(1);
+console.log('Inserting 2');
 stack.push(2);
+console.log('Inserting 3');
 stack.push(3);
 
 console.log('The top element is', stack.peek());
 
-stack.pop();
-stack.pop();
-stack.pop();
+console.log('Removing', stack.pop());
+console.log('Removing', stack.pop());
+console.log('Removing', stack.pop());
 
 if (stack.isEmpty()) {
     console.log('The stack is empty');

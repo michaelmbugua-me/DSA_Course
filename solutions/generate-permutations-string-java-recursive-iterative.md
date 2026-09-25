@@ -1,4 +1,4 @@
-# Generate all permutations of a string in Java – Recursive and Iterative
+# Generate all permutations of a string in TypeScript – Recursive and Iterative
 
 > Source: https://www.techiedelight.com/generate-permutations-string-java-recursive-iterative/
 

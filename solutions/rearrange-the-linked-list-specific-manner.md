@@ -21,7 +21,10 @@ The algorithm can be implemented as follows in TypeScript:
 class ListNode {
     val: number;
     next: ListNode | null = null;
-    constructor(val: number, next: ListNode | null = null) {}
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -54,16 +57,20 @@ function rearrange(head: ListNode | null): void {
     // iterate through the list and process two nodes at a time
     while (curr !== null) {
         // move the current node to the first list
-        first.next = curr;
-        first = first.next as ListNode;
+        const firstNode = curr;
+        first.next = firstNode;
+        first = firstNode;
 
         // move the next node to the second list
-        if (curr.next !== null) {
-            second.next = curr.next;
-            second = second.next as ListNode;
-            curr = curr.next;
+        const nextNode: ListNode | null = curr.next;
+        if (nextNode !== null) {
+            const secondNode: ListNode = nextNode;
+            second.next = secondNode;
+            second = secondNode;
+            curr = secondNode.next;
+        } else {
+            curr = null;
         }
-        curr = curr.next;
     }
 
     // combine the first list with the second list

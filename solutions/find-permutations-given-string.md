@@ -1,4 +1,4 @@
-# Find all permutations of a string in C++ (Using Backtracking and STL)
+# Find all permutations of a string in TypeScript (Using Backtracking)
 
 > Source: https://www.techiedelight.com/find-permutations-given-string/
 

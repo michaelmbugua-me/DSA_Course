@@ -18,9 +18,13 @@ This approach is demonstrated below in TypeScript:
 // A class to store a binary tree node
 class TreeNode {
     key: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to calculate the height of a binary tree with
@@ -53,9 +57,12 @@ root.right.right = new TreeNode(6);     // leaf node
 root.left.left.left = new TreeNode(7);  // leaf node
 
 // construct a circular doubly linked list from leaves
-const first = root.left.left.left!;
-const second = root.left.right!;
-const third = root.right.right!;
+const first = root.left?.left?.left;
+const second = root.left?.right;
+const third = root.right?.right;
+if (first === undefined || second === undefined || third === undefined) {
+    throw new Error('Invalid leaf configuration');
+}
 
 // set previous and next pointers of the linked list
 // (left and right child of a binary tree node, respectively)

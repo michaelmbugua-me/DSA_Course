@@ -84,16 +84,18 @@ function count(coeff: number[], k: number, rhs: number, lookup: Map<string, numb
 
     // if the subproblem is seen for the first time, solve it and
     // store its result in a map
-    if (!lookup.has(key)) {
-        const include = count(coeff, k, rhs - coeff[k], lookup);  // Case 1
-        const exclude = count(coeff, k - 1, rhs, lookup);         // Case 2
-
-        // return total ways by including or excluding the current coefficient
-        lookup.set(key, include + exclude);
+    const cached = lookup.get(key);
+    if (cached !== undefined) {
+        return cached;
     }
 
-    // return solution to the current subproblem
-    return lookup.get(key);
+    const include = count(coeff, k, rhs - coeff[k], lookup);  // Case 1
+    const exclude = count(coeff, k - 1, rhs, lookup);         // Case 2
+
+    // return total ways by including or excluding the current coefficient
+    const result = include + exclude;
+    lookup.set(key, result);
+    return result;
 }
 
 // `k` coefficients of the given equation

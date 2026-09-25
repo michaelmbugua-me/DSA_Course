@@ -1,4 +1,4 @@
-# Selection Sort Algorithm – Iterative & Recursive | C, Java, Python
+# Selection Sort Algorithm – Iterative & Recursive | TypeScript
 
 > Source: https://www.techiedelight.com/selection-sort-iterative-recursive/
 

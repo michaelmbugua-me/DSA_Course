@@ -1,4 +1,4 @@
-# Graph Implementation in C++ using STL
+# Graph Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/graph-implementation-using-stl/
 

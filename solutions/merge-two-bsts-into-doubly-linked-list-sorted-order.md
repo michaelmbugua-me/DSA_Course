@@ -23,7 +23,11 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Helper function to print a doubly linked list

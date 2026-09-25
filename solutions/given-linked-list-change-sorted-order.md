@@ -17,7 +17,10 @@ Following is a TypeScript program that demonstrates it:
 class ListNode {
     data: number = 0;
     next: ListNode | null = null;
-    constructor(data: number = 0, next: ListNode | null = null) {}
+    constructor(data: number = 0, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -30,12 +33,12 @@ function printList(head: ListNode | null): void {
         ptr = ptr.next;
     }
 
-    console.log(out + 'null');
+    console.log(out + 'NULL');
 }
 
 // Function to insert a given node at its correct sorted position into a given
 // list sorted in increasing order
-function sortedInsert(head: ListNode | null, newNode: ListNode): ListNode {
+function sortedInsert(head: ListNode | null, newNode: ListNode): ListNode | null {
 
     const dummy = new ListNode();
     let current = dummy;

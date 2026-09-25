@@ -25,13 +25,17 @@ class Node {
     left: Node | null = null;
     mid: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, mid: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, mid: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Insert a tree node at the front of the doubly linked list
 function push(node: Node, head: Node | null): Node | null {
     // insert the given node at the front of the doubly linked list
-    head!.left = node;
+    if (head !== null) {
+        head.left = node;
+    }
     node.right = head;
 
     // update left and mid-child pointer to null
@@ -90,28 +94,44 @@ function printDoublyLinkedList(node: Node | null): void {
 */
 
 const root = new Node(1);
+const left = new Node(2);
+const mid = new Node(9);
+const right = new Node(12);
+const leftLeft = new Node(3);
+const leftMid = new Node(6);
+const leftRight = new Node(8);
+const midLeft = new Node(10);
+const midRight = new Node(11);
+const rightMid = new Node(13);
+const rightRight = new Node(16);
+const leftLeftMid = new Node(4);
+const leftLeftMidRight = new Node(5);
+const leftMidRight = new Node(7);
+const rightMidLeft = new Node(14);
+const rightMidRight = new Node(15);
+const rightRightMid = new Node(17);
 
-root.left = new Node(2);
-root.mid = new Node(9);
-root.right = new Node(12);
+root.left = left;
+root.mid = mid;
+root.right = right;
 
-root.left!.left = new Node(3);
-root.left!.mid = new Node(6);
-root.left!.right = new Node(8);
+left.left = leftLeft;
+left.mid = leftMid;
+left.right = leftRight;
 
-root.mid!.left = new Node(10);
-root.mid!.right = new Node(11);
+mid.left = midLeft;
+mid.right = midRight;
 
-root.right!.mid = new Node(13);
-root.right!.right = new Node(16);
+right.mid = rightMid;
+right.right = rightRight;
 
-root.left!.left!.mid = new Node(4);
-root.left!.left!.mid!.right = new Node(5);
-root.left!.mid!.right = new Node(7);
+leftLeft.mid = leftLeftMid;
+leftLeftMid.right = leftLeftMidRight;
+leftMid.right = leftMidRight;
 
-root.right!.mid!.left = new Node(14);
-root.right!.mid!.right = new Node(15);
-root.right!.right!.mid = new Node(17);
+rightMid.left = rightMidLeft;
+rightMid.right = rightMidRight;
+rightRight.mid = rightRightMid;
 
 ternaryTreeToDoublyLinkedList(root);
 printDoublyLinkedList(root);

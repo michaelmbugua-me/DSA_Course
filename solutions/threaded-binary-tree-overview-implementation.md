@@ -31,7 +31,9 @@ class Node {
     isThreaded = false;
 
     data: number;
-    constructor(data: number) {}
+    constructor(data: number) {
+        this.data = data;
+    }
 }
 
 // Utility function to return the leftmost node in a given binary tree

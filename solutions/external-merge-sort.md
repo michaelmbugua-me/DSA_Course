@@ -46,7 +46,10 @@ class MinHeap
 
     pop(): MinHeapNode {
         const min = this.data[0];
-        const last = this.data.pop()!;
+        const last = this.data.pop();
+        if (last === undefined) {
+            return min;
+        }
         if (this.data.length > 0) {
             this.data[0] = last;
             let i = 0;
@@ -90,7 +93,7 @@ class MinHeap
 function readNumbers(fileName: string): number[] {
     return fs.readFileSync(fileName, 'utf8')
         .split(/\s+/)
-        .filter((s) => s.length > 0)
+        .filter((s: string) => s.length > 0)
         .map(Number);
 }
 

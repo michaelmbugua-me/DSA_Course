@@ -1,4 +1,4 @@
-# Stack Implementation in Python
+# Stack Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/stack-implementation-python/
 

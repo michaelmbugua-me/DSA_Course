@@ -20,8 +20,11 @@ This approach is demonstrated below in TypeScript:
 // A Linked List Node
 class ListNode {
     data: number;
-    next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    next: ListNode | null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -98,8 +101,12 @@ function append(X: ListNode | null, Y: ListNode | null): ListNode | null {
             prev = node;
             head = node;
         } else {
+            if (prev === null) {
+                return null;
+            }
+
             // add the new node to the output list
-            prev!.next = node;
+            prev.next = node;
 
             // update the previous node to point to the new node
             prev = node;
@@ -111,7 +118,10 @@ function append(X: ListNode | null, Y: ListNode | null): ListNode | null {
     }
 
     if (carry) {
-        prev!.next = new ListNode(carry, prev!.next);
+        if (prev === null) {
+            return null;
+        }
+        prev.next = new ListNode(carry, prev.next);
     }
 
     return head;

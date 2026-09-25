@@ -20,7 +20,11 @@ class TreeNode {
     val: number;
     left: TreeNode | null = null;
     right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to print preorder traversal of a given tree

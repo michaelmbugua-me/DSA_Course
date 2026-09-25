@@ -20,9 +20,13 @@ Following is the implementation of the idea in TypeScript:
 // A class to store a binary tree node
 class TreeNode {
     val: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if a given node is a leaf node or not

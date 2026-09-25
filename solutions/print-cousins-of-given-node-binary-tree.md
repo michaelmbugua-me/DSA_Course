@@ -20,7 +20,11 @@ class TreeNode {
     key: number;
     left: TreeNode | null = null;
     right: TreeNode | null = null;
-    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to find the level of the given node `x`

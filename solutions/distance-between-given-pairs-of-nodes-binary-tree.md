@@ -18,9 +18,13 @@ The algorithm can be implemented as follows in TypeScript:
 // A class to store a binary tree node
 class TreeNode {
     val: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 const INT_MIN = Number.MIN_SAFE_INTEGER;
@@ -157,7 +161,7 @@ root.right.left.left = new TreeNode(7);
 root.right.right.right = new TreeNode(8);
 
 // find the distance between node 7 and node 6
-console.log(findDistance(root, root.right.left.left as TreeNode, root.right.right as TreeNode));
+console.log(findDistance(root, root.right.left.left, root.right.right));
 ```
 
 **Output:** 3

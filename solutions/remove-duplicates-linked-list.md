@@ -23,7 +23,10 @@ Following is a TypeScript program that demonstrates it:
 class ListNode {
     val: number;
     next: ListNode | null = null;
-    constructor(val: number, next: ListNode | null = null) {}
+    constructor(val: number, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -48,7 +51,10 @@ function removeDuplicates(head: ListNode | null): void {
     while (current !== null) {
         // if the current node is seen before, ignore it
         if (s.has(current.val)) {
-            (previous as ListNode).next = current.next;
+            if (previous === null) {
+                return;
+            }
+            previous.next = current.next;
         }
         // insert the current node into the set and proceed to the next node
         else {
@@ -56,7 +62,10 @@ function removeDuplicates(head: ListNode | null): void {
             previous = current;
         }
 
-        current = (previous as ListNode).next;
+        if (previous === null) {
+            return;
+        }
+        current = previous.next;
     }
 }
 

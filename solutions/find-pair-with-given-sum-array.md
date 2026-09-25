@@ -108,9 +108,12 @@ function findPair(nums: number[], target: number): void {
     for (let i = 0; i < nums.length; i++) {
         // check if pair (nums[i], target - nums[i]) exists
 
+        // index of the complement element, if it is seen before
+        const j = map.get(target - nums[i]);
+
         // if the difference is seen before, print the pair
-        if (map.has(target - nums[i])) {
-            console.log(`Pair found (${nums[map.get(target - nums[i])]}, ${nums[i]})`);
+        if (j !== undefined) {
+            console.log(`Pair found (${nums[j]}, ${nums[i]})`);
             return;
         }
 

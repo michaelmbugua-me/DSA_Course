@@ -18,9 +18,13 @@ This can be easily expressed as a recursive algorithm. The implementation can be
 // A class to store a BST node
 class TreeNode {
     data: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST
@@ -93,9 +97,13 @@ The space used by the [call stack](https://en.wikipedia.org/wiki/Call_stack) is 
 // A class to store a BST node
 class TreeNode {
     data: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST

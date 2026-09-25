@@ -50,8 +50,13 @@ function findTotalPaths(graph: Graph, src: number, dest: number, m: number): num
 
     // loop till queue is empty
     while (q.length > 0) {
+        if (q.length === 0) {
+            break;
+        }
+
         // dequeue front node
-        const [vertex, depth] = q.shift();
+        const [vertex, depth] = q[0];
+        q.shift();
 
         // if the destination is reached and BFS depth is equal to `m`, update count
         if (vertex === dest && depth === m) {

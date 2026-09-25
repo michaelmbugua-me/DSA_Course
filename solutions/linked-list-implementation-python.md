@@ -1,4 +1,4 @@
-# Linked List Implementation in Python
+# Linked List Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/linked-list-implementation-python/
 

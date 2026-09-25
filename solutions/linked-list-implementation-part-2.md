@@ -1,4 +1,4 @@
-# Linked List – Insertion at Tail | C, Java, and Python Implementation
+# Linked List – Insertion at Tail | TypeScript Implementation
 
 > Source: https://www.techiedelight.com/linked-list-implementation-part-2/
 

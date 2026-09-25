@@ -1,4 +1,4 @@
-# Merge sort algorithm for a singly linked list – C, Java, and Python
+# Merge sort algorithm for a singly linked list – TypeScript
 
 > Source: https://www.techiedelight.com/merge-sort-singly-linked-list/
 

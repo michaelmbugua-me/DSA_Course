@@ -24,7 +24,9 @@ class TreeNode {
   data: number;
   left: TreeNode | null = null;
   right: TreeNode | null = null;
-  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+  }
 }
 
 // Function to store inorder traversal on the tree in a list

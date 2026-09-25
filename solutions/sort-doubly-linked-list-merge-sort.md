@@ -18,7 +18,11 @@ class Node {
     data: number;
     next: Node | null = null;
     prev: Node | null = null;
-    constructor(data: number, next: Node | null = null, prev: Node | null = null) {}
+    constructor(data: number, next: Node | null = null, prev: Node | null = null) {
+        this.data = data;
+        this.next = next;
+        this.prev = prev;
+    }
 }
 
 // Utility function to push a node at the beginning of the doubly linked list
@@ -56,7 +60,10 @@ function split(head: Node): Node {
     while (fast !== null) {
         fast = fast.next;
         if (fast !== null) {
-            slow = slow.next!;
+            const nextSlow = slow.next;
+            if (nextSlow !== null) {
+                slow = nextSlow;
+            }
             fast = fast.next;
         }
     }
@@ -79,14 +86,20 @@ function merge(a: Node | null, b: Node | null): Node | null {
 
     // pick either `a` or `b`, and recur
     if (a.data <= b.data) {
-        a.next = merge(a.next, b);
-        a.next!.prev = a;
+        const merged = merge(a.next, b);
+        a.next = merged;
+        if (merged !== null) {
+            merged.prev = a;
+        }
         a.prev = null;
         return a;
     }
     else {
-        b.next = merge(a, b.next);
-        b.next!.prev = b;
+        const merged = merge(a, b.next);
+        b.next = merged;
+        if (merged !== null) {
+            merged.prev = b;
+        }
         b.prev = null;
         return b;
     }

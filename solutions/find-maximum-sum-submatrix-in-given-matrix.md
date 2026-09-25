@@ -69,6 +69,9 @@ function findMaxSumSubMatrix(mat: number[][], k: number): number[][] {
 
     let maximum = -Infinity;
 
+    // `p` stores the bottom-right corner coordinates of the submatrix
+    let p: number[] = [0, 0];
+
     // find the maximum sum submatrix
 
     // start from cell (k-1, k-1) and consider each submatrix of size `k × k`

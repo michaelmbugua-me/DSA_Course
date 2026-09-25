@@ -22,7 +22,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Function to perform inorder traversal on the tree
@@ -79,12 +81,14 @@ function convert(root: Node | null): void {
 */
 
 let root = new Node(8);
-root.left = new Node(3);
-root.right = new Node(5);
-root.left!.left = new Node(10);
-root.left!.right = new Node(2);
-root.right!.left = new Node(4);
-root.right!.right = new Node(6);
+const left = new Node(3);
+const right = new Node(5);
+root.left = left;
+root.right = right;
+left.left = new Node(10);
+left.right = new Node(2);
+right.left = new Node(4);
+right.right = new Node(6);
 
 convert(root);
 const output: number[] = [];

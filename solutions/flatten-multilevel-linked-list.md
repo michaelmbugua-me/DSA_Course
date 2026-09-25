@@ -25,7 +25,11 @@ class ListNode {
     data: number;
     down: ListNode | null = null;
     next: ListNode | null = null;
-    constructor(data: number, down: ListNode | null = null, next: ListNode | null = null) {}
+    constructor(data: number, down: ListNode | null = null, next: ListNode | null = null) {
+        this.data = data;
+        this.down = down;
+        this.next = next;
+    }
 }
 
 // Utility function to print a list with `down` and `next` pointers

@@ -1,4 +1,4 @@
-# Pop operation in a linked list – C, Java, and Python
+# Pop operation in a linked list – TypeScript
 
 > Source: https://www.techiedelight.com/pop-operation-in-linked-list/
 
@@ -17,7 +17,10 @@ Following is a TypeScript program that demonstrates it:
 class ListNode {
     data: number;
     next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

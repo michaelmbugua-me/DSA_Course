@@ -20,9 +20,13 @@ Following is a TypeScript program that demonstrates it:
 // A class to store a binary tree node
 class TreeNode {
     val: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to calculate the difference between the sum of all nodes present

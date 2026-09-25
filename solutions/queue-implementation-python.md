@@ -1,4 +1,4 @@
-# Queue Implementation in Python
+# Queue Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/queue-implementation-python/
 

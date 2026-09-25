@@ -24,7 +24,10 @@ This can be effectively implemented as the following in TypeScript:
 class ListNode {
     data: number;
     next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Utility function to print a linked list

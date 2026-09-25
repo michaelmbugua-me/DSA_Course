@@ -1,4 +1,4 @@
-# Graph Implementation in C++ (without using STL)
+# Graph Implementation in TypeScript (without using STL)
 
 > Source: https://www.techiedelight.com/graph-implementation-c-without-using-stl/
 
@@ -14,7 +14,7 @@ For example, below is the adjacency list representation of the above graph:
 
 The adjacency list representation of graphs also allows additional data storage on the vertices but is practically very efficient when it contains only a few edges.
 
-## 1\. Directed Graph implementation in C++
+## 1\. Directed Graph implementation in TypeScript
 
 ```ts
 // Data structure to store adjacency list nodes
@@ -129,7 +129,7 @@ for (let i = 0; i < N; i++)
 
 **Output:** 0 —> 1 1 —> 2 2 —> 1 —> 0 3 —> 2 4 —> 5 5 —> 4
 
-## 2\. Weighted Directed Graph implementation in C++
+## 2\. Weighted Directed Graph implementation in TypeScript
 
 We know that in a weighted graph, every edge will have a weight or cost associated with it, as shown below:
 

@@ -22,7 +22,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // The helper function to count all subtrees having the same value of nodes.
@@ -73,15 +75,20 @@ function countSubtrees(root: Node | null, count = 0): [number, number] {
 */
 
 const root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.right!.left = new Node(5);
-root.right!.right = new Node(6);
-root.left!.left!.left = new Node(4);
-root.right!.left!.left = new Node(5);
-root.right!.left!.right = new Node(5);
-root.right!.right!.right = new Node(7);
+const left = new Node(2);
+const right = new Node(3);
+const leftChild = new Node(4);
+const rightLeft = new Node(5);
+const rightRight = new Node(6);
+root.left = left;
+root.right = right;
+left.left = leftChild;
+right.left = rightLeft;
+right.right = rightRight;
+leftChild.left = new Node(4);
+rightLeft.left = new Node(5);
+rightLeft.right = new Node(5);
+rightRight.right = new Node(7);
 
 console.log(countSubtrees(root)[1]);
 ```

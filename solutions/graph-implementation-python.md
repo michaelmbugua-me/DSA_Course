@@ -1,4 +1,4 @@
-# Graph Implementation in Python
+# Graph Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/graph-implementation-python/
 

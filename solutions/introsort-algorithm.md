@@ -1,4 +1,4 @@
-# Introsort Algorithm – Overview and C++ Implementation
+# Introsort Algorithm – Overview and TypeScript Implementation
 
 > Source: https://www.techiedelight.com/introsort-algorithm/
 

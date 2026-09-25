@@ -1,4 +1,4 @@
-# Implementation of KMP Algorithm – C, C++, Java, and Python
+# Implementation of KMP Algorithm – TypeScript
 
 > Source: https://www.techiedelight.com/implementation-kmp-algorithm-c-cpp-java/
 

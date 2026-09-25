@@ -83,7 +83,11 @@ function BFS(field: number[][]): number {
         // (i, j) represents the position inside the field
         // `dist` represents its minimum distance from the source
 
-        const [i, j, dist] = q.shift();
+        const cell = q.shift();
+        if (cell === undefined) {
+            break;
+        }
+        const [i, j, dist] = cell;
 
         // if the destination is found, return minimum distance
         if (j === N - 1) {

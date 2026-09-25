@@ -1,4 +1,4 @@
-# Implement Graph Data Structure in C
+# Implement Graph Data Structure in TypeScript
 
 > Source: https://www.techiedelight.com/implement-graph-data-structure-c/
 

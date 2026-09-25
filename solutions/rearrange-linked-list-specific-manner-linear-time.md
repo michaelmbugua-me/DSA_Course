@@ -25,7 +25,10 @@ The algorithm can be implemented as follows in TypeScript:
 class Node {
     data: number;
     next: Node | null = null;
-    constructor(data: number, next: Node | null = null) {}
+    constructor(data: number, next: Node | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Function to print a given linked list
@@ -84,7 +87,7 @@ function shuffleMerge(a: Node | null, b: Node | null): Node | null {
 
     const result = a;       // one node from `a`
     a.next = b;             // one from `b`
-    b!.next = recur;        // then the `rest`
+    b.next = recur;         // then the `rest`
 
     return result;
 }
@@ -100,18 +103,28 @@ function findMiddle(head: Node | null): Node | null {
     // find the middle pointer
     while (fast && fast.next) {
         prev = slow;
-        slow = slow!.next;
+        if (slow === null) {
+            return null;
+        }
+        slow = slow.next;
         fast = fast.next.next;
     }
 
     // for odd nodes, fix middle
     if (fast && fast.next === null) {
         prev = slow;
-        slow = slow!.next;
+        if (slow === null) {
+            return null;
+        }
+        slow = slow.next;
+    }
+
+    if (prev === null) {
+        return null;
     }
 
     // make next of previous node null
-    prev!.next = null;
+    prev.next = null;
 
     // return middle node
     return slow;

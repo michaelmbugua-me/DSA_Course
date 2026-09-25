@@ -1,4 +1,4 @@
-# Min Heap and Max Heap Implementation in Java
+# Min Heap and Max Heap Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/min-heap-max-heap-implementation-in-java/
 

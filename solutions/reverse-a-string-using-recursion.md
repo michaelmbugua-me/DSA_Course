@@ -1,4 +1,4 @@
-# Reverse a string using recursion – C, C++, and Java
+# Reverse a string using recursion – TypeScript
 
 > Source: https://www.techiedelight.com/reverse-a-string-using-recursion/
 

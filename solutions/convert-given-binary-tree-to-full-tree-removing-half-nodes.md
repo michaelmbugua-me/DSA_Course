@@ -23,7 +23,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Function to perform inorder traversal on the tree
@@ -79,16 +81,20 @@ function truncate(root: Node | null): Node | null {
    5       6     7
 */
 
-let root: Node | null = new Node(0);
-root.left = new Node(1);
-root.right = new Node(2);
-root.left!.left = new Node(3);
-root.right!.left = new Node(4);
-root.left!.left!.left = new Node(5);
-root.right!.left!.left = new Node(6);
-root.right!.left!.right = new Node(7);
+const rootNode = new Node(0);
+const left = new Node(1);
+const right = new Node(2);
+const leftChild = new Node(3);
+const rightChild = new Node(4);
+rootNode.left = left;
+rootNode.right = right;
+left.left = leftChild;
+right.left = rightChild;
+leftChild.left = new Node(5);
+rightChild.left = new Node(6);
+rightChild.right = new Node(7);
 
-root = truncate(root);
+let root: Node | null = truncate(rootNode);
 const output: number[] = [];
 inorder(root, output);
 console.log(output.join(' '));

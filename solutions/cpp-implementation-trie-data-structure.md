@@ -1,10 +1,10 @@
-# C++ Implementation of Trie Data Structure
+# TypeScript Implementation of Trie Data Structure
 
 > Source: https://www.techiedelight.com/cpp-implementation-trie-data-structure/
 
 This post covers the TypeScript implementation of the Trie data structure, which supports insertion, deletion, and search operations.
 
-We know that Trie is a tree-based data structure used for efficient re _trie_ val of a key in a huge set of strings. In the [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/), we have discussed Trie data structure and covered its C implementation. In this post, the C++ implementation of Trie data structure is discussed, which is way cleaner than the C implementation.
+Trie is a tree-based data structure used for efficient retrieval of keys from a large set of strings. The [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/) introduced the Trie data structure; this post presents a TypeScript implementation with insertion, deletion, and search operations.
 
 Following is the TypeScript implementation of the Trie data structure, which supports insertion, deletion, and search operations:
 

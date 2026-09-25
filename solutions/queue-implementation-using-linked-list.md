@@ -1,4 +1,4 @@
-# Queue Implementation using a Linked List – C, Java, and Python
+# Queue Implementation using a Linked List – TypeScript
 
 > Source: https://www.techiedelight.com/queue-implementation-using-linked-list/
 

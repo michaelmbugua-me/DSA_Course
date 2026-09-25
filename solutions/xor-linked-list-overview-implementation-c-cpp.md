@@ -1,4 +1,4 @@
-# XOR Linked List – Overview and Implementation in C/C++
+# XOR Linked List – Overview and Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/xor-linked-list-overview-implementation-c-cpp/
 
@@ -55,7 +55,9 @@ class Node {
     link = 0;                // XOR of the previous and next node ids
 
     data: number;
-    constructor(data: number) {}
+    constructor(data: number) {
+        this.data = data;
+    }
 }
 
 // Registry mapping node ids to nodes (stands in for C/C++ memory addresses)

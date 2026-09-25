@@ -1,4 +1,4 @@
-# Stack Implementation in C++
+# Stack Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/stack-implementation-in-cpp/
 

@@ -48,6 +48,10 @@ console.log(`1 ~ ${(y / 100).toFixed(2)}%`);
 We can also do something like below, but this will increase the number of calls made to the `random()` function:
 
 ```ts
+function random(): number {
+    return Math.floor(Math.random() * 5) + 1;
+}
+
 function generate(): number
 {
     let r;

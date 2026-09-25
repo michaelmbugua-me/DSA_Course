@@ -1,4 +1,4 @@
-# Reverse a linked List – Iterative Solution | C, Java, and Python
+# Reverse a linked List – Iterative Solution | TypeScript
 
 > Source: https://www.techiedelight.com/reverse-linked-list-part-1-iterative-solution/
 
@@ -19,8 +19,11 @@ This `previous-current-next` strategy can be implemented as follows in TypeScrip
 ```ts
 class ListNode {
     data: number;
-    next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    next: ListNode | null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -73,8 +76,11 @@ The implementation can be seen below in TypeScript:
 ```ts
 class ListNode {
     data: number;
-    next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    next: ListNode | null;
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list
@@ -104,8 +110,8 @@ function moveNode(destRef: { head: ListNode | null }, sourceRef: { head: ListNod
 // Iterate through the list and move each node to the front of the
 // result list like `push()` of the node. It uses `moveNode()`.
 function reverse(head: ListNode | null): ListNode | null {
-    const result = { head: null as ListNode | null };
-    const current = { head };
+    const result: { head: ListNode | null } = { head: null };
+    const current: { head: ListNode | null } = { head };
 
     while (current.head) {
         moveNode(result, current);

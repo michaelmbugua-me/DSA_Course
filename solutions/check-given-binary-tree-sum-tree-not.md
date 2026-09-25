@@ -18,9 +18,13 @@ The algorithm can be implemented as follows in TypeScript:
 // A class to store a binary tree node
 class TreeNode {
     key: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(key: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to check if a given binary tree is a sum tree or not

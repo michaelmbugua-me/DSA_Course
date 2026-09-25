@@ -22,9 +22,13 @@ We can quickly check this using recursion. Following is a TypeScript implementat
 // A class to store a binary tree node
 class TreeNode {
     data: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Function to check if subtree rooted at `X` and `Y` mirror each other

@@ -33,6 +33,9 @@ function printPreorder(start: number, end: number, postorder: number[],
     // get the current node index in inorder sequence to determine
     // its left and right subtree boundary
     const index = d.get(value);
+    if (index === undefined) {
+        return;
+    }
 
     // recur for the right subtree
     printPreorder(index + 1, end, postorder, pIndex, d, stack);

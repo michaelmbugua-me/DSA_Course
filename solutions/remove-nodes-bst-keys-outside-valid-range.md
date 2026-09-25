@@ -24,7 +24,11 @@ class TreeNode {
     val: number;
     left: TreeNode | null = null;
     right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to insert a key into a BST

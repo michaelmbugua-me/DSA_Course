@@ -1,4 +1,4 @@
-# Min Heap and Max Heap Implementation in C++
+# Min Heap and Max Heap Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/min-heap-max-heap-implementation-c/
 

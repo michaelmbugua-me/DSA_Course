@@ -105,8 +105,9 @@ function findMaxLenSubarray(nums: number[], S: number): void {
 
         // update length and ending index of the maximum length subarray
         // having sum `S`
-        if (map.has(target - S) && len < i - map.get(target - S)) {
-            len = i - map.get(target - S);
+        const firstIndex = map.get(target - S);
+        if (firstIndex !== undefined && len < i - firstIndex) {
+            len = i - firstIndex;
             ending_index = i;
         }
     }

@@ -1,4 +1,4 @@
-# Iterative solution to reverse a string in C++ and Java
+# Iterative solution to reverse a string in TypeScript
 
 > Source: https://www.techiedelight.com/reverse-string-without-using-recursion/
 

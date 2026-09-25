@@ -1,4 +1,4 @@
-# Linked List Implementation in Java
+# Linked List Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/linked-list-implementation-java/
 

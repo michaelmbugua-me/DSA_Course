@@ -71,7 +71,11 @@ function updateShortestDistance(mat: string[][]): number[][] {
     while (q.length) {
 
         // dequeue front cell
-        const [x, y, distance] = q.shift();
+        const cell = q.shift();
+        if (cell === undefined) {
+            break;
+        }
+        const [x, y, distance] = cell;
 
         // update the four adjacent cells of the front node in the queue
         for (let i = 0; i < row.length; i++) {

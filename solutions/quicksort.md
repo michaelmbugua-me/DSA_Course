@@ -1,4 +1,4 @@
-# Quicksort Algorithm – C++, Java, and Python Implementation
+# Quicksort Algorithm – TypeScript Implementation
 
 > Source: https://www.techiedelight.com/quicksort/
 

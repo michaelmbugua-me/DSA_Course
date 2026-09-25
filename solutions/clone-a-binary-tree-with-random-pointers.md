@@ -17,10 +17,15 @@ Following is a TypeScript implementation of the idea:
 class Node {
     // Constructor
     data: number;
-    left: Node | null = null;
-    right: Node | null = null;
-    random: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null, random: Node | null = null) {}
+    left: Node | null;
+    right: Node | null;
+    random: Node | null;
+    constructor(data: number, left: Node | null = null, right: Node | null = null, random: Node | null = null) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+        this.random = random;
+    }
 }
 
 // Function to print the preorder traversal on a given binary tree
@@ -52,12 +57,17 @@ function preorder(root: Node | null): void {
 // into the cloned binary tree using the map
 function updateRandomPointers(root: Node | null, map: Map<Node, Node>): void {
     // base case
-    if (root === null || !map.has(root)) {
+    if (root === null) {
+        return;
+    }
+
+    const clone = map.get(root);
+    if (clone === undefined) {
         return;
     }
 
     // update the random pointer of the cloned node
-    map.get(root)!.random = root.random ? (map.get(root.random) ?? null) : null;
+    clone.random = root.random === null ? null : map.get(root.random) ?? null;
 
     // recur for the left and right subtree
     updateRandomPointers(root.left, map);
@@ -75,14 +85,15 @@ function cloneLeftRightPointers(root: Node | null, map: Map<Node, Node>): Node |
     // clone all fields of the root node except the random pointer
 
     // create a new node with the same data as the root node
-    map.set(root, new Node(root.data));
+    const clone = new Node(root.data);
+    map.set(root, clone);
 
     // clone the left and right subtree
-    map.get(root)!.left = cloneLeftRightPointers(root.left, map);
-    map.get(root)!.right = cloneLeftRightPointers(root.right, map);
+    clone.left = cloneLeftRightPointers(root.left, map);
+    clone.right = cloneLeftRightPointers(root.right, map);
 
     // return cloned root node
-    return map.get(root)!;
+    return clone;
 }
 
 // The main function to clone a special binary tree with random pointers
@@ -97,13 +108,13 @@ function cloneSpecialBinaryTree(root: Node | null): Node | null {
 
     // clone data, left, and right children for each node of the original
     // binary tree, and put references into the map
-    cloneLeftRightPointers(root, map);
+    const clone = cloneLeftRightPointers(root, map);
 
     // update random pointers from the original binary tree in the map
     updateRandomPointers(root, map);
 
     // return the cloned root node
-    return map.get(root)!;
+    return clone;
 }
 
 // construct the tree

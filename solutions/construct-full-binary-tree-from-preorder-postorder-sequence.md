@@ -38,7 +38,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Recursive function to perform inorder traversal on a given binary tree
@@ -70,7 +72,10 @@ function buildTree(preorder: number[], pIndex: number, start: number, end: numbe
 
     // find the next key index in the postorder sequence to determine the
     // boundary of the left and right subtree of the current root node
-    const index = d.get(preorder[pIndex])!;
+    const index = d.get(preorder[pIndex]);
+    if (index === undefined) {
+        return [root, pIndex];
+    }
 
     // fill the left and right subtree together
     if (start <= index && index + 1 <= end - 1) {

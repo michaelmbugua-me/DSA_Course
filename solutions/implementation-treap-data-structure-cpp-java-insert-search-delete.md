@@ -28,7 +28,12 @@ class TreapNode {
     priority = randrange(100);
     left: TreapNode | null = null;
     right: TreapNode | null = null;
-    constructor(data: number, priority = randrange(100), left: TreapNode | null = null, right: TreapNode | null = null) {}
+    constructor(data: number, priority = randrange(100), left: TreapNode | null = null, right: TreapNode | null = null) {
+        this.data = data;
+        this.priority = priority;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Generates a pseudo-random integer in range [0, max)

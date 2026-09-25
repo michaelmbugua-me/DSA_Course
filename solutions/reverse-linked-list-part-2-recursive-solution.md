@@ -1,4 +1,4 @@
-# Reverse a Linked List – Recursive Solution | C, C++, Java, and Python
+# Reverse a Linked List – Recursive Solution | TypeScript
 
 > Source: https://www.techiedelight.com/reverse-linked-list-part-2-recursive-solution/
 

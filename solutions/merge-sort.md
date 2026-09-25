@@ -1,4 +1,4 @@
-# Merge Sort Algorithm – C++, Java, and Python Implementation
+# Merge Sort Algorithm – TypeScript Implementation
 
 > Source: https://www.techiedelight.com/merge-sort/
 

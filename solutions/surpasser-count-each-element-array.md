@@ -42,7 +42,7 @@ function merge(A: number[], aux: number[], low: number, mid: number, high: numbe
 
     // copy remaining elements
     while (i <= mid) {
-        count[A[i]] = (count.get(A[i]) ?? 0) + c;
+        count.set(A[i], (count.get(A[i]) ?? 0) + c);
         aux[k++] = A[i++];
     }
 

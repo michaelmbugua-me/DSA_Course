@@ -1,4 +1,4 @@
-# Trie Implementation in C – Insert, Search and Delete
+# Trie Implementation in TypeScript – Insert, Search and Delete
 
 > Source: https://www.techiedelight.com/trie-implementation-insert-search-delete/
 

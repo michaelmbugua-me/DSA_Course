@@ -1,4 +1,4 @@
-# Linked List Implementation in C++
+# Linked List Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/linked-list-implementation-cpp/
 

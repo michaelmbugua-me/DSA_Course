@@ -18,7 +18,10 @@ Following is a TypeScript implementation of the idea:
 class Node {
   data: number;
   next: Node | null = null;
-  constructor(data: number, next: Node | null = null) {}
+  constructor(data: number, next: Node | null = null) {
+    this.data = data;
+    this.next = next;
+  }
 }
 
 // Helper function to print a given linked list

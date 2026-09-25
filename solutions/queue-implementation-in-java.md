@@ -1,4 +1,4 @@
-# Queue Implementation in Java
+# Queue Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/queue-implementation-in-java/
 

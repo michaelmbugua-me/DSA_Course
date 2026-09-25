@@ -1,4 +1,4 @@
-# Stack Implementation in C
+# Stack Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/stack-implementation/
 
@@ -71,12 +71,10 @@ class Stack {
     // Utility function to return the top element of the stack
     peek(): number {
         // check for an empty stack
-        if (!this.isEmpty()) {
-            return this.items[this.top];
-        }
-        else {
+        if (this.isEmpty()) {
             process.exit(-1);
         }
+        return this.items[this.top];
     }
 
     // Utility function to pop a top element from the stack

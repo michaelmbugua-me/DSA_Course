@@ -20,7 +20,11 @@ class TreeNode {
     val: number;
     left: TreeNode | null = null;
     right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Iterative function to print corner nodes of every level in a binary tree
@@ -47,7 +51,10 @@ function printTree(root: TreeNode | null): void {
         // process all nodes present in the current level
         while (n > 0) {
             n = n - 1;
-            const node = q.shift()!;
+            const node = q.shift();
+            if (node === undefined) {
+                break;
+            }
 
             // if the corner node is found, print it
             if (n === size - 1 || n === 0) {

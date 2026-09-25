@@ -1,4 +1,4 @@
-# Trie Data Structure – Python Implementation
+# Trie Data Structure – TypeScript Implementation
 
 > Source: https://www.techiedelight.com/trie-implementation-python/
 

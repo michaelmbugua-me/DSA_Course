@@ -22,7 +22,9 @@ class Node {
     key: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(key: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(key: number, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+    }
 }
 
 // Utility function to print binary tree nodes in an inorder fashion
@@ -58,7 +60,13 @@ function constructTree(mat: number[][]): Node | null {
         if (!d.has(total)) {
             d.set(total, []);
         }
-        d.get(total)!.push(i);
+        const rows = d.get(total);
+        if (rows === undefined) {
+            d.set(total, [i]);
+        }
+        else {
+            rows.push(i);
+        }
     }
 
     // node[i] will store the node for `i` in the constructed tree
@@ -70,7 +78,11 @@ function constructTree(mat: number[][]): Node | null {
 
     // Traverse the dictionary in sorted order
     for (const key of [...d.keys()].sort((a, b) => a - b)) {
-        for (const row of d.get(key)!) {
+        const rows = d.get(key);
+        if (rows === undefined) {
+            continue;
+        }
+        for (const row of rows) {
             last = row;
             // create a new node
             node[row] = new Node(row);

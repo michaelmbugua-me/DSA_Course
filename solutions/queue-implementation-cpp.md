@@ -1,4 +1,4 @@
-# Queue Implementation in C++
+# Queue Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/queue-implementation-cpp/
 

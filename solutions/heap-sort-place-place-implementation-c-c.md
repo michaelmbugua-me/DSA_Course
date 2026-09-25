@@ -1,4 +1,4 @@
-# Heap Sort Algorithm – Overview & C, C++, Java, and Python Implementation
+# Heap Sort Algorithm – Overview & TypeScript Implementation
 
 > Source: https://www.techiedelight.com/heap-sort-place-place-implementation-c-c/
 

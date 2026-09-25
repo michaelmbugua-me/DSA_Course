@@ -62,9 +62,13 @@ The only difference is that instead of using string to store the output, use bin
 // A class to store a binary tree node
 class Node {
     key: string;
-    left: Node | null = null;
-    right: Node | null = null;
-    constructor(key: string, left: Node | null = null, right: Node | null = null) {}
+    left: Node | null;
+    right: Node | null;
+    constructor(key: string, left: Node | null = null, right: Node | null = null) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

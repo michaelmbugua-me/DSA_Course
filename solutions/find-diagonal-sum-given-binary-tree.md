@@ -17,9 +17,13 @@ This approach is demonstrated below in TypeScript:
 ```ts
 class TreeNode {
     val: number;
-    left: TreeNode | null = null;
-    right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree and

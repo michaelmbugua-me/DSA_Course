@@ -25,7 +25,10 @@ Following is a TypeScript implementation of the idea:
 class ListNode {
     data: number;
     next: ListNode | null = null;
-    constructor(data: number, next: ListNode | null = null) {}
+    constructor(data: number, next: ListNode | null = null) {
+        this.data = data;
+        this.next = next;
+    }
 }
 
 // Helper function to print a given linked list

@@ -53,10 +53,11 @@ function findLargestSubarray(nums: number[]): void {
 
         // if the sum is seen before
         if (map.has(sum)) {
+            const firstIndex = map.get(sum);
 
             // update length and ending index of largest subarray having zero-sum
-            if (len < i - map.get(sum)) {
-                len = i - map.get(sum);
+            if (firstIndex !== undefined && len < i - firstIndex) {
+                len = i - firstIndex;
                 ending_index = i;
             }
         }

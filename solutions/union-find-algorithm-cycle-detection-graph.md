@@ -55,13 +55,18 @@ class DisjointSet {
 
     // Find the root of the set in which element `k` belongs
     find(k: number): number {
+        const parent = this.parent.get(k);
+        if (parent === undefined) {
+            throw new RangeError(`Element ${k} is not in a set`);
+        }
+
         // if `k` is root
-        if (this.parent.get(k) === k) {
+        if (parent === k) {
             return k;
         }
 
         // recur for the parent until we find the root
-        return this.find(this.parent.get(k));
+        return this.find(parent);
     }
 
     // Perform Union of two subsets

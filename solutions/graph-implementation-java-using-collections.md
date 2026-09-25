@@ -1,4 +1,4 @@
-# Graph Implementation in Java using Collections
+# Graph Implementation in TypeScript using Collections
 
 > Source: https://www.techiedelight.com/graph-implementation-java-using-collections/
 

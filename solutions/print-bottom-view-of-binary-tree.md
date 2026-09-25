@@ -24,7 +24,11 @@ class TreeNode {
     val: number;
     left: TreeNode | null = null;
     right: TreeNode | null = null;
-    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+    constructor(val: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
 }
 
 // Recursive function to perform preorder traversal on the tree and fill the map.
@@ -40,7 +44,8 @@ function printBottom(root: TreeNode | null, dist: number, level: number, d: Map<
     // if the current level is more than or equal to the maximum level seen so far
     // for the same horizontal distance or horizontal distance is seen for
     // the first time, update the dictionary
-    if (!d.has(dist) || level >= d.get(dist)![1]) {
+    const entry = d.get(dist);
+    if (entry === undefined || level >= entry[1]) {
         // update value and level for the current distance
         d.set(dist, [root.val, level]);
     }
@@ -68,7 +73,10 @@ function printBottomView(root: TreeNode | null): void {
     // traverse the dictionary in sorted order of their keys and
     // print the bottom view
     for (const key of [...d.keys()].sort((a, b) => a - b)) {
-        process.stdout.write(d.get(key)![0] + ' ');
+        const entry = d.get(key);
+        if (entry !== undefined) {
+            process.stdout.write(entry[0] + ' ');
+        }
     }
 }
 

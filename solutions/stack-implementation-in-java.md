@@ -1,4 +1,4 @@
-# Stack Implementation in Java
+# Stack Implementation in TypeScript
 
 > Source: https://www.techiedelight.com/stack-implementation-in-java/
 
@@ -59,12 +59,10 @@ class Stack {
 
     // Utility function to return the top element of the stack
     peek(): number {
-        if (!this.isEmpty()) {
-            return this.arr[this.top];
-        }
-        else {
+        if (this.isEmpty()) {
             process.exit(-1);
         }
+        return this.arr[this.top];
     }
 
     // Utility function to return the size of the stack

@@ -25,7 +25,9 @@ class TreeNode {
   data: number;
   left: TreeNode | null = null;
   right: TreeNode | null = null;
-  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {}
+  constructor(data: number, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.data = data;
+  }
 }
 
 // Function to determine if two given binary trees can be transformed

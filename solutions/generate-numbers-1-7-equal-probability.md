@@ -57,6 +57,10 @@ for (let i = 1; i <= 7; i++) {
 To minimize the total number of calls to the `random()` function, stop the while loop at `r <= 21` and use the modulo operator, as shown below:
 
 ```ts
+function rand(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function generate(): number {
     let r: number;
     do {

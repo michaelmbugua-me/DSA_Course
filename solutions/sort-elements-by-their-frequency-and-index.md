@@ -21,8 +21,12 @@ The algorithm can be implemented as follows in TypeScript:
 class Data {
     value: number;
     index: number;
-    count = 0;
-    constructor(value: number, index: number, count = 0) {}
+    count: number;
+    constructor(value: number, index: number, count = 0) {
+        this.value = value;
+        this.index = index;
+        this.count = count;
+    }
 }
 
 // Custom sort by element's frequency and index
@@ -36,10 +40,12 @@ function sortByFrequencyAndIndex(arr: number[]): void {
     // for each array element, insert into the map
     // its frequency and index of its first occurrence in the array
     for (let i = 0; i < arr.length; i++) {
-        if (!hm.has(arr[i])) {
-            hm.set(arr[i], new Data(arr[i], i));
+        let data = hm.get(arr[i]);
+        if (data === undefined) {
+            data = new Data(arr[i], i);
+            hm.set(arr[i], data);
         }
-        hm.get(arr[i])!.count += 1;
+        data.count += 1;
     }
 
     // get the values

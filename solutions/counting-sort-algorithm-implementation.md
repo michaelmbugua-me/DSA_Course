@@ -1,4 +1,4 @@
-# Counting Sort Algorithm – C, Java, and Python Implementation
+# Counting Sort Algorithm – TypeScript Implementation
 
 > Source: https://www.techiedelight.com/counting-sort-algorithm-implementation/
 

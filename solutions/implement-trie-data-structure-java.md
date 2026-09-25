@@ -1,4 +1,4 @@
-# Java Implementation of Trie Data Structure
+# TypeScript Implementation of Trie Data Structure
 
 > Source: https://www.techiedelight.com/implement-trie-data-structure-java/
 
@@ -6,7 +6,7 @@
 
 Trie is a tree-based data structure used for efficient re _trie_ val of a key in a huge word set. In this post, we will implement the Trie data structure in TypeScript.
 
-In the [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/), we discussed a Trie data structure in detail and covered its C implementation. In this post, the Trie data structure’s TypeScript implementation is discussed, which is way cleaner than the C implementation.
+The [previous post](https://techiedelight.com/trie-implementation-insert-search-delete/) introduced the Trie data structure. This post presents a TypeScript implementation with insertion, deletion, and search operations.
 
 Following is the TypeScript implementation of the Trie data structure, which supports insertion and search operations. The implementation currently supports only lowercase English characters `(a – z)`, but we can easily extend the solution to support any set of characters.
 

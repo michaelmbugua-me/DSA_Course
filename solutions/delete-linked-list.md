@@ -1,4 +1,4 @@
-# Delete a linked list in C/C++
+# Delete a linked list in TypeScript
 
 > Source: https://www.techiedelight.com/delete-linked-list/
 

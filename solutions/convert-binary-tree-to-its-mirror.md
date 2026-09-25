@@ -18,7 +18,9 @@ class Node {
     data: number;
     left: Node | null = null;
     right: Node | null = null;
-    constructor(data: number, left: Node | null = null, right: Node | null = null) {}
+    constructor(data: number, left: Node | null = null, right: Node | null = null) {
+        this.data = data;
+    }
 }
 
 // Function to perform preorder traversal on a given binary tree
@@ -62,12 +64,14 @@ function convertToMirror(root: Node | null): void {
 */
 
 let root = new Node(1);
-root.left = new Node(2);
-root.right = new Node(3);
-root.left!.left = new Node(4);
-root.left!.right = new Node(5);
-root.right!.left = new Node(6);
-root.right!.right = new Node(7);
+const left = new Node(2);
+const right = new Node(3);
+root.left = left;
+root.right = right;
+left.left = new Node(4);
+left.right = new Node(5);
+right.left = new Node(6);
+right.right = new Node(7);
 
 convertToMirror(root);
 const output: number[] = [];
